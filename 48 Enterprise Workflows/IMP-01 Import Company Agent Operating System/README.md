@@ -10,6 +10,19 @@ PORT / OS is a working map of 137 narrow agents across seven departments. A revi
 
 The center of the system is a shared company brain containing versioned supplier, product, logistics, customs, finance, customer, market, and policy records. The same knowledge and control rules therefore ground every department instead of each agent improvising from a separate prompt.
 
+## Product and commercialization guide
+
+The complete [PORT / OS B2B SaaS Playbook](PORT-OS-B2B-SAAS-PLAYBOOK.md) explains:
+
+- how to operate and demonstrate the current prototype;
+- how to convert it into a six-week paid pilot;
+- the production architecture and prototype-to-product backlog;
+- a Bolivia-focused offer, pricing hypotheses, outreach, and 90-day launch plan;
+- country-pack expansion into Peru, Paraguay, Chile, and wider Latin America; and
+- reuse of the control-plane architecture for logistics, distribution, procurement, construction, agro-export, professional services, and ecommerce.
+
+The [Spanish six-week pilot proposal](PORT-OS-PILOT-OFFER-ES.md) is a ready-to-customize commercial template for Bolivian prospects, with scope, exclusions, controls, acceptance criteria, pricing placeholders, and next steps.
+
 ## What is real
 
 - A typed registry that asserts exactly **137 agents** at runtime
@@ -82,6 +95,8 @@ The first release does **not** animate agents pretending to work in the backgrou
 ```text
 IMP-01 Import Company Agent Operating System/
 ├── README.md
+├── PORT-OS-B2B-SAAS-PLAYBOOK.md
+├── PORT-OS-PILOT-OFFER-ES.md
 └── site/
     ├── app/
     │   ├── api/run-agent/route.ts

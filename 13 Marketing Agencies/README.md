@@ -1,14 +1,9 @@
 # Marketing Agencies
 
-> Status: **Pending population** — scheduled in a future staged session.
+> Status: **Flagship delivered**
 
-## Purpose
+## [MKT-01 — Multi-Channel Ad Operations Control Plane](MKT-01%20Multi-Channel%20Ad%20Operations%20Control%20Plane/SOP.md)
 
-Enterprise automation projects for marketing, creative, and media buying agencies.
+A tested reference build that normalizes Meta and Google campaign facts into one contract, detects pacing and performance anomalies, and creates approval-backed recommendations. It proves data ingestion, business logic, auditability, and operator handoff without pretending the system can spend money autonomously.
 
-## Contents
-
-This folder is currently a placeholder within the Portfolio directory scaffold. Documents will be added here in a subsequent phase of the build-out, following the staged plan tracked in [`MASTER-INDEX.md`](../MASTER-INDEX.md).
-
----
-*Part of the Enterprise Automation Portfolio. See root [README.md](../README.md) for navigation.*
+[Inspect the runnable build](MKT-01%20Multi-Channel%20Ad%20Operations%20Control%20Plane/build/README.md).

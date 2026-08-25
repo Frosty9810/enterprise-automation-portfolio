@@ -1,14 +1,9 @@
 # Accounting
 
-> Status: **Pending population** — scheduled in a future staged session.
+> Status: **Flagship delivered**
 
-## Purpose
+## [ACC-01 — Accounts Payable Match & Cash Control](ACC-01%20Accounts%20Payable%20Match%20and%20Cash%20Control/SOP.md)
 
-Enterprise automation projects for accounting and bookkeeping firms.
+A three-way invoice/PO/receipt matcher with duplicate detection, tolerance policies, approval separation, and cash-impact reporting. It automates evidence assembly and exception routing while keeping payment authority outside the workflow.
 
-## Contents
-
-This folder is currently a placeholder within the Portfolio directory scaffold. Documents will be added here in a subsequent phase of the build-out, following the staged plan tracked in [`MASTER-INDEX.md`](../MASTER-INDEX.md).
-
----
-*Part of the Enterprise Automation Portfolio. See root [README.md](../README.md) for navigation.*
+[Inspect the runnable build](ACC-01%20Accounts%20Payable%20Match%20and%20Cash%20Control/build/README.md).

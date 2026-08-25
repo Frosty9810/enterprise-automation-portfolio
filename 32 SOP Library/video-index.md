@@ -1,6 +1,6 @@
 # Video Index
 
-> Status: **Populated** — 12 SOPs indexed across Real Estate, SaaS, and E-Commerce. All videos currently pending recording.
+> Status: **Populated** — 16 SOPs indexed across seven industry sections. All videos currently pending recording.
 
 ## Purpose
 
@@ -10,9 +10,9 @@ Single source of truth for the video-walkthrough coverage of this portfolio, per
 
 | Metric | Count |
 |---|---|
-| Total documented automations | 12 |
+| Total documented automations | 16 |
 | Videos recorded | 0 |
-| Videos pending | 12 |
+| Videos pending | 16 |
 | Coverage % | 0% (documentation coverage 100%, recording coverage 0%) |
 
 ## Index
@@ -31,6 +31,10 @@ Single source of truth for the video-walkthrough coverage of this portfolio, per
 | SOP | 15 E-Commerce | [ECOM-02: Review Intelligence & Response Queue](../15%20E-Commerce/ECOM-02%20Review%20Intelligence%20and%20Response%20Queue/SOP.md) | Pending | — | — |
 | SOP | 15 E-Commerce | [ECOM-03: Catalog & Inventory Reconciliation](../15%20E-Commerce/ECOM-03%20Catalog%20Inventory%20Reconciliation/SOP.md) | Pending | — | — |
 | SOP | 15 E-Commerce | [ECOM-04: Support Routing & SLA Control](../15%20E-Commerce/ECOM-04%20Support%20Routing%20and%20SLA%20Control/SOP.md) | Pending | — | — |
+| SOP | 12 Recruiting | [REC-01: Candidate Consent, Matching & Interview Operations](../12%20Recruiting/REC-01%20Candidate%20Consent%20Matching%20and%20Interview%20Operations/SOP.md) | Pending | — | — |
+| SOP | 13 Marketing Agencies | [MKT-01: Multi-Channel Ad Operations Control Plane](../13%20Marketing%20Agencies/MKT-01%20Multi-Channel%20Ad%20Operations%20Control%20Plane/SOP.md) | Pending | — | — |
+| SOP | 16 Accounting | [ACC-01: Accounts Payable Match & Cash Control](../16%20Accounting/ACC-01%20Accounts%20Payable%20Match%20and%20Cash%20Control/SOP.md) | Pending | — | — |
+| SOP | 17 Customer Support | [CS-01: Support Quality & Knowledge Feedback Loop](../17%20Customer%20Support/CS-01%20Support%20Quality%20and%20Knowledge%20Feedback%20Loop/SOP.md) | Pending | — | — |
 
 ## How This File Is Maintained
 

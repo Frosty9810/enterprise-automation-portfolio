@@ -1,14 +1,9 @@
 # Customer Support
 
-> Status: **Pending population** — scheduled in a future staged session.
+> Status: **Flagship delivered**
 
-## Purpose
+## [CS-01 — Support Quality & Knowledge Feedback Loop](CS-01%20Support%20Quality%20and%20Knowledge%20Feedback%20Loop/SOP.md)
 
-Enterprise automation projects for customer support and service operations across industries.
+A privacy-minimized QA pipeline that samples support interactions, evaluates answer grounding against approved knowledge, clusters recurring knowledge gaps, and routes coaching or content tasks. It measures AI-assisted support without letting the evaluator publish customer-facing answers.
 
-## Contents
-
-This folder is currently a placeholder within the Portfolio directory scaffold. Documents will be added here in a subsequent phase of the build-out, following the staged plan tracked in [`MASTER-INDEX.md`](../MASTER-INDEX.md).
-
----
-*Part of the Enterprise Automation Portfolio. See root [README.md](../README.md) for navigation.*
+[Inspect the runnable build](CS-01%20Support%20Quality%20and%20Knowledge%20Feedback%20Loop/build/README.md).

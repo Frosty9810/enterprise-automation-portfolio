@@ -20,10 +20,10 @@ An industry flagship must include:
 
 | Order | ID | Flagship | Distinct proof | Hard constraint |
 |---|---|---|---|---|
-| 1 | MKT-01 | Multi-Channel Ad Operations Control Plane | Meta/Google ingestion, attribution normalization, anomaly detection, budget approval | Reporting may recommend but cannot mutate spend without approval |
-| 2 | REC-01 | Candidate Intake, Matching & Interview Operations | explainable matching, consent ledger, scheduling state machine | protected attributes excluded from ranking |
-| 3 | ACC-01 | Accounts Payable Three-Way Match & Cash Forecast | invoice extraction, PO/receipt matching, exception workflow | no payment-changing action without segregation of duties |
-| 4 | CS-01 | Support Quality & Knowledge Feedback Loop | sampled QA, grounded answer evaluation, knowledge-gap clustering | customer text minimized and redacted at model boundary |
+| 1 | MKT-01 ✅ | Multi-Channel Ad Operations Control Plane | Meta/Google ingestion, attribution normalization, anomaly detection, budget approval | Reporting may recommend but cannot mutate spend without approval |
+| 2 | REC-01 ✅ | Candidate Intake, Matching & Interview Operations | explainable matching, consent ledger, scheduling state machine | protected attributes excluded from ranking |
+| 3 | ACC-01 ✅ | Accounts Payable Three-Way Match & Cash Forecast | invoice extraction, PO/receipt matching, exception workflow | no payment-changing action without segregation of duties |
+| 4 | CS-01 ✅ | Support Quality & Knowledge Feedback Loop | sampled QA, grounded answer evaluation, knowledge-gap clustering | customer text minimized and redacted at model boundary |
 | 5 | PM-01 | Lease-to-Maintenance Operations Control Tower | tenant intake, vendor dispatch, access windows, SLA escalation | emergency classification cannot depend on an LLM |
 | 6 | CON-01 | Subcontractor Compliance & Change-Order Ledger | document expiry, site readiness, approval chain, cost impact | immutable approval history across legacy email/PDF inputs |
 | 7 | MED-01 | Referral Intake & Prior-Authorization Work Queue | document classification, completeness rules, payer checklist | synthetic data only; no PHI leaves the controlled boundary |

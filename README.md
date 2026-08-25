@@ -10,7 +10,7 @@
 
 This repository is structured as an internal consulting knowledge base. It is **not** a collection of tutorials: completed artifacts are written for technical and operational reviewers evaluating whether a workflow is understandable, testable, and maintainable.
 
-The current verified scope is **13 executable reference projects**: twelve n8n/Python/PostgreSQL implementations across Real Estate, SaaS, and E-Commerce, plus a seven-department import-company agent operating system with a 137-agent registry, shared knowledge brain, typed execution API, and interactive interface. Other numbered sections form the development roadmap and may still be placeholders; see [`MASTER-INDEX.md`](MASTER-INDEX.md) for the live status.
+The current verified scope is **17 executable reference projects**: sixteen n8n/Python/PostgreSQL implementations across seven industry sections, plus a seven-department import-company agent operating system with a 137-agent registry, shared knowledge brain, typed execution API, and interactive interface. Other numbered sections form the development roadmap and may still be placeholders; see [`MASTER-INDEX.md`](MASTER-INDEX.md) for the live status.
 
 Deployment contexts and sample organizations are illustrative reference scenarios. They are labeled as such and are not presented as client engagements. The workflows, code, schemas, error-handling patterns, and documentation are the portfolio deliverables being demonstrated.
 

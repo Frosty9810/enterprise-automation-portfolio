@@ -29,12 +29,12 @@ Every SOP, workflow doc, and case study authored from this point forward must in
 | 09 | Medical | ⬜ | Stub only. |
 | 10 | Legal | ⬜ | Stub only. |
 | 11 | Insurance | ⬜ | Stub only. |
-| 12 | Recruiting | ⬜ | Stub only. |
-| 13 | Marketing Agencies | ⬜ | Stub only. |
+| 12 | Recruiting | ✅ | REC-01 flagship delivered: consent-gated explainable matching and interview operations with executable artifacts and tests. |
+| 13 | Marketing Agencies | ✅ | MKT-01 flagship delivered: normalized Meta/Google ad-operations control plane with anomaly detection and approval-backed recommendations. |
 | 14 | SaaS | ✅ | Flagship suite delivered: SAAS-01–SAAS-04 (2 Intermediate, 2 Advanced), each with a verified `/build/` containing n8n, Python, and SQL artifacts. |
 | 15 | E-Commerce | ✅ | Flagship suite delivered: 4 connected Shopify operations projects covering multi-market content, review triage, inventory reconciliation, and support routing; each includes runnable Python, n8n JSON, PostgreSQL schema, and tests. |
-| 16 | Accounting | ⬜ | Stub only. |
-| 17 | Customer Support | ⬜ | Stub only. |
+| 16 | Accounting | ✅ | ACC-01 flagship delivered: AP three-way match, duplicate controls, approval separation, and draft-only ERP handoff. |
+| 17 | Customer Support | ✅ | CS-01 flagship delivered: privacy-minimized support QA, grounding evaluation, and knowledge-gap feedback loop. |
 | 18 | Executive Assistants | ⬜ | Stub only. |
 
 ## Platform & Technology Depth (19–31)
@@ -59,7 +59,7 @@ Every SOP, workflow doc, and case study authored from this point forward must in
 
 | # | Section | Status | Notes |
 |---|---|---|---|
-| 32 | SOP Library | 🟡 | `video-index.md` now tracks 12 SOPs (all pending recording). Cross-industry function-based SOP index still pending further industry build-out. |
+| 32 | SOP Library | 🟡 | `video-index.md` now tracks 16 SOPs (all pending recording). Cross-industry function-based SOP index still pending further industry build-out. |
 | 33 | Workflow Diagrams | ⬜ | Stub only. |
 | 34 | Database Schemas | ⬜ | Stub only. |
 | 35 | Security | ⬜ | Stub only. |

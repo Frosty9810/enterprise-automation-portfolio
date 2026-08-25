@@ -1,0 +1,962 @@
+{
+  "name": "SAAS-02 - Automated Dunning and Failed-Payment Recovery Engine",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "stripe-invoice-payment-failed",
+        "responseMode": "responseNode",
+        "options": {
+          "rawBody": true
+        }
+      },
+      "id": "a1b2c3d4-0001-4aaa-9001-000000000001",
+      "name": "Stripe Webhook - invoice.payment_failed",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [-1200, 300],
+      "webhookId": "dunning-invoice-payment-failed"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Extract plan tier, decline reason, and MRR from the Stripe event payload\n// and normalize into the internal dunning-case shape (SOP Section 15).\nconst body = $input.first().json.body ?? $input.first().json;\nconst invoice = body.data.object;\nconst lastError = body.last_payment_error ?? {};\n\nconst planTier = invoice.metadata?.plan_tier ?? 'smb';\nconst accountId = invoice.metadata?.account_id ?? null;\nconst declineReason = lastError.decline_code ?? lastError.code ?? 'unknown';\n\n// MRR lookup would normally hit the billing system; using subscription\n// metadata here as the illustrative source per SOP Section 4/16.\nconst mrrCents = Number(invoice.metadata?.mrr_cents ?? 0);\nconst highValueThresholdCents = 150000; // $1,500/mo, SOP Section 14\nconst highValue = mrrCents >= highValueThresholdCents;\n\nreturn [{\n  json: {\n    dunning_case_id: `dc_${invoice.id}`,\n    invoice_id: invoice.id,\n    stripe_customer_id: invoice.customer,\n    account_id: accountId,\n    plan_tier: planTier,\n    decline_reason: declineReason,\n    amount_due_cents: invoice.amount_due,\n    currency: invoice.currency,\n    mrr_cents: mrrCents,\n    high_value: highValue,\n    card_last4: lastError.payment_method?.card?.last4 ?? null,\n    card_brand: lastError.payment_method?.card?.brand ?? null,\n    failed_at: new Date(body.created * 1000).toISOString(),\n    source_event_id: body.id\n  }\n}];"
+      },
+      "id": "a1b2c3d4-0002-4bbb-9002-000000000002",
+      "name": "Extract Tier and Failure Reason",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-980, 300]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO dunning_cases (dunning_case_id, invoice_id, stripe_customer_id, account_id, plan_tier, decline_reason, amount_due_cents, currency, mrr_cents, high_value, card_last4, card_brand, failed_at, status) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, 'new') ON CONFLICT (invoice_id) DO UPDATE SET updated_at = now() RETURNING *;",
+        "options": {
+          "queryParams": "={{ $json.dunning_case_id }},={{ $json.invoice_id }},={{ $json.stripe_customer_id }},={{ $json.account_id }},={{ $json.plan_tier }},={{ $json.decline_reason }},={{ $json.amount_due_cents }},={{ $json.currency }},={{ $json.mrr_cents }},={{ $json.high_value }},={{ $json.card_last4 }},={{ $json.card_brand }},={{ $json.failed_at }}"
+        }
+      },
+      "id": "a1b2c3d4-0003-4ccc-9003-000000000003",
+      "name": "Postgres - Create Dunning Case",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [-760, 300],
+      "credentials": {
+        "postgres": {
+          "id": "postgres-dunning-engine",
+          "name": "Dunning Engine Postgres"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.plan_tier }}",
+                    "rightValue": "smb",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "outputKey": "SMB"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.plan_tier }}",
+                    "rightValue": "mid_market",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "outputKey": "Mid-Market"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.plan_tier }}",
+                    "rightValue": "enterprise",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "outputKey": "Enterprise"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "SMB"
+        }
+      },
+      "id": "a1b2c3d4-0004-4ddd-9004-000000000004",
+      "name": "Switch - Plan Tier",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [-540, 300]
+    },
+    {
+      "parameters": {
+        "amount": 3,
+        "unit": "days"
+      },
+      "id": "a1b2c3d4-0005-4eee-9005-000000000005",
+      "name": "Wait Until Day 3 (SMB)",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [-300, 120],
+      "webhookId": "wait-day3-smb"
+    },
+    {
+      "parameters": {
+        "amount": 3,
+        "unit": "days"
+      },
+      "id": "a1b2c3d4-0006-4fff-9006-000000000006",
+      "name": "Wait Until Day 3 (Mid-Market)",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [-300, 300],
+      "webhookId": "wait-day3-midmarket"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT status FROM dunning_cases WHERE invoice_id = $1;",
+        "options": {
+          "queryParams": "={{ $json.invoice_id }}"
+        }
+      },
+      "id": "a1b2c3d4-0007-4000-9007-000000000007",
+      "name": "Postgres - Check Before Send (Day 3)",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [-80, 210],
+      "credentials": {
+        "postgres": {
+          "id": "postgres-dunning-engine",
+          "name": "Dunning Engine Postgres"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.status }}",
+              "rightValue": "recovered",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "id": "a1b2c3d4-0008-4111-9008-000000000008",
+      "name": "IF Not Yet Recovered (Day 3)",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [140, 210]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.hubapi.com/marketing/v3/transactional/single-email/send",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "hubspotOAuth2Api",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"emailId\": \"dunning_day3_recovery_v2\",\n  \"message\": {\n    \"to\": \"={{ $json.billing_contact_email }}\"\n  },\n  \"customProperties\": [\n    { \"name\": \"amount_due\", \"value\": \"={{ $json.amount_due_cents / 100 }}\" },\n    { \"name\": \"card_last4\", \"value\": \"={{ $json.card_last4 }}\" },\n    { \"name\": \"update_payment_link\", \"value\": \"={{ 'https://billing.atlasmetrics.com/update-card/' + $json.dunning_case_id }}\" }\n  ]\n}",
+        "options": {}
+      },
+      "id": "a1b2c3d4-0009-4222-9009-000000000009",
+      "name": "HubSpot - Send Day 3 Email",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [360, 120],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "hubspot-api",
+          "name": "HubSpot API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 4,
+        "unit": "days"
+      },
+      "id": "a1b2c3d4-0010-4333-9010-000000000010",
+      "name": "Wait Until Day 7",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [580, 210],
+      "webhookId": "wait-day7"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT status, high_value, mrr_cents FROM dunning_cases WHERE invoice_id = $1;",
+        "options": {
+          "queryParams": "={{ $json.invoice_id }}"
+        }
+      },
+      "id": "a1b2c3d4-0011-4444-9011-000000000011",
+      "name": "Postgres - Check Before Send (Day 7)",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [800, 210],
+      "credentials": {
+        "postgres": {
+          "id": "postgres-dunning-engine",
+          "name": "Dunning Engine Postgres"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.status }}",
+              "rightValue": "recovered",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "id": "a1b2c3d4-0012-4555-9012-000000000012",
+      "name": "IF Not Yet Recovered (Day 7)",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [1020, 210]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.hubapi.com/marketing/v3/transactional/single-email/send",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "hubspotOAuth2Api",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"emailId\": \"dunning_day7_escalation_v2\",\n  \"message\": {\n    \"to\": \"={{ $json.billing_contact_email }}\"\n  },\n  \"customProperties\": [\n    { \"name\": \"amount_due\", \"value\": \"={{ $json.amount_due_cents / 100 }}\" },\n    { \"name\": \"restriction_warning\", \"value\": \"true\" }\n  ]\n}",
+        "options": {}
+      },
+      "id": "a1b2c3d4-0013-4666-9013-000000000013",
+      "name": "HubSpot - Send Day 7 Email",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1240, 120],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "hubspot-api",
+          "name": "HubSpot API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.high_value }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "id": "a1b2c3d4-0014-4777-9014-000000000014",
+      "name": "IF High Value Account",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [1240, 300]
+    },
+    {
+      "parameters": {
+        "resource": "sms",
+        "operation": "send",
+        "from": "+18005550123",
+        "to": "={{ $json.billing_contact_mobile }}",
+        "message": "=Atlas Metrics: your payment of ${{ $json.amount_due_cents / 100 }} failed. Update your card to avoid service restriction: https://billing.atlasmetrics.com/update-card/{{ $json.dunning_case_id }}"
+      },
+      "id": "a1b2c3d4-0015-4888-9015-000000000015",
+      "name": "Twilio - Send SMS Escalation",
+      "type": "n8n-nodes-base.twilio",
+      "typeVersion": 1,
+      "position": [1460, 300],
+      "credentials": {
+        "twilioApi": {
+          "id": "twilio-account",
+          "name": "Twilio Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 7,
+        "unit": "days"
+      },
+      "id": "a1b2c3d4-0016-4999-9016-000000000016",
+      "name": "Wait Until Day 14",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [1680, 210],
+      "webhookId": "wait-day14"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT status, plan_tier FROM dunning_cases WHERE invoice_id = $1;",
+        "options": {
+          "queryParams": "={{ $json.invoice_id }}"
+        }
+      },
+      "id": "a1b2c3d4-0017-4aaa-9017-000000000017",
+      "name": "Postgres - Check Before Suspend (Day 14)",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [1900, 210],
+      "credentials": {
+        "postgres": {
+          "id": "postgres-dunning-engine",
+          "name": "Dunning Engine Postgres"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.status }}",
+              "rightValue": "recovered",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "id": "a1b2c3d4-0018-4bbb-9018-000000000018",
+      "name": "IF Not Yet Recovered (Day 14)",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [2120, 210]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://app.atlasmetrics.com/api/internal/v1/subscriptions/suspend",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"account_id\": \"={{ $json.account_id }}\",\n  \"dunning_case_id\": \"={{ $json.dunning_case_id }}\",\n  \"action\": \"={{ $json.plan_tier === 'mid_market' ? 'downgrade' : 'suspend' }}\",\n  \"reason\": \"dunning_grace_period_expired\"\n}",
+        "options": {}
+      },
+      "id": "a1b2c3d4-0019-4ccc-9019-000000000019",
+      "name": "HTTP - Suspend or Downgrade Subscription",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [2340, 120],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "internal-app-api",
+          "name": "Atlas Metrics Internal API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "amount": 0,
+        "unit": "seconds"
+      },
+      "id": "a1b2c3d4-0020-4ddd-9020-000000000020",
+      "name": "Wait Until Day 3 (Enterprise, parallel)",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [-300, 500],
+      "webhookId": "wait-day3-enterprise"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.close.com/api/v1/task/",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpBasicAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"lead_id\": \"={{ $json.close_lead_id }}\",\n  \"assigned_to\": \"={{ $json.csm_owner_id }}\",\n  \"text\": \"=Payment failure on {{ $json.account_id }}: ${{ $json.amount_due_cents / 100 }} due, decline reason {{ $json.decline_reason }}. Dunning case {{ $json.dunning_case_id }}.\",\n  \"due_date\": \"={{ $now.plus({ hours: 1 }).toISO() }}\",\n  \"is_complete\": false\n}",
+        "options": {}
+      },
+      "id": "a1b2c3d4-0021-4eee-9021-000000000021",
+      "name": "Close CRM - Create CSM Task",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [-80, 500],
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "close-crm-api",
+          "name": "Close CRM API Key"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE dunning_cases SET csm_task_id = $1, status = 'enterprise_csm_task_open', updated_at = now() WHERE invoice_id = $2 RETURNING *;",
+        "options": {
+          "queryParams": "={{ $json.id }},={{ $('Extract Tier and Failure Reason').item.json.invoice_id }}"
+        }
+      },
+      "id": "a1b2c3d4-0022-4fff-9022-000000000022",
+      "name": "Postgres - Log CSM Task Created",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [140, 500],
+      "credentials": {
+        "postgres": {
+          "id": "postgres-dunning-engine",
+          "name": "Dunning Engine Postgres"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "stripe-invoice-payment-succeeded",
+        "responseMode": "responseNode",
+        "options": {
+          "rawBody": true
+        }
+      },
+      "id": "a1b2c3d4-0023-4000-9023-000000000023",
+      "name": "Stripe Webhook - invoice.payment_succeeded",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [-1200, 700],
+      "webhookId": "dunning-invoice-payment-succeeded"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Mark the matching dunning case recovered and prepare a QuickBooks\n// journal-entry payload for AR reconciliation (SOP FR-7 / Section 11 Step 11).\nconst body = $input.first().json.body ?? $input.first().json;\nconst invoice = body.data.object;\n\nreturn [{\n  json: {\n    invoice_id: invoice.id,\n    stripe_customer_id: invoice.customer,\n    amount_paid_cents: invoice.amount_paid ?? invoice.amount_due,\n    currency: invoice.currency,\n    recovered_at: new Date(body.created * 1000).toISOString(),\n    source_event_id: body.id\n  }\n}];"
+      },
+      "id": "a1b2c3d4-0024-4111-9024-000000000024",
+      "name": "Extract Recovery Payload",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-980, 700]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE dunning_cases SET status = 'recovered', recovered_at = $1, terminal_action = 'recovered', terminal_at = $1, updated_at = now() WHERE invoice_id = $2 RETURNING *;",
+        "options": {
+          "queryParams": "={{ $json.recovered_at }},={{ $json.invoice_id }}"
+        }
+      },
+      "id": "a1b2c3d4-0025-4222-9025-000000000025",
+      "name": "Postgres - Mark Case Recovered",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [-760, 700],
+      "credentials": {
+        "postgres": {
+          "id": "postgres-dunning-engine",
+          "name": "Dunning Engine Postgres"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO dunning_case_audit_log (dunning_case_id, event, actor, source_event_id, previous_status, new_status) VALUES ($1, 'case_recovered', 'system', $2, 'retrying', 'recovered');",
+        "options": {
+          "queryParams": "={{ $json.dunning_case_id }},={{ $json.source_event_id }}"
+        }
+      },
+      "id": "a1b2c3d4-0026-4333-9026-000000000026",
+      "name": "Postgres - Log Recovery Transition",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [-540, 700],
+      "credentials": {
+        "postgres": {
+          "id": "postgres-dunning-engine",
+          "name": "Dunning Engine Postgres"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://quickbooks.api.intuit.com/v3/company/{{ $json.qbo_realm_id }}/journalentry",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "oAuth2Api",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"TxnDate\": \"={{ $json.recovered_at.split('T')[0] }}\",\n  \"Line\": [\n    {\n      \"Description\": \"=Dunning recovery - invoice {{ $json.invoice_id }}\",\n      \"Amount\": \"={{ $json.amount_paid_cents / 100 }}\",\n      \"DetailType\": \"JournalEntryLineDetail\",\n      \"JournalEntryLineDetail\": {\n        \"PostingType\": \"Credit\",\n        \"AccountRef\": { \"value\": \"ACCOUNTS_RECEIVABLE_ACCOUNT_ID\" }\n      }\n    },\n    {\n      \"Description\": \"=Dunning recovery - invoice {{ $json.invoice_id }}\",\n      \"Amount\": \"={{ $json.amount_paid_cents / 100 }}\",\n      \"DetailType\": \"JournalEntryLineDetail\",\n      \"JournalEntryLineDetail\": {\n        \"PostingType\": \"Debit\",\n        \"AccountRef\": { \"value\": \"CASH_ACCOUNT_ID\" }\n      }\n    }\n  ]\n}",
+        "options": {
+          "headers": {
+            "parameters": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          }
+        }
+      },
+      "id": "a1b2c3d4-0027-4444-9027-000000000027",
+      "name": "QuickBooks - Reconcile Journal Entry",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [-320, 700],
+      "credentials": {
+        "oAuth2Api": {
+          "id": "quickbooks-online-oauth2",
+          "name": "QuickBooks Online OAuth2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE dunning_cases SET qbo_reconciled = TRUE, qbo_reconciled_at = now(), qbo_journal_entry_id = $1 WHERE invoice_id = $2;",
+        "options": {
+          "queryParams": "={{ $json.Id }},={{ $('Extract Recovery Payload').item.json.invoice_id }}"
+        }
+      },
+      "id": "a1b2c3d4-0028-4555-9028-000000000028",
+      "name": "Postgres - Log QBO Reconciliation",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [-100, 700],
+      "credentials": {
+        "postgres": {
+          "id": "postgres-dunning-engine",
+          "name": "Dunning Engine Postgres"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={ \"received\": true }",
+        "options": {}
+      },
+      "id": "a1b2c3d4-0029-4666-9029-000000000029",
+      "name": "Respond 200 (Failed Webhook)",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [-760, 460]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={ \"received\": true }",
+        "options": {}
+      },
+      "id": "a1b2c3d4-0030-4777-9030-000000000030",
+      "name": "Respond 200 (Succeeded Webhook)",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [-980, 860]
+    }
+  ],
+  "connections": {
+    "Stripe Webhook - invoice.payment_failed": {
+      "main": [
+        [
+          {
+            "node": "Extract Tier and Failure Reason",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Tier and Failure Reason": {
+      "main": [
+        [
+          {
+            "node": "Postgres - Create Dunning Case",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres - Create Dunning Case": {
+      "main": [
+        [
+          {
+            "node": "Switch - Plan Tier",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Respond 200 (Failed Webhook)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch - Plan Tier": {
+      "main": [
+        [
+          {
+            "node": "Wait Until Day 3 (SMB)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait Until Day 3 (Mid-Market)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Wait Until Day 3 (Enterprise, parallel)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait Until Day 3 (SMB)": {
+      "main": [
+        [
+          {
+            "node": "Postgres - Check Before Send (Day 3)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait Until Day 3 (Mid-Market)": {
+      "main": [
+        [
+          {
+            "node": "Postgres - Check Before Send (Day 3)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres - Check Before Send (Day 3)": {
+      "main": [
+        [
+          {
+            "node": "IF Not Yet Recovered (Day 3)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF Not Yet Recovered (Day 3)": {
+      "main": [
+        [
+          {
+            "node": "HubSpot - Send Day 3 Email",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "HubSpot - Send Day 3 Email": {
+      "main": [
+        [
+          {
+            "node": "Wait Until Day 7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait Until Day 7": {
+      "main": [
+        [
+          {
+            "node": "Postgres - Check Before Send (Day 7)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres - Check Before Send (Day 7)": {
+      "main": [
+        [
+          {
+            "node": "IF Not Yet Recovered (Day 7)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF Not Yet Recovered (Day 7)": {
+      "main": [
+        [
+          {
+            "node": "HubSpot - Send Day 7 Email",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "IF High Value Account",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "IF High Value Account": {
+      "main": [
+        [
+          {
+            "node": "Twilio - Send SMS Escalation",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "HubSpot - Send Day 7 Email": {
+      "main": [
+        [
+          {
+            "node": "Wait Until Day 14",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Twilio - Send SMS Escalation": {
+      "main": [
+        [
+          {
+            "node": "Wait Until Day 14",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait Until Day 14": {
+      "main": [
+        [
+          {
+            "node": "Postgres - Check Before Suspend (Day 14)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres - Check Before Suspend (Day 14)": {
+      "main": [
+        [
+          {
+            "node": "IF Not Yet Recovered (Day 14)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF Not Yet Recovered (Day 14)": {
+      "main": [
+        [
+          {
+            "node": "HTTP - Suspend or Downgrade Subscription",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Wait Until Day 3 (Enterprise, parallel)": {
+      "main": [
+        [
+          {
+            "node": "Close CRM - Create CSM Task",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Close CRM - Create CSM Task": {
+      "main": [
+        [
+          {
+            "node": "Postgres - Log CSM Task Created",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Stripe Webhook - invoice.payment_succeeded": {
+      "main": [
+        [
+          {
+            "node": "Extract Recovery Payload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Recovery Payload": {
+      "main": [
+        [
+          {
+            "node": "Postgres - Mark Case Recovered",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Respond 200 (Succeeded Webhook)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres - Mark Case Recovered": {
+      "main": [
+        [
+          {
+            "node": "Postgres - Log Recovery Transition",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres - Log Recovery Transition": {
+      "main": [
+        [
+          {
+            "node": "QuickBooks - Reconcile Journal Entry",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "QuickBooks - Reconcile Journal Entry": {
+      "main": [
+        [
+          {
+            "node": "Postgres - Log QBO Reconciliation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": ""
+  },
+  "id": "saas-02-dunning-recovery-engine",
+  "tags": [
+    {
+      "name": "SAAS-02"
+    },
+    {
+      "name": "dunning"
+    },
+    {
+      "name": "billing-ops"
+    }
+  ]
+}

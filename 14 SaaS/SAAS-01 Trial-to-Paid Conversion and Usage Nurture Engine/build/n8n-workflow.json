@@ -1,0 +1,1085 @@
+{
+  "name": "SAAS-01 Trial-to-Paid Conversion & Usage Nurture Engine",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "atlas-usage-event",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "a1b2c3d4-0001-4a1a-9c1a-000000000001",
+      "name": "Webhook - Usage Event Stream",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [-1600, 0],
+      "webhookId": "atlas-usage-event"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Validate HMAC signature and normalize the incoming usage event.\n// Mirrors SOP Section 12 Step 1 / Section 16 / Section 24.\nconst crypto = require('crypto');\n\nconst secret = $env.ATLAS_WEBHOOK_SECRET || '';\nconst body = $input.first().json;\nconst headers = $input.first().json.headers || {};\n\nconst signature = headers['x-atlas-signature'] || '';\nconst payload = JSON.stringify(body.body || body);\nconst expected = crypto.createHmac('sha256', secret).update(payload).digest('hex');\n\nconst validSignature = signature === expected;\nconst evt = (body.body || body);\n\nconst VALID_TYPES = ['feature_activated', 'integration_connected', 'workflow_created', 'seat_invited'];\n\nconst now = new Date();\nconst eventTimestamp = new Date(evt.timestamp);\nconst maxFuture = 24 * 60 * 60 * 1000;\nconst maxPast = 30 * 24 * 60 * 60 * 1000;\n\nconst timestampValid = !isNaN(eventTimestamp.getTime())\n  && (eventTimestamp.getTime() - now.getTime()) < maxFuture\n  && (now.getTime() - eventTimestamp.getTime()) < maxPast;\n\nconst typeValid = VALID_TYPES.includes(evt.event_type);\n\nreturn [{\n  json: {\n    account_id: evt.account_id,\n    user_id: evt.user_id,\n    event_type: evt.event_type,\n    event_id: evt.event_id,\n    timestamp: evt.timestamp,\n    metadata: evt.metadata || {},\n    source: evt.source || 'atlas-product-event-api',\n    valid_signature: validSignature,\n    type_valid: typeValid,\n    timestamp_valid: timestampValid,\n    is_valid: validSignature && typeValid && timestampValid\n  }\n}];"
+      },
+      "id": "a1b2c3d4-0002-4a1a-9c1a-000000000002",
+      "name": "Validate & Normalize Event",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-1380, 0]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "b1c2d3e4-0001",
+              "leftValue": "={{ $json.is_valid }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "a1b2c3d4-0003-4a1a-9c1a-000000000003",
+      "name": "If - Event Valid",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [-1160, 0]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO usage_events (event_id, account_id, user_id, event_type, event_timestamp, metadata, source)\nVALUES ($1, $2, $3, $4, $5, $6, $7)\nON CONFLICT (event_id) DO NOTHING;",
+        "options": {
+          "queryReplacement": "={{ [$json.event_id, $json.account_id, $json.user_id, $json.event_type, $json.timestamp, JSON.stringify($json.metadata), $json.source] }}"
+        }
+      },
+      "id": "a1b2c3d4-0004-4a1a-9c1a-000000000004",
+      "name": "Postgres - Insert Usage Event",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [-940, -120],
+      "credentials": {
+        "postgres": {
+          "id": "atlas-postgres-usage-db",
+          "name": "Atlas Metrics Usage Postgres"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO usage_events_rejected (raw_payload, rejection_reason, source_ip)\nVALUES ($1, $2, $3);",
+        "options": {
+          "queryReplacement": "={{ [JSON.stringify($json), ($json.valid_signature ? ($json.type_valid ? 'invalid_timestamp' : 'invalid_event_type') : 'invalid_hmac_signature'), $json.headers && $json.headers['x-forwarded-for'] || 'unknown'] }}"
+        }
+      },
+      "id": "a1b2c3d4-0005-4a1a-9c1a-000000000005",
+      "name": "Postgres - Log Rejected Event",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [-940, 140],
+      "credentials": {
+        "postgres": {
+          "id": "atlas-postgres-usage-db",
+          "name": "Atlas Metrics Usage Postgres"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { \"status\": \"accepted\", \"event_id\": $json.event_id } }}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "id": "a1b2c3d4-0006-4a1a-9c1a-000000000006",
+      "name": "Respond 200 - Accepted",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [-720, -120]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { \"status\": \"rejected\" } }}",
+        "options": {
+          "responseCode": 401
+        }
+      },
+      "id": "a1b2c3d4-0007-4a1a-9c1a-000000000007",
+      "name": "Respond 401 - Rejected",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [-720, 140]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 15
+            }
+          ]
+        }
+      },
+      "id": "a1b2c3d4-0008-4a1a-9c1a-000000000008",
+      "name": "Schedule - Incremental Rollup (15 min)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [-1600, 380]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT a.account_id, a.trial_start_date, a.trial_end_date,\n       COALESCE(SUM(CASE WHEN e.event_type = 'integration_connected' THEN 1 ELSE 0 END), 0) AS integrations_connected,\n       COALESCE(SUM(CASE WHEN e.event_type = 'seat_invited' THEN 1 ELSE 0 END), 0) AS seats_invited,\n       COALESCE(SUM(CASE WHEN e.event_type = 'workflow_created' THEN 1 ELSE 0 END), 0) AS workflows_created,\n       COALESCE(SUM(CASE WHEN e.event_type = 'feature_activated' THEN 1 ELSE 0 END), 0) AS features_activated,\n       MAX(e.event_timestamp) AS last_event_at\nFROM trial_accounts a\nLEFT JOIN usage_events e ON e.account_id = a.account_id\nWHERE a.is_active_trial = true\nGROUP BY a.account_id, a.trial_start_date, a.trial_end_date;",
+        "options": {}
+      },
+      "id": "a1b2c3d4-0009-4a1a-9c1a-000000000009",
+      "name": "Postgres - Read Active Trial Usage",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [-1380, 380],
+      "credentials": {
+        "postgres": {
+          "id": "atlas-postgres-usage-db",
+          "name": "Atlas Metrics Usage Postgres"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Aggregate raw counts into a per-account daily intent score.\n// Weighted scoring function per SOP Section 14.\nconst WEIGHTS = { integrations: 12, seats: 8, workflows: 3, features: 1 };\nconst CAPS = { integrations: 5, seats: 6, workflows: 10, features: 20 };\n\nconst today = new Date();\n\nreturn $input.all().map(item => {\n  const row = item.json;\n  const trialStart = new Date(row.trial_start_date);\n  const trialDay = Math.floor((today.getTime() - trialStart.getTime()) / (24 * 60 * 60 * 1000)) + 1;\n\n  const noUsageData = !row.last_event_at;\n\n  const integrations = Math.min(Number(row.integrations_connected) || 0, CAPS.integrations);\n  const seats = Math.min(Number(row.seats_invited) || 0, CAPS.seats);\n  const workflows = Math.min(Number(row.workflows_created) || 0, CAPS.workflows);\n  const features = Math.min(Number(row.features_activated) || 0, CAPS.features);\n\n  let intentScore = noUsageData ? 0.0 : (\n    integrations * WEIGHTS.integrations +\n    seats * WEIGHTS.seats +\n    workflows * WEIGHTS.workflows +\n    features * WEIGHTS.features\n  );\n  intentScore = Math.min(intentScore, 100.0);\n\n  const meetsIntegrationThreshold = (Number(row.integrations_connected) || 0) >= 3;\n  const meetsSeatThreshold = (Number(row.seats_invited) || 0) >= 2;\n  const isHighIntent = meetsIntegrationThreshold && meetsSeatThreshold && trialDay < 10;\n\n  return {\n    json: {\n      account_id: row.account_id,\n      score_date: today.toISOString().slice(0, 10),\n      trial_day: trialDay,\n      integrations_connected: Number(row.integrations_connected) || 0,\n      seats_invited: Number(row.seats_invited) || 0,\n      workflows_created: Number(row.workflows_created) || 0,\n      features_activated: Number(row.features_activated) || 0,\n      last_event_at: row.last_event_at,\n      no_usage_data: noUsageData,\n      intent_score: intentScore,\n      intent_tier: isHighIntent ? 'high' : 'standard',\n      is_high_intent: isHighIntent\n    }\n  };\n});"
+      },
+      "id": "a1b2c3d4-0010-4a1a-9c1a-000000000010",
+      "name": "Code - Aggregate Daily Score",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-1160, 380]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO account_usage_daily (\n  account_id, score_date, trial_day, integrations_connected, seats_invited,\n  workflows_created, features_activated, last_event_at, no_usage_data,\n  intent_score, intent_tier\n) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)\nON CONFLICT (account_id, score_date) DO UPDATE SET\n  integrations_connected = EXCLUDED.integrations_connected,\n  seats_invited = EXCLUDED.seats_invited,\n  workflows_created = EXCLUDED.workflows_created,\n  features_activated = EXCLUDED.features_activated,\n  last_event_at = EXCLUDED.last_event_at,\n  no_usage_data = EXCLUDED.no_usage_data,\n  intent_score = EXCLUDED.intent_score,\n  intent_tier = EXCLUDED.intent_tier,\n  updated_at = now();",
+        "options": {
+          "queryReplacement": "={{ [$json.account_id, $json.score_date, $json.trial_day, $json.integrations_connected, $json.seats_invited, $json.workflows_created, $json.features_activated, $json.last_event_at, $json.no_usage_data, $json.intent_score, $json.intent_tier] }}"
+        }
+      },
+      "id": "a1b2c3d4-0011-4a1a-9c1a-000000000011",
+      "name": "Postgres - Upsert Account Score",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [-940, 380],
+      "credentials": {
+        "postgres": {
+          "id": "atlas-postgres-usage-db",
+          "name": "Atlas Metrics Usage Postgres"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours"
+            }
+          ]
+        }
+      },
+      "id": "a1b2c3d4-0012-4a1a-9c1a-000000000012",
+      "name": "Schedule - Hourly Checkpoint Sweep",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [-1600, 660]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT a.account_id, a.hubspot_contact_id, a.trial_end_date,\n       u.trial_day, u.integrations_connected, u.seats_invited,\n       u.workflows_created, u.features_activated, u.intent_score,\n       u.intent_tier, u.checkpoint_stage_sent\nFROM trial_accounts a\nJOIN account_usage_daily u ON u.account_id = a.account_id\nWHERE a.is_active_trial = true\n  AND u.score_date = (SELECT MAX(score_date) FROM account_usage_daily WHERE account_id = a.account_id)\n  AND (a.trial_end_date - CURRENT_DATE) IN (7, 3, 1);",
+        "options": {}
+      },
+      "id": "a1b2c3d4-0013-4a1a-9c1a-000000000013",
+      "name": "Postgres - Read Checkpoint Candidates",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [-1380, 660],
+      "credentials": {
+        "postgres": {
+          "id": "atlas-postgres-usage-db",
+          "name": "Atlas Metrics Usage Postgres"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Determine which checkpoint (day_7 / day_3 / day_1) applies and build\n// the milestone personalization payload (SOP Section 12 Step 3).\nreturn $input.all().map(item => {\n  const row = item.json;\n  const daysRemaining = row.trial_day !== undefined\n    ? null\n    : null;\n\n  const trialEnd = new Date(row.trial_end_date);\n  const today = new Date();\n  const remaining = Math.round((trialEnd.getTime() - today.getTime()) / (24 * 60 * 60 * 1000));\n\n  let checkpoint = null;\n  if (remaining === 7) checkpoint = 'day_7';\n  else if (remaining === 3) checkpoint = 'day_3';\n  else if (remaining === 1) checkpoint = 'day_1';\n\n  const alreadySent = (row.checkpoint_stage_sent || []).includes(checkpoint);\n\n  const milestonesHit = [];\n  const milestonesMissed = [];\n  if (row.integrations_connected > 0) milestonesHit.push(`integrations_connected:${row.integrations_connected}`);\n  else milestonesMissed.push('integrations_connected:0');\n  if (row.seats_invited > 0) milestonesHit.push(`seats_invited:${row.seats_invited}`);\n  else milestonesMissed.push('seats_invited:0');\n\n  return {\n    json: {\n      ...row,\n      checkpoint,\n      should_send: checkpoint !== null && !alreadySent,\n      milestones_hit: milestonesHit,\n      milestones_missed: milestonesMissed\n    }\n  };\n});"
+      },
+      "id": "a1b2c3d4-0014-4a1a-9c1a-000000000014",
+      "name": "Code - Determine Checkpoint",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-1160, 660]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "c1d2e3f4-0001",
+              "leftValue": "={{ $json.should_send }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "a1b2c3d4-0015-4a1a-9c1a-000000000015",
+      "name": "If - Checkpoint Due",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [-940, 660]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.hubapi.com/marketing/v3/transactional/single-email/send",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "hubspotOAuth2Api",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ {\n  \"emailId\": $json.checkpoint === 'day_7' ? 12345001 : ($json.checkpoint === 'day_3' ? 12345002 : 12345003),\n  \"message\": {\n    \"to\": $json.hubspot_contact_id\n  },\n  \"customProperties\": {\n    \"trial_checkpoint_stage\": $json.checkpoint,\n    \"usage_milestones_hit\": $json.milestones_hit.join(','),\n    \"usage_milestones_missed\": $json.milestones_missed.join(','),\n    \"account_id\": $json.account_id,\n    \"intent_tier\": $json.intent_tier\n  }\n} }}",
+        "options": {
+          "timeout": 10000
+        }
+      },
+      "id": "a1b2c3d4-0016-4a1a-9c1a-000000000016",
+      "name": "HubSpot - Send Checkpoint Email",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [-720, 600],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "atlas-hubspot-private-app",
+          "name": "Atlas Metrics HubSpot Private App Token"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE account_usage_daily\nSET checkpoint_stage_sent = array_append(checkpoint_stage_sent, $2)\nWHERE account_id = $1 AND score_date = (SELECT MAX(score_date) FROM account_usage_daily WHERE account_id = $1);",
+        "options": {
+          "queryReplacement": "={{ [$json.account_id, $json.checkpoint] }}"
+        }
+      },
+      "id": "a1b2c3d4-0017-4a1a-9c1a-000000000017",
+      "name": "Postgres - Mark Checkpoint Sent",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [-500, 600],
+      "credentials": {
+        "postgres": {
+          "id": "atlas-postgres-usage-db",
+          "name": "Atlas Metrics Usage Postgres"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "d1e2f3a4-0001",
+              "leftValue": "={{ $json.is_high_intent }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true"
+              }
+            },
+            {
+              "id": "d1e2f3a4-0002",
+              "leftValue": "={{ $json.high_intent_opportunity_created }}",
+              "rightValue": false,
+              "operator": {
+                "type": "boolean",
+                "operation": "false"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "a1b2c3d4-0018-4a1a-9c1a-000000000018",
+      "name": "If - High Intent Threshold Crossed",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [-720, 380]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT account_id, assigned_ae_id, assigned_ae_slack_channel, close_lead_id, high_intent_opportunity_created\nFROM trial_accounts WHERE account_id = $1;",
+        "options": {
+          "queryReplacement": "={{ [$json.account_id] }}"
+        }
+      },
+      "id": "a1b2c3d4-0019-4a1a-9c1a-000000000019",
+      "name": "Postgres - Read Account Ownership",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [-500, 320],
+      "credentials": {
+        "postgres": {
+          "id": "atlas-postgres-usage-db",
+          "name": "Atlas Metrics Usage Postgres"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.close.com/api/v1/opportunity/",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "httpBasicAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ {\n  \"lead_id\": $json.close_lead_id,\n  \"status_id\": \"stat_trial_high_intent\",\n  \"note\": \"Auto-created by trial intent engine. Account crossed high-intent threshold. Assigned AE: \" + ($json.assigned_ae_id || \"unassigned\"),\n  \"value\": 14400,\n  \"value_period\": \"annual\",\n  \"confidence\": 60,\n  \"custom\": {\n    \"trigger_source\": \"usage_intent_engine\",\n    \"account_id_external\": $json.account_id\n  }\n} }}",
+        "options": {
+          "timeout": 10000
+        }
+      },
+      "id": "a1b2c3d4-0020-4a1a-9c1a-000000000020",
+      "name": "Close CRM - Create Opportunity",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [-280, 260],
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "atlas-close-api-key",
+          "name": "Atlas Metrics Close CRM API Key"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ 'https://slack.com/api/chat.postMessage' }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "slackOAuth2Api",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ {\n  \"channel\": $json.assigned_ae_slack_channel || \"#sales-assist-unassigned\",\n  \"text\": \":rotating_light: High-intent trial account detected: \" + $json.account_id + \" — crossed usage threshold. Close Opportunity: \" + ($json.close_opportunity_id || \"pending\")\n} }}",
+        "options": {
+          "timeout": 10000
+        }
+      },
+      "id": "a1b2c3d4-0021-4a1a-9c1a-000000000021",
+      "name": "Slack - Alert AE",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [-60, 260],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "atlas-slack-bot-token",
+          "name": "Atlas Metrics Slack Bot Token"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE trial_accounts SET high_intent_opportunity_created = true, close_opportunity_id = $2, intent_tier = 'high'\nWHERE account_id = $1;",
+        "options": {
+          "queryReplacement": "={{ [$json.account_id, $json.close_opportunity_id || null] }}"
+        }
+      },
+      "id": "a1b2c3d4-0022-4a1a-9c1a-000000000022",
+      "name": "Postgres - Set Idempotency Flag",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [160, 260],
+      "credentials": {
+        "postgres": {
+          "id": "atlas-postgres-usage-db",
+          "name": "Atlas Metrics Usage Postgres"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "stripe-trial-end",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "a1b2c3d4-0023-4a1a-9c1a-000000000023",
+      "name": "Webhook - Stripe Trial End Event",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [-1600, 980],
+      "webhookId": "stripe-trial-end"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Normalize the Stripe trial_will_end / subscription webhook event.\nconst body = $input.first().json.body || $input.first().json;\nconst obj = (body.data && body.data.object) || {};\n\nreturn [{\n  json: {\n    stripe_event_type: body.type,\n    stripe_customer_id: obj.customer,\n    stripe_subscription_id: obj.id,\n    trial_end: obj.trial_end,\n    default_payment_method: obj.default_payment_method || null,\n    account_id: (obj.metadata && obj.metadata.account_id) || null\n  }\n}];"
+      },
+      "id": "a1b2c3d4-0024-4a1a-9c1a-000000000024",
+      "name": "Code - Normalize Stripe Event",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-1380, 980]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "={{ 'https://api.stripe.com/v1/customers/' + $json.stripe_customer_id }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "httpHeaderAuth",
+        "options": {
+          "timeout": 10000
+        }
+      },
+      "id": "a1b2c3d4-0025-4a1a-9c1a-000000000025",
+      "name": "Stripe - Get Customer Card Status",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [-1160, 980],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "atlas-stripe-restricted-key",
+          "name": "Atlas Metrics Stripe Restricted API Key"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const customer = $input.first().json;\nconst cardPresent = !!(customer.default_source || customer.invoice_settings?.default_payment_method);\n\nreturn [{\n  json: {\n    ...$('Code - Normalize Stripe Event').first().json,\n    card_present: cardPresent,\n    stripe_customer_email: customer.email || null\n  }\n}];"
+      },
+      "id": "a1b2c3d4-0026-4a1a-9c1a-000000000026",
+      "name": "Code - Merge Card Status",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-940, 980]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "e1f2a3b4-0001",
+              "leftValue": "={{ $json.card_present }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "a1b2c3d4-0027-4a1a-9c1a-000000000027",
+      "name": "If - Card On File",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [-720, 980]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ 'https://api.stripe.com/v1/subscriptions/' + $json.stripe_subscription_id }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "httpHeaderAuth",
+        "sendBody": true,
+        "contentType": "form-urlencoded",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "trial_end",
+              "value": "now"
+            },
+            {
+              "name": "proration_behavior",
+              "value": "none"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 10000
+        }
+      },
+      "id": "a1b2c3d4-0028-4a1a-9c1a-000000000028",
+      "name": "Stripe - Convert Subscription to Active",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [-500, 900],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "atlas-stripe-restricted-key",
+          "name": "Atlas Metrics Stripe Restricted API Key"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE trial_accounts SET access_state = 'converted_active', is_active_trial = false WHERE account_id = $1;",
+        "options": {
+          "queryReplacement": "={{ [$json.account_id] }}"
+        }
+      },
+      "id": "a1b2c3d4-0029-4a1a-9c1a-000000000029",
+      "name": "Postgres - Mark Converted",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [-280, 900],
+      "credentials": {
+        "postgres": {
+          "id": "atlas-postgres-usage-db",
+          "name": "Atlas Metrics Usage Postgres"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT intent_tier FROM trial_accounts WHERE account_id = $1;",
+        "options": {
+          "queryReplacement": "={{ [$json.account_id] }}"
+        }
+      },
+      "id": "a1b2c3d4-0030-4a1a-9c1a-000000000030",
+      "name": "Postgres - Read Intent Tier",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [-500, 1060],
+      "credentials": {
+        "postgres": {
+          "id": "atlas-postgres-usage-db",
+          "name": "Atlas Metrics Usage Postgres"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "f1a2b3c4-0001",
+              "leftValue": "={{ $json.intent_tier }}",
+              "rightValue": "high",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "a1b2c3d4-0031-4a1a-9c1a-000000000031",
+      "name": "If - Intent Tier High",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [-280, 1060]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "g1h2i3j4-0001",
+              "name": "access_state",
+              "type": "string",
+              "value": "paywalled_sales"
+            },
+            {
+              "id": "g1h2i3j4-0002",
+              "name": "show_sales_cta",
+              "type": "boolean",
+              "value": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "a1b2c3d4-0032-4a1a-9c1a-000000000032",
+      "name": "Set - Show Sales CTA (High Intent, No Card)",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [-60, 1000],
+      "webhookId": "not-applicable-set-node"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "g1h2i3j4-0003",
+              "name": "access_state",
+              "type": "string",
+              "value": "paywalled_standard"
+            },
+            {
+              "id": "g1h2i3j4-0004",
+              "name": "show_sales_cta",
+              "type": "boolean",
+              "value": false
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "a1b2c3d4-0033-4a1a-9c1a-000000000033",
+      "name": "Set - Standard Paywall",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [-60, 1140]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE trial_accounts SET access_state = $2, is_active_trial = false WHERE account_id = $1;",
+        "options": {
+          "queryReplacement": "={{ [$('Code - Merge Card Status').first().json.account_id, $json.access_state] }}"
+        }
+      },
+      "id": "a1b2c3d4-0034-4a1a-9c1a-000000000034",
+      "name": "Postgres - Persist Access State",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [160, 1060],
+      "credentials": {
+        "postgres": {
+          "id": "atlas-postgres-usage-db",
+          "name": "Atlas Metrics Usage Postgres"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { \"status\": \"processed\" } }}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "id": "a1b2c3d4-0035-4a1a-9c1a-000000000035",
+      "name": "Respond 200 - Stripe Event Processed",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [380, 1060]
+    }
+  ],
+  "connections": {
+    "Webhook - Usage Event Stream": {
+      "main": [
+        [
+          {
+            "node": "Validate & Normalize Event",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate & Normalize Event": {
+      "main": [
+        [
+          {
+            "node": "If - Event Valid",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If - Event Valid": {
+      "main": [
+        [
+          {
+            "node": "Postgres - Insert Usage Event",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Postgres - Log Rejected Event",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres - Insert Usage Event": {
+      "main": [
+        [
+          {
+            "node": "Respond 200 - Accepted",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres - Log Rejected Event": {
+      "main": [
+        [
+          {
+            "node": "Respond 401 - Rejected",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule - Incremental Rollup (15 min)": {
+      "main": [
+        [
+          {
+            "node": "Postgres - Read Active Trial Usage",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres - Read Active Trial Usage": {
+      "main": [
+        [
+          {
+            "node": "Code - Aggregate Daily Score",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code - Aggregate Daily Score": {
+      "main": [
+        [
+          {
+            "node": "Postgres - Upsert Account Score",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres - Upsert Account Score": {
+      "main": [
+        [
+          {
+            "node": "If - High Intent Threshold Crossed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If - High Intent Threshold Crossed": {
+      "main": [
+        [
+          {
+            "node": "Postgres - Read Account Ownership",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Postgres - Read Account Ownership": {
+      "main": [
+        [
+          {
+            "node": "Close CRM - Create Opportunity",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Close CRM - Create Opportunity": {
+      "main": [
+        [
+          {
+            "node": "Slack - Alert AE",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Slack - Alert AE": {
+      "main": [
+        [
+          {
+            "node": "Postgres - Set Idempotency Flag",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule - Hourly Checkpoint Sweep": {
+      "main": [
+        [
+          {
+            "node": "Postgres - Read Checkpoint Candidates",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres - Read Checkpoint Candidates": {
+      "main": [
+        [
+          {
+            "node": "Code - Determine Checkpoint",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code - Determine Checkpoint": {
+      "main": [
+        [
+          {
+            "node": "If - Checkpoint Due",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If - Checkpoint Due": {
+      "main": [
+        [
+          {
+            "node": "HubSpot - Send Checkpoint Email",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "HubSpot - Send Checkpoint Email": {
+      "main": [
+        [
+          {
+            "node": "Postgres - Mark Checkpoint Sent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook - Stripe Trial End Event": {
+      "main": [
+        [
+          {
+            "node": "Code - Normalize Stripe Event",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code - Normalize Stripe Event": {
+      "main": [
+        [
+          {
+            "node": "Stripe - Get Customer Card Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Stripe - Get Customer Card Status": {
+      "main": [
+        [
+          {
+            "node": "Code - Merge Card Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code - Merge Card Status": {
+      "main": [
+        [
+          {
+            "node": "If - Card On File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If - Card On File": {
+      "main": [
+        [
+          {
+            "node": "Stripe - Convert Subscription to Active",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Postgres - Read Intent Tier",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Stripe - Convert Subscription to Active": {
+      "main": [
+        [
+          {
+            "node": "Postgres - Mark Converted",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres - Mark Converted": {
+      "main": [
+        [
+          {
+            "node": "Respond 200 - Stripe Event Processed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres - Read Intent Tier": {
+      "main": [
+        [
+          {
+            "node": "If - Intent Tier High",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If - Intent Tier High": {
+      "main": [
+        [
+          {
+            "node": "Set - Show Sales CTA (High Intent, No Card)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Set - Standard Paywall",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set - Show Sales CTA (High Intent, No Card)": {
+      "main": [
+        [
+          {
+            "node": "Postgres - Persist Access State",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set - Standard Paywall": {
+      "main": [
+        [
+          {
+            "node": "Postgres - Persist Access State",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres - Persist Access State": {
+      "main": [
+        [
+          {
+            "node": "Respond 200 - Stripe Event Processed",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": ""
+  },
+  "id": "saas01-trial-to-paid-conversion-engine",
+  "tags": [
+    {
+      "name": "SAAS-01"
+    },
+    {
+      "name": "trial-conversion"
+    }
+  ]
+}

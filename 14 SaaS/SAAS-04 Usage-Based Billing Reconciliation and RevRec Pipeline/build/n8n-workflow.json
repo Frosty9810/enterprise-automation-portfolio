@@ -1,0 +1,686 @@
+{
+  "name": "SAAS-04 Usage-Based Billing Reconciliation & RevRec Pipeline",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 2 * * *"
+            }
+          ]
+        }
+      },
+      "id": "a1b2c3d4-0001-4000-8000-000000000001",
+      "name": "Nightly Schedule Trigger (02:00 ET)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -1600,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT account_id, billing_period_start, billing_period_end, metered_api_calls, included_api_calls, plan_id, plan_change_mid_cycle, duplicate_event_flag_count FROM usage_snapshots WHERE billing_period_end = $1;",
+        "options": {
+          "queryReplacement": "={{ $json.billing_date }}"
+        }
+      },
+      "id": "a1b2c3d4-0002-4000-8000-000000000002",
+      "name": "Postgres: Pull Internal Usage",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        -1360,
+        -100
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "postgres_metering_replica",
+          "name": "Metering DB Replica (read-only)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "https://api.stripe.com/v1/invoices",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "stripeApi",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "customer",
+              "value": "={{ $json.stripe_customer_id }}"
+            },
+            {
+              "name": "status",
+              "value": "paid"
+            },
+            {
+              "name": "created[gte]",
+              "value": "={{ $json.period_start_unix }}"
+            },
+            {
+              "name": "created[lte]",
+              "value": "={{ $json.period_end_unix }}"
+            },
+            {
+              "name": "limit",
+              "value": "100"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Stripe-Version",
+              "value": "2024-06-20"
+            }
+          ]
+        },
+        "options": {
+          "pagination": {
+            "pagination": {
+              "paginationMode": "responseContainsNextURL",
+              "requestInterval": 250,
+              "continue": "={{ $response.body.has_more === true }}",
+              "nextURL": "={{ 'https://api.stripe.com/v1/invoices?starting_after=' + $response.body.data.last().id }}"
+            }
+          }
+        }
+      },
+      "id": "a1b2c3d4-0003-4000-8000-000000000003",
+      "name": "Stripe: Pull Invoice Line Items",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1360,
+        100
+      ],
+      "credentials": {
+        "stripeApi": {
+          "id": "stripe_readonly_key",
+          "name": "Stripe API (restricted, read-only)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Join internal usage records to Stripe invoice records on account_id\n// and billing_period, then compute variance_pct per SOP Section 14.1.\n// Mirrors reconciliation_engine.calculate_variance()/classify_variance().\n\nconst VARIANCE_THRESHOLD_PCT = 0.03;\n\nfunction round4(n) {\n  return Math.round(n * 10000) / 10000;\n}\n\nfunction rootCauseHint(variancePct, ctx) {\n  if (ctx.plan_change_mid_cycle && !ctx.proration_applied) {\n    return \"Plan change mid-cycle not prorated — check subscription upgrade/downgrade timestamp against invoice line item split.\";\n  }\n  if ((ctx.duplicate_event_flag_count || 0) > 0) {\n    return `Usage event double-counted — ${ctx.duplicate_event_flag_count} duplicate event IDs detected in metering audit trail.`;\n  }\n  if (variancePct < 0) {\n    return \"Metered usage exceeds invoiced amount — possible missed Stripe usage-record submission for this period.\";\n  }\n  return \"Unclassified variance — no known heuristic matched; manual investigation required.\";\n}\n\nconst usageItems = $input.all();\nconst results = [];\n\nfor (const item of usageItems) {\n  const usage = item.json;\n  const invoiced = usage._matched_invoice || { invoiced_overage_units: 0, invoiced_overage_amount_usd: 0 };\n\n  let variancePct;\n  if (!usage.metered_api_calls || usage.metered_api_calls === 0) {\n    variancePct = invoiced.invoiced_overage_units > 0 ? 1.0 : 0.0;\n  } else {\n    variancePct = round4((invoiced.invoiced_overage_units - usage.metered_api_calls) / usage.metered_api_calls);\n  }\n\n  const requiresReview = Math.abs(variancePct) >= VARIANCE_THRESHOLD_PCT;\n  const direction = variancePct < 0 ? \"underbilled\" : (variancePct > 0 ? \"overbilled\" : \"matched\");\n  const unitDelta = invoiced.invoiced_overage_units - usage.metered_api_calls;\n  const effectiveRate = invoiced.invoiced_overage_units ? (invoiced.invoiced_overage_amount_usd / invoiced.invoiced_overage_units) : 0;\n  const estimatedDollarImpact = Math.round(unitDelta * effectiveRate * 100) / 100;\n\n  results.push({\n    json: {\n      account_id: usage.account_id,\n      billing_period_start: usage.billing_period_start,\n      billing_period_end: usage.billing_period_end,\n      metered_api_calls: usage.metered_api_calls,\n      invoiced_overage_units: invoiced.invoiced_overage_units,\n      variance_pct: variancePct,\n      variance_direction: direction,\n      estimated_dollar_impact_usd: estimatedDollarImpact,\n      status: requiresReview ? \"pending_review\" : \"auto_resolved\",\n      root_cause_hint: requiresReview ? rootCauseHint(variancePct, usage) : null,\n      run_id: $('Nightly Schedule Trigger (02:00 ET)').first().json.run_id || `recon-${usage.billing_period_end}-01`\n    }\n  });\n}\n\nreturn results;"
+      },
+      "id": "a1b2c3d4-0004-4000-8000-000000000004",
+      "name": "Code: Compute Variance",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1120,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "id": "cond-variance-threshold",
+              "leftValue": "={{ Math.abs($json.variance_pct) }}",
+              "rightValue": 0.03,
+              "operator": {
+                "type": "number",
+                "operation": "gte"
+              }
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "id": "a1b2c3d4-0005-4000-8000-000000000005",
+      "name": "If: Variance >= 3%",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -880,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "insert",
+        "schema": "public",
+        "table": "reconciliation_ledger",
+        "columns": "reconciliation_id,run_id,account_id,billing_period_start,billing_period_end,metered_api_calls,invoiced_overage_units,variance_pct,variance_direction,estimated_dollar_impact_usd,status,root_cause_hint,created_by",
+        "additionalFields": {
+          "mode": "insert"
+        }
+      },
+      "id": "a1b2c3d4-0006-4000-8000-000000000006",
+      "name": "Postgres: Log Pending Review",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        -640,
+        -100
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "postgres_reconciliation_store",
+          "name": "Reconciliation Store (Postgres)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "insert",
+        "schema": "public",
+        "table": "reconciliation_ledger",
+        "columns": "reconciliation_id,run_id,account_id,billing_period_start,billing_period_end,metered_api_calls,invoiced_overage_units,variance_pct,variance_direction,estimated_dollar_impact_usd,status,created_by",
+        "additionalFields": {
+          "mode": "insert"
+        }
+      },
+      "id": "a1b2c3d4-0007-4000-8000-000000000007",
+      "name": "Postgres: Log Auto-Resolved",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        -640,
+        120
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "postgres_reconciliation_store",
+          "name": "Reconciliation Store (Postgres)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://slack.com/api/chat.postMessage",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "slackApi",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "channel",
+              "value": "#finance-billing-variance"
+            },
+            {
+              "name": "text",
+              "value": "={{ ':warning: Billing variance flagged — account ' + $json.account_id + ' | variance: ' + (($json.variance_pct * 100).toFixed(2)) + '% (' + $json.variance_direction + ') | est. impact: $' + $json.estimated_dollar_impact_usd + ' | root cause: ' + $json.root_cause_hint + ' | reconciliation_id: ' + $json.reconciliation_id }}"
+            }
+          ]
+        }
+      },
+      "id": "a1b2c3d4-0008-4000-8000-000000000008",
+      "name": "Slack: Post Variance Alert",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -400,
+        -100
+      ],
+      "credentials": {
+        "slackApi": {
+          "id": "slack_finance_bot",
+          "name": "Slack Bot (#finance-billing-variance)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 4 1 * *"
+            }
+          ]
+        }
+      },
+      "id": "a1b2c3d4-0009-4000-8000-000000000009",
+      "name": "Monthly Schedule Trigger (1st, 04:00 ET)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -1600,
+        500
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT s.subscription_id, s.account_id, s.cost_center, s.contract_start, s.contract_end, s.seat_fee_total_usd, s.included_api_calls, s.overage_rate_per_unit_usd FROM subscriptions s WHERE s.contract_end >= $1 AND s.account_id NOT IN (SELECT account_id FROM reconciliation_ledger WHERE status = 'pending_review');",
+        "options": {
+          "queryReplacement": "={{ $json.period_start }}"
+        }
+      },
+      "id": "a1b2c3d4-0010-4000-8000-000000000010",
+      "name": "Postgres: Pull Active Subscriptions",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        -1360,
+        500
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "postgres_reconciliation_store",
+          "name": "Reconciliation Store (Postgres)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Generate the revrec schedule per subscription: straight-line seat\n// recognition (daily) + usage-triggered metered recognition (period-close\n// event). Mirrors reconciliation_engine.generate_revrec_schedule().\n\nfunction toCents(n) {\n  return Math.round(n * 100) / 100;\n}\n\nconst results = [];\n\nfor (const item of $input.all()) {\n  const sub = item.json;\n  const start = new Date(sub.contract_start);\n  const end = new Date(sub.contract_end);\n  const totalDays = Math.round((end - start) / 86400000) + 1;\n  const dailyRate = sub.seat_fee_total_usd / totalDays;\n\n  const seatRecords = [];\n  let running = 0;\n  for (let i = 0; i < totalDays; i++) {\n    const d = new Date(start);\n    d.setDate(d.getDate() + i);\n    let amount;\n    if (i === totalDays - 1) {\n      amount = toCents(sub.seat_fee_total_usd - running);\n    } else {\n      amount = toCents(dailyRate);\n    }\n    running += amount;\n    seatRecords.push({ component: \"seat\", recognition_date: d.toISOString().slice(0, 10), amount_usd: amount });\n  }\n\n  const confirmedUsageUnits = sub.confirmed_usage_units || 0;\n  const overageUnits = Math.max(0, confirmedUsageUnits - sub.included_api_calls);\n  const usageRecognizedUsd = toCents(overageUnits * sub.overage_rate_per_unit_usd);\n\n  const seatRecognizedTotal = toCents(seatRecords.reduce((a, r) => a + r.amount_usd, 0));\n  const totalRecognized = toCents(seatRecognizedTotal + usageRecognizedUsd);\n  const deferredBalance = toCents(sub.seat_fee_total_usd - seatRecognizedTotal);\n\n  results.push({\n    json: {\n      subscription_id: sub.subscription_id,\n      cost_center: sub.cost_center,\n      as_of: sub.contract_end,\n      seat_recognized_usd: seatRecognizedTotal,\n      usage_recognized_usd: usageRecognizedUsd,\n      total_recognized_usd: totalRecognized,\n      deferred_balance_usd: deferredBalance,\n      status: \"ready_to_post\",\n      seat_schedule_sample: seatRecords.slice(0, 3),\n      subscription_batch_id: `SUB-${sub.contract_end.slice(0,7)}-CC-${sub.cost_center}`\n    }\n  });\n}\n\nreturn results;"
+      },
+      "id": "a1b2c3d4-0011-4000-8000-000000000011",
+      "name": "Code: Generate RevRec Schedule",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1120,
+        500
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "insert",
+        "schema": "public",
+        "table": "revrec_schedule",
+        "columns": "subscription_id,as_of,component,seat_recognized_usd,usage_recognized_usd,total_recognized_usd,deferred_balance_usd,status,created_by",
+        "additionalFields": {
+          "mode": "insert"
+        }
+      },
+      "id": "a1b2c3d4-0012-4000-8000-000000000012",
+      "name": "Postgres: Persist RevRec Schedule",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        -880,
+        500
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "postgres_reconciliation_store",
+          "name": "Reconciliation Store (Postgres)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Build the idempotency key BEFORE constructing the HTTP request, per\n// SOP Section 18: key = sha256(subscription_batch_id + \":\" + period_end + \":\" + je_type)\n// This node also builds the balanced QBO Journal Entry payload shape\n// (SOP Section 34.4) and embeds the key into PrivateNote since QuickBooks\n// Online has no native idempotency-key field (SOP Section 38).\n\nconst crypto = require('crypto');\n\nconst results = [];\n\nfor (const item of $input.all()) {\n  const rec = item.json;\n  const periodEnd = rec.as_of;\n  const jeType = \"recognized_revenue_period_close\";\n  const rawKey = `${rec.subscription_batch_id}:${periodEnd}:${jeType}`;\n  const idempotencyKey = crypto.createHash('sha256').update(rawKey).digest('hex');\n\n  const deferredAmount = rec.total_recognized_usd;\n  const seatAmount = rec.seat_recognized_usd;\n  const usageAmount = rec.usage_recognized_usd;\n\n  const lines = [\n    {\n      Description: `Deferred revenue release — subscription batch ${rec.subscription_batch_id}`,\n      Amount: deferredAmount,\n      DetailType: \"JournalEntryLineDetail\",\n      JournalEntryLineDetail: {\n        PostingType: \"Debit\",\n        AccountRef: { value: \"2400\", name: \"Deferred Revenue - Subscription\" },\n        ClassRef: { value: rec.cost_center, name: `Cost Center: ${rec.cost_center}` }\n      }\n    }\n  ];\n\n  if (seatAmount > 0) {\n    lines.push({\n      Description: `Recognized revenue — seat fee, period ending ${periodEnd}`,\n      Amount: seatAmount,\n      DetailType: \"JournalEntryLineDetail\",\n      JournalEntryLineDetail: {\n        PostingType: \"Credit\",\n        AccountRef: { value: \"4100\", name: \"Recognized Revenue - Seats\" },\n        ClassRef: { value: rec.cost_center, name: `Cost Center: ${rec.cost_center}` }\n      }\n    });\n  }\n\n  if (usageAmount > 0) {\n    lines.push({\n      Description: `Recognized revenue — usage overage, period ending ${periodEnd}`,\n      Amount: usageAmount,\n      DetailType: \"JournalEntryLineDetail\",\n      JournalEntryLineDetail: {\n        PostingType: \"Credit\",\n        AccountRef: { value: \"4200\", name: \"Recognized Revenue - Usage\" },\n        ClassRef: { value: rec.cost_center, name: `Cost Center: ${rec.cost_center}` }\n      }\n    });\n  }\n\n  results.push({\n    json: {\n      subscription_id: rec.subscription_id,\n      cost_center: rec.cost_center,\n      idempotency_key: idempotencyKey,\n      je_type: jeType,\n      qbo_payload: {\n        Line: lines,\n        TxnDate: periodEnd,\n        PrivateNote: `IDEMPOTENCY_KEY:${idempotencyKey} | Batch ${rec.subscription_batch_id}`\n      }\n    }\n  });\n}\n\nreturn results;"
+      },
+      "id": "a1b2c3d4-0013-4000-8000-000000000013",
+      "name": "Code: Build JE Payload + Idempotency Key",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -640,
+        500
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT 1 FROM posted_journal_entries WHERE idempotency_key = $1;",
+        "options": {
+          "queryReplacement": "={{ $json.idempotency_key }}"
+        }
+      },
+      "id": "a1b2c3d4-0014-4000-8000-000000000014",
+      "name": "Postgres: Idempotency Fast-Path Check",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        -400,
+        500
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "postgres_reconciliation_store",
+          "name": "Reconciliation Store (Postgres)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "id": "cond-already-posted",
+              "leftValue": "={{ $json.count }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "id": "a1b2c3d4-0015-4000-8000-000000000015",
+      "name": "If: Already Posted (Duplicate Guard)",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -160,
+        500
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://quickbooks.api.intuit.com/v3/company/{{ $json.realm_id }}/journalentry",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "quickBooksOAuth2Api",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "Idempotency-Key",
+              "value": "={{ $json.idempotency_key }}"
+            },
+            {
+              "name": "Accept",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.qbo_payload) }}",
+        "options": {
+          "timeout": 15000,
+          "response": {
+            "response": {
+              "neverError": false
+            }
+          }
+        }
+      },
+      "id": "a1b2c3d4-0016-4000-8000-000000000016",
+      "name": "QuickBooks: POST Journal Entry (Idempotency-Key header)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        80,
+        400
+      ],
+      "credentials": {
+        "quickBooksOAuth2Api": {
+          "id": "qbo_oauth2",
+          "name": "QuickBooks Online (OAuth2, refresh-token rotation)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "insert",
+        "schema": "public",
+        "table": "posted_journal_entries",
+        "columns": "schedule_id,idempotency_key,qbo_doc_number,je_type,request_payload,response_status,post_status,posted_at,created_by",
+        "additionalFields": {
+          "mode": "insert"
+        }
+      },
+      "id": "a1b2c3d4-0017-4000-8000-000000000017",
+      "name": "Postgres: Log Posted Entry",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        320,
+        400
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "postgres_reconciliation_store",
+          "name": "Reconciliation Store (Postgres)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "insert",
+        "schema": "public",
+        "table": "posted_journal_entries",
+        "columns": "idempotency_key,je_type,request_payload,post_status,created_by",
+        "additionalFields": {
+          "mode": "insert"
+        }
+      },
+      "id": "a1b2c3d4-0018-4000-8000-000000000018",
+      "name": "Postgres: Log Duplicate Prevented",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        80,
+        620
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "postgres_reconciliation_store",
+          "name": "Reconciliation Store (Postgres)"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Nightly Schedule Trigger (02:00 ET)": {
+      "main": [
+        [
+          {
+            "node": "Postgres: Pull Internal Usage",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Stripe: Pull Invoice Line Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres: Pull Internal Usage": {
+      "main": [
+        [
+          {
+            "node": "Code: Compute Variance",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Stripe: Pull Invoice Line Items": {
+      "main": [
+        [
+          {
+            "node": "Code: Compute Variance",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code: Compute Variance": {
+      "main": [
+        [
+          {
+            "node": "If: Variance >= 3%",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If: Variance >= 3%": {
+      "main": [
+        [
+          {
+            "node": "Postgres: Log Pending Review",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Postgres: Log Auto-Resolved",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres: Log Pending Review": {
+      "main": [
+        [
+          {
+            "node": "Slack: Post Variance Alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Monthly Schedule Trigger (1st, 04:00 ET)": {
+      "main": [
+        [
+          {
+            "node": "Postgres: Pull Active Subscriptions",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres: Pull Active Subscriptions": {
+      "main": [
+        [
+          {
+            "node": "Code: Generate RevRec Schedule",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code: Generate RevRec Schedule": {
+      "main": [
+        [
+          {
+            "node": "Postgres: Persist RevRec Schedule",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres: Persist RevRec Schedule": {
+      "main": [
+        [
+          {
+            "node": "Code: Build JE Payload + Idempotency Key",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code: Build JE Payload + Idempotency Key": {
+      "main": [
+        [
+          {
+            "node": "Postgres: Idempotency Fast-Path Check",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres: Idempotency Fast-Path Check": {
+      "main": [
+        [
+          {
+            "node": "If: Already Posted (Duplicate Guard)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If: Already Posted (Duplicate Guard)": {
+      "main": [
+        [
+          {
+            "node": "Postgres: Log Duplicate Prevented",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "QuickBooks: POST Journal Entry (Idempotency-Key header)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "QuickBooks: POST Journal Entry (Idempotency-Key header)": {
+      "main": [
+        [
+          {
+            "node": "Postgres: Log Posted Entry",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "timezone": "America/New_York"
+  },
+  "pinData": {},
+  "versionId": "1a2b3c4d-5e6f-4a5b-8c9d-000000000001",
+  "id": "saas04-usage-billing-recon-revrec",
+  "tags": [
+    {
+      "id": "tag-finance-automation",
+      "name": "finance-automation"
+    },
+    {
+      "id": "tag-saas-04",
+      "name": "SAAS-04"
+    }
+  ]
+}

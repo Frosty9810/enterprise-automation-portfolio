@@ -1,5 +1,7 @@
 # Enterprise Automation Portfolio
 
+[![Validate portfolio](https://github.com/Frosty9810/enterprise-automation-portfolio/actions/workflows/validate-portfolio.yml/badge.svg)](https://github.com/Frosty9810/enterprise-automation-portfolio/actions/workflows/validate-portfolio.yml)
+
 **A consulting-grade knowledge base of enterprise workflow automation architecture, spanning CRM implementation, AI agent design, systems integration, and business process optimization across 35+ industry verticals.**
 
 ---

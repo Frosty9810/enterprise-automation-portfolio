@@ -1,0 +1,835 @@
+{
+  "name": "RE-02: Transaction Coordination & Compliance Automation",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "close-crm-opportunity-status-changed",
+        "responseMode": "onReceived",
+        "responseData": "{\"received\":true}",
+        "options": {}
+      },
+      "id": "a1b2c3d4-0001-4a11-8f01-000000000001",
+      "name": "Webhook: Close Opportunity Status Changed",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        -1600,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "cond-stage-filter",
+              "leftValue": "={{ $json.body.data.status_label }}",
+              "rightValue": "Under Contract",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "a1b2c3d4-0002-4a11-8f01-000000000002",
+      "name": "If: Stage Is Under Contract",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        -1360,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Validate transaction_type against the enumerated set and map to a Dotloop template.\n// Mirrors SOP Section 14 select_template_id() / Section 16 data validation table.\nconst allowed = ['financed', 'cash', 'short_sale'];\nconst templateMap = {\n  financed: 'tmpl_financed_purchase_v3',\n  cash: 'tmpl_cash_purchase_v2',\n  short_sale: 'tmpl_short_sale_purchase_v4'\n};\n\nconst data = $input.first().json.body.data;\nconst custom = data.custom || {};\nconst txnType = custom.transaction_type;\n\nif (!allowed.includes(txnType)) {\n  return [{\n    json: {\n      routeToException: true,\n      reason: `Unrecognized or missing transaction_type: '${txnType}'`,\n      opportunity_id: data.id\n    }\n  }];\n}\n\nreturn [{\n  json: {\n    routeToException: false,\n    opportunity_id: data.id,\n    template_id: templateMap[txnType],\n    transaction_type: txnType,\n    office_code: custom.office_code,\n    property_address: custom.property_address,\n    buyer_name: custom.buyer_name,\n    buyer_email: custom.buyer_email,\n    buyer_phone: custom.buyer_phone,\n    seller_name: custom.seller_name,\n    seller_email: custom.seller_email,\n    seller_phone: custom.seller_phone,\n    listing_agent_email: custom.listing_agent_email,\n    buyer_agent_email: custom.buyer_agent_email,\n    escrow_officer_name: custom.escrow_officer_name,\n    escrow_officer_email: custom.escrow_officer_email,\n    escrow_officer_phone: custom.escrow_officer_phone,\n    date_updated: data.date_updated\n  }\n}];"
+      },
+      "id": "a1b2c3d4-0003-4a11-8f01-000000000003",
+      "name": "Code: Validate Type & Select Template",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1160,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "cond-exception-route",
+              "leftValue": "={{ $json.routeToException }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "a1b2c3d4-0004-4a11-8f01-000000000004",
+      "name": "If: Route To TC Exception Queue",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        -960,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://api.dotloop.com/v2/loops",
+        "method": "POST",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "dotloopOAuth2Api",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            },
+            {
+              "name": "X-Request-Id",
+              "value": "={{ $json.opportunity_id }}-under-contract"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({\n  template_id: $json.template_id,\n  loop_name: $json.property_address,\n  property: {\n    street_address: $json.property_address\n  },\n  participants: [\n    { role: \"buyer\", name: $json.buyer_name, email: $json.buyer_email, phone: $json.buyer_phone },\n    { role: \"seller\", name: $json.seller_name, email: $json.seller_email, phone: $json.seller_phone },\n    { role: \"listing_agent\", email: $json.listing_agent_email },\n    { role: \"buyer_agent\", email: $json.buyer_agent_email },\n    { role: \"escrow_officer\", name: $json.escrow_officer_name, email: $json.escrow_officer_email, phone: $json.escrow_officer_phone }\n  ],\n  office_code: $json.office_code,\n  external_reference_id: $json.opportunity_id\n}) }}",
+        "options": {
+          "timeout": 15000,
+          "retry": {
+            "maxTries": 3,
+            "waitBetweenTries": 30000
+          }
+        }
+      },
+      "id": "a1b2c3d4-0005-4a11-8f01-000000000005",
+      "name": "HTTP: Create Dotloop Transaction",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        -760,
+        -120
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://www.googleapis.com/drive/v3/files",
+        "method": "POST",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({\n  name: `${$json.office_code}-${$json.property_address}-${$json.loop_id}`,\n  mimeType: \"application/vnd.google-apps.folder\",\n  parents: [\"__ACTIVE_TRANSACTIONS_SHARED_DRIVE_FOLDER_ID__\"]\n}) }}",
+        "options": {
+          "timeout": 15000,
+          "retry": {
+            "maxTries": 3,
+            "waitBetweenTries": 15000
+          }
+        }
+      },
+      "id": "a1b2c3d4-0006-4a11-8f01-000000000006",
+      "name": "HTTP: Provision Google Drive Folder",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        -540,
+        -120
+      ]
+    },
+    {
+      "parameters": {
+        "url": "=https://www.googleapis.com/drive/v3/files/{{ $json.id }}/permissions",
+        "method": "POST",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "googleApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({\n  role: \"writer\",\n  type: \"user\",\n  emailAddress: $('Code: Validate Type & Select Template').item.json.listing_agent_email\n}) }}",
+        "options": {
+          "timeout": 15000
+        }
+      },
+      "id": "a1b2c3d4-0007-4a11-8f01-000000000007",
+      "name": "HTTP: Share Folder With Agents/TC",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        -320,
+        -120
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO transactions (\n  close_opportunity_id, dotloop_loop_id, office_code, office_timezone,\n  transaction_type, property_address, contract_execution_date,\n  buyer_name, buyer_email, buyer_phone,\n  seller_name, seller_email, seller_phone,\n  agent_email, escrow_officer_name, escrow_officer_email, escrow_officer_phone,\n  closing_folder_url, lifecycle_state, status\n) VALUES (\n  $1, $2, $3, $4,\n  $5, $6, $7,\n  $8, $9, $10,\n  $11, $12, $13,\n  $14, $15, $16, $17,\n  $18, 'under_contract', 'active'\n)\nRETURNING id;",
+        "options": {
+          "queryReplacement": "={{ [\n  $('Code: Validate Type & Select Template').item.json.opportunity_id,\n  $('HTTP: Create Dotloop Transaction').item.json.loop_id,\n  $('Code: Validate Type & Select Template').item.json.office_code,\n  'America/Los_Angeles',\n  $('Code: Validate Type & Select Template').item.json.transaction_type,\n  $('Code: Validate Type & Select Template').item.json.property_address,\n  $('HTTP: Create Dotloop Transaction').item.json.contract_execution_date,\n  $('Code: Validate Type & Select Template').item.json.buyer_name,\n  $('Code: Validate Type & Select Template').item.json.buyer_email,\n  $('Code: Validate Type & Select Template').item.json.buyer_phone,\n  $('Code: Validate Type & Select Template').item.json.seller_name,\n  $('Code: Validate Type & Select Template').item.json.seller_email,\n  $('Code: Validate Type & Select Template').item.json.seller_phone,\n  $('Code: Validate Type & Select Template').item.json.buyer_agent_email,\n  $('Code: Validate Type & Select Template').item.json.escrow_officer_name,\n  $('Code: Validate Type & Select Template').item.json.escrow_officer_email,\n  $('Code: Validate Type & Select Template').item.json.escrow_officer_phone,\n  $json.webViewLink\n] }}"
+        }
+      },
+      "id": "a1b2c3d4-0008-4a11-8f01-000000000008",
+      "name": "Postgres: Insert Transaction Ledger Row",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2,
+      "position": [
+        -100,
+        -120
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// TC exception queue entry — no Dotloop loop is created (SOP Section 16/21).\nconst item = $input.first().json;\nreturn [{\n  json: {\n    exception_type: 'transaction_type_invalid',\n    opportunity_id: item.opportunity_id,\n    reason: item.reason,\n    created_at: new Date().toISOString()\n  }\n}];"
+      },
+      "id": "a1b2c3d4-0009-4a11-8f01-000000000009",
+      "name": "Code: Build Exception Record",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -760,
+        160
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO exceptions (opportunity_id, exception_type, reason, created_at)\nVALUES ($1, $2, $3, $4);",
+        "options": {
+          "queryReplacement": "={{ [$json.opportunity_id, $json.exception_type, $json.reason, $json.created_at] }}"
+        }
+      },
+      "id": "a1b2c3d4-0010-4a11-8f01-00000000000a",
+      "name": "Postgres: Insert Exception Row",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2,
+      "position": [
+        -540,
+        160
+      ]
+    },
+    {
+      "parameters": {
+        "sendTo": "tc-exceptions@harborviewrealtypartners.example",
+        "subject": "=Exception queue: Opportunity {{ $json.opportunity_id }} needs transaction_type",
+        "message": "=A new Opportunity moved to Under Contract but could not be classified.\n\nReason: {{ $json.reason }}\n\nPlease assign the correct transaction_type in Close CRM to resume automated processing.",
+        "options": {}
+      },
+      "id": "a1b2c3d4-0011-4a11-8f01-00000000000b",
+      "name": "Email: Notify TC Exception Queue",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2,
+      "position": [
+        -320,
+        160
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 2 * * *"
+            }
+          ]
+        }
+      },
+      "id": "a1b2c3d4-0012-4a11-8f01-00000000000c",
+      "name": "Schedule: Nightly Document Status Poll (02:00)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1600,
+        480
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT id AS transaction_id, dotloop_loop_id, office_code, office_timezone\nFROM transactions\nWHERE status = 'active'\n  AND lifecycle_state NOT IN ('closed', 'fell_through');",
+        "options": {}
+      },
+      "id": "a1b2c3d4-0013-4a11-8f01-00000000000d",
+      "name": "Postgres: Select Open Loops",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2,
+      "position": [
+        -1400,
+        480
+      ]
+    },
+    {
+      "parameters": {
+        "url": "=https://api.dotloop.com/v2/loops/{{ $json.dotloop_loop_id }}/documents",
+        "method": "GET",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "dotloopOAuth2Api",
+        "options": {
+          "timeout": 15000,
+          "retry": {
+            "maxTries": 3,
+            "waitBetweenTries": 30000
+          }
+        }
+      },
+      "id": "a1b2c3d4-0014-4a11-8f01-00000000000e",
+      "name": "HTTP: Poll Dotloop Document Status",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        -1200,
+        480
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE transactions\nSET document_status = $1, updated_at = now()\nWHERE dotloop_loop_id = $2;",
+        "options": {
+          "queryReplacement": "={{ [$json.normalized_status, $('Postgres: Select Open Loops').item.json.dotloop_loop_id] }}"
+        }
+      },
+      "id": "a1b2c3d4-0015-4a11-8f01-00000000000f",
+      "name": "Postgres: Update Document Status",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2,
+      "position": [
+        -1000,
+        480
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 6 * * *"
+            }
+          ]
+        }
+      },
+      "id": "a1b2c3d4-0016-4a11-8f01-000000000010",
+      "name": "Schedule: Nightly Deadline Evaluator (06:00)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1600,
+        820
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT d.id AS deadline_id, d.transaction_id, d.milestone, d.due_date, d.status,\n       t.dotloop_loop_id, t.office_code, t.office_timezone, t.property_address,\n       t.buyer_email, t.buyer_phone, t.seller_email, t.seller_phone,\n       t.agent_email, t.escrow_officer_email, t.escrow_officer_phone\nFROM deadlines d\nJOIN transactions t ON t.id = d.transaction_id\nWHERE d.status = 'pending'\n  AND d.due_date - CURRENT_DATE IN (3, 1, 0);",
+        "options": {}
+      },
+      "id": "a1b2c3d4-0017-4a11-8f01-000000000011",
+      "name": "Postgres: Select Deadlines In Window",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2,
+      "position": [
+        -1400,
+        820
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Compute the notification tier (T-3 / T-1 / T-0) for each deadline row.\n// Mirrors SOP Section 14 notification_windows().\nconst today = new Date();\ntoday.setHours(0, 0, 0, 0);\n\nreturn $input.all().map((item) => {\n  const due = new Date(item.json.due_date);\n  due.setHours(0, 0, 0, 0);\n  const deltaDays = Math.round((due.getTime() - today.getTime()) / 86400000);\n\n  let tier = null;\n  if (deltaDays === 3) tier = 'T-3';\n  else if (deltaDays === 1) tier = 'T-1';\n  else if (deltaDays === 0) tier = 'T-0';\n\n  return {\n    json: {\n      ...item.json,\n      delta_days: deltaDays,\n      notification_tier: tier\n    }\n  };\n});"
+      },
+      "id": "a1b2c3d4-0018-4a11-8f01-000000000012",
+      "name": "Code: Compute Notification Tier",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1200,
+        820
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "cond-tier-t0",
+              "leftValue": "={{ $json.notification_tier }}",
+              "rightValue": "T-0",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "a1b2c3d4-0019-4a11-8f01-000000000013",
+      "name": "If: Tier Is T-0",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        -1000,
+        820
+      ]
+    },
+    {
+      "parameters": {
+        "url": "=https://api.twilio.com/2010-04-01/Accounts/{{ $env.TWILIO_ACCOUNT_SID }}/Messages.json",
+        "method": "POST",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "twilioApi",
+        "sendBody": true,
+        "contentType": "form-urlencoded",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "To",
+              "value": "={{ $json.buyer_phone }}"
+            },
+            {
+              "name": "From",
+              "value": "={{ $env.TWILIO_FROM_NUMBER }}"
+            },
+            {
+              "name": "Body",
+              "value": "=Reminder: {{ $json.milestone }} for {{ $json.property_address }} is due {{ $json.notification_tier }} ({{ $json.due_date }}). Details: https://portal.harborviewrealtypartners.example/t/{{ $json.transaction_id }}"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 10000,
+          "retry": {
+            "maxTries": 2,
+            "waitBetweenTries": 10000
+          }
+        }
+      },
+      "id": "a1b2c3d4-0020-4a11-8f01-000000000014",
+      "name": "HTTP: Send Twilio SMS (T-0)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        -780,
+        720
+      ]
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.buyer_email }}",
+        "subject": "=Deadline due today: {{ $json.milestone }} — {{ $json.property_address }}",
+        "message": "=This is a reminder that the {{ $json.milestone }} deadline for {{ $json.property_address }} is due today ({{ $json.due_date }}). Please complete the required step in Dotloop or contact your transaction coordinator.",
+        "options": {}
+      },
+      "id": "a1b2c3d4-0021-4a11-8f01-000000000015",
+      "name": "Email: Send Deadline Notice (T-0)",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2,
+      "position": [
+        -780,
+        920
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "cond-t0-missed",
+              "leftValue": "={{ $json.status }}",
+              "rightValue": "complete",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "a1b2c3d4-0022-4a11-8f01-000000000016",
+      "name": "If: T-0 Missed (Escalate To Broker)",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        -580,
+        820
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO escalations (deadline_id, transaction_id, escalated_at, reason)\nVALUES ($1, $2, now(), 'T-0 deadline missed without completion');",
+        "options": {
+          "queryReplacement": "={{ [$json.deadline_id, $json.transaction_id] }}"
+        }
+      },
+      "id": "a1b2c3d4-0023-4a11-8f01-000000000017",
+      "name": "Postgres: Insert Escalation Row",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2,
+      "position": [
+        -380,
+        740
+      ]
+    },
+    {
+      "parameters": {
+        "url": "=https://api.twilio.com/2010-04-01/Accounts/{{ $env.TWILIO_ACCOUNT_SID }}/Messages.json",
+        "method": "POST",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "twilioApi",
+        "sendBody": true,
+        "contentType": "form-urlencoded",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "To",
+              "value": "={{ $env.BROKER_PHONE_BY_OFFICE[$json.office_code] }}"
+            },
+            {
+              "name": "From",
+              "value": "={{ $env.TWILIO_FROM_NUMBER }}"
+            },
+            {
+              "name": "Body",
+              "value": "=ESCALATION: {{ $json.milestone }} for {{ $json.property_address }} missed its T-0 deadline ({{ $json.due_date }}) without completion. Review: https://portal.harborviewrealtypartners.example/t/{{ $json.transaction_id }}"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 10000,
+          "retry": {
+            "maxTries": 2,
+            "waitBetweenTries": 10000
+          }
+        }
+      },
+      "id": "a1b2c3d4-0024-4a11-8f01-000000000018",
+      "name": "HTTP: Send Twilio SMS Escalation To Broker",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        -180,
+        740
+      ]
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $env.MANAGING_BROKER_EMAIL_BY_OFFICE }}[{{ $json.office_code }}]",
+        "subject": "=ESCALATION: Missed T-0 deadline — {{ $json.property_address }}",
+        "message": "=The {{ $json.milestone }} deadline for {{ $json.property_address }} (transaction {{ $json.transaction_id }}) was not marked complete by end of day T-0 ({{ $json.due_date }}). Please review and respond within one business day per SOP RE-02 Section 10.",
+        "options": {}
+      },
+      "id": "a1b2c3d4-0025-4a11-8f01-000000000019",
+      "name": "Email: Escalate To Managing Broker",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2,
+      "position": [
+        -180,
+        920
+      ]
+    }
+  ],
+  "connections": {
+    "Webhook: Close Opportunity Status Changed": {
+      "main": [
+        [
+          {
+            "node": "If: Stage Is Under Contract",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If: Stage Is Under Contract": {
+      "main": [
+        [
+          {
+            "node": "Code: Validate Type & Select Template",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        []
+      ]
+    },
+    "Code: Validate Type & Select Template": {
+      "main": [
+        [
+          {
+            "node": "If: Route To TC Exception Queue",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If: Route To TC Exception Queue": {
+      "main": [
+        [
+          {
+            "node": "Code: Build Exception Record",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP: Create Dotloop Transaction",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP: Create Dotloop Transaction": {
+      "main": [
+        [
+          {
+            "node": "HTTP: Provision Google Drive Folder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP: Provision Google Drive Folder": {
+      "main": [
+        [
+          {
+            "node": "HTTP: Share Folder With Agents/TC",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP: Share Folder With Agents/TC": {
+      "main": [
+        [
+          {
+            "node": "Postgres: Insert Transaction Ledger Row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code: Build Exception Record": {
+      "main": [
+        [
+          {
+            "node": "Postgres: Insert Exception Row",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres: Insert Exception Row": {
+      "main": [
+        [
+          {
+            "node": "Email: Notify TC Exception Queue",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule: Nightly Document Status Poll (02:00)": {
+      "main": [
+        [
+          {
+            "node": "Postgres: Select Open Loops",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres: Select Open Loops": {
+      "main": [
+        [
+          {
+            "node": "HTTP: Poll Dotloop Document Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP: Poll Dotloop Document Status": {
+      "main": [
+        [
+          {
+            "node": "Postgres: Update Document Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule: Nightly Deadline Evaluator (06:00)": {
+      "main": [
+        [
+          {
+            "node": "Postgres: Select Deadlines In Window",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres: Select Deadlines In Window": {
+      "main": [
+        [
+          {
+            "node": "Code: Compute Notification Tier",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code: Compute Notification Tier": {
+      "main": [
+        [
+          {
+            "node": "If: Tier Is T-0",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If: Tier Is T-0": {
+      "main": [
+        [
+          {
+            "node": "If: T-0 Missed (Escalate To Broker)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP: Send Twilio SMS (T-0)",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Email: Send Deadline Notice (T-0)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If: T-0 Missed (Escalate To Broker)": {
+      "main": [
+        [
+          {
+            "node": "Postgres: Insert Escalation Row",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP: Send Twilio SMS (T-0)",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Email: Send Deadline Notice (T-0)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres: Insert Escalation Row": {
+      "main": [
+        [
+          {
+            "node": "HTTP: Send Twilio SMS Escalation To Broker",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP: Send Twilio SMS Escalation To Broker": {
+      "main": [
+        [
+          {
+            "node": "Email: Escalate To Managing Broker",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "id": "re02-txn-coordination-compliance-automation"
+}

@@ -1,0 +1,64 @@
+{
+  "name": "ECOM-04 - Support Routing and SLA Control",
+  "active": false,
+  "settings": {"executionOrder": "v1"},
+  "nodes": [
+    {
+      "id": "ecom04-01",
+      "name": "Helpdesk Ticket Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [-850, 100],
+      "parameters": {"httpMethod": "POST", "path": "ecom-support-ticket", "responseMode": "onReceived", "options": {}}
+    },
+    {
+      "id": "ecom04-02",
+      "name": "Redact PII and Apply Policy",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-600, 100],
+      "parameters": {"jsCode": "const t=$json.body??$json;let safe=String(t.message??'').replace(/[\\w.+-]+@[\\w.-]+\\.[A-Za-z]{2,}/g,'[EMAIL]').replace(/\\+?\\d[\\d\\s().-]{7,}\\d/g,'[PHONE_OR_NUMBER]').replace(/\\b(?:\\d[ -]*?){13,16}\\b/g,'[PAYMENT_NUMBER]');const x=safe.toLowerCase();let queue='general_review',priority='normal',hours=24,reasons=['safe_fallback'];if(['chargeback','fraud','unsafe','injury'].some(v=>x.includes(v))){queue='risk_escalation';priority='urgent';hours=1;reasons=['risk_policy_match'];}else if(['delete my data','privacy request','gdpr'].some(v=>x.includes(v))){queue='privacy';priority='urgent';hours=4;reasons=['privacy_rights_request'];}else if(['cancel','change address'].some(v=>x.includes(v))){queue='order_changes';priority='high';hours=2;reasons=['time_sensitive_order_change'];}else if(['where is','tracking','late delivery'].some(v=>x.includes(v))){queue='delivery';hours=12;reasons=['delivery_intent'];}return [{json:{event_id:t.event_id,external_ticket_id:t.ticket_id,market:t.market,redacted_text:safe,queue,priority,reasons,respond_by:new Date(Date.now()+hours*3600000).toISOString()}}];"}
+    },
+    {
+      "id": "ecom04-03",
+      "name": "Persist Route and SLA",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [-350, 100],
+      "parameters": {"operation": "executeQuery", "query": "INSERT INTO ecom_support.ticket_events (event_id,event_hash,external_ticket_id,market,redacted_text) VALUES ($1,$1,$2,$3,$4) ON CONFLICT (event_id) DO NOTHING RETURNING event_id;", "options": {"queryParams": "={{$json.event_id}},={{$json.external_ticket_id}},={{$json.market}},={{$json.redacted_text}}"}},
+      "credentials": {"postgres": {"id": "PLACEHOLDER_POSTGRES", "name": "Ecommerce Operations DB"}}
+    },
+    {
+      "id": "ecom04-04",
+      "name": "Urgent Policy Route",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [-100, 100],
+      "parameters": {"conditions": {"options": {"caseSensitive": true, "typeValidation": "strict"}, "conditions": [{"leftValue": "={{$('Redact PII and Apply Policy').item.json.priority}}", "rightValue": "urgent", "operator": {"type": "string", "operation": "equals"}}], "combinator": "and"}, "options": {}}
+    },
+    {
+      "id": "ecom04-05",
+      "name": "Page Risk or Privacy Owner",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [170, 0],
+      "parameters": {"method": "POST", "url": "={{$env.INCIDENT_ROUTER_URL + '/events'}}", "sendBody": true, "jsonBody": "={\"ticket_id\":$('Redact PII and Apply Policy').item.json.external_ticket_id,\"queue\":$('Redact PII and Apply Policy').item.json.queue,\"priority\":$('Redact PII and Apply Policy').item.json.priority,\"respond_by\":$('Redact PII and Apply Policy').item.json.respond_by}", "options": {"timeout": 10000}},
+      "credentials": {"httpHeaderAuth": {"id": "PLACEHOLDER_INCIDENT_ROUTER", "name": "Incident Router"}}
+    },
+    {
+      "id": "ecom04-06",
+      "name": "Assign Helpdesk Queue",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [170, 220],
+      "parameters": {"method": "POST", "url": "={{$env.HELPDESK_URL + '/tickets/' + $('Redact PII and Apply Policy').item.json.external_ticket_id + '/route'}}", "sendBody": true, "jsonBody": "={\"queue\":$('Redact PII and Apply Policy').item.json.queue,\"priority\":$('Redact PII and Apply Policy').item.json.priority,\"respond_by\":$('Redact PII and Apply Policy').item.json.respond_by,\"internal_summary_input\":$('Redact PII and Apply Policy').item.json.redacted_text}", "options": {"timeout": 10000}},
+      "credentials": {"httpHeaderAuth": {"id": "PLACEHOLDER_HELPDESK", "name": "Helpdesk Scoped Router"}}
+    }
+  ],
+  "connections": {
+    "Helpdesk Ticket Webhook": {"main": [[{"node": "Redact PII and Apply Policy", "type": "main", "index": 0}]]},
+    "Redact PII and Apply Policy": {"main": [[{"node": "Persist Route and SLA", "type": "main", "index": 0}]]},
+    "Persist Route and SLA": {"main": [[{"node": "Urgent Policy Route", "type": "main", "index": 0}]]},
+    "Urgent Policy Route": {"main": [[{"node": "Page Risk or Privacy Owner", "type": "main", "index": 0}], [{"node": "Assign Helpdesk Queue", "type": "main", "index": 0}]]}
+  }
+}

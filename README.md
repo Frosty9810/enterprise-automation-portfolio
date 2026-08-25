@@ -10,7 +10,7 @@
 
 This repository is structured as an internal consulting knowledge base. It is **not** a collection of tutorials: completed artifacts are written for technical and operational reviewers evaluating whether a workflow is understandable, testable, and maintainable.
 
-The current verified scope is **nine executable reference projects**: eight n8n/Python/PostgreSQL implementations across Real Estate and SaaS, plus a seven-department import-company agent operating system with a 137-agent registry, shared knowledge brain, typed execution API, and interactive interface. Other numbered sections form the development roadmap and may still be placeholders; see [`MASTER-INDEX.md`](MASTER-INDEX.md) for the live status.
+The current verified scope is **13 executable reference projects**: twelve n8n/Python/PostgreSQL implementations across Real Estate, SaaS, and E-Commerce, plus a seven-department import-company agent operating system with a 137-agent registry, shared knowledge brain, typed execution API, and interactive interface. Other numbered sections form the development roadmap and may still be placeholders; see [`MASTER-INDEX.md`](MASTER-INDEX.md) for the live status.
 
 Deployment contexts and sample organizations are illustrative reference scenarios. They are labeled as such and are not presented as client engagements. The workflows, code, schemas, error-handling patterns, and documentation are the portfolio deliverables being demonstrated.
 
@@ -67,6 +67,8 @@ Portfolio/
 
 See [`MASTER-INDEX.md`](MASTER-INDEX.md) for the live build-status tracker — this repository is being populated in staged phases, and the index shows what is complete versus pending.
 
+The finite definition of “complete,” remaining flagship backlog, and release gates are tracked in [`COMPLETION-ROADMAP.md`](COMPLETION-ROADMAP.md).
+
 ## 4. Delivery Methodology
 
 Every completed reference project follows the same six-phase methodology, detailed in [`01 Consulting Methodology/`](01%20Consulting%20Methodology/README.md):
@@ -80,7 +82,7 @@ Every completed reference project follows the same six-phase methodology, detail
 
 ## 5. SOP Standard
 
-Every Standard Operating Procedure in this repository — regardless of industry or platform — conforms to the same 44-section standard (Purpose through Related SOPs), including Mermaid workflow/sequence/ER/state diagrams, decision trees, JSON payload examples, error-handling matrices, and ROI analysis. The canonical template lives at [`41 Templates/sop-master-template.md`](41%20Templates/sop-master-template.md).
+Every completed project documents the job to be done, flow, system boundary, hard constraint, technical core, defensible decision and tradeoff, explicit feature cut, acceptance tests, and takeover notes. Large consulting engagements may use the full 44-section SOP template; focused engineering projects use the shorter project dossier when extra sections would add repetition rather than evidence. The canonical templates live in [`41 Templates/`](41%20Templates/README.md).
 
 ## 6. Technology Decision Framework
 

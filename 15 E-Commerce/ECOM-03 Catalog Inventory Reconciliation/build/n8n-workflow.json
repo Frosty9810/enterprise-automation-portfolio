@@ -1,0 +1,74 @@
+{
+  "name": "ECOM-03 - Catalog Inventory Reconciliation",
+  "active": false,
+  "settings": {"executionOrder": "v1"},
+  "nodes": [
+    {
+      "id": "ecom03-01",
+      "name": "Reconciliation Schedule",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [-900, 100],
+      "parameters": {"rule": {"interval": [{"field": "minutes", "minutesInterval": 15}]}}
+    },
+    {
+      "id": "ecom03-02",
+      "name": "Load Fresh Three-Way Snapshot",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [-650, 100],
+      "parameters": {"operation": "executeQuery", "query": "SELECT m.canonical_sku,m.location_code,m.shopify_inventory_item_id,s.payload AS shopify,w.payload AS warehouse,e.payload AS erp,s.source_version AS shopify_version,w.source_version AS warehouse_version,e.source_version AS erp_version FROM ecom_inventory.sku_maps m LEFT JOIN LATERAL (SELECT * FROM ecom_inventory.snapshots x WHERE x.source='shopify' AND x.canonical_sku=m.canonical_sku AND x.location_code=m.location_code ORDER BY captured_at DESC LIMIT 1) s ON true LEFT JOIN LATERAL (SELECT * FROM ecom_inventory.snapshots x WHERE x.source='warehouse' AND x.canonical_sku=m.canonical_sku AND x.location_code=m.location_code ORDER BY captured_at DESC LIMIT 1) w ON true LEFT JOIN LATERAL (SELECT * FROM ecom_inventory.snapshots x WHERE x.source='erp' AND x.canonical_sku=m.canonical_sku AND x.location_code=m.location_code ORDER BY captured_at DESC LIMIT 1) e ON true WHERE m.active=true;", "options": {}},
+      "credentials": {"postgres": {"id": "PLACEHOLDER_POSTGRES", "name": "Ecommerce Operations DB"}}
+    },
+    {
+      "id": "ecom03-03",
+      "name": "Apply Authority and Safety Policy",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-400, 100],
+      "parameters": {"jsCode": "return $input.all().map(({json:r})=>{const onHand=Number(r.warehouse?.on_hand??NaN);const reserved=Number(r.erp?.reserved??NaN);const buffer=Number(r.erp?.safety_buffer??0);const observed=Number(r.shopify?.available??NaN);const expected=onHand-reserved-buffer;let action='safe_correction',reasons=[];if(!Number.isFinite(expected)||!Number.isFinite(observed)){action='quarantine';reasons.push('missing_authoritative_input');}else if(expected<0||Math.abs(expected-observed)>100){action='quarantine';reasons.push('safety_limit');}else if(expected===observed){action='aligned';reasons.push('no_change');}else{reasons.push('authoritative_derivation');}return {json:{...r,expected_sellable:expected,observed_shopify:observed,action,reasons,correction_key:`${r.canonical_sku}:${r.location_code}:${r.warehouse_version}:${r.erp_version}:${expected}`}}});"}
+    },
+    {
+      "id": "ecom03-04",
+      "name": "Safe Correction",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [-150, 100],
+      "parameters": {"conditions": {"options": {"caseSensitive": true, "typeValidation": "strict"}, "conditions": [{"leftValue": "={{$json.action}}", "rightValue": "safe_correction", "operator": {"type": "string", "operation": "equals"}}], "combinator": "and"}, "options": {}}
+    },
+    {
+      "id": "ecom03-05",
+      "name": "Set Shopify Inventory",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [100, 0],
+      "parameters": {"method": "POST", "url": "={{$env.SHOPIFY_GRAPHQL_URL}}", "sendBody": true, "contentType": "raw", "rawContentType": "application/json", "body": "={{JSON.stringify({query:$env.INVENTORY_SET_MUTATION,variables:{inventoryItemId:$json.shopify_inventory_item_id,quantity:$json.expected_sellable,referenceDocumentUri:'portfolio://reconcile/'+$json.correction_key}})}}", "options": {"timeout": 20000}},
+      "credentials": {"httpHeaderAuth": {"id": "PLACEHOLDER_SHOPIFY_INVENTORY", "name": "Shopify Scoped Inventory Writer"}}
+    },
+    {
+      "id": "ecom03-06",
+      "name": "Verify and Record Correction",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [360, 0],
+      "parameters": {"operation": "executeQuery", "query": "INSERT INTO ecom_inventory.correction_receipts (correction_key,external_request_id,requested_quantity,applied_at) VALUES ($1,$2,$3,now()) ON CONFLICT (correction_key) DO NOTHING RETURNING *;", "options": {"queryParams": "={{$json.correction_key}},={{$json.extensions?.cost?.requestedQueryCost ?? $execution.id}},={{$json.expected_sellable}}"}},
+      "credentials": {"postgres": {"id": "PLACEHOLDER_POSTGRES", "name": "Ecommerce Operations DB"}}
+    },
+    {
+      "id": "ecom03-07",
+      "name": "Record No-Write Decision",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [100, 220],
+      "parameters": {"operation": "executeQuery", "query": "SELECT $1::text AS action,$2::text AS correction_key,$3::jsonb AS reasons;", "options": {"queryParams": "={{$json.action}},={{$json.correction_key}},={{JSON.stringify($json.reasons)}}"}},
+      "credentials": {"postgres": {"id": "PLACEHOLDER_POSTGRES", "name": "Ecommerce Operations DB"}}
+    }
+  ],
+  "connections": {
+    "Reconciliation Schedule": {"main": [[{"node": "Load Fresh Three-Way Snapshot", "type": "main", "index": 0}]]},
+    "Load Fresh Three-Way Snapshot": {"main": [[{"node": "Apply Authority and Safety Policy", "type": "main", "index": 0}]]},
+    "Apply Authority and Safety Policy": {"main": [[{"node": "Safe Correction", "type": "main", "index": 0}]]},
+    "Safe Correction": {"main": [[{"node": "Set Shopify Inventory", "type": "main", "index": 0}], [{"node": "Record No-Write Decision", "type": "main", "index": 0}]]},
+    "Set Shopify Inventory": {"main": [[{"node": "Verify and Record Correction", "type": "main", "index": 0}]]}
+  }
+}

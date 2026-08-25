@@ -19,20 +19,20 @@ Every SOP, workflow doc, and case study authored from this point forward must in
 | 04 | Automation Framework | ⬜ | Stub only. |
 | 05 | CRM Architectures | ⬜ | Stub only. |
 
-## Industry Verticals (06–18) — 15–20 projects each per original spec
+## Industry Verticals (06–18) — one verified flagship suite minimum
 
 | # | Section | Status | Notes |
 |---|---|---|---|
 | 06 | Property Management | ⬜ | Stub only. |
-| 07 | Real Estate | 🟡 | 4 of 15–20 target projects delivered (RE-01–RE-04: 2 Intermediate, 2 Advanced), each with a verified real `/build/` (importable n8n workflow, executed Python script, parsed SQL schema). See [`07 Real Estate/README.md`](07%20Real%20Estate/README.md). |
+| 07 | Real Estate | ✅ | Flagship suite delivered: RE-01–RE-04 (2 Intermediate, 2 Advanced), each with a verified `/build/` containing n8n, Python, and SQL artifacts. |
 | 08 | Construction | ⬜ | Stub only. |
 | 09 | Medical | ⬜ | Stub only. |
 | 10 | Legal | ⬜ | Stub only. |
 | 11 | Insurance | ⬜ | Stub only. |
 | 12 | Recruiting | ⬜ | Stub only. |
 | 13 | Marketing Agencies | ⬜ | Stub only. |
-| 14 | SaaS | 🟡 | 4 of 15–20 target projects delivered (SAAS-01–SAAS-04: 2 Intermediate, 2 Advanced), each with a verified real `/build/` (importable n8n workflow, executed Python script, parsed SQL schema). See [`14 SaaS/README.md`](14%20SaaS/README.md). |
-| 15 | E-Commerce | ⬜ | Stub only. |
+| 14 | SaaS | ✅ | Flagship suite delivered: SAAS-01–SAAS-04 (2 Intermediate, 2 Advanced), each with a verified `/build/` containing n8n, Python, and SQL artifacts. |
+| 15 | E-Commerce | ✅ | Flagship suite delivered: 4 connected Shopify operations projects covering multi-market content, review triage, inventory reconciliation, and support routing; each includes runnable Python, n8n JSON, PostgreSQL schema, and tests. |
 | 16 | Accounting | ⬜ | Stub only. |
 | 17 | Customer Support | ⬜ | Stub only. |
 | 18 | Executive Assistants | ⬜ | Stub only. |
@@ -59,7 +59,7 @@ Every SOP, workflow doc, and case study authored from this point forward must in
 
 | # | Section | Status | Notes |
 |---|---|---|---|
-| 32 | SOP Library | 🟡 | `video-index.md` now tracks 8 SOPs (all pending recording). Cross-industry function-based SOP index still pending further industry build-out. |
+| 32 | SOP Library | 🟡 | `video-index.md` now tracks 12 SOPs (all pending recording). Cross-industry function-based SOP index still pending further industry build-out. |
 | 33 | Workflow Diagrams | ⬜ | Stub only. |
 | 34 | Database Schemas | ⬜ | Stub only. |
 | 35 | Security | ⬜ | Stub only. |
@@ -89,18 +89,18 @@ Every SOP, workflow doc, and case study authored from this point forward must in
 |---|---|
 | [`README.md`](README.md) | ✅ Populated |
 | `MASTER-INDEX.md` (this file) | ✅ Populated |
+| [`COMPLETION-ROADMAP.md`](COMPLETION-ROADMAP.md) | ✅ Populated |
 
-## Recommended Build Order for Future Sessions
+## Completion Standard and Build Order
 
-Per the staged approach: populate one industry vertical at a time (15–20 full SOPs each, using the master template), then move to platform depth, then operational libraries, then the remaining foundational and deliverable sections. Suggested order:
+The portfolio is complete when every industry contains at least one verified flagship implementation, every platform section points to tested reusable components, and every operating-discipline section contains artifacts used by those implementations. Project count is not a quality target.
 
-1. Pick one industry from 06–18 → author 15–20 SOPs + supporting diagrams/schemas/code
-2. Repeat for each remaining industry
-3. Populate 32 SOP Library as a cross-industry index once several industries exist
-4. Populate platform sections (19–31) with configuration patterns referenced by the SOPs already written
-5. Populate operational libraries (32–40)
-6. Populate 00, 02–05, 42–48 using material generated along the way
-7. Final pass: cross-link everything, verify all Mermaid diagrams render, verify all internal links resolve
+1. Finish one executable flagship for each remaining industry: Property Management, Construction, Medical, Legal, Insurance, Recruiting, Marketing Agencies, Accounting, Customer Support, and Executive Assistants.
+2. Extract platform-specific patterns from the verified builds into sections 19–31 instead of writing disconnected tool summaries.
+3. Populate sections 00 and 02–05 with discovery, analysis, architecture, and CRM artifacts used by the flagships.
+4. Generate the cross-cutting SOP, diagram, schema, security, monitoring, testing, deployment, maintenance, and troubleshooting libraries from real project files.
+5. Complete the client deliverable, case-study, ROI, dashboard, and AI-documentation sections using clearly labeled illustrative evidence.
+6. Run code, workflow, SQL, link, and documentation validation before marking any section complete.
 
 ---
 *Part of the Enterprise Automation Portfolio. See root [README.md](README.md) for navigation.*

@@ -1,0 +1,454 @@
+{
+  "name": "SAAS-03 - Churn Prediction and Proactive CS Intervention",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 1 * * *"
+            }
+          ]
+        }
+      },
+      "id": "b1a1a111-0001-4a11-8a11-000000000001",
+      "name": "Nightly Schedule Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [-1600, 300]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT account_id, arr, plan_tier, csm_owner_id, account_tenure_days, contract_days_to_renewal FROM churn_intel.active_accounts WHERE status = 'active';",
+        "options": {}
+      },
+      "id": "b1a1a111-0002-4a11-8a11-000000000002",
+      "name": "Pull Active Account Roster",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [-1360, 300],
+      "credentials": {
+        "postgres": {
+          "id": "PLACEHOLDER_POSTGRES_CRED_ID",
+          "name": "Atlas Metrics Postgres (churn_intel)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT account_id, login_frequency_delta, feature_usage_delta, seat_utilization_rate, seat_utilization_delta, support_ticket_sentiment_score, support_ticket_volume_delta, nps_trend, payment_failure_flag, contract_days_to_renewal, account_tenure_days, plan_tier_encoded FROM churn_intel.feature_snapshots WHERE snapshot_date = CURRENT_DATE AND account_id = ANY($1);",
+        "options": {
+          "queryReplacement": "={{ [ $json.account_id ] }}"
+        }
+      },
+      "id": "b1a1a111-0003-4a11-8a11-000000000003",
+      "name": "Pull Engagement Feature Snapshot",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [-1120, 300],
+      "credentials": {
+        "postgres": {
+          "id": "PLACEHOLDER_POSTGRES_CRED_ID",
+          "name": "Atlas Metrics Postgres (churn_intel)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "batchSize": 200,
+        "options": {}
+      },
+      "id": "b1a1a111-0004-4a11-8a11-000000000004",
+      "name": "Batch Accounts (200 per call)",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [-880, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://scoring-service.internal/score",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ { \"batch_id\": $runIndex, \"idempotency_key\": $runIndex + \"_\" + $now.format('yyyy-MM-dd'), \"accounts\": $input.all().map(item => item.json) } }}",
+        "options": {
+          "timeout": 8000,
+          "retry": {
+            "retryOnFail": true,
+            "maxTries": 3,
+            "waitBetweenTries": 2000
+          }
+        }
+      },
+      "id": "b1a1a111-0005-4a11-8a11-000000000005",
+      "name": "Call scikit-learn Scoring Service",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [-640, 300],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "PLACEHOLDER_SCORING_SERVICE_TOKEN_CRED_ID",
+          "name": "Scoring Service Internal Token"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Flatten the scoring service response into one item per account,\n// each carrying churn_probability and top_factors (SHAP-derived).\nconst results = [];\nfor (const item of $input.all()) {\n  const scored = item.json.scored_accounts || [item.json];\n  for (const acct of scored) {\n    results.push({ json: acct });\n  }\n}\nreturn results;"
+      },
+      "id": "b1a1a111-0006-4a11-8a11-000000000006",
+      "name": "Flatten Scored Accounts",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-400, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "id": "c1",
+              "leftValue": "={{ $json.churn_probability }}",
+              "rightValue": 0.6,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "b1a1a111-0007-4a11-8a11-000000000007",
+      "name": "Above Churn Probability Threshold?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [-160, 300]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO churn_intel.score_history (account_id, scored_at, churn_probability, top_factors, explanation_method, model_version, above_probability_threshold, intervention_type) VALUES ($1, CURRENT_DATE, $2, $3, $4, $5, FALSE, 'none') ON CONFLICT (account_id, scored_at) DO NOTHING;",
+        "options": {
+          "queryReplacement": "={{ [ $json.account_id, $json.churn_probability, JSON.stringify($json.top_factors), $json.explanation_method || 'shap', $json.model_version || 'v1' ] }}"
+        }
+      },
+      "id": "b1a1a111-0008-4a11-8a11-000000000008",
+      "name": "Log Score (Below Threshold, No Action)",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [80, 460],
+      "credentials": {
+        "postgres": {
+          "id": "PLACEHOLDER_POSTGRES_CRED_ID",
+          "name": "Atlas Metrics Postgres (churn_intel)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "id": "c2",
+              "leftValue": "={{ $json.arr }}",
+              "rightValue": 18000,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "b1a1a111-0009-4a11-8a11-000000000009",
+      "name": "Above ARR Human-Touch Threshold?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [80, 180]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            { "name": "anthropic-version", "value": "2023-06-01" },
+            { "name": "content-type", "value": "application/json" }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ { \"model\": \"claude-sonnet-4-5\", \"max_tokens\": 800, \"system\": \"You are generating a Customer Success intervention playbook for a Customer Success Manager (CSM) at a B2B SaaS company. You will be given a churn risk score, the top statistical drivers of that risk (SHAP values), a summary of recent support ticket sentiment, and a usage history snapshot. Produce a playbook grounded ONLY in the provided data — do not speculate beyond it. If the provided context is incomplete, say so explicitly rather than inventing detail. Output valid JSON matching the schema provided.\", \"messages\": [ { \"role\": \"user\", \"content\": JSON.stringify({ account_id: $json.account_id, churn_probability: $json.churn_probability, top_shap_factors: $json.top_factors, support_ticket_sentiment: $json.support_ticket_sentiment_summary, usage_history_snapshot: $json.usage_history_snapshot, output_schema: { talking_points: \"list of 3-5 specific, data-grounded talking points\", recommended_reengagement_feature: \"string\", ideal_outreach_channel: \"string, one of: email, phone, in-app message, scheduled call\", sentiment_summary: \"string\", confidence_caveat: \"string or null\" } }) } ] } }}",
+        "options": {
+          "timeout": 15000,
+          "retry": {
+            "retryOnFail": true,
+            "maxTries": 2,
+            "waitBetweenTries": 3000
+          }
+        }
+      },
+      "id": "b1a1a111-0010-4a11-8a11-000000000010",
+      "name": "Claude API - Generate Intervention Playbook",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [340, 80],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "PLACEHOLDER_ANTHROPIC_API_KEY_CRED_ID",
+          "name": "Anthropic API Key"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.close.com/api/v1/task/",
+        "authentication": "predefinedCredentialType",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ { \"assigned_to\": $json.csm_owner_id, \"lead_id\": $json.close_lead_id, \"text\": \"Churn risk intervention for \" + $json.account_id + \" (probability \" + $json.churn_probability + \"). \" + $json.playbook_body, \"due_date\": $now.plus(3, 'days').toFormat('yyyy-MM-dd') } }}",
+        "options": {
+          "timeout": 10000,
+          "retry": {
+            "retryOnFail": true,
+            "maxTries": 3,
+            "waitBetweenTries": 5000
+          }
+        }
+      },
+      "id": "b1a1a111-0012-4a11-8a11-000000000012",
+      "name": "Close CRM - Create Task (HTTP)",
+      "notesInFlow": true,
+      "notes": "Uses a generic HTTP Request node against Close's REST API since Close CRM auth here is a simple API key rather than n8n's built-in CRM node credential type.",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [780, 80],
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "PLACEHOLDER_CLOSE_CRM_API_KEY_CRED_ID",
+          "name": "Close CRM API Key"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.hubapi.com/automation/v3/workflows/PLACEHOLDER_WORKFLOW_ID/enrollments",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "hubspotOAuth2Api",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ { \"email\": $json.primary_contact_email, \"account_id\": $json.account_id, \"sequence_variant\": $json.top_factors[0].feature } }}",
+        "options": {
+          "timeout": 10000,
+          "retry": {
+            "retryOnFail": true,
+            "maxTries": 3,
+            "waitBetweenTries": 5000
+          }
+        }
+      },
+      "id": "b1a1a111-0013-4a11-8a11-000000000013",
+      "name": "HubSpot - Enroll Automated Sequence",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [340, 460],
+      "credentials": {
+        "hubspotOAuth2Api": {
+          "id": "PLACEHOLDER_HUBSPOT_OAUTH_CRED_ID",
+          "name": "HubSpot Private App Token"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO churn_intel.score_history (account_id, scored_at, churn_probability, top_factors, explanation_method, model_version, above_probability_threshold, intervention_type) VALUES ($1, CURRENT_DATE, $2, $3, $4, $5, TRUE, $6) ON CONFLICT (account_id, scored_at) DO UPDATE SET intervention_type = EXCLUDED.intervention_type;",
+        "options": {
+          "queryReplacement": "={{ [ $json.account_id, $json.churn_probability, JSON.stringify($json.top_factors), $json.explanation_method || 'shap', $json.model_version || 'v1', $json.intervention_type ] }}"
+        }
+      },
+      "id": "b1a1a111-0014-4a11-8a11-000000000014",
+      "name": "Log Score + Action to Postgres",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [1000, 260],
+      "credentials": {
+        "postgres": {
+          "id": "PLACEHOLDER_POSTGRES_CRED_ID",
+          "name": "Atlas Metrics Postgres (churn_intel)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO churn_intel.interventions (account_id, score_id, intervention_type, close_task_id, playbook_json) SELECT $1, score_id, $2, $3, $4::jsonb FROM churn_intel.score_history WHERE account_id = $1 AND scored_at = CURRENT_DATE ON CONFLICT (account_id, score_id) DO NOTHING;",
+        "options": {
+          "queryReplacement": "={{ [ $json.account_id, $json.intervention_type, $json.close_task_id || null, JSON.stringify($json.playbook_json || {}) ] }}"
+        }
+      },
+      "id": "b1a1a111-0015-4a11-8a11-000000000015",
+      "name": "Log Intervention Record",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [1000, 80],
+      "credentials": {
+        "postgres": {
+          "id": "PLACEHOLDER_POSTGRES_CRED_ID",
+          "name": "Atlas Metrics Postgres (churn_intel)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "channel": "#cs-automation-log",
+        "text": "={{ 'Nightly churn batch complete: ' + $json.account_id + ' scored ' + $json.churn_probability + ', routed to ' + $json.intervention_type }}",
+        "otherOptions": {}
+      },
+      "id": "b1a1a111-0016-4a11-8a11-000000000016",
+      "name": "Slack - Log Notification",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.2,
+      "position": [1240, 180],
+      "credentials": {
+        "slackApi": {
+          "id": "PLACEHOLDER_SLACK_CRED_ID",
+          "name": "CS Automation Slack Bot"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Nightly Schedule Trigger": {
+      "main": [
+        [
+          { "node": "Pull Active Account Roster", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Pull Active Account Roster": {
+      "main": [
+        [
+          { "node": "Pull Engagement Feature Snapshot", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Pull Engagement Feature Snapshot": {
+      "main": [
+        [
+          { "node": "Batch Accounts (200 per call)", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Batch Accounts (200 per call)": {
+      "main": [
+        [
+          { "node": "Call scikit-learn Scoring Service", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Call scikit-learn Scoring Service": {
+      "main": [
+        [
+          { "node": "Flatten Scored Accounts", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Flatten Scored Accounts": {
+      "main": [
+        [
+          { "node": "Above Churn Probability Threshold?", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Above Churn Probability Threshold?": {
+      "main": [
+        [
+          { "node": "Above ARR Human-Touch Threshold?", "type": "main", "index": 0 }
+        ],
+        [
+          { "node": "Log Score (Below Threshold, No Action)", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Above ARR Human-Touch Threshold?": {
+      "main": [
+        [
+          { "node": "Claude API - Generate Intervention Playbook", "type": "main", "index": 0 }
+        ],
+        [
+          { "node": "HubSpot - Enroll Automated Sequence", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Claude API - Generate Intervention Playbook": {
+      "main": [
+        [
+          { "node": "Close CRM - Create Task (HTTP)", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Close CRM - Create Task (HTTP)": {
+      "main": [
+        [
+          { "node": "Log Intervention Record", "type": "main", "index": 0 },
+          { "node": "Log Score + Action to Postgres", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "HubSpot - Enroll Automated Sequence": {
+      "main": [
+        [
+          { "node": "Log Score + Action to Postgres", "type": "main", "index": 0 }
+        ]
+      ]
+    },
+    "Log Score + Action to Postgres": {
+      "main": [
+        [
+          { "node": "Slack - Log Notification", "type": "main", "index": 0 }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": "PLACEHOLDER_ERROR_WORKFLOW_ID",
+    "timezone": "America/New_York"
+  },
+  "staticData": null,
+  "tags": [
+    { "name": "SAAS-03" },
+    { "name": "churn-prediction" },
+    { "name": "nightly-batch" }
+  ],
+  "triggerCount": 1,
+  "versionId": "b2f3a4c5-0001-4a11-8a11-000000000099",
+  "id": "SAAS-03-churn-prediction-workflow",
+  "meta": {
+    "instanceId": "PLACEHOLDER_N8N_INSTANCE_ID"
+  }
+}

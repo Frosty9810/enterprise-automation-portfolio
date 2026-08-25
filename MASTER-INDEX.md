@@ -79,8 +79,8 @@ Every SOP, workflow doc, and case study authored from this point forward must in
 | 44 | ROI | ⬜ | Stub only — will hold the standalone ROI calculation framework referenced by the template. |
 | 45 | Dashboards | ⬜ | Stub only. |
 | 46 | AI Documentation | ⬜ | Stub only. |
-| 47 | Automation Blueprints | ⬜ | Stub only. |
-| 48 | Enterprise Workflows | ⬜ | Stub only. |
+| 47 | Automation Blueprints | 🟡 | 5 research-to-production AI engineering blueprints completed: agentic retrieval, memory reranking, agent security, edge SLM deployment, and privacy-preserving RAG. |
+| 48 | Enterprise Workflows | 🟡 | IMP-01 delivered: executable seven-department import-company operating system with 137-agent registry, shared knowledge brain, typed execution API, and interactive site. |
 | 49 | Internal Standards | ✅ | Style guide, confidentiality rules, diagram conventions, and the video-walkthrough requirement (Section 8) written. |
 
 ## Root-Level Files

@@ -1,0 +1,41 @@
+name: Validate import company agent OS
+
+on:
+  pull_request:
+    paths:
+      - "48 Enterprise Workflows/IMP-01 Import Company Agent Operating System/**"
+      - ".github/workflows/validate-import-os.yml"
+  push:
+    branches:
+      - main
+    paths:
+      - "48 Enterprise Workflows/IMP-01 Import Company Agent Operating System/**"
+      - ".github/workflows/validate-import-os.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: "48 Enterprise Workflows/IMP-01 Import Company Agent Operating System/site"
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22.13.0"
+          cache: npm
+          cache-dependency-path: "48 Enterprise Workflows/IMP-01 Import Company Agent Operating System/site/package-lock.json"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build site and API
+        run: npm run build
+

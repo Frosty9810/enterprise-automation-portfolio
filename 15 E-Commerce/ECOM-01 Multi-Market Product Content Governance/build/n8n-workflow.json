@@ -1,0 +1,83 @@
+{
+  "name": "ECOM-01 - Multi-Market Product Content Governance",
+  "active": false,
+  "settings": {"executionOrder": "v1"},
+  "nodes": [
+    {
+      "id": "ecom01-01",
+      "name": "Shopify Product Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [-900, 100],
+      "parameters": {"httpMethod": "POST", "path": "ecom-product-content-ready", "responseMode": "onReceived", "options": {"rawBody": true}}
+    },
+    {
+      "id": "ecom01-02",
+      "name": "Normalize and Hash Source",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-650, 100],
+      "parameters": {"jsCode": "const b = $json.body ?? $json; const p = b.product ?? b; const locales = p.target_locales ?? ['es-ES']; return locales.map(locale => ({json: {product_id: String(p.id), revision: Number(p.revision ?? 1), sku: p.sku, locale, title: p.title, description: p.description, material: p.material, dimensions_cm: p.dimensions_cm, warranty_months: Number(p.warranty_months), idempotency_key: `${p.id}:${p.revision ?? 1}:${locale}`}}));"}
+    },
+    {
+      "id": "ecom01-03",
+      "name": "Create Idempotent Locale Job",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [-400, 100],
+      "parameters": {"operation": "executeQuery", "query": "INSERT INTO ecom_localization.locale_jobs (idempotency_key, product_id, source_revision, target_locale, glossary_version, status) VALUES ($1,$2,$3,$4,'v1','pending') ON CONFLICT (idempotency_key) DO NOTHING RETURNING *;", "options": {"queryParams": "={{$json.idempotency_key}},={{$json.product_id}},={{$json.revision}},={{$json.locale}}"}},
+      "credentials": {"postgres": {"id": "PLACEHOLDER_POSTGRES", "name": "Ecommerce Operations DB"}}
+    },
+    {
+      "id": "ecom01-04",
+      "name": "Generate Structured Candidate",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [-150, 100],
+      "parameters": {"method": "POST", "url": "={{$env.LOCALIZATION_SERVICE_URL + '/generate'}}", "sendBody": true, "contentType": "raw", "rawContentType": "application/json", "body": "={{JSON.stringify($('Normalize and Hash Source').item.json)}}", "options": {"timeout": 30000}},
+      "credentials": {"httpHeaderAuth": {"id": "PLACEHOLDER_LOCALIZATION_SERVICE", "name": "Localization Service Token"}}
+    },
+    {
+      "id": "ecom01-05",
+      "name": "Validate Protected Facts",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [100, 100],
+      "parameters": {"jsCode": "const reasons = $json.validation?.reasons ?? []; const action = reasons.length ? 'blocked' : ($json.auto_publish_allowlist === true ? 'auto_publish' : 'human_review'); return [{json: {...$json, action, reasons}}];"}
+    },
+    {
+      "id": "ecom01-06",
+      "name": "Eligible for Automatic Publish",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [350, 100],
+      "parameters": {"conditions": {"options": {"caseSensitive": true, "typeValidation": "strict"}, "conditions": [{"leftValue": "={{$json.action}}", "rightValue": "auto_publish", "operator": {"type": "string", "operation": "equals"}}], "combinator": "and"}, "options": {}}
+    },
+    {
+      "id": "ecom01-07",
+      "name": "Publish Shopify Translation",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [600, 0],
+      "parameters": {"method": "POST", "url": "={{$env.SHOPIFY_GRAPHQL_URL}}", "sendBody": true, "contentType": "raw", "rawContentType": "application/json", "body": "={{JSON.stringify($json.shopify_mutation)}}", "options": {"timeout": 20000}},
+      "credentials": {"httpHeaderAuth": {"id": "PLACEHOLDER_SHOPIFY_PUBLISH", "name": "Shopify Scoped Translation Publisher"}}
+    },
+    {
+      "id": "ecom01-08",
+      "name": "Queue Content Approval",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [600, 220],
+      "parameters": {"operation": "executeQuery", "query": "UPDATE ecom_localization.locale_jobs SET status=$1, updated_at=now() WHERE idempotency_key=$2 RETURNING *;", "options": {"queryParams": "={{$json.action}},={{$json.idempotency_key}}"}},
+      "credentials": {"postgres": {"id": "PLACEHOLDER_POSTGRES", "name": "Ecommerce Operations DB"}}
+    }
+  ],
+  "connections": {
+    "Shopify Product Webhook": {"main": [[{"node": "Normalize and Hash Source", "type": "main", "index": 0}]]},
+    "Normalize and Hash Source": {"main": [[{"node": "Create Idempotent Locale Job", "type": "main", "index": 0}]]},
+    "Create Idempotent Locale Job": {"main": [[{"node": "Generate Structured Candidate", "type": "main", "index": 0}]]},
+    "Generate Structured Candidate": {"main": [[{"node": "Validate Protected Facts", "type": "main", "index": 0}]]},
+    "Validate Protected Facts": {"main": [[{"node": "Eligible for Automatic Publish", "type": "main", "index": 0}]]},
+    "Eligible for Automatic Publish": {"main": [[{"node": "Publish Shopify Translation", "type": "main", "index": 0}], [{"node": "Queue Content Approval", "type": "main", "index": 0}]]}
+  }
+}

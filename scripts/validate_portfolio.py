@@ -45,8 +45,62 @@ def validate_n8n_workflows(errors: list[str]) -> int:
             continue
         if not isinstance(workflow.get("nodes"), list) or not workflow["nodes"]:
             errors.append(f"Workflow has no nodes: {path.relative_to(ROOT)}")
+            continue
         if not isinstance(workflow.get("connections"), dict):
             errors.append(f"Workflow connections must be an object: {path.relative_to(ROOT)}")
+            continue
+
+        names = [node.get("name") for node in workflow["nodes"] if isinstance(node, dict)]
+        if any(not isinstance(name, str) or not name for name in names):
+            errors.append(f"Workflow contains an unnamed node: {path.relative_to(ROOT)}")
+            continue
+        if len(names) != len(set(names)):
+            errors.append(f"Workflow contains duplicate node names: {path.relative_to(ROOT)}")
+            continue
+
+        known = set(names)
+        adjacency: dict[str, set[str]] = {name: set() for name in names}
+        incoming: dict[str, int] = {name: 0 for name in names}
+        for source, channels in workflow["connections"].items():
+            if source not in known:
+                errors.append(
+                    f"Connection source does not exist in {path.relative_to(ROOT)}: {source}"
+                )
+                continue
+            if not isinstance(channels, dict):
+                errors.append(f"Invalid connection channels in {path.relative_to(ROOT)}: {source}")
+                continue
+            for outputs in channels.values():
+                if not isinstance(outputs, list):
+                    continue
+                for branch in outputs:
+                    if not isinstance(branch, list):
+                        continue
+                    for connection in branch:
+                        target = connection.get("node") if isinstance(connection, dict) else None
+                        if target not in known:
+                            errors.append(
+                                f"Connection target does not exist in {path.relative_to(ROOT)}: {target}"
+                            )
+                            continue
+                        if target not in adjacency[source]:
+                            adjacency[source].add(target)
+                            incoming[target] += 1
+
+        roots = [name for name, count in incoming.items() if count == 0]
+        reachable: set[str] = set()
+        pending = list(roots)
+        while pending:
+            current = pending.pop()
+            if current in reachable:
+                continue
+            reachable.add(current)
+            pending.extend(adjacency[current] - reachable)
+        unreachable = known - reachable
+        if unreachable:
+            errors.append(
+                f"Unreachable nodes in {path.relative_to(ROOT)}: {', '.join(sorted(unreachable))}"
+            )
     return len(files)
 
 

@@ -1,0 +1,64 @@
+{
+  "name": "ECOM-02 - Review Intelligence and Response Queue",
+  "active": false,
+  "settings": {"executionOrder": "v1"},
+  "nodes": [
+    {
+      "id": "ecom02-01",
+      "name": "Review Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [-800, 100],
+      "parameters": {"httpMethod": "POST", "path": "ecom-review-created", "responseMode": "onReceived", "options": {}}
+    },
+    {
+      "id": "ecom02-02",
+      "name": "Rules-First Review Router",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [-550, 100],
+      "parameters": {"jsCode": "const r=$json.body??$json; const t=String(r.text??'').toLowerCase(); const safety=['fire','hot','burn','injury','smoke','unsafe'].some(x=>t.includes(x)); const defect=['broken','cracked','missing','damaged','defect'].some(x=>t.includes(x)); let queue='manual_review', priority='normal', sla_hours=24; if(safety){queue='safety_escalation';priority='urgent';sla_hours=1;} else if(Number(r.rating)<=2||defect){queue='product_quality';priority='high';sla_hours=8;} else if(Number(r.rating)>=4&&r.verified_purchase){queue='low_risk_response';sla_hours=48;} return [{json:{...r,queue,priority,sla_hours,auto_publish_allowed:queue==='low_risk_response'}}];"}
+    },
+    {
+      "id": "ecom02-03",
+      "name": "Persist Triage Decision",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [-300, 100],
+      "parameters": {"operation": "executeQuery", "query": "INSERT INTO ecom_reviews.review_events (review_id,event_hash,sku,rating,verified_purchase,market,redacted_text) VALUES ($1,$2,$3,$4,$5,$6,$7) ON CONFLICT (review_id) DO NOTHING RETURNING review_id;", "options": {"queryParams": "={{$json.review_id}},={{$json.review_id}},={{$json.sku}},={{$json.rating}},={{$json.verified_purchase}},={{$json.market}},={{$json.text}}"}},
+      "credentials": {"postgres": {"id": "PLACEHOLDER_POSTGRES", "name": "Ecommerce Operations DB"}}
+    },
+    {
+      "id": "ecom02-04",
+      "name": "Automatic Response Allowed",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [-50, 100],
+      "parameters": {"conditions": {"options": {"caseSensitive": true, "typeValidation": "strict"}, "conditions": [{"leftValue": "={{$('Rules-First Review Router').item.json.auto_publish_allowed}}", "rightValue": true, "operator": {"type": "boolean", "operation": "true", "singleValue": true}}], "combinator": "and"}, "options": {}}
+    },
+    {
+      "id": "ecom02-05",
+      "name": "Publish Bounded Thank You",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [220, 0],
+      "parameters": {"method": "POST", "url": "={{$env.REVIEW_PLATFORM_URL + '/responses'}}", "sendBody": true, "jsonBody": "={\"review_id\":$('Rules-First Review Router').item.json.review_id,\"template\":\"verified_thank_you_v1\"}", "options": {"timeout": 15000}},
+      "credentials": {"httpHeaderAuth": {"id": "PLACEHOLDER_REVIEW_PLATFORM", "name": "Review Platform"}}
+    },
+    {
+      "id": "ecom02-06",
+      "name": "Create Human Review Task",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [220, 220],
+      "parameters": {"method": "POST", "url": "={{$env.OPS_QUEUE_URL + '/tasks'}}", "sendBody": true, "jsonBody": "={\"review_id\":$('Rules-First Review Router').item.json.review_id,\"queue\":$('Rules-First Review Router').item.json.queue,\"priority\":$('Rules-First Review Router').item.json.priority}", "options": {"timeout": 15000}},
+      "credentials": {"httpHeaderAuth": {"id": "PLACEHOLDER_OPS_QUEUE", "name": "Operations Queue"}}
+    }
+  ],
+  "connections": {
+    "Review Webhook": {"main": [[{"node": "Rules-First Review Router", "type": "main", "index": 0}]]},
+    "Rules-First Review Router": {"main": [[{"node": "Persist Triage Decision", "type": "main", "index": 0}]]},
+    "Persist Triage Decision": {"main": [[{"node": "Automatic Response Allowed", "type": "main", "index": 0}]]},
+    "Automatic Response Allowed": {"main": [[{"node": "Publish Bounded Thank You", "type": "main", "index": 0}], [{"node": "Create Human Review Task", "type": "main", "index": 0}]]}
+  }
+}

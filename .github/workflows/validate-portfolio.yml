@@ -25,3 +25,5 @@ jobs:
       - name: Validate executable artifacts
         run: python scripts/validate_portfolio.py
 
+      - name: Run ecommerce policy tests
+        run: python -m unittest discover -s tests -p "test_*.py" -v

@@ -1,6 +1,6 @@
 # Video Index
 
-> Status: **Populated** — 8 SOPs indexed across Real Estate and SaaS. All videos currently pending recording.
+> Status: **Populated** — 12 SOPs indexed across Real Estate, SaaS, and E-Commerce. All videos currently pending recording.
 
 ## Purpose
 
@@ -10,9 +10,9 @@ Single source of truth for the video-walkthrough coverage of this portfolio, per
 
 | Metric | Count |
 |---|---|
-| Total documented automations | 8 |
+| Total documented automations | 12 |
 | Videos recorded | 0 |
-| Videos pending | 8 |
+| Videos pending | 12 |
 | Coverage % | 0% (documentation coverage 100%, recording coverage 0%) |
 
 ## Index
@@ -27,6 +27,10 @@ Single source of truth for the video-walkthrough coverage of this portfolio, per
 | SOP | 14 SaaS | [SAAS-02: Automated Dunning & Failed-Payment Recovery Engine](../14%20SaaS/SAAS-02%20Automated%20Dunning%20and%20Failed-Payment%20Recovery%20Engine/SOP.md) | Pending | — | — |
 | SOP | 14 SaaS | [SAAS-03: Churn Prediction & Proactive CS Intervention System](../14%20SaaS/SAAS-03%20Churn%20Prediction%20and%20Proactive%20CS%20Intervention%20System/SOP.md) | Pending | — | — |
 | SOP | 14 SaaS | [SAAS-04: Usage-Based Billing Reconciliation & RevRec Pipeline](../14%20SaaS/SAAS-04%20Usage-Based%20Billing%20Reconciliation%20and%20RevRec%20Pipeline/SOP.md) | Pending | — | — |
+| SOP | 15 E-Commerce | [ECOM-01: Multi-Market Product Content Governance](../15%20E-Commerce/ECOM-01%20Multi-Market%20Product%20Content%20Governance/SOP.md) | Pending | — | — |
+| SOP | 15 E-Commerce | [ECOM-02: Review Intelligence & Response Queue](../15%20E-Commerce/ECOM-02%20Review%20Intelligence%20and%20Response%20Queue/SOP.md) | Pending | — | — |
+| SOP | 15 E-Commerce | [ECOM-03: Catalog & Inventory Reconciliation](../15%20E-Commerce/ECOM-03%20Catalog%20Inventory%20Reconciliation/SOP.md) | Pending | — | — |
+| SOP | 15 E-Commerce | [ECOM-04: Support Routing & SLA Control](../15%20E-Commerce/ECOM-04%20Support%20Routing%20and%20SLA%20Control/SOP.md) | Pending | — | — |
 
 ## How This File Is Maintained
 

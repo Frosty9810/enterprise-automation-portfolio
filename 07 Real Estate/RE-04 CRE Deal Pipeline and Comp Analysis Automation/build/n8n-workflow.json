@@ -1,0 +1,536 @@
+{
+  "name": "RE-04 - CRE Deal Pipeline and Comp Analysis Automation",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "cre-comp-upload",
+        "responseMode": "responseNode",
+        "options": {
+          "rawBody": true
+        }
+      },
+      "id": "5f6a1e10-1a2b-4c3d-8e4f-000000000001",
+      "name": "Webhook - Comp File Upload",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        -1600,
+        400
+      ],
+      "webhookId": "cre-comp-upload"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "8a3b2c10-0000-0000-0000-000000000001",
+              "leftValue": "={{ $json.headers['content-type'] }}",
+              "rightValue": "text/csv",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "8a3b2c10-1a2b-4c3d-8e4f-000000000002",
+      "name": "If CSV Or PDF",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        -1360,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Parse a CoStar-style CSV comp export into an array of raw comp row objects.\n// Mirrors SOP.md Section 12, Step 2 and the canonical column set in Section 34.\nconst csvText = Buffer.from($input.first().binary.data.data, 'base64').toString('utf-8');\nconst opportunityId = $('Webhook - Comp File Upload').first().json.body.opportunity_id;\n\nconst lines = csvText.trim().split(/\\r?\\n/);\nconst headers = lines[0].split(',').map((h) => h.replace(/\"/g, '').trim());\n\nconst expectedColumns = [\n  'Property Address', 'City', 'State', 'Zip', 'Sale Date', 'Sale Price',\n  'Building SF', 'Price/SF', 'Cap Rate', 'NOI', 'Building Class', 'Occupancy %'\n];\nconst missing = expectedColumns.filter((c) => !headers.includes(c));\nif (missing.length > 0) {\n  throw new Error(`CoStar template drift detected. Missing columns: ${missing.join(', ')}`);\n}\n\nconst rows = lines.slice(1).filter((l) => l.trim().length > 0).map((line) => {\n  const cells = line.split(',').map((c) => c.replace(/\"/g, '').trim());\n  const row = {};\n  headers.forEach((h, i) => { row[h] = cells[i]; });\n  return {\n    address: row['Property Address'],\n    city: row['City'],\n    state: row['State'],\n    zip: row['Zip'],\n    sale_date: row['Sale Date'],\n    sale_price_usd: Number(row['Sale Price'].replace(/[$,]/g, '')),\n    building_sf: Number(row['Building SF']),\n    price_per_sf: Number(row['Price/SF'].replace(/[$,]/g, '')),\n    cap_rate: Number(row['Cap Rate'].replace('%', '')) / 100,\n    noi_annual_usd: Number(row['NOI'].replace(/[$,]/g, '')),\n    building_class: row['Building Class'],\n    occupancy_pct: Number(row['Occupancy %'].replace('%', '')) / 100,\n    source_platform: 'CoStar',\n    opportunity_id: opportunityId\n  };\n});\n\nreturn rows.map((r) => ({ json: r }));"
+      },
+      "id": "8a3b2c10-1a2b-4c3d-8e4f-000000000003",
+      "name": "Code - Parse CoStar CSV",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1120,
+        280
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Extract raw text layer from an uploaded LoopNet PDF (placeholder for a\n// real pdf-parse / textract call). SOP.md Section 12, Step 3.\nconst pdfBinary = $input.first().binary.data.data;\nconst opportunityId = $('Webhook - Comp File Upload').first().json.body.opportunity_id;\n\n// In production this delegates to a PDF text-extraction library or an\n// OCR fallback when the text layer is sparse (SOP.md Section 17, Scenario 1).\nconst extractedText = $input.first().json.extractedText || '[PDF TEXT EXTRACTION PLACEHOLDER]';\n\nreturn [{\n  json: {\n    opportunity_id: opportunityId,\n    raw_pdf_text: extractedText,\n    source_platform: 'LoopNet'\n  }\n}];"
+      },
+      "id": "8a3b2c10-1a2b-4c3d-8e4f-000000000004",
+      "name": "Code - Extract PDF Text",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1120,
+        560
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "anthropic-version",
+              "value": "2023-06-01"
+            },
+            {
+              "name": "content-type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({\n  model: \"claude-sonnet-4-5\",\n  max_tokens: 1024,\n  temperature: 0.15,\n  messages: [{\n    role: \"user\",\n    content: `You are extracting structured comparable-property data from a commercial real estate listing flyer. The source text was extracted from a PDF and may contain OCR artifacts, inconsistent spacing, or table layouts flattened into plain text.\\n\\nExtract the following fields into a JSON object matching this exact schema:\\n- address (string)\\n- transaction_type (\\\"sale\\\" or \\\"lease\\\")\\n- transaction_date (ISO 8601 date string, or null if not present)\\n- price_per_sf (number, USD, or null)\\n- cap_rate (number, decimal form e.g. 0.062 for 6.2%, or null)\\n- noi_annual (number, USD, or null)\\n- building_class (\\\"A\\\", \\\"B\\\", or \\\"C\\\")\\n- tenant_vacancy_notes (string, brief, or null)\\n\\nFor each field, also return a confidence value: \\\"high\\\", \\\"medium\\\", or \\\"low\\\". If a field cannot be determined from the text with reasonable certainty, set its value to null and its confidence to \\\"low\\\" -- do not guess or infer a plausible-sounding value.\\n\\nReturn only the JSON object, no commentary.\\n\\nSOURCE TEXT:\\n---\\n${$json.raw_pdf_text}\\n---`\n  }]\n}) }}",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "8a3b2c10-1a2b-4c3d-8e4f-000000000005",
+      "name": "HTTP - Claude Structured Extraction",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -880,
+        560
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "anthropic_api_credential",
+          "name": "Anthropic API Key"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Normalize both the CSV path and the Claude-extracted PDF path into the\n// single canonical comp schema (SOP.md Section 34, Appendix).\nconst items = $input.all();\nconst normalized = items.map((item) => {\n  const j = item.json;\n  // If this item came through the Claude extraction branch, unwrap its response.\n  if (j.content && Array.isArray(j.content)) {\n    const parsed = JSON.parse(j.content[0].text);\n    return {\n      json: {\n        comp_id: `cmp_${Buffer.from(parsed.address + parsed.transaction_date).toString('hex').slice(0, 12)}`,\n        source_platform: 'LoopNet',\n        address: parsed.address,\n        transaction_type: parsed.transaction_type,\n        transaction_date: parsed.transaction_date,\n        price_per_sf: parsed.price_per_sf,\n        cap_rate: parsed.cap_rate,\n        noi_annual_usd: parsed.noi_annual,\n        building_class: parsed.building_class,\n        tenant_vacancy_notes: parsed.tenant_vacancy_notes,\n        needs_review: Object.values(parsed.confidence || {}).includes('low')\n      }\n    };\n  }\n  // CSV path: already close to canonical shape.\n  return {\n    json: {\n      comp_id: `cmp_${Buffer.from(j.address + j.sale_date).toString('hex').slice(0, 12)}`,\n      source_platform: j.source_platform,\n      address: j.address,\n      transaction_type: 'sale',\n      transaction_date: j.sale_date,\n      price_per_sf: j.price_per_sf,\n      cap_rate: j.cap_rate,\n      noi_annual_usd: j.noi_annual_usd,\n      building_class: j.building_class,\n      tenant_vacancy_notes: null,\n      needs_review: false,\n      opportunity_id: j.opportunity_id\n    }\n  };\n});\nreturn normalized;"
+      },
+      "id": "8a3b2c10-1a2b-4c3d-8e4f-000000000006",
+      "name": "Code - Normalize To Canonical Schema",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -640,
+        420
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Statistical outlier detection: 2-standard-deviation rule against the\n// comp set's median cap rate (SOP.md Section 14).\nconst MIN_COMPS_FOR_STATISTICS = 5;\nconst OUTLIER_THRESHOLD_STD_DEV = 2.0;\n\nconst comps = $input.all().map((i) => i.json);\n\nfunction median(values) {\n  const sorted = [...values].sort((a, b) => a - b);\n  const mid = Math.floor(sorted.length / 2);\n  return sorted.length % 2 !== 0 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2;\n}\n\nfunction stdev(values) {\n  const m = values.reduce((a, b) => a + b, 0) / values.length;\n  const variance = values.reduce((sum, v) => sum + Math.pow(v - m, 2), 0) / (values.length - 1);\n  return Math.sqrt(variance);\n}\n\nif (comps.length < MIN_COMPS_FOR_STATISTICS) {\n  return comps.map((c) => ({ json: { ...c, is_outlier: false, needs_review: true, accepted: false } }));\n}\n\nconst capRates = comps.map((c) => c.cap_rate);\nconst medianCapRate = median(capRates);\nconst capRateStdev = stdev(capRates);\n\nreturn comps.map((c) => {\n  const deviation = Math.abs(c.cap_rate - medianCapRate);\n  const isOutlier = capRateStdev > 0 && deviation > OUTLIER_THRESHOLD_STD_DEV * capRateStdev;\n  return {\n    json: {\n      ...c,\n      is_outlier: isOutlier,\n      accepted: !isOutlier,\n      median_cap_rate: medianCapRate,\n      cap_rate_stdev: capRateStdev\n    }\n  };\n});"
+      },
+      "id": "8a3b2c10-1a2b-4c3d-8e4f-000000000007",
+      "name": "Code - Outlier Statistics",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -400,
+        420
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.anthropic.com/v1/messages",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "anthropic-version",
+              "value": "2023-06-01"
+            },
+            {
+              "name": "content-type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({\n  model: \"claude-sonnet-4-5\",\n  max_tokens: 1536,\n  temperature: 0.4,\n  messages: [{\n    role: \"user\",\n    content: `You are drafting the valuation narrative section of a commercial real estate offering memorandum. This is a DRAFT for broker review -- do not present conclusions as final. Write in the register of an institutional underwriting memo: precise, comp-supported, no marketing language.\\n\\nSubject property:\\n${JSON.stringify($json.subject_property)}\\n\\nAccepted comparable set (outliers already excluded):\\n${JSON.stringify($json.accepted_comps)}\\n\\nComputed valuation range (cap rate derived):\\n${JSON.stringify($json.valuation_range)}\\n\\nWrite a 3-5 paragraph narrative that:\\n1. States the valuation range and the cap rate assumption driving it.\\n2. Explicitly references which comps support the range and why they were judged comparable (asset class, submarket, building class, recency).\\n3. Notes any comps that were excluded as statistical outliers and the reason (cap rate deviation), without asserting they were factually wrong.\\n4. Ends with a one-line flag: \\\"Draft narrative -- pending broker review and approval prior to distribution.\\\"\\n\\nDo not state the valuation range as final or guaranteed.`\n  }]\n}) }}",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "8a3b2c10-1a2b-4c3d-8e4f-000000000008",
+      "name": "HTTP - Claude Narrative Generation",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -160,
+        420
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "anthropic_api_credential",
+          "name": "Anthropic API Key"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO comps (comp_id, source_platform, address, transaction_type, transaction_date, price_per_sf, cap_rate, noi_annual_usd, building_class, tenant_vacancy_notes, needs_review, is_outlier_last_run)\nVALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)\nON CONFLICT (address, transaction_date, transaction_type)\nDO UPDATE SET updated_at = now()\nRETURNING comp_id;",
+        "options": {
+          "queryReplacement": "={{ [$json.comp_id, $json.source_platform, $json.address, $json.transaction_type, $json.transaction_date, $json.price_per_sf, $json.cap_rate, $json.noi_annual_usd, $json.building_class, $json.tenant_vacancy_notes, $json.needs_review, $json.is_outlier] }}"
+        }
+      },
+      "id": "8a3b2c10-1a2b-4c3d-8e4f-000000000009",
+      "name": "Postgres - Upsert Comps",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        100,
+        280
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "re04_postgres_credential",
+          "name": "RE-04 Postgres"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO deal_financial_model (opportunity_id, subject_noi_annual_usd, median_cap_rate, cap_rate_stdev, valuation_range_low, valuation_range_high, valuation_point_estimate, confidence_score, comp_count_used, outlier_count_excluded, draft_narrative)\nVALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)\nON CONFLICT (opportunity_id)\nDO UPDATE SET\n  median_cap_rate = EXCLUDED.median_cap_rate,\n  valuation_range_low = EXCLUDED.valuation_range_low,\n  valuation_range_high = EXCLUDED.valuation_range_high,\n  valuation_point_estimate = EXCLUDED.valuation_point_estimate,\n  confidence_score = EXCLUDED.confidence_score,\n  draft_narrative = EXCLUDED.draft_narrative,\n  updated_at = now()\nRETURNING model_id;",
+        "options": {
+          "queryReplacement": "={{ [$json.opportunity_id, $json.subject_noi_annual_usd, $json.median_cap_rate, $json.cap_rate_stdev, $json.valuation_range_low, $json.valuation_range_high, $json.valuation_point_estimate, $json.confidence_score, $json.comp_count_used, $json.outlier_count_excluded, $json.draft_narrative] }}"
+        }
+      },
+      "id": "8a3b2c10-1a2b-4c3d-8e4f-00000000000a",
+      "name": "Postgres - Upsert Financial Model",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        100,
+        560
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "re04_postgres_credential",
+          "name": "RE-04 Postgres"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "PATCH",
+        "url": "=https://{{ $vars.SALESFORCE_INSTANCE_URL }}/services/data/v59.0/sobjects/Opportunity/{{ $('Webhook - Comp File Upload').first().json.body.opportunity_id }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "salesforceOAuth2Api",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "content-type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({\n  CRE_Valuation_Range_Low__c: $json.valuation_range_low,\n  CRE_Valuation_Range_High__c: $json.valuation_range_high,\n  CRE_Cap_Rate_Assumption__c: $json.median_cap_rate,\n  CRE_Comp_Count__c: $json.comp_count_used,\n  CRE_Comps_Flagged_For_Review__c: $json.outlier_count_excluded,\n  CRE_Valuation_Confidence_Score__c: $json.confidence_score,\n  CRE_OM_Approval_Status__c: \"Pending Broker Review\"\n}) }}",
+        "options": {
+          "timeout": 15000,
+          "retry": {
+            "maxRetries": 5,
+            "waitBetweenTries": 2000
+          }
+        }
+      },
+      "id": "8a3b2c10-1a2b-4c3d-8e4f-00000000000b",
+      "name": "HTTP - Salesforce Update Opportunity",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        360,
+        420
+      ],
+      "credentials": {
+        "salesforceOAuth2Api": {
+          "id": "re04_salesforce_credential",
+          "name": "RE-04 Salesforce OAuth2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "PUT",
+        "url": "=https://{{ $vars.S3_BUCKET_NAME }}.s3.{{ $vars.AWS_REGION }}.amazonaws.com/oms/{{ $('Webhook - Comp File Upload').first().json.body.opportunity_id }}/v1/OM.pdf",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "aws",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "content-type",
+              "value": "application/pdf"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "binaryData",
+        "inputDataFieldName": "om_document",
+        "options": {
+          "timeout": 30000,
+          "retry": {
+            "maxRetries": 3,
+            "waitBetweenTries": 2000
+          }
+        }
+      },
+      "id": "8a3b2c10-1a2b-4c3d-8e4f-00000000000c",
+      "name": "HTTP - S3 Upload OM",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        620,
+        420
+      ],
+      "credentials": {
+        "aws": {
+          "id": "re04_aws_credential",
+          "name": "RE-04 AWS S3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "task",
+        "operation": "create",
+        "additionalFields": {
+          "Subject": "=Review CRE comp set and draft narrative - Opportunity {{ $('Webhook - Comp File Upload').first().json.body.opportunity_id }}",
+          "Status": "Not Started",
+          "Priority": "High",
+          "WhatId": "={{ $('Webhook - Comp File Upload').first().json.body.opportunity_id }}",
+          "OwnerId": "={{ $('Webhook - Comp File Upload').first().json.body.uploaded_by_user_id }}",
+          "Description": "=Broker review required: {{ $json.outlier_count_excluded }} comp(s) flagged as statistical outliers. Valuation range ${{ $json.valuation_range_low }} - ${{ $json.valuation_range_high }}. Draft narrative and OM pending approval."
+        }
+      },
+      "id": "8a3b2c10-1a2b-4c3d-8e4f-00000000000d",
+      "name": "Salesforce - Create Broker Review Task",
+      "type": "n8n-nodes-base.salesforce",
+      "typeVersion": 1,
+      "position": [
+        880,
+        420
+      ],
+      "credentials": {
+        "salesforceOAuth2Api": {
+          "id": "re04_salesforce_credential",
+          "name": "RE-04 Salesforce OAuth2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ { status: \"accepted\", opportunity_id: $('Webhook - Comp File Upload').first().json.body.opportunity_id } }}",
+        "options": {}
+      },
+      "id": "8a3b2c10-1a2b-4c3d-8e4f-00000000000e",
+      "name": "Respond To Webhook",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1140,
+        420
+      ]
+    }
+  ],
+  "connections": {
+    "Webhook - Comp File Upload": {
+      "main": [
+        [
+          {
+            "node": "If CSV Or PDF",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If CSV Or PDF": {
+      "main": [
+        [
+          {
+            "node": "Code - Parse CoStar CSV",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Code - Extract PDF Text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code - Parse CoStar CSV": {
+      "main": [
+        [
+          {
+            "node": "Code - Normalize To Canonical Schema",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code - Extract PDF Text": {
+      "main": [
+        [
+          {
+            "node": "HTTP - Claude Structured Extraction",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP - Claude Structured Extraction": {
+      "main": [
+        [
+          {
+            "node": "Code - Normalize To Canonical Schema",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code - Normalize To Canonical Schema": {
+      "main": [
+        [
+          {
+            "node": "Code - Outlier Statistics",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code - Outlier Statistics": {
+      "main": [
+        [
+          {
+            "node": "HTTP - Claude Narrative Generation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP - Claude Narrative Generation": {
+      "main": [
+        [
+          {
+            "node": "Postgres - Upsert Comps",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Postgres - Upsert Financial Model",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres - Upsert Comps": {
+      "main": [
+        [
+          {
+            "node": "HTTP - Salesforce Update Opportunity",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres - Upsert Financial Model": {
+      "main": [
+        [
+          {
+            "node": "HTTP - Salesforce Update Opportunity",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP - Salesforce Update Opportunity": {
+      "main": [
+        [
+          {
+            "node": "HTTP - S3 Upload OM",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP - S3 Upload OM": {
+      "main": [
+        [
+          {
+            "node": "Salesforce - Create Broker Review Task",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Salesforce - Create Broker Review Task": {
+      "main": [
+        [
+          {
+            "node": "Respond To Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "timezone": "America/Los_Angeles"
+  },
+  "pinData": {},
+  "versionId": "b1c2d3e4-f5a6-4b7c-8d9e-000000000001",
+  "id": "RE04CREDealPipeline",
+  "tags": [
+    {
+      "name": "real-estate"
+    },
+    {
+      "name": "cre"
+    }
+  ]
+}

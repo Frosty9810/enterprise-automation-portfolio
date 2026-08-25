@@ -1,0 +1,677 @@
+{
+  "name": "RE-01: Speed-to-Lead Response & Drip Nurture Engine",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "re01/lead-intake",
+        "responseMode": "onReceived",
+        "responseData": "{\"status\":\"received\"}",
+        "options": {}
+      },
+      "id": "a1b2c3d4-0001-4a1a-9c11-000000000001",
+      "name": "Webhook - Portal Lead Intake",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        240,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Normalize raw portal payload (Zillow, Realtor.com, or brokerage site) into canonical schema.\nconst body = $input.first().json.body || $input.first().json;\nconst headers = $input.first().json.headers || {};\n\nfunction detectSource(payload, headers) {\n  if (payload.leadSource && String(payload.leadSource).toLowerCase().includes('zillow')) return 'zillow';\n  if (payload.source_name && String(payload.source_name).toLowerCase().includes('realtor')) return 'realtor_com';\n  if (payload.formId || payload.website_form) return 'brokerage_site';\n  const path = (headers['x-source-path'] || '').toLowerCase();\n  if (path.includes('zillow')) return 'zillow';\n  if (path.includes('realtor')) return 'realtor_com';\n  return 'brokerage_site';\n}\n\nfunction toE164(rawPhone) {\n  if (!rawPhone) return null;\n  const digits = String(rawPhone).replace(/\\D/g, '');\n  if (digits.length === 10) return `+1${digits}`;\n  if (digits.length === 11 && digits.startsWith('1')) return `+${digits}`;\n  return null;\n}\n\nfunction normalizeEmail(rawEmail) {\n  if (!rawEmail) return null;\n  return String(rawEmail).trim().toLowerCase();\n}\n\nfunction priceBand(price) {\n  if (price === null || price === undefined || Number.isNaN(price)) return 'unknown';\n  if (price < 300000) return 'under_300k';\n  if (price < 500000) return '300k-500k';\n  if (price < 750000) return '500k-750k';\n  return '750k-plus';\n}\n\nfunction parsePrice(raw) {\n  if (raw === null || raw === undefined) return null;\n  const cleaned = String(raw).replace(/[^0-9.]/g, '');\n  if (!cleaned) return null;\n  const value = parseInt(cleaned, 10);\n  return Number.isNaN(value) ? null : value;\n}\n\nconst source = detectSource(body, headers);\n\nlet firstName = null, lastName = null, email = null, phone = null;\nlet propertyAddress = null, listingRef = null, listPrice = null, inquiryNote = null, capturedAt = null;\n\nif (source === 'zillow') {\n  const person = body.person || {};\n  firstName = person.firstName || null;\n  lastName = person.lastName || null;\n  email = normalizeEmail(person.emailAddress);\n  phone = toE164(person.phoneNumber);\n  propertyAddress = body.propertyAddress || null;\n  listingRef = body.listingId || null;\n  listPrice = parsePrice(body.listPrice);\n  inquiryNote = body.message || null;\n  capturedAt = body.createdAt || null;\n} else if (source === 'realtor_com') {\n  const contact = body.contact || {};\n  const listing = body.listing || {};\n  const fullName = contact.full_name || '';\n  const parts = fullName.trim().split(/\\s+/);\n  firstName = parts[0] || null;\n  lastName = parts.slice(1).join(' ') || null;\n  email = normalizeEmail(contact.email);\n  phone = toE164(contact.phone);\n  propertyAddress = [listing.address_line1, listing.address_line2].filter(Boolean).join(', ') || null;\n  listingRef = listing.mls_id || null;\n  listPrice = parsePrice(listing.price);\n  inquiryNote = body.comments || null;\n  capturedAt = body.submitted_at || null;\n} else {\n  // brokerage_site fallback shape\n  firstName = body.firstName || body.first_name || null;\n  lastName = body.lastName || body.last_name || null;\n  email = normalizeEmail(body.email);\n  phone = toE164(body.phone);\n  propertyAddress = body.propertyAddress || body.address || null;\n  listingRef = body.listingRef || body.listing_id || null;\n  listPrice = parsePrice(body.listPrice || body.price);\n  inquiryNote = body.message || body.comments || null;\n  capturedAt = body.createdAt || body.submitted_at || null;\n}\n\nlet timestampInferred = false;\nif (!capturedAt || Number.isNaN(Date.parse(capturedAt))) {\n  capturedAt = new Date().toISOString();\n  timestampInferred = true;\n}\n\n// Form completeness: share of optional fields populated (address, listingRef, price, note)\nconst optionalFields = [propertyAddress, listingRef, listPrice, inquiryNote];\nconst formCompleteness = optionalFields.filter((f) => f !== null && f !== undefined && f !== '').length / optionalFields.length;\n\nconst emailInvalid = email ? !/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email) : false;\nconst phoneInvalid = phone === null && Boolean(\n  (source === 'zillow' && body.person && body.person.phoneNumber) ||\n  (source === 'realtor_com' && body.contact && body.contact.phone) ||\n  (source === 'brokerage_site' && body.phone)\n);\n\nconst hasIdentifier = Boolean((email && !emailInvalid) || (phone && !phoneInvalid));\n\nreturn [{\n  json: {\n    leadId: null,\n    source,\n    sourceLeadType: body.inquiryType || body.lead_type || 'buyer_inquiry',\n    firstName,\n    lastName,\n    email,\n    phone,\n    propertyAddress,\n    listingRef,\n    listPrice,\n    priceBand: priceBand(listPrice),\n    inquiryNote,\n    capturedAt,\n    timestampInferred,\n    formCompleteness,\n    emailInvalid,\n    phoneInvalid,\n    hasIdentifier,\n    dedupeKeyEmail: email,\n    dedupeKeyPhone: phone ? phone.replace(/\\D/g, '') : null\n  }\n}];\n"
+      },
+      "id": "a1b2c3d4-0002-4a1a-9c11-000000000002",
+      "name": "Normalize Payload to Canonical Schema",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        460,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "id": "cond-has-identifier",
+              "leftValue": "={{ $json.hasIdentifier }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "a1b2c3d4-0003-4a1a-9c11-000000000003",
+      "name": "If - Has Valid Identifier",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        680,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT lead_id, email, phone, last_sms_sent_at\nFROM leads\nWHERE (similarity(email, $1) > 0.85 AND $1 IS NOT NULL)\n   OR (similarity(phone, $2) > 0.92 AND $2 IS NOT NULL)\nORDER BY GREATEST(similarity(email, $1), similarity(phone, $2)) DESC\nLIMIT 1;",
+        "options": {
+          "queryReplacement": "={{ [$json.dedupeKeyEmail, $json.dedupeKeyPhone] }}"
+        }
+      },
+      "id": "a1b2c3d4-0004-4a1a-9c11-000000000004",
+      "name": "Postgres - Fuzzy Dedup Lookup",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2,
+      "position": [
+        900,
+        320
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "1",
+          "name": "Postgres - Lead Audit DB"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "insert",
+        "table": {
+          "value": "lead_exceptions",
+          "mode": "list"
+        },
+        "columns": "raw_payload, reason, occurred_at",
+        "options": {},
+        "valuesToSend": {
+          "values": [
+            {
+              "column": "raw_payload",
+              "value": "={{ JSON.stringify($json) }}"
+            },
+            {
+              "column": "reason",
+              "value": "={{ $json.hasIdentifier ? 'unknown_validation_failure' : 'missing_email_and_phone' }}"
+            },
+            {
+              "column": "occurred_at",
+              "value": "={{ $now.toISO() }}"
+            }
+          ]
+        }
+      },
+      "id": "a1b2c3d4-0006-4a1a-9c11-000000000006",
+      "name": "Postgres - Insert Lead Exception",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2,
+      "position": [
+        900,
+        560
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "1",
+          "name": "Postgres - Lead Audit DB"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "={{ $json.lead_id ? \"INSERT INTO lead_inquiries (lead_id, source, inquiry_note, listing_ref, captured_at) VALUES ($1, $2, $3, $4, $5) RETURNING lead_id, true AS was_merge\" : \"INSERT INTO leads (first_name, last_name, email, phone, source, source_lead_type, property_address, listing_ref, list_price, price_band, inquiry_note, captured_at) VALUES ($6, $7, $8, $9, $2, $10, $4, $4, $11, $12, $3, $5) RETURNING lead_id, false AS was_merge\" }}",
+        "options": {
+          "queryReplacement": "={{ [$json.lead_id, $json.source, $json.inquiryNote, $json.propertyAddress, $json.capturedAt, $json.firstName, $json.lastName, $json.email, $json.phone, $json.sourceLeadType, $json.listPrice, $json.priceBand] }}"
+        }
+      },
+      "id": "a1b2c3d4-0008-4a1a-9c11-000000000008",
+      "name": "Postgres - Create or Merge Lead",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2,
+      "position": [
+        1340,
+        320
+      ],
+      "notes": "Branches at the SQL level on whether the upstream fuzzy-dedup lookup (Postgres - Fuzzy Dedup Lookup) returned a lead_id: match -> INSERT into lead_inquiries as a child event; no match -> INSERT into leads as a new record. Mirrors SOP Section 12 Step 3 / Section 13 decision tree nodes A3/A4.",
+      "credentials": {
+        "postgres": {
+          "id": "1",
+          "name": "Postgres - Lead Audit DB"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://api.twilio.com/2010-04-01/Accounts/{{ $credentials.twilioApi.accountSid }}/Messages.json",
+        "method": "POST",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "twilioApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/x-www-form-urlencoded"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "form-urlencoded",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "To",
+              "value": "={{ $json.phone }}"
+            },
+            {
+              "name": "From",
+              "value": "={{ $env.TWILIO_MESSAGING_SERVICE_NUMBER }}"
+            },
+            {
+              "name": "Body",
+              "value": "={{ 'Hi ' + $json.firstName + ', thanks for your interest in ' + ($json.propertyAddress || 'the property') + '! An agent will follow up shortly. Reply STOP to opt out.' }}"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 10000
+        }
+      },
+      "id": "a1b2c3d4-0010-4a1a-9c11-000000000010",
+      "name": "Twilio - Send Instant SMS",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1560,
+        320
+      ],
+      "credentials": {
+        "twilioApi": {
+          "id": "2",
+          "name": "Twilio - Harborview A2P Sender"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://services.leadconnectorhq.com/contacts/",
+        "method": "POST",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "highLevelOAuth2Api",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Version",
+              "value": "2021-07-28"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "json",
+        "jsonBody": "={{ JSON.stringify({\n  locationId: $env.GHL_LOCATION_ID,\n  firstName: $json.firstName,\n  lastName: $json.lastName,\n  email: $json.email,\n  phone: $json.phone,\n  source: $json.source,\n  customFields: [\n    { key: \"lead_score\", field_value: $json.score },\n    { key: \"drip_tier\", field_value: $json.tier },\n    { key: \"price_band\", field_value: $json.priceBand }\n  ]\n}) }}",
+        "options": {
+          "timeout": 10000
+        }
+      },
+      "id": "a1b2c3d4-0011-4a1a-9c11-000000000011",
+      "name": "GHL - Create Contact & Trigger Email",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1780,
+        320
+      ],
+      "credentials": {
+        "highLevelOAuth2Api": {
+          "id": "3",
+          "name": "GoHighLevel - Harborview Sub-Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Compute 0-100 lead score from source weight, price band, and form completeness.\nconst SOURCE_WEIGHTS = { zillow: 30, realtor_com: 25, brokerage_site: 20 };\nconst PRICE_BAND_WEIGHTS = { under_300k: 10, '300k-500k': 15, '500k-750k': 20, '750k-plus': 25 };\n\nconst item = $input.first().json;\n\nlet sourceScore, priceScore, completenessScore, score, tier;\ntry {\n  sourceScore = SOURCE_WEIGHTS[item.source] ?? 15;\n  priceScore = PRICE_BAND_WEIGHTS[item.priceBand] ?? 10;\n  completenessScore = Math.round((item.formCompleteness ?? 0) * 25);\n  score = Math.min(100, sourceScore + priceScore + completenessScore);\n} catch (err) {\n  // Fail-safe: scoring errors never block enrollment (Section 14/21 of SOP).\n  score = 40;\n}\n\nif (score >= 70) tier = 'fast_track';\nelse if (score >= 40) tier = 'standard';\nelse tier = 'long_cycle';\n\n// Unknown source enum never fast-tracks, per data validation rule.\nif (!['zillow', 'realtor_com', 'brokerage_site'].includes(item.source) && tier === 'fast_track') {\n  tier = 'standard';\n}\n\nreturn [{\n  json: {\n    ...item,\n    score,\n    tier\n  }\n}];\n"
+      },
+      "id": "a1b2c3d4-0012-4a1a-9c11-000000000012",
+      "name": "Code - Compute Lead Score",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2000,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose"
+                },
+                "conditions": [
+                  {
+                    "id": "hot-cond",
+                    "leftValue": "={{ $json.tier }}",
+                    "rightValue": "fast_track",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Fast Track"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose"
+                },
+                "conditions": [
+                  {
+                    "id": "standard-cond",
+                    "leftValue": "={{ $json.tier }}",
+                    "rightValue": "standard",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Standard"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "loose"
+                },
+                "conditions": [
+                  {
+                    "id": "longcycle-cond",
+                    "leftValue": "={{ $json.tier }}",
+                    "rightValue": "long_cycle",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Long Cycle"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "Long Cycle"
+        }
+      },
+      "id": "a1b2c3d4-0013-4a1a-9c11-000000000013",
+      "name": "Switch - Route Drip Tier",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [
+        2220,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://services.leadconnectorhq.com/workflows/{{ $json.tier === 'fast_track' ? $env.GHL_WORKFLOW_FAST_TRACK_ID : ($json.tier === 'standard' ? $env.GHL_WORKFLOW_STANDARD_ID : $env.GHL_WORKFLOW_LONG_CYCLE_ID) }}/subscribers",
+        "method": "POST",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "highLevelOAuth2Api",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Version",
+              "value": "2021-07-28"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "json",
+        "jsonBody": "={{ JSON.stringify({ contactId: $json.contactId, eventStartTime: new Date().toISOString() }) }}",
+        "options": {
+          "timeout": 10000
+        }
+      },
+      "id": "a1b2c3d4-0014-4a1a-9c11-000000000014",
+      "name": "GHL - Enroll in Tiered Drip Campaign",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2440,
+        320
+      ],
+      "credentials": {
+        "highLevelOAuth2Api": {
+          "id": "3",
+          "name": "GoHighLevel - Harborview Sub-Account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose"
+          },
+          "conditions": [
+            {
+              "id": "escalate-cond",
+              "leftValue": "={{ $json.score >= 70 && $json.engagementWithin24h === true }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "a1b2c3d4-0015-4a1a-9c11-000000000015",
+      "name": "If - Escalate to Hot Queue",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        2660,
+        320
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://api.close.com/api/v1/lead/",
+        "method": "POST",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "httpBasicAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "json",
+        "jsonBody": "={{ JSON.stringify({\n  name: $json.firstName + ' ' + $json.lastName,\n  contacts: [\n    {\n      name: $json.firstName + ' ' + $json.lastName,\n      emails: $json.email ? [{ email: $json.email, type: 'office' }] : [],\n      phones: $json.phone ? [{ phone: $json.phone, type: 'mobile' }] : []\n    }\n  ],\n  custom: {\n    lead_score: $json.score,\n    lead_source: $json.source,\n    property_address: $json.propertyAddress,\n    assigned_agent: $json.roundRobinAgent\n  }\n}) }}",
+        "options": {
+          "timeout": 10000
+        }
+      },
+      "id": "a1b2c3d4-0016-4a1a-9c11-000000000016",
+      "name": "Close CRM - Create Hot Lead Task",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2880,
+        220
+      ],
+      "credentials": {
+        "httpBasicAuth": {
+          "id": "4",
+          "name": "Close CRM - API Key"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "insert",
+        "table": {
+          "value": "lead_audit_log",
+          "mode": "list"
+        },
+        "columns": "lead_id, event_type, resulting_state, workflow_execution_id, occurred_at",
+        "options": {},
+        "valuesToSend": {
+          "values": [
+            {
+              "column": "lead_id",
+              "value": "={{ $json.lead_id }}"
+            },
+            {
+              "column": "event_type",
+              "value": "={{ $json.score >= 70 && $json.engagementWithin24h === true ? 'escalated' : 'enrolled' }}"
+            },
+            {
+              "column": "resulting_state",
+              "value": "={{ $json.tier }}"
+            },
+            {
+              "column": "workflow_execution_id",
+              "value": "={{ $execution.id }}"
+            },
+            {
+              "column": "occurred_at",
+              "value": "={{ $now.toISO() }}"
+            }
+          ]
+        }
+      },
+      "id": "a1b2c3d4-0017-4a1a-9c11-000000000017",
+      "name": "Postgres - Write Audit Record",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2,
+      "position": [
+        3100,
+        320
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "1",
+          "name": "Postgres - Lead Audit DB"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Webhook - Portal Lead Intake": {
+      "main": [
+        [
+          {
+            "node": "Normalize Payload to Canonical Schema",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize Payload to Canonical Schema": {
+      "main": [
+        [
+          {
+            "node": "If - Has Valid Identifier",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If - Has Valid Identifier": {
+      "main": [
+        [
+          {
+            "node": "Postgres - Fuzzy Dedup Lookup",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Postgres - Insert Lead Exception",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres - Fuzzy Dedup Lookup": {
+      "main": [
+        [
+          {
+            "node": "Postgres - Create or Merge Lead",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Postgres - Create or Merge Lead": {
+      "main": [
+        [
+          {
+            "node": "Twilio - Send Instant SMS",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Twilio - Send Instant SMS": {
+      "main": [
+        [
+          {
+            "node": "GHL - Create Contact & Trigger Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GHL - Create Contact & Trigger Email": {
+      "main": [
+        [
+          {
+            "node": "Code - Compute Lead Score",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code - Compute Lead Score": {
+      "main": [
+        [
+          {
+            "node": "Switch - Route Drip Tier",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch - Route Drip Tier": {
+      "main": [
+        [
+          {
+            "node": "GHL - Enroll in Tiered Drip Campaign",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "GHL - Enroll in Tiered Drip Campaign",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "GHL - Enroll in Tiered Drip Campaign",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GHL - Enroll in Tiered Drip Campaign": {
+      "main": [
+        [
+          {
+            "node": "If - Escalate to Hot Queue",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If - Escalate to Hot Queue": {
+      "main": [
+        [
+          {
+            "node": "Close CRM - Create Hot Lead Task",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Postgres - Write Audit Record",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Close CRM - Create Hot Lead Task": {
+      "main": [
+        [
+          {
+            "node": "Postgres - Write Audit Record",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "id": "re01-speed-to-lead-drip-nurture"
+}

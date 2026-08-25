@@ -1,14 +1,9 @@
 # Recruiting
 
-> Status: **Pending population** — scheduled in a future staged session.
+> Status: **Flagship delivered**
 
-## Purpose
+## [REC-01 — Candidate Consent, Matching & Interview Operations](REC-01%20Candidate%20Consent%20Matching%20and%20Interview%20Operations/SOP.md)
 
-Enterprise automation projects for recruiting and staffing firms.
+A consent-aware candidate pipeline with explainable skill matching, protected-field exclusion, interview state management, and deletion controls. The automation prepares decisions; accountable recruiters make them.
 
-## Contents
-
-This folder is currently a placeholder within the Portfolio directory scaffold. Documents will be added here in a subsequent phase of the build-out, following the staged plan tracked in [`MASTER-INDEX.md`](../MASTER-INDEX.md).
-
----
-*Part of the Enterprise Automation Portfolio. See root [README.md](../README.md) for navigation.*
+[Inspect the runnable build](REC-01%20Candidate%20Consent%20Matching%20and%20Interview%20Operations/build/README.md).

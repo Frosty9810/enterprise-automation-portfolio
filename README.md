@@ -2,15 +2,17 @@
 
 [![Validate portfolio](https://github.com/Frosty9810/enterprise-automation-portfolio/actions/workflows/validate-portfolio.yml/badge.svg)](https://github.com/Frosty9810/enterprise-automation-portfolio/actions/workflows/validate-portfolio.yml)
 
-**A consulting-grade knowledge base of enterprise workflow automation architecture, spanning CRM implementation, AI agent design, systems integration, and business process optimization across 35+ industry verticals.**
+**A consulting-grade knowledge base for enterprise workflow automation architecture, covering CRM implementation, AI-assisted workflows, systems integration, and business process optimization.**
 
 ---
 
 ## 1. Positioning
 
-This repository is structured as an internal consulting knowledge base — the kind of documentation library maintained by an automation practice inside a Big Four or IBM-Consulting-style advisory group. It is **not** tutorial content. Every artifact — SOP, architecture diagram, schema, runbook — is written to the standard expected by a CTO, CIO, VP of Operations, or Enterprise Architect reviewing a delivered engagement.
+This repository is structured as an internal consulting knowledge base. It is **not** a collection of tutorials: completed artifacts are written for technical and operational reviewers evaluating whether a workflow is understandable, testable, and maintainable.
 
-Client identities are fictionalized (e.g., "Meridian Properties," "Atlas SaaS Corp") to protect confidentiality while preserving full technical fidelity: real API shapes, real error-handling logic, real data models.
+The current verified scope is **eight executable reference projects** across Real Estate and SaaS. Each completed project includes an SOP, importable n8n workflow, runnable Python implementation, PostgreSQL schema, and build notes. Other numbered sections form the development roadmap and may still be placeholders; see [`MASTER-INDEX.md`](MASTER-INDEX.md) for the live status.
+
+Deployment contexts and sample organizations are illustrative reference scenarios. They are labeled as such and are not presented as client engagements. The workflows, code, schemas, error-handling patterns, and documentation are the portfolio deliverables being demonstrated.
 
 ## 2. Capability Summary
 
@@ -27,7 +29,7 @@ Client identities are fictionalized (e.g., "Meridian Properties," "Atlas SaaS Co
 
 ## 3. Repository Structure
 
-The repository is organized into 50 numbered sections (`00`–`49`). Sections `00`–`05` establish the firm's methodology and cross-cutting frameworks. Sections `06`–`18` contain industry-specific engagements. Sections `19`–`31` document platform and technology depth. Sections `32`–`40` hold operational libraries (SOPs, diagrams, schemas, security, testing, deployment). Sections `41`–`49` hold templates, client-facing deliverables, case studies, and internal standards.
+The repository is organized into 50 numbered sections (`00`–`49`). Sections `00`–`05` establish the methodology and cross-cutting frameworks. Sections `06`–`18` contain industry-specific reference implementations. Sections `19`–`31` document platform and technology depth. Sections `32`–`40` hold operational libraries (SOPs, diagrams, schemas, security, testing, deployment). Sections `41`–`49` hold templates, deliverable patterns, case studies, and internal standards.
 
 ```
 Portfolio/
@@ -67,7 +69,7 @@ See [`MASTER-INDEX.md`](MASTER-INDEX.md) for the live build-status tracker — t
 
 ## 4. Delivery Methodology
 
-Every engagement documented here follows the same six-phase methodology, detailed in [`01 Consulting Methodology/`](01%20Consulting%20Methodology/README.md):
+Every completed reference project follows the same six-phase methodology, detailed in [`01 Consulting Methodology/`](01%20Consulting%20Methodology/README.md):
 
 1. **Discovery** — stakeholder interviews, current-state process mapping, systems inventory
 2. **Business Analysis** — requirements definition, gap analysis, cost-of-inaction modeling

@@ -23,6 +23,12 @@ The complete [PORT / OS B2B SaaS Playbook](PORT-OS-B2B-SAAS-PLAYBOOK.md) explain
 
 The [Spanish six-week pilot proposal](PORT-OS-PILOT-OFFER-ES.md) is a ready-to-customize commercial template for Bolivian prospects, with scope, exclusions, controls, acceptance criteria, pricing placeholders, and next steps.
 
+The deeper product specifications turn that commercial concept into an implementable platform:
+
+- [CRM Benchmark, Universal Business Architecture, and Portfolio Implementation Plan](PORT-OS-CRM-AND-UNIVERSAL-ARCHITECTURE.md) compares CRM, ERP, work-management, and specialist logistics approaches; defines the canonical business graph, policy/action architecture, personalization engine, adapter patterns, vertical packs, and implementation sequence; and maps existing portfolio builds into reusable PORT / OS services.
+- [Personalized 137-Agent Service Catalog](PORT-OS-AGENT-SERVICE-CATALOG.md) defines the trigger, output, critical checks, and personalization dimensions for every registered agent, plus production acceptance and six-month takeover requirements.
+- [Cost Model, TCO, Unit Economics, and Pricing Guide](PORT-OS-COST-MODEL.md) provides a dated vendor-price snapshot, build and run-cost scenarios, model-routing examples, TCO/ROI formulas, Bolivia and international packaging hypotheses, provider margins, and cost controls.
+
 ## What is real
 
 - A typed registry that asserts exactly **137 agents** at runtime
@@ -96,6 +102,9 @@ The first release does **not** animate agents pretending to work in the backgrou
 IMP-01 Import Company Agent Operating System/
 ├── README.md
 ├── PORT-OS-B2B-SAAS-PLAYBOOK.md
+├── PORT-OS-CRM-AND-UNIVERSAL-ARCHITECTURE.md
+├── PORT-OS-AGENT-SERVICE-CATALOG.md
+├── PORT-OS-COST-MODEL.md
 ├── PORT-OS-PILOT-OFFER-ES.md
 └── site/
     ├── app/

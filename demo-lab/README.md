@@ -1,8 +1,10 @@
 # Local portfolio demo lab
 
+**[Twelve-system collection](TWELVE-SYSTEMS.md):** open **http://127.0.0.1:5680/flagships**. Run twelve distinct business decision engines, inspect their source passports, cross-check all twelve and export acknowledged analysis. Reproduce the acceptance report with `node demo-lab/run-flagships.mjs`. Live providers remain pending.
+
 **[Salesforce RevenueOS](SALESFORCE-REVENUEOPS.md):** open **http://127.0.0.1:5680/salesforce** and run the complete local Lead/Opportunity/Case demonstration. Reproduce its acceptance report with `node demo-lab/run-salesforce.mjs`.
 
-**[Reliability workshop](RELIABILITY-WORKSHOP.md):** open **http://127.0.0.1:5680/workshop** for all 27 project passports and interactive durable handoff recovery. The [project roadmap](PORTFOLIO-ROADMAP.md) ranks twelve new builds and deeper extensions.
+**[Reliability workshop](RELIABILITY-WORKSHOP.md):** open **http://127.0.0.1:5680/workshop** for all 27 project passports and interactive durable handoff recovery. The [project roadmap](PORTFOLIO-ROADMAP.md) ranks remaining integrations for the twelve built local systems.
 
 **27 executable local automation demos:** your 17 cleaned showcase builds plus ten bounded examples: PM-01, EA-01, CON-01, MED-01, LEGAL-01, INS-01, INV-01, CRM-01, AGT-01 and OPS-01. The local runs use bundled synthetic fixtures.
 

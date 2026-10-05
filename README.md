@@ -1,8 +1,10 @@
 # Gabriel Acosta — automation engineering portfolio
 
+**[Twelve executable business systems](demo-lab/TWELVE-SYSTEMS.md)** — open `http://127.0.0.1:5680/flagships` to explore Salesforce operations, recovery, grounded support, routing evaluation, invoice controls, architecture evidence, merge previews, product governance, consent, billing, scheduling and reconstruction. Cross-check all twelve, edit evidence and export reviewed local analysis. These are synthetic local demonstrations; live integration and business-impact acceptance remain separate.
+
 **[RevenueOS — Salesforce control room](demo-lab/SALESFORCE-REVENUEOPS.md)** is the new local flagship: lead assignment, opportunity follow-up and case escalation, with reviewed field changes, revision checks and durable recovery. Open `/salesforce` in the lab and run the full demonstration. The 27 n8n demos remain a separate collection; this flagship performs local SQLite record updates and makes no hosted Salesforce calls.
 
-**New: [Reliability workshop for all 27 automation projects](demo-lab/RELIABILITY-WORKSHOP.md)** — open `/workshop` in the local lab to explore business passports, reviewed handoffs, duplicate events, timeout recovery and source-bound evidence. See the [ranked flagship roadmap](demo-lab/PORTFOLIO-ROADMAP.md) for the next projects to build deeply.
+**[Reliability workshop for all 27 automation projects](demo-lab/RELIABILITY-WORKSHOP.md)** — open `/workshop` in the local lab to explore business passports, reviewed handoffs, duplicate events, timeout recovery and source-bound evidence. See the [integration roadmap](demo-lab/PORTFOLIO-ROADMAP.md) for the remaining depth work.
 
 **Start with the interactive product-governance case:** [walkthrough and engineering boundaries](demo-lab/PRODUCT-GOVERNANCE.md). After local setup, open `http://127.0.0.1:5680/product-governance` to edit a translation, inspect the original Python policy, record a review and export the exact reviewed draft. Synthetic inputs make the workflow shareable without client records.
 
@@ -14,11 +16,11 @@ Business workflows built with n8n, Python and TypeScript, with GoHighLevel relat
 
 ## Recommended presentation route
 
-1. **ECOM-01 — Automation:** inspect protected-fact rules, the n8n wrapper and local CRM handoff.
-2. **ShelfSense (ENG-05) — Human review:** correct the supplied pack size against its source before approval.
-3. **Repair Studio (ENG-09) — Coding evidence:** compare the known bug, Codex-assisted candidate and actual tests.
+1. **Salesforce RevenueOS:** run Lead, Opportunity and Case decisions; inspect reviewed patches and revision holds.
+2. **Incident Recovery:** show an uncertain write reconciled without duplicating the local effect.
+3. **Accounts Payable:** compare invoice/PO/receipt evidence, then demonstrate duplicate or changed-bank holds.
 
-The same route appears on the portfolio landing page. Additional automation case studies follow.
+The twelve-system hub connects these cases; the landing page also retains product governance and the engineering prototypes. Additional automation case studies follow.
 
 **New: [AI Engineering Workbench](demo-lab/AI-WORKBENCH.md)** — open `http://127.0.0.1:5680/engineering` for ClaimProof, Action Ledger and Eval Observatory. The expanded collection now has nine local engineering prototypes, including guided human review, supplier-field correction, recorded repair tests and a measured learning chart. They add editable fixtures, decision traces and exportable results for evidence validation, controlled tool actions and regression comparison. They use deterministic code and make no live-model performance claim.
 

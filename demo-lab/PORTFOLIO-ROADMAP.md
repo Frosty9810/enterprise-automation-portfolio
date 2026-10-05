@@ -1,8 +1,8 @@
 # Portfolio roadmap — October 2026
 
-The strongest direction is revenue operations with trustworthy automation: Salesforce, evidence-based decisions, resilient event processing and human review. Build three deep flagships before expanding the project count.
+The strongest direction is revenue operations with trustworthy automation: Salesforce, evidence-based decisions, resilient event processing and human review. The twelve local systems are now built; prioritize live acceptance for three lead cases.
 
-This is a proposal backlog. [Salesforce RevenueOS now has a complete local demonstration](SALESFORCE-REVENUEOPS.md); its live sandbox acceptance remains pending. None of the proposed new systems is presented as shipped client work. Demonstrations should use synthetic data or an authorized sandbox and clearly label their scope.
+All twelve rows now have executable synthetic demonstrations in the [twelve-system hub](TWELVE-SYSTEMS.md). The table below preserves the broader integration targets; it is not a claim that those targets are complete. Live sandbox acceptance, authentication, real model costs, blind datasets and provider evidence remain pending. None is presented as shipped client work.
 
 | Rank | Project | New or extension | Showable deliverable | Completion evidence |
 |---|---|---|---|---|
@@ -36,4 +36,4 @@ This is a proposal backlog. [Salesforce RevenueOS now has a complete local demon
 
 Every project needs a credible purpose, an explicit input contract, minimized data, separate proposal and execution authority, repeat-event handling, uncertain-outcome handling, bounded retries, independent adverse tests, current source evidence, understandable UI and a reproducible setup. A passing shared contact-handoff test does not prove the underlying domain policy or hosted workflow is production-ready.
 
-The next single project to build deeply is **Salesforce RevenueOps Control Room**. It best combines the user's stated Salesforce background with observable engineering substance.
+The next integration to complete is **Salesforce RevenueOps Control Room** in an authorized sandbox. Then connect one real recovery provider and independently evaluate the support dataset. See [the implemented matrix](TWELVE-SYSTEMS.md) for exact local boundaries.

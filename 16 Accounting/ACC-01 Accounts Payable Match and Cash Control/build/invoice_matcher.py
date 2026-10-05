@@ -2,6 +2,7 @@
 """Deterministic three-way AP matcher with financial-control gates."""
 
 import json
+import sys
 from dataclasses import asdict, dataclass
 from decimal import Decimal
 from hashlib import sha256
@@ -86,6 +87,19 @@ def evaluate(i: Invoice, e: PurchaseEvidence, known_fingerprints: set[str] | Non
 
 
 if __name__ == "__main__":
-    inv = Invoice("v1", "INV-42", "EUR", 10, 20, 40, 240)
-    ev = PurchaseEvidence(10, 20, 10, 40)
-    print(json.dumps(evaluate(inv, ev), indent=2))
+    if "--stdin" in sys.argv:
+        payload = json.load(sys.stdin)
+        print(
+            json.dumps(
+                evaluate(
+                    Invoice(**payload["invoice"]),
+                    PurchaseEvidence(**payload["purchase"]),
+                    set(payload.get("knownFingerprints", [])),
+                ),
+                allow_nan=False,
+            )
+        )
+    else:
+        inv = Invoice("v1", "INV-42", "EUR", 10, 20, 40, 240)
+        ev = PurchaseEvidence(10, 20, 10, 40)
+        print(json.dumps(evaluate(inv, ev), indent=2))

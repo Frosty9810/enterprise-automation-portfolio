@@ -80,6 +80,8 @@ jobs:
         run: node --test demo-lab/*.test.mjs demo-lab/test.mjs
       - name: Execute complete local Salesforce RevenueOps acceptance
         run: node demo-lab/run-salesforce.mjs
+      - name: Cross-check all twelve business systems
+        run: node demo-lab/run-flagships.mjs
       - name: Execute all local n8n demos
         run: |
           node demo-lab/server.mjs > /tmp/portfolio-demo.log 2>&1 &
@@ -99,6 +101,7 @@ jobs:
             reports/n8n-local-executions.json
             reports/original-node-compatibility.json
             reports/salesforce-local-acceptance.json
+            reports/twelve-project-acceptance.json
 
   public-flagship:
     runs-on: ubuntu-latest

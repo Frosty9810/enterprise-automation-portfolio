@@ -10,6 +10,8 @@ import { projects, projectById } from './catalog.mjs';
 import { projectPassports } from './project-passports.mjs';
 import { reliabilityDesk } from './reliability.mjs';
 import { salesforceDesk, salesforceScenarios, salesforceScope } from './salesforce-core.mjs';
+import { flagshipSuite, sourceArtifact } from './flagship-suite.mjs';
+import { crossCheckFlagships } from './flagship-acceptance.mjs';
 import { maintenance, commitments } from './extra-scenarios.mjs';
 import { artifacts, toolProfile } from './showcase.mjs';
 import { evaluateIndustryDepth, openDecisionRegister, depthFixtures } from './industry-depth.mjs';
@@ -132,6 +134,7 @@ export function createLabServer(db = openStore(), executeWorkflow = runN8n) {
   const desk = productDesk(db);
   const reliability = reliabilityDesk(db);
   const salesforce = salesforceDesk(db);
+  const flagships = flagshipSuite(db);
   let busy = false;
   let activity = null;
   let domains = 0;
@@ -140,6 +143,21 @@ export function createLabServer(db = openStore(), executeWorkflow = runN8n) {
     const origin = request.headers.origin;
     if (origin && origin !== 'http://127.0.0.1:5680') return send(response, 403, { error: 'Local origin required' });
     if (request.method === 'GET') {
+      if (url.pathname === '/api/flagships/catalog') return send(response,200,{projects:flagships.catalog(),history:flagships.history()});
+      if (url.pathname.startsWith('/api/flagships/example/')) {
+        try { return send(response,200,flagships.example(url.pathname.split('/').pop())); }
+        catch(error) { return send(response,400,{error:error.message}); }
+      }
+      if (url.pathname.startsWith('/api/flagships/source/')) {
+        try { const parts=url.pathname.split('/'); if(parts.length!==6)throw Error('Invalid artifact');const file=sourceArtifact(parts[4],Number(parts[5]));response.writeHead(200,{'Content-Type':'text/plain; charset=utf-8','X-Content-Type-Options':'nosniff','Cache-Control':'no-store'});return response.end(readFileSync(file.path)); }
+        catch(error) { return send(response,404,{error:error.message}); }
+      }
+      if (url.pathname === '/flagships') {
+        response.writeHead(200, {'Content-Type':'text/html; charset=utf-8','Cache-Control':'no-store','Content-Security-Policy':"default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; object-src 'none'"});return response.end(readFileSync(join(directory,'flagships.html')));
+      }
+      if (['/flagships.css','/flagships-ui.mjs'].includes(url.pathname)) {
+        response.writeHead(200,{'Content-Type':url.pathname.endsWith('.css')?'text/css; charset=utf-8':'text/javascript; charset=utf-8','X-Content-Type-Options':'nosniff','Cache-Control':'no-store'});return response.end(readFileSync(join(directory,url.pathname.slice(1))));
+      }
       if (url.pathname === '/api/salesforce/config') return send(response,200,{scenarios:salesforceScenarios,scope:salesforceScope});
       if (url.pathname === '/api/salesforce/state') {
         try { return send(response,200,salesforce.state(url.searchParams.get('run'))); }
@@ -217,6 +235,13 @@ export function createLabServer(db = openStore(), executeWorkflow = runN8n) {
     if (request.headers['x-demo-client'] !== 'local-showcase') return send(response, 403, { error: 'Demo client header required' });
     try {
       const body = await readBody(request);
+      if (url.pathname === '/api/flagships/evaluate' || url.pathname === '/api/flagships/run-all') {
+        if(domains>=2)return send(response,429,{error:'Local evaluator busy'});domains++;
+        try { return send(response,200,url.pathname.endsWith('run-all')?await crossCheckFlagships(flagships):await flagships.evaluate(body.toolId,body.input)); }
+        finally { domains--; }
+      }
+      if (url.pathname === '/api/flagships/review') return send(response,200,flagships.review(body.receiptId,body.actor));
+      if (url.pathname === '/api/flagships/export') return send(response,200,flagships.export(body.receiptId));
       if (url.pathname === '/api/salesforce/start') return send(response,200,salesforce.start(body.scenario));
       if (url.pathname === '/api/salesforce/full-run') return send(response,200,salesforce.fullRun());
       if (url.pathname === '/api/salesforce/evaluate') return send(response,200,salesforce.submit(body.runId,body.event??salesforce.event(body.runId,body.recordId)));

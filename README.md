@@ -1,5 +1,7 @@
 # Gabriel Acosta — automation engineering portfolio
 
+**[RevenueOS — Salesforce control room](demo-lab/SALESFORCE-REVENUEOPS.md)** is the new local flagship: lead assignment, opportunity follow-up and case escalation, with reviewed field changes, revision checks and durable recovery. Open `/salesforce` in the lab and run the full demonstration. The 27 n8n demos remain a separate collection; this flagship performs local SQLite record updates and makes no hosted Salesforce calls.
+
 **New: [Reliability workshop for all 27 automation projects](demo-lab/RELIABILITY-WORKSHOP.md)** — open `/workshop` in the local lab to explore business passports, reviewed handoffs, duplicate events, timeout recovery and source-bound evidence. See the [ranked flagship roadmap](demo-lab/PORTFOLIO-ROADMAP.md) for the next projects to build deeply.
 
 **Start with the interactive product-governance case:** [walkthrough and engineering boundaries](demo-lab/PRODUCT-GOVERNANCE.md). After local setup, open `http://127.0.0.1:5680/product-governance` to edit a translation, inspect the original Python policy, record a review and export the exact reviewed draft. Synthetic inputs make the workflow shareable without client records.

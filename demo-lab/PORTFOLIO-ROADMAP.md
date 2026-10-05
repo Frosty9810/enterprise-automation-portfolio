@@ -2,7 +2,7 @@
 
 The strongest direction is revenue operations with trustworthy automation: Salesforce, evidence-based decisions, resilient event processing and human review. Build three deep flagships before expanding the project count.
 
-This is a proposal backlog. None of the new systems below is presented as shipped client work. Demonstrations should use synthetic data or an authorized sandbox and clearly label their scope.
+This is a proposal backlog. [Salesforce RevenueOS now has a complete local demonstration](SALESFORCE-REVENUEOPS.md); its live sandbox acceptance remains pending. None of the proposed new systems is presented as shipped client work. Demonstrations should use synthetic data or an authorized sandbox and clearly label their scope.
 
 | Rank | Project | New or extension | Showable deliverable | Completion evidence |
 |---|---|---|---|---|

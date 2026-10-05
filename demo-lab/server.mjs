@@ -9,6 +9,7 @@ import { createHash, randomUUID } from 'node:crypto';
 import { projects, projectById } from './catalog.mjs';
 import { projectPassports } from './project-passports.mjs';
 import { reliabilityDesk } from './reliability.mjs';
+import { salesforceDesk, salesforceScenarios, salesforceScope } from './salesforce-core.mjs';
 import { maintenance, commitments } from './extra-scenarios.mjs';
 import { artifacts, toolProfile } from './showcase.mjs';
 import { evaluateIndustryDepth, openDecisionRegister, depthFixtures } from './industry-depth.mjs';
@@ -130,6 +131,7 @@ export async function runN8n(id, progress = () => {}) {
 export function createLabServer(db = openStore(), executeWorkflow = runN8n) {
   const desk = productDesk(db);
   const reliability = reliabilityDesk(db);
+  const salesforce = salesforceDesk(db);
   let busy = false;
   let activity = null;
   let domains = 0;
@@ -138,6 +140,20 @@ export function createLabServer(db = openStore(), executeWorkflow = runN8n) {
     const origin = request.headers.origin;
     if (origin && origin !== 'http://127.0.0.1:5680') return send(response, 403, { error: 'Local origin required' });
     if (request.method === 'GET') {
+      if (url.pathname === '/api/salesforce/config') return send(response,200,{scenarios:salesforceScenarios,scope:salesforceScope});
+      if (url.pathname === '/api/salesforce/state') {
+        try { return send(response,200,salesforce.state(url.searchParams.get('run'))); }
+        catch(error) { return send(response,400,{error:error.message}); }
+      }
+      if (url.pathname === '/salesforce') {
+        response.writeHead(200, {'Content-Type':'text/html; charset=utf-8','Cache-Control':'no-store',
+          'Content-Security-Policy': "default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; object-src 'none'"});
+        return response.end(readFileSync(join(directory,'salesforce.html')));
+      }
+      if (['/salesforce.css','/salesforce-ui.mjs','/salesforce-core.mjs'].includes(url.pathname)) {
+        response.writeHead(200, {'Content-Type':url.pathname.endsWith('.css')?'text/css; charset=utf-8':'text/javascript; charset=utf-8','X-Content-Type-Options':'nosniff','Cache-Control':'no-store'});
+        return response.end(readFileSync(join(directory,url.pathname.slice(1))));
+      }
       if (url.pathname === '/api/workshop/projects') return send(response,200,{projects:projectPassports()});
       if (url.pathname === '/workshop') {
         response.writeHead(200, {'Content-Type':'text/html; charset=utf-8','Cache-Control':'no-store',
@@ -201,6 +217,14 @@ export function createLabServer(db = openStore(), executeWorkflow = runN8n) {
     if (request.headers['x-demo-client'] !== 'local-showcase') return send(response, 403, { error: 'Demo client header required' });
     try {
       const body = await readBody(request);
+      if (url.pathname === '/api/salesforce/start') return send(response,200,salesforce.start(body.scenario));
+      if (url.pathname === '/api/salesforce/full-run') return send(response,200,salesforce.fullRun());
+      if (url.pathname === '/api/salesforce/evaluate') return send(response,200,salesforce.submit(body.runId,body.event??salesforce.event(body.runId,body.recordId)));
+      if (url.pathname === '/api/salesforce/review') return send(response,200,salesforce.review(body.receiptId,body.profile));
+      if (url.pathname === '/api/salesforce/execute') return send(response,200,salesforce.execute(body.receiptId,body.outcome));
+      if (url.pathname === '/api/salesforce/reconcile') return send(response,200,salesforce.reconcile(body.receiptId));
+      if (url.pathname === '/api/salesforce/change') return send(response,200,salesforce.simulateChange(body.runId,body.recordId));
+      if (url.pathname === '/api/salesforce/export') return send(response,200,salesforce.export(body.receiptId));
       if (url.pathname === '/api/workshop/submit') return send(response,200,reliability.submit(body.projectId,body.event));
       if (url.pathname === '/api/workshop/review') return send(response,200,reliability.review(body.receiptId,body.reviewer));
       if (url.pathname === '/api/workshop/execute') return send(response,200,reliability.execute(body.receiptId,body.outcome));

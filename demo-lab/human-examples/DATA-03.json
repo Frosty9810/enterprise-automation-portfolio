@@ -1,0 +1,47 @@
+{
+  "project": "DATA-03",
+  "title": "Time Lens",
+  "dataOrigin": "Invented example",
+  "input": {
+    "minutes": [
+      20,
+      25,
+      20,
+      30,
+      150
+    ]
+  },
+  "output": {
+    "summary": "Mean 49, median 25 minutes. Compare both when one large day changes the picture.",
+    "rows": [
+      {
+        "label": "Day 1",
+        "value": 20
+      },
+      {
+        "label": "Day 2",
+        "value": 25
+      },
+      {
+        "label": "Day 3",
+        "value": 20
+      },
+      {
+        "label": "Day 4",
+        "value": 30
+      },
+      {
+        "label": "Day 5",
+        "value": 150
+      }
+    ],
+    "unit": "minutes",
+    "details": {
+      "mean": 49,
+      "median": 25,
+      "min": 20,
+      "max": 150,
+      "sampleSize": 5
+    }
+  }
+}

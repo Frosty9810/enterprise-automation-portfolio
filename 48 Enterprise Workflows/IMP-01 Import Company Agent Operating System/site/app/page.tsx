@@ -65,7 +65,11 @@ export default function Home() {
         body: JSON.stringify({ agentId: selectedAgent.id, task }),
       });
       const payload = await response.json();
-      if (!response.ok) throw new Error(payload.error ?? "Agent run failed.");
+      if (!response.ok) {
+        const message = payload && typeof payload === "object" && "error" in payload
+          && typeof payload.error === "string" ? payload.error : "Agent run failed.";
+        throw new Error(message);
+      }
       setResult(payload as RunResult);
     } catch (runError) {
       setError(runError instanceof Error ? runError.message : "Agent run failed.");

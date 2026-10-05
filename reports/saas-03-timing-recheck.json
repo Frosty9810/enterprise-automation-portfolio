@@ -1,0 +1,89 @@
+{
+  "checkedAt": "2026-09-12T15:25:05.523Z",
+  "httpStatus": 200,
+  "runId": "24669245-32ba-4658-82ba-31f57f716788",
+  "projectId": "SAAS-03",
+  "status": "passed",
+  "engine": "n8n",
+  "ghlMode": "local simulator",
+  "contactId": "cb1e2aef-b65d-4c9f-9cf3-4c08c60e9e01",
+  "created": false,
+  "businessEvidence": {
+    "projectId": "SAAS-03",
+    "status": "passed",
+    "fixture": "bundled synthetic demonstration",
+    "source": "14 SaaS/SAAS-03 Churn Prediction and Proactive CS Intervention System/build/churn_model.py",
+    "sourceHash": "c2c8f5b6c2dcfe17d9345504c24162377ef1662a03abd2a9a4ed72b621ed7784",
+    "componentHashes": {},
+    "outputHash": "f7ed0ade252b5c079f6f07622232e600bbba1455e7b20c84255c3425178df7a6",
+    "output": "Generating synthetic training data (500 accounts)...\r\n  Feature matrix shape: (500, 11)\r\n  Churn label rate: 43.40%\r\n\r\nTraining GradientBoostingClassifier...\r\n  Training accuracy: 0.9960\r\n  Feature importances (top 3): [('login_frequency_delta', np.float64(0.2237770974586235)), ('feature_usage_delta', np.float64(0.17777654567048382)), ('support_ticket_sentiment_score', np.float64(0.12057183609691377))]\r\n\r\n======================================================================\r\nLOW RISK EXAMPLE: acct_low_risk_001  (ARR=$24,000, plan_tier=growth)\r\n======================================================================\r\nChurn probability: 0.0391\r\nExplanation method: feature_importance_fallback\r\nNotice: shap package not installed — falling back to a feature-importance-based approximation. Install `shap` for real per-account SHAP explanations (`pip install shap`).\r\nTop contributing factors:\r\n  - login_frequency_delta: importance_score=0.2238, direction=decreases_risk\r\n  - feature_usage_delta: importance_score=0.1778, direction=decreases_risk\r\n  - support_ticket_sentiment_score: importance_score=0.1206, direction=decreases_risk\r\nRouting decision (Sec. 13 decision tree): NO ACTION: below churn-probability threshold\r\nIntervention prompt preview (first 400 chars):\r\n{\r\n  \"account_id\": \"acct_low_risk_001\",\r\n  \"plan_tier\": \"growth\",\r\n  \"arr\": 24000.0,\r\n  \"churn_probability\": 0.0391,\r\n  \"top_factors\": [\r\n    {\r\n      \"feature\": \"login_frequency_delta\",\r\n      \"importance_score\": 0.2238,\r\n      \"direction\": \"decreases_risk\"\r\n    },\r\n    {\r\n      \"feature\": \"feature_usage_delta\",\r\n      \"importance_score\": 0.1778,\r\n      \"direction\": \"decreases_risk\"\r\n    },\r\n    {\r\n      \"feature...\r\n(ANTHROPIC_API_KEY not set or anthropic package unavailable — skipping live playbook call; prompt above is what would be sent.)\r\n\r\n======================================================================\r\nMEDIUM RISK EXAMPLE: acct_medium_risk_002  (ARR=$15,000, plan_tier=growth)\r\n======================================================================\r\nChurn probability: 0.9454\r\nExplanation method: feature_importance_fallback\r\nNotice: shap package not installed — falling back to a feature-importance-based approximation. Install `shap` for real per-account SHAP explanations (`pip install shap`).\r\nTop contributing factors:\r\n  - login_frequency_delta: importance_score=0.2238, direction=increases_risk\r\n  - feature_usage_delta: importance_score=0.1778, direction=increases_risk\r\n  - support_ticket_sentiment_score: importance_score=0.1206, direction=increases_risk\r\nRouting decision (Sec. 13 decision tree): AUTOMATED: HubSpot re-engagement sequence\r\nIntervention prompt preview (first 400 chars):\r\n{\r\n  \"account_id\": \"acct_medium_risk_002\",\r\n  \"plan_tier\": \"growth\",\r\n  \"arr\": 15000.0,\r\n  \"churn_probability\": 0.9454,\r\n  \"top_factors\": [\r\n    {\r\n      \"feature\": \"login_frequency_delta\",\r\n      \"importance_score\": 0.2238,\r\n      \"direction\": \"increases_risk\"\r\n    },\r\n    {\r\n      \"feature\": \"feature_usage_delta\",\r\n      \"importance_score\": 0.1778,\r\n      \"direction\": \"increases_risk\"\r\n    },\r\n    {\r\n      \"feat...\r\n(ANTHROPIC_API_KEY not set or anthropic package unavailable — skipping live playbook call; prompt above is what would be sent.)\r\n\r\n======================================================================\r\nHIGH RISK EXAMPLE: acct_high_risk_003  (ARR=$32,000, plan_tier=enterprise)\r\n======================================================================\r\nChurn probability: 0.9967\r\nExplanation method: feature_importance_fallback\r\nNotice: shap package not installed — falling back to a feature-importance-based approximation. Install `shap` for real per-account SHAP explanations (`pip install shap`).\r\nTop contributing factors:\r\n  - login_frequency_delta: importance_score=0.2238, direction=increases_risk\r\n  - feature_usage_delta: importance_score=0.1778, direction=increases_risk\r\n  - support_ticket_sentiment_score: importance_score=0.1206, direction=increases_risk\r\nRouting decision (Sec. 13 decision tree): HUMAN-TOUCH: Claude playbook -> Close CRM task\r\nIntervention prompt preview (first 400 chars):\r\n{\r\n  \"account_id\": \"acct_high_risk_003\",\r\n  \"plan_tier\": \"enterprise\",\r\n  \"arr\": 32000.0,\r\n  \"churn_probability\": 0.9967,\r\n  \"top_factors\": [\r\n    {\r\n      \"feature\": \"login_frequency_delta\",\r\n      \"importance_score\": 0.2238,\r\n      \"direction\": \"increases_risk\"\r\n    },\r\n    {\r\n      \"feature\": \"feature_usage_delta\",\r\n      \"importance_score\": 0.1778,\r\n      \"direction\": \"increases_risk\"\r\n    },\r\n    {\r\n      \"fe...\r\n(ANTHROPIC_API_KEY not set or anthropic package unavailable — skipping live playbook call; prompt above is what would be sent.)\r\n\r\n======================================================================\r\nDone. Ran end-to-end using only numpy + scikit-learn (+ shap if installed, + anthropic only if ANTHROPIC_API_KEY is set).\r\n======================================================================\r\n",
+    "measuredAt": "2026-09-12T15:25:05.305Z"
+  },
+  "communicationSent": false,
+  "nodeEvidence": [
+    {
+      "name": "Run local showcase",
+      "attempts": 1,
+      "durationMs": 0,
+      "startedAt": "2026-09-12T15:25:02.847Z",
+      "status": "passed"
+    },
+    {
+      "name": "Run original business logic",
+      "attempts": 1,
+      "durationMs": 2473,
+      "startedAt": "2026-09-12T15:25:02.847Z",
+      "status": "passed"
+    },
+    {
+      "name": "Validate contact handoff",
+      "attempts": 1,
+      "durationMs": 24,
+      "startedAt": "2026-09-12T15:25:05.320Z",
+      "status": "passed"
+    },
+    {
+      "name": "GHL simulator - Upsert contact",
+      "attempts": 1,
+      "durationMs": 19,
+      "startedAt": "2026-09-12T15:25:05.344Z",
+      "status": "passed"
+    },
+    {
+      "name": "Verify result and preserve evidence",
+      "attempts": 1,
+      "durationMs": 4,
+      "startedAt": "2026-09-12T15:25:05.364Z",
+      "status": "passed"
+    }
+  ],
+  "executionId": null,
+  "executionMode": "n8n CLI execute",
+  "startedAt": "2026-09-12T15:25:02.844Z",
+  "stoppedAt": "2026-09-12T15:25:05.368Z",
+  "engineDurationMs": 2524,
+  "workflowHash": "f3b6e6fc6a31a8f811de839b0bdd99bd89f93b3351f76dfdf9c4f060fe2018c7",
+  "timeline": [
+    {
+      "stage": "importing",
+      "message": "Importing the project workflow into the local n8n engine.",
+      "at": "2026-09-12T15:24:51.785Z"
+    },
+    {
+      "stage": "executing",
+      "message": "n8n is running the business demo, validating the handoff and calling the local CRM simulator.",
+      "at": "2026-09-12T15:24:59.420Z"
+    },
+    {
+      "stage": "verified",
+      "message": "The final n8n node confirmed the contact email, location and identifier.",
+      "at": "2026-09-12T15:25:05.515Z"
+    },
+    {
+      "stage": "saving",
+      "message": "Writing execution evidence to the local run history.",
+      "at": "2026-09-12T15:25:05.516Z"
+    }
+  ],
+  "wallDurationMs": 13732
+}

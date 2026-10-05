@@ -1,14 +1,8 @@
-# Property Management
+# Property management
 
-> Status: **Pending population** — scheduled in a future staged session.
+Status: partially populated. A new bounded local demo for **PM-01 maintenance triage and access review** is implemented in the [local lab](../demo-lab/README.md). It runs in real n8n with the local GHL simulator. Full flagship scope remains on the roadmap.
 
-## Purpose
-
-Enterprise automation projects for residential and commercial property management operators.
-
-## Contents
-
-This folder is currently a placeholder within the Portfolio directory scaffold. Documents will be added here in a subsequent phase of the build-out, following the staged plan tracked in [`MASTER-INDEX.md`](../MASTER-INDEX.md).
+See the [source and next-build review](../demo-lab/RESEARCH-AND-NEXT-BUILDS.md).
 
 ---
-*Part of the Enterprise Automation Portfolio. See root [README.md](../README.md) for navigation.*
+Part of the [Enterprise Automation Portfolio](../README.md).

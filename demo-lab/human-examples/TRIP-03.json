@@ -1,0 +1,39 @@
+{
+  "project": "TRIP-03",
+  "title": "Your Way There",
+  "dataOrigin": "Invented example",
+  "input": {
+    "times": [
+      15,
+      22,
+      30
+    ],
+    "stairs": [
+      3,
+      0,
+      1
+    ],
+    "penalty": 5
+  },
+  "output": {
+    "summary": "Route 2 has the lowest score under your preferences. Verify real accessibility separately.",
+    "rows": [
+      {
+        "label": "Route 1",
+        "value": 30
+      },
+      {
+        "label": "Route 2",
+        "value": 22
+      },
+      {
+        "label": "Route 3",
+        "value": 35
+      }
+    ],
+    "unit": "weighted points",
+    "details": {
+      "method": "minutes + stair segments × personal penalty"
+    }
+  }
+}

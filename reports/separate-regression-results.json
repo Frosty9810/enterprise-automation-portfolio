@@ -1,0 +1,112 @@
+{
+  "measuredAt": "2026-09-09T17:19:49.464Z",
+  "results": [
+    {
+      "projectId": "CON-01",
+      "passed": 3,
+      "total": 3,
+      "cases": [
+        {
+          "name": "Expiry-day certificate remains current under demo policy",
+          "expected": "release_review",
+          "actual": "release_review",
+          "passed": true
+        },
+        {
+          "name": "Same actor cannot fill both approval roles",
+          "expected": "exception_review",
+          "actual": "exception_review",
+          "passed": true
+        },
+        {
+          "name": "Empty approval history cannot release readiness",
+          "expected": "exception_review",
+          "actual": "exception_review",
+          "passed": true
+        }
+      ],
+      "scope": "Separate regression file, authored after the demos. Not a blind holdout, model benchmark or production validation."
+    },
+    {
+      "projectId": "MED-01",
+      "passed": 3,
+      "total": 3,
+      "cases": [
+        {
+          "name": "Extra document labels cannot satisfy a missing order",
+          "expected": "document_follow_up",
+          "actual": "document_follow_up",
+          "passed": true
+        },
+        {
+          "name": "Prototype-like payer name remains unknown",
+          "expected": "payer_review",
+          "actual": "payer_review",
+          "passed": true
+        },
+        {
+          "name": "Revoked consent wins over a complete checklist",
+          "expected": "consent_review",
+          "actual": "consent_review",
+          "passed": true
+        }
+      ],
+      "scope": "Separate regression file, authored after the demos. Not a blind holdout, model benchmark or production validation."
+    },
+    {
+      "projectId": "LEGAL-01",
+      "passed": 3,
+      "total": 3,
+      "cases": [
+        {
+          "name": "Exact match wins when another party is ambiguous",
+          "expected": "conflict_review",
+          "actual": "conflict_review",
+          "passed": true
+        },
+        {
+          "name": "Full-width normalized entity still conflicts",
+          "expected": "conflict_review",
+          "actual": "conflict_review",
+          "passed": true
+        },
+        {
+          "name": "Empty adverse list does not grant creation authority",
+          "expected": false,
+          "actual": false,
+          "passed": true
+        }
+      ],
+      "scope": "Separate regression file, authored after the demos. Not a blind holdout, model benchmark or production validation."
+    },
+    {
+      "projectId": "INS-01",
+      "passed": 3,
+      "total": 3,
+      "cases": [
+        {
+          "name": "Policy start date is inside the demo window",
+          "expected": "adjuster_intake",
+          "actual": "adjuster_intake",
+          "passed": true
+        },
+        {
+          "name": "Multiple exception flags do not decide coverage",
+          "expected": "not_made",
+          "actual": "not_made",
+          "passed": true
+        },
+        {
+          "name": "Leap-day date is accepted in a leap year",
+          "expected": "adjuster_intake",
+          "actual": "adjuster_intake",
+          "passed": true
+        }
+      ],
+      "scope": "Separate regression file, authored after the demos. Not a blind holdout, model benchmark or production validation."
+    }
+  ],
+  "source": "demo-lab/regression-cases.mjs",
+  "sourceHash": "145fd3c1f938edf3f2ff93afcd081c20752adf7a04dd29da8393ac38be761a9a",
+  "domainSourceHash": "5fa75a9c4cb1e759d14f4d121a8a9210c4dfe1a26094e3a965de30f5c1a18fe0"
+}

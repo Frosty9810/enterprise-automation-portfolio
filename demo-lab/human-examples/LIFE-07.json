@@ -1,0 +1,28 @@
+{
+  "project": "LIFE-07",
+  "title": "Second Life",
+  "dataOrigin": "Invented example",
+  "input": {
+    "repair": 40,
+    "replacement": 120,
+    "months": 12
+  },
+  "output": {
+    "summary": "Compare the entered quotes and your own expected useful life. This does not assess safety or repairability.",
+    "rows": [
+      {
+        "label": "Repair",
+        "value": 40
+      },
+      {
+        "label": "Replacement",
+        "value": 120
+      }
+    ],
+    "unit": "cost units",
+    "details": {
+      "repairPerAddedMonth": 3.33,
+      "difference": 80
+    }
+  }
+}

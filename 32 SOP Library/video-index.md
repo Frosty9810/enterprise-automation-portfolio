@@ -1,6 +1,6 @@
 # Video Index
 
-> Status: **Populated** — 16 SOPs indexed across seven industry sections. All videos currently pending recording.
+> Status: **Populated** — 26 SOPs indexed across original industry builds and local project builds. All videos currently pending recording.
 
 ## Purpose
 
@@ -10,10 +10,10 @@ Single source of truth for the video-walkthrough coverage of this portfolio, per
 
 | Metric | Count |
 |---|---|
-| Total documented automations | 16 |
+| Total indexed SOPs | 26 |
 | Videos recorded | 0 |
-| Videos pending | 16 |
-| Coverage % | 0% (documentation coverage 100%, recording coverage 0%) |
+| Videos pending | 26 |
+| Coverage % | 0% recorded for indexed SOPs; broader workflow-document coverage still requires reconciliation |
 
 ## Index
 
@@ -36,6 +36,17 @@ Single source of truth for the video-walkthrough coverage of this portfolio, per
 | SOP | 16 Accounting | [ACC-01: Accounts Payable Match & Cash Control](../16%20Accounting/ACC-01%20Accounts%20Payable%20Match%20and%20Cash%20Control/SOP.md) | Pending | — | — |
 | SOP | 17 Customer Support | [CS-01: Support Quality & Knowledge Feedback Loop](../17%20Customer%20Support/CS-01%20Support%20Quality%20and%20Knowledge%20Feedback%20Loop/SOP.md) | Pending | — | — |
 
+| SOP | Local project builds | [PM-01 bounded build walkthrough](../demo-lab/project-builds/PM-01/SOP.md) | Pending | — | — |
+| SOP | Local project builds | [EA-01 bounded build walkthrough](../demo-lab/project-builds/EA-01/SOP.md) | Pending | — | — |
+| SOP | Local project builds | [CON-01 bounded build walkthrough](../demo-lab/project-builds/CON-01/SOP.md) | Pending | — | — |
+| SOP | Local project builds | [MED-01 bounded build walkthrough](../demo-lab/project-builds/MED-01/SOP.md) | Pending | — | — |
+| SOP | Local project builds | [LEGAL-01 bounded build walkthrough](../demo-lab/project-builds/LEGAL-01/SOP.md) | Pending | — | — |
+| SOP | Local project builds | [INS-01 bounded build walkthrough](../demo-lab/project-builds/INS-01/SOP.md) | Pending | — | — |
+| SOP | Local project builds | [INV-01 bounded build walkthrough](../demo-lab/project-builds/INV-01/SOP.md) | Pending | — | — |
+| SOP | Local project builds | [CRM-01 bounded build walkthrough](../demo-lab/project-builds/CRM-01/SOP.md) | Pending | — | — |
+| SOP | Local project builds | [AGT-01 bounded build walkthrough](../demo-lab/project-builds/AGT-01/SOP.md) | Pending | — | — |
+| SOP | Local project builds | [OPS-01 bounded build walkthrough](../demo-lab/project-builds/OPS-01/SOP.md) | Pending | — | — |
+
 ## How This File Is Maintained
 
 1. When a new SOP, workflow doc, or case study is authored, add a row here immediately — even if the video is not yet recorded (`Video Status: Pending`).
@@ -44,3 +55,35 @@ Single source of truth for the video-walkthrough coverage of this portfolio, per
 
 ---
 *Part of the Enterprise Automation Portfolio. See root [README.md](../README.md) for navigation.*
+
+## September 2026 showcase recording queue
+
+These 17 additional package walkthroughs are pending; none is a recorded video or a new full business automation. The original 16-SOP coverage table above remains scoped to those SOPs.
+
+| Package | Script | Recording |
+|---|---|---|
+| RE-01 | [Walkthrough script](../showcase/RE-01/README.md#four-minute-walkthrough-script) | Pending |
+| RE-02 | [Walkthrough script](../showcase/RE-02/README.md#four-minute-walkthrough-script) | Pending |
+| RE-03 | [Walkthrough script](../showcase/RE-03/README.md#four-minute-walkthrough-script) | Pending |
+| RE-04 | [Walkthrough script](../showcase/RE-04/README.md#four-minute-walkthrough-script) | Pending |
+| REC-01 | [Walkthrough script](../showcase/REC-01/README.md#four-minute-walkthrough-script) | Pending |
+| MKT-01 | [Walkthrough script](../showcase/MKT-01/README.md#four-minute-walkthrough-script) | Pending |
+| SAAS-01 | [Walkthrough script](../showcase/SAAS-01/README.md#four-minute-walkthrough-script) | Pending |
+| SAAS-02 | [Walkthrough script](../showcase/SAAS-02/README.md#four-minute-walkthrough-script) | Pending |
+| SAAS-03 | [Walkthrough script](../showcase/SAAS-03/README.md#four-minute-walkthrough-script) | Pending |
+| SAAS-04 | [Walkthrough script](../showcase/SAAS-04/README.md#four-minute-walkthrough-script) | Pending |
+| ECOM-01 | [Walkthrough script](../showcase/ECOM-01/README.md#four-minute-walkthrough-script) | Pending |
+| ECOM-02 | [Walkthrough script](../showcase/ECOM-02/README.md#four-minute-walkthrough-script) | Pending |
+| ECOM-03 | [Walkthrough script](../showcase/ECOM-03/README.md#four-minute-walkthrough-script) | Pending |
+| ECOM-04 | [Walkthrough script](../showcase/ECOM-04/README.md#four-minute-walkthrough-script) | Pending |
+| ACC-01 | [Walkthrough script](../showcase/ACC-01/README.md#four-minute-walkthrough-script) | Pending |
+| CS-01 | [Walkthrough script](../showcase/CS-01/README.md#four-minute-walkthrough-script) | Pending |
+| IMP-01 | [Walkthrough script](../showcase/IMP-01/README.md#four-minute-walkthrough-script) | Pending |
+
+## Local lab recording
+
+| Package | Script | Recording |
+|---|---|---|
+| 19-project local lab | [Local run and replay script](../demo-lab/README.md#recording-script) | Pending |
+| PM-01 local addition | [Maintenance triage](../demo-lab/README.md#new-demo-examples) | Pending |
+| EA-01 local addition | [Commitment review](../demo-lab/README.md#new-demo-examples) | Pending |

@@ -347,7 +347,7 @@ class SubscriptionContract:
     cost_center: str
     contract_start: date
     contract_end: date
-    seat_fee_total_usd: Decimal        # total contracted seat/platform fee for the period
+    seat_fee_total_usd: Decimal  # total contracted seat/platform fee for the period
     included_api_calls: int
     overage_rate_per_unit_usd: Decimal
 
@@ -1040,3 +1040,8 @@ These figures are illustrative, computed from the stated assumptions for portfol
 
 ---
 *Part of the Enterprise Automation Portfolio. See [`14 SaaS`](../README.md) for navigation.*
+
+
+## Engineering amendment — 8 September 2026
+
+Revision 2026-09-08: Python artifacts were linted/formatted and local demos rerun. UTC defaults and usage timestamp normalization were repaired where applicable. Original n8n/API/database execution remains a separate acceptance gate; prior narrative production claims are not verified by local checks. See the root portfolio audit and the project showcase package for current evidence.

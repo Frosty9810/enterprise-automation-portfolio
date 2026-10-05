@@ -1,0 +1,22 @@
+{
+  "kind": "manual-configuration-blueprint-not-ghl-snapshot",
+  "projectId": "RE-02",
+  "relationshipRole": "Transaction stakeholder",
+  "pipelineName": "Portfolio / RE-02",
+  "stages": [
+    "Intake",
+    "Documents due",
+    "Review",
+    "Complete"
+  ],
+  "messagingEnabled": false,
+  "duplicateMatch": "email",
+  "contactFields": [
+    "firstName",
+    "lastName",
+    "email",
+    "source"
+  ],
+  "liveAcceptance": "pending",
+  "systemOfRecord": "original project system"
+}

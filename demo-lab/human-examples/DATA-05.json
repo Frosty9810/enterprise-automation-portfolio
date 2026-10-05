@@ -1,0 +1,50 @@
+{
+  "project": "DATA-05",
+  "title": "Small Steps",
+  "dataOrigin": "Invented example",
+  "input": {
+    "minutes": [
+      10,
+      0,
+      20,
+      15,
+      25,
+      10
+    ]
+  },
+  "output": {
+    "summary": "A descriptive comparison of two parts of your sample. A quiet day is not a failure, and this does not explain causes.",
+    "rows": [
+      {
+        "label": "Observation 1",
+        "value": 10
+      },
+      {
+        "label": "Observation 2",
+        "value": 0
+      },
+      {
+        "label": "Observation 3",
+        "value": 20
+      },
+      {
+        "label": "Observation 4",
+        "value": 15
+      },
+      {
+        "label": "Observation 5",
+        "value": 25
+      },
+      {
+        "label": "Observation 6",
+        "value": 10
+      }
+    ],
+    "unit": "minutes",
+    "details": {
+      "firstMean": 10,
+      "secondMean": 16.67,
+      "difference": 6.67
+    }
+  }
+}

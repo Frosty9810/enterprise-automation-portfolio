@@ -1,0 +1,22 @@
+{
+  "kind": "manual-configuration-blueprint-not-ghl-snapshot",
+  "projectId": "SAAS-03",
+  "relationshipRole": "Customer success contact",
+  "pipelineName": "Portfolio / SAAS-03",
+  "stages": [
+    "Monitoring",
+    "At risk",
+    "CS review",
+    "Resolved"
+  ],
+  "messagingEnabled": false,
+  "duplicateMatch": "email",
+  "contactFields": [
+    "firstName",
+    "lastName",
+    "email",
+    "source"
+  ],
+  "liveAcceptance": "pending",
+  "systemOfRecord": "original project system"
+}

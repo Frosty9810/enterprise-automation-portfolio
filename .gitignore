@@ -10,4 +10,6 @@ venv/
 Thumbs.db
 .idea/
 .vscode/
-
+node_modules/
+demo-lab/.runtime/
+demo-lab/.n8n/

@@ -1,0 +1,71 @@
+{
+  "name": "RE-04 | GHL handoff preview | no external writes",
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "nodes": [
+    {
+      "id": "manual",
+      "name": "Run synthetic demo",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "fixture",
+      "name": "Synthetic fixture and trusted config",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        260,
+        0
+      ],
+      "parameters": {
+        "jsCode": "return [{json: {event: {\"projectId\": \"RE-04\", \"eventId\": \"demo-001\", \"storageConsent\": true, \"contact\": {\"firstName\": \"Demo\", \"lastName\": \"Reviewer\", \"email\": \"reviewer@example.com\"}}, config: {\"projectId\": \"RE-04\", \"locationId\": \"DEMO_LOCATION\"}}}];"
+      }
+    },
+    {
+      "id": "plan",
+      "name": "Validate and preview GHL request",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        520,
+        0
+      ],
+      "parameters": {
+        "jsCode": "/** Pure contact handoff planner, also embedded verbatim in n8n exports.\n * Configuration belongs to the workflow operator; event data cannot select a tenant.\n * This module performs no I/O and grants no authority to contact a person.\n */\nfunction planContact(event, config) {\n  const fail = (reason) => ({ status: 'rejected', reason });\n  if (!event || typeof event !== 'object' || Array.isArray(event)) return fail('invalid_event');\n  if (!config || typeof config.locationId !== 'string' || !/^[A-Za-z0-9_-]{1,80}$/.test(config.locationId)) return fail('invalid_location');\n  if (typeof config.projectId !== 'string' || !/^[A-Z]+-[0-9]{2}$/.test(config.projectId)) return fail('invalid_project');\n  if (event.projectId !== config.projectId) return fail('project_mismatch');\n  if (event.locationId !== undefined && event.locationId !== config.locationId) return fail('tenant_mismatch');\n  if (typeof event.eventId !== 'string' || !/^[A-Za-z0-9_-]{1,128}$/.test(event.eventId)) return fail('invalid_event_id');\n  // Contact storage consent is distinct from permission to send marketing.\n  if (event.storageConsent !== true) return fail('storage_consent_required');\n  if (event.sensitive === true) return fail('sensitive_record');\n  const contact = event.contact;\n  if (!contact || typeof contact !== 'object' || Array.isArray(contact)) return fail('invalid_contact');\n  const email = typeof contact.email === 'string' ? contact.email.trim().toLowerCase() : '';\n  if (email.length > 254 || !/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email)) return fail('invalid_email');\n  const body = { locationId: config.locationId, email, source: `portfolio:${config.projectId}` };\n  for (const key of ['firstName', 'lastName']) {\n    if (contact[key] !== undefined) {\n      if (typeof contact[key] !== 'string' || contact[key].length > 100) return fail('invalid_name');\n      body[key] = contact[key].trim();\n    }\n  }\n  // Deliberately omit tags, DND, phone, free text and custom fields: an upsert\n  // must not replace tags, loosen existing opt-outs or copy sensitive records.\n  return {\n    status: 'ready', projectId: config.projectId,\n    eventKey: `${config.locationId}:${config.projectId}:${event.eventId}`,\n    request: { method: 'POST', url: 'https://services.leadconnectorhq.com/contacts/upsert',\n      headers: { Version: 'v3', 'Content-Type': 'application/json' }, body },\n    communicationAllowed: false,\n  };\n}\n\nreturn $input.all().map(({json}) => ({json: planContact(json.event, json.config)}));\n"
+      }
+    }
+  ],
+  "connections": {
+    "Run synthetic demo": {
+      "main": [
+        [
+          {
+            "node": "Synthetic fixture and trusted config",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Synthetic fixture and trusted config": {
+      "main": [
+        [
+          {
+            "node": "Validate and preview GHL request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {}
+}

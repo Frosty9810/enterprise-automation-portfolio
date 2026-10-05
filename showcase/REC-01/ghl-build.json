@@ -1,0 +1,22 @@
+{
+  "kind": "manual-configuration-blueprint-not-ghl-snapshot",
+  "projectId": "REC-01",
+  "relationshipRole": "Recruiter client contact",
+  "pipelineName": "Portfolio / REC-01",
+  "stages": [
+    "Intake",
+    "Matching",
+    "Interview review",
+    "Closed"
+  ],
+  "messagingEnabled": false,
+  "duplicateMatch": "email",
+  "contactFields": [
+    "firstName",
+    "lastName",
+    "email",
+    "source"
+  ],
+  "liveAcceptance": "pending",
+  "systemOfRecord": "original project system"
+}

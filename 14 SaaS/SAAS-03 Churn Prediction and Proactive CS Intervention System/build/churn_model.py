@@ -120,7 +120,9 @@ def generate_synthetic_training_data(
     payment_failure_flag = rng.binomial(n=1, p=0.08, size=n_accounts).astype(float)
     contract_days_to_renewal = rng.integers(low=1, high=365, size=n_accounts).astype(float)
     account_tenure_days = rng.integers(low=15, high=1800, size=n_accounts).astype(float)
-    plan_tier_encoded = rng.integers(low=0, high=3, size=n_accounts).astype(float)  # 0=starter,1=growth,2=enterprise
+    plan_tier_encoded = rng.integers(low=0, high=3, size=n_accounts).astype(
+        float
+    )  # 0=starter,1=growth,2=enterprise
 
     X = np.column_stack(
         [
@@ -156,7 +158,9 @@ def generate_synthetic_training_data(
     )
     churn_probability_true = 1.0 / (1.0 + np.exp(-logit))
     noise = rng.normal(loc=0.0, scale=0.08, size=n_accounts)
-    y = (rng.uniform(size=n_accounts) < np.clip(churn_probability_true + noise, 0.0, 1.0)).astype(int)
+    y = (rng.uniform(size=n_accounts) < np.clip(churn_probability_true + noise, 0.0, 1.0)).astype(
+        int
+    )
 
     return X, y
 
@@ -286,7 +290,7 @@ def score_account(model: GradientBoostingClassifier, feature_vector: np.ndarray)
         )
         top_factors = _fallback_feature_importance_factors(model, feature_vector)
         explanation_method = "feature_importance_fallback"
-    except Exception as exc:  # pragma: no cover - defensive: never crash scoring
+    except Exception as exc:  # noqa: BLE001 - optional SHAP backend failure must label its fallback
         notice = f"SHAP explanation failed unexpectedly ({exc!r}); using fallback."
         top_factors = _fallback_feature_importance_factors(model, feature_vector)
         explanation_method = "feature_importance_fallback"
@@ -364,7 +368,9 @@ def build_intervention_prompt(account: dict[str, Any], score_result: dict[str, A
     return json.dumps(context, indent=2)
 
 
-def generate_playbook_via_claude(account: dict[str, Any], score_result: dict[str, Any]) -> dict[str, Any] | None:
+def generate_playbook_via_claude(
+    account: dict[str, Any], score_result: dict[str, Any]
+) -> dict[str, Any] | None:
     """Optionally call the real Anthropic Messages API to generate a playbook.
 
     Gated behind the `ANTHROPIC_API_KEY` environment variable. Returns None
@@ -392,11 +398,14 @@ def generate_playbook_via_claude(account: dict[str, Any], score_result: dict[str
             model="claude-sonnet-4-5",
             max_tokens=800,
             system=PLAYBOOK_SYSTEM_PROMPT,
-            messages=[{"role": "user", "content": build_intervention_prompt(account, score_result)}],
+            messages=[
+                {"role": "user", "content": build_intervention_prompt(account, score_result)}
+            ],
         )
         text = response.content[0].text
         return json.loads(text)
-    except Exception:
+    except Exception as exc:  # noqa: BLE001 - optional provider failure cannot invalidate deterministic scoring
+        print(f"Optional playbook unavailable: {type(exc).__name__}")
         return None
 
 
@@ -405,13 +414,17 @@ def generate_playbook_via_claude(account: dict[str, Any], score_result: dict[str
 # ---------------------------------------------------------------------------
 
 
-def _print_account_report(label: str, account: dict[str, Any], model: GradientBoostingClassifier) -> None:
+def _print_account_report(
+    label: str, account: dict[str, Any], model: GradientBoostingClassifier
+) -> None:
     feature_vector = np.array([account[col] for col in FEATURE_COLUMNS], dtype=float)
     score_result = score_account(model, feature_vector)
     prompt = build_intervention_prompt(account, score_result)
 
     print(f"\n{'=' * 70}")
-    print(f"{label}: {account['account_id']}  (ARR=${account['arr']:,.0f}, plan_tier={account['plan_tier']})")
+    print(
+        f"{label}: {account['account_id']}  (ARR=${account['arr']:,.0f}, plan_tier={account['plan_tier']})"
+    )
     print(f"{'=' * 70}")
     print(f"Churn probability: {score_result['churn_probability']:.4f}")
     print(f"Explanation method: {score_result['explanation_method']}")
@@ -420,7 +433,9 @@ def _print_account_report(label: str, account: dict[str, Any], model: GradientBo
     print("Top contributing factors:")
     for factor in score_result["top_factors"]:
         magnitude_key = "shap_value" if "shap_value" in factor else "importance_score"
-        print(f"  - {factor['feature']}: {magnitude_key}={factor[magnitude_key]}, direction={factor['direction']}")
+        print(
+            f"  - {factor['feature']}: {magnitude_key}={factor[magnitude_key]}, direction={factor['direction']}"
+        )
 
     above_prob_threshold = score_result["churn_probability"] > CHURN_PROBABILITY_THRESHOLD
     above_arr_threshold = account["arr"] > HUMAN_TOUCH_ARR_THRESHOLD
@@ -440,8 +455,10 @@ def _print_account_report(label: str, account: dict[str, Any], model: GradientBo
         print("Live Claude playbook generated:")
         print(json.dumps(playbook, indent=2)[:400])
     else:
-        print("(ANTHROPIC_API_KEY not set or anthropic package unavailable — "
-              "skipping live playbook call; prompt above is what would be sent.)")
+        print(
+            "(ANTHROPIC_API_KEY not set or anthropic package unavailable — "
+            "skipping live playbook call; prompt above is what would be sent.)"
+        )
 
 
 if __name__ == "__main__":
@@ -454,8 +471,10 @@ if __name__ == "__main__":
     churn_model = train_model(X_train, y_train)
     train_accuracy = churn_model.score(X_train, y_train)
     print(f"  Training accuracy: {train_accuracy:.4f}")
-    print(f"  Feature importances (top 3): "
-          f"{sorted(zip(FEATURE_COLUMNS, churn_model.feature_importances_), key=lambda t: -t[1])[:3]}")
+    print(
+        f"  Feature importances (top 3): "
+        f"{sorted(zip(FEATURE_COLUMNS, churn_model.feature_importances_), key=lambda t: -t[1])[:3]}"
+    )
 
     # Three example accounts constructed to be low / medium / high risk.
     low_risk_account = {
@@ -520,6 +539,8 @@ if __name__ == "__main__":
     _print_account_report("HIGH RISK EXAMPLE", high_risk_account, churn_model)
 
     print(f"\n{'=' * 70}")
-    print("Done. Ran end-to-end using only numpy + scikit-learn"
-          " (+ shap if installed, + anthropic only if ANTHROPIC_API_KEY is set).")
+    print(
+        "Done. Ran end-to-end using only numpy + scikit-learn"
+        " (+ shap if installed, + anthropic only if ANTHROPIC_API_KEY is set)."
+    )
     print(f"{'=' * 70}")

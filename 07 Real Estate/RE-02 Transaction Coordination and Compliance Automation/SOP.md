@@ -286,8 +286,7 @@ def select_template_id(transaction_type: str) -> str:
         return mapping[TransactionType(transaction_type)]
     except ValueError as exc:
         raise ValueError(
-            f"Unrecognized transaction_type '{transaction_type}'; "
-            "routing to TC exception queue."
+            f"Unrecognized transaction_type '{transaction_type}'; routing to TC exception queue."
         ) from exc
 
 
@@ -303,9 +302,7 @@ def calculate_deadlines(
     """
     offsets = office_offsets or DEFAULT_OFFSETS_DAYS
     excluded = (
-        SHORT_SALE_EXCLUDED_MILESTONES
-        if transaction_type == TransactionType.SHORT_SALE
-        else set()
+        SHORT_SALE_EXCLUDED_MILESTONES if transaction_type == TransactionType.SHORT_SALE else set()
     )
     return [
         Deadline(milestone=name, due_date=contract_execution_date + timedelta(days=days))
@@ -730,3 +727,8 @@ The pilot phase surfaced that escrow/title contact data completeness was the sin
 
 ---
 *Part of the Enterprise Automation Portfolio. See root [07 Real Estate README.md](../README.md) for navigation.*
+
+
+## Engineering amendment — 8 September 2026
+
+Revision 2026-09-08: Python artifacts were linted/formatted and local demos rerun. UTC defaults and usage timestamp normalization were repaired where applicable. Original n8n/API/database execution remains a separate acceptance gate; prior narrative production claims are not verified by local checks. See the root portfolio audit and the project showcase package for current evidence.

@@ -1,0 +1,630 @@
+{
+  "format": "salesforce-local-acceptance/v1",
+  "measuredAt": "2026-10-05T15:14:13.149Z",
+  "sourceHash": "bb4e01b54851651d7aa3bcb4f0771da1e69866a0afe9686448699178a51d8553",
+  "wallDurationMs": 126.91069999999999,
+  "passed": true,
+  "checks": [
+    {
+      "name": "Three domain updates and case reconciliation",
+      "passed": true
+    },
+    {
+      "name": "Exactly one persisted local effect per intent",
+      "passed": true
+    },
+    {
+      "name": "storage_consent_required",
+      "passed": true
+    },
+    {
+      "name": "field_write_permission_denied",
+      "passed": true
+    },
+    {
+      "name": "stale_record_evidence",
+      "passed": true
+    },
+    {
+      "name": "Uncertain update survives restart without duplicate effect",
+      "passed": true
+    }
+  ],
+  "fullRun": {
+    "passed": true,
+    "runId": "2bc51b01-53d0-4564-9e3d-ebe8bd24326a",
+    "orgId": "00D000000000001",
+    "scenario": "normal",
+    "cursor": "M2UyZDZlMzUtNmI4ZC00NDllLTk3MjctOGFiNDYwZjgzNzk0",
+    "records": [
+      {
+        "run": "2bc51b01-53d0-4564-9e3d-ebe8bd24326a",
+        "id": "500000000000001",
+        "object": "Case",
+        "data": {
+          "id": "500000000000001",
+          "object": "Case",
+          "Name": "Northstar · Integration outage",
+          "Severity": "Critical",
+          "Priority": "High",
+          "Status": "New",
+          "OwnerId": "005000000000003"
+        },
+        "revision": 2
+      },
+      {
+        "run": "2bc51b01-53d0-4564-9e3d-ebe8bd24326a",
+        "id": "00Q000000000001",
+        "object": "Lead",
+        "data": {
+          "id": "00Q000000000001",
+          "object": "Lead",
+          "Name": "Avery · Northstar Labs",
+          "Company": "Northstar Labs",
+          "Score": 91,
+          "Employees": 420,
+          "StorageConsent": true,
+          "OwnerId": "005000000000002",
+          "Status": "Open"
+        },
+        "revision": 2
+      },
+      {
+        "run": "2bc51b01-53d0-4564-9e3d-ebe8bd24326a",
+        "id": "006000000000001",
+        "object": "Opportunity",
+        "data": {
+          "id": "006000000000001",
+          "object": "Opportunity",
+          "Name": "Northstar · Expansion",
+          "Amount": 48000,
+          "StageName": "Proposal",
+          "DaysWithoutNextStep": 9,
+          "NextStep": "Schedule expansion review; confirm decision owner and next milestone.",
+          "OwnerId": "005000000000001"
+        },
+        "revision": 2
+      }
+    ],
+    "receipts": [
+      {
+        "receiptId": "37d5cf6b-1871-4a68-83a9-e57eca7a33cc",
+        "runId": "2bc51b01-53d0-4564-9e3d-ebe8bd24326a",
+        "recordId": "006000000000001",
+        "status": "completed",
+        "reasons": [
+          "proposal_followup_overdue"
+        ],
+        "before": {
+          "id": "006000000000001",
+          "object": "Opportunity",
+          "Name": "Northstar · Expansion",
+          "Amount": 48000,
+          "StageName": "Proposal",
+          "DaysWithoutNextStep": 9,
+          "NextStep": "Awaiting discovery notes",
+          "OwnerId": "005000000000001"
+        },
+        "patch": {
+          "NextStep": "Schedule expansion review; confirm decision owner and next milestone."
+        },
+        "expectedRevision": 1,
+        "sourceHash": "bb4e01b54851651d7aa3bcb4f0771da1e69866a0afe9686448699178a51d8553",
+        "reviewer": "revops-reviewer",
+        "attempts": 1,
+        "currentRecord": {
+          "run": "2bc51b01-53d0-4564-9e3d-ebe8bd24326a",
+          "id": "006000000000001",
+          "object": "Opportunity",
+          "data": {
+            "id": "006000000000001",
+            "object": "Opportunity",
+            "Name": "Northstar · Expansion",
+            "Amount": 48000,
+            "StageName": "Proposal",
+            "DaysWithoutNextStep": 9,
+            "NextStep": "Schedule expansion review; confirm decision owner and next milestone.",
+            "OwnerId": "005000000000001"
+          },
+          "revision": 2
+        },
+        "localEffects": 1,
+        "history": [
+          {
+            "sequence": 8,
+            "kind": "evaluated",
+            "status": "pending_review",
+            "detail": {
+              "reasons": [
+                "proposal_followup_overdue"
+              ]
+            }
+          },
+          {
+            "sequence": 9,
+            "kind": "review_recorded",
+            "status": "reviewed",
+            "detail": {
+              "profile": "revops-reviewer"
+            }
+          },
+          {
+            "sequence": 10,
+            "kind": "local_update_confirmed",
+            "status": "completed",
+            "detail": {}
+          }
+        ],
+        "externalActions": 0,
+        "scope": "Synthetic Salesforce-shaped records and normalized events; local SQLite updates only. No Salesforce org connected. Reviewer profiles simulate permissions; they are not authenticated identities."
+      },
+      {
+        "receiptId": "6530ee5e-90e4-424d-bc11-4296bd13f6a2",
+        "runId": "2bc51b01-53d0-4564-9e3d-ebe8bd24326a",
+        "recordId": "00Q000000000001",
+        "status": "completed",
+        "reasons": [
+          "enterprise_fit_and_intent"
+        ],
+        "before": {
+          "id": "00Q000000000001",
+          "object": "Lead",
+          "Name": "Avery · Northstar Labs",
+          "Company": "Northstar Labs",
+          "Score": 91,
+          "Employees": 420,
+          "StorageConsent": true,
+          "OwnerId": "005000000000001",
+          "Status": "Open"
+        },
+        "patch": {
+          "OwnerId": "005000000000002"
+        },
+        "expectedRevision": 1,
+        "sourceHash": "bb4e01b54851651d7aa3bcb4f0771da1e69866a0afe9686448699178a51d8553",
+        "reviewer": "revops-reviewer",
+        "attempts": 1,
+        "currentRecord": {
+          "run": "2bc51b01-53d0-4564-9e3d-ebe8bd24326a",
+          "id": "00Q000000000001",
+          "object": "Lead",
+          "data": {
+            "id": "00Q000000000001",
+            "object": "Lead",
+            "Name": "Avery · Northstar Labs",
+            "Company": "Northstar Labs",
+            "Score": 91,
+            "Employees": 420,
+            "StorageConsent": true,
+            "OwnerId": "005000000000002",
+            "Status": "Open"
+          },
+          "revision": 2
+        },
+        "localEffects": 1,
+        "history": [
+          {
+            "sequence": 5,
+            "kind": "evaluated",
+            "status": "pending_review",
+            "detail": {
+              "reasons": [
+                "enterprise_fit_and_intent"
+              ]
+            }
+          },
+          {
+            "sequence": 6,
+            "kind": "review_recorded",
+            "status": "reviewed",
+            "detail": {
+              "profile": "revops-reviewer"
+            }
+          },
+          {
+            "sequence": 7,
+            "kind": "local_update_confirmed",
+            "status": "completed",
+            "detail": {}
+          }
+        ],
+        "externalActions": 0,
+        "scope": "Synthetic Salesforce-shaped records and normalized events; local SQLite updates only. No Salesforce org connected. Reviewer profiles simulate permissions; they are not authenticated identities."
+      },
+      {
+        "receiptId": "12436ccc-7a13-472b-b19f-3d277c7d063b",
+        "runId": "2bc51b01-53d0-4564-9e3d-ebe8bd24326a",
+        "recordId": "500000000000001",
+        "status": "completed",
+        "reasons": [
+          "critical_service_escalation"
+        ],
+        "before": {
+          "id": "500000000000001",
+          "object": "Case",
+          "Name": "Northstar · Integration outage",
+          "Severity": "Critical",
+          "Priority": "Medium",
+          "Status": "New",
+          "OwnerId": "005000000000001"
+        },
+        "patch": {
+          "Priority": "High",
+          "OwnerId": "005000000000003"
+        },
+        "expectedRevision": 1,
+        "sourceHash": "bb4e01b54851651d7aa3bcb4f0771da1e69866a0afe9686448699178a51d8553",
+        "reviewer": "revops-reviewer",
+        "attempts": 1,
+        "currentRecord": {
+          "run": "2bc51b01-53d0-4564-9e3d-ebe8bd24326a",
+          "id": "500000000000001",
+          "object": "Case",
+          "data": {
+            "id": "500000000000001",
+            "object": "Case",
+            "Name": "Northstar · Integration outage",
+            "Severity": "Critical",
+            "Priority": "High",
+            "Status": "New",
+            "OwnerId": "005000000000003"
+          },
+          "revision": 2
+        },
+        "localEffects": 1,
+        "history": [
+          {
+            "sequence": 1,
+            "kind": "evaluated",
+            "status": "pending_review",
+            "detail": {
+              "reasons": [
+                "critical_service_escalation"
+              ]
+            }
+          },
+          {
+            "sequence": 2,
+            "kind": "review_recorded",
+            "status": "reviewed",
+            "detail": {
+              "profile": "revops-reviewer"
+            }
+          },
+          {
+            "sequence": 3,
+            "kind": "acknowledgement_lost",
+            "status": "uncertain",
+            "detail": {}
+          },
+          {
+            "sequence": 4,
+            "kind": "existing_update_reconciled",
+            "status": "completed",
+            "detail": {}
+          }
+        ],
+        "externalActions": 0,
+        "scope": "Synthetic Salesforce-shaped records and normalized events; local SQLite updates only. No Salesforce org connected. Reviewer profiles simulate permissions; they are not authenticated identities."
+      }
+    ],
+    "sourceHash": "bb4e01b54851651d7aa3bcb4f0771da1e69866a0afe9686448699178a51d8553",
+    "scope": "Synthetic Salesforce-shaped records and normalized events; local SQLite updates only. No Salesforce org connected. Reviewer profiles simulate permissions; they are not authenticated identities.",
+    "profiles": [
+      {
+        "id": "revops-reviewer",
+        "canReview": true
+      },
+      {
+        "id": "analyst-readonly",
+        "canReview": false
+      }
+    ],
+    "results": [
+      {
+        "receiptId": "12436ccc-7a13-472b-b19f-3d277c7d063b",
+        "runId": "2bc51b01-53d0-4564-9e3d-ebe8bd24326a",
+        "recordId": "500000000000001",
+        "status": "completed",
+        "reasons": [
+          "critical_service_escalation"
+        ],
+        "before": {
+          "id": "500000000000001",
+          "object": "Case",
+          "Name": "Northstar · Integration outage",
+          "Severity": "Critical",
+          "Priority": "Medium",
+          "Status": "New",
+          "OwnerId": "005000000000001"
+        },
+        "patch": {
+          "Priority": "High",
+          "OwnerId": "005000000000003"
+        },
+        "expectedRevision": 1,
+        "sourceHash": "bb4e01b54851651d7aa3bcb4f0771da1e69866a0afe9686448699178a51d8553",
+        "reviewer": "revops-reviewer",
+        "attempts": 1,
+        "currentRecord": {
+          "run": "2bc51b01-53d0-4564-9e3d-ebe8bd24326a",
+          "id": "500000000000001",
+          "object": "Case",
+          "data": {
+            "id": "500000000000001",
+            "object": "Case",
+            "Name": "Northstar · Integration outage",
+            "Severity": "Critical",
+            "Priority": "High",
+            "Status": "New",
+            "OwnerId": "005000000000003"
+          },
+          "revision": 2
+        },
+        "localEffects": 1,
+        "history": [
+          {
+            "sequence": 1,
+            "kind": "evaluated",
+            "status": "pending_review",
+            "detail": {
+              "reasons": [
+                "critical_service_escalation"
+              ]
+            }
+          },
+          {
+            "sequence": 2,
+            "kind": "review_recorded",
+            "status": "reviewed",
+            "detail": {
+              "profile": "revops-reviewer"
+            }
+          },
+          {
+            "sequence": 3,
+            "kind": "acknowledgement_lost",
+            "status": "uncertain",
+            "detail": {}
+          },
+          {
+            "sequence": 4,
+            "kind": "existing_update_reconciled",
+            "status": "completed",
+            "detail": {}
+          }
+        ],
+        "externalActions": 0,
+        "scope": "Synthetic Salesforce-shaped records and normalized events; local SQLite updates only. No Salesforce org connected. Reviewer profiles simulate permissions; they are not authenticated identities."
+      },
+      {
+        "receiptId": "6530ee5e-90e4-424d-bc11-4296bd13f6a2",
+        "runId": "2bc51b01-53d0-4564-9e3d-ebe8bd24326a",
+        "recordId": "00Q000000000001",
+        "status": "completed",
+        "reasons": [
+          "enterprise_fit_and_intent"
+        ],
+        "before": {
+          "id": "00Q000000000001",
+          "object": "Lead",
+          "Name": "Avery · Northstar Labs",
+          "Company": "Northstar Labs",
+          "Score": 91,
+          "Employees": 420,
+          "StorageConsent": true,
+          "OwnerId": "005000000000001",
+          "Status": "Open"
+        },
+        "patch": {
+          "OwnerId": "005000000000002"
+        },
+        "expectedRevision": 1,
+        "sourceHash": "bb4e01b54851651d7aa3bcb4f0771da1e69866a0afe9686448699178a51d8553",
+        "reviewer": "revops-reviewer",
+        "attempts": 1,
+        "currentRecord": {
+          "run": "2bc51b01-53d0-4564-9e3d-ebe8bd24326a",
+          "id": "00Q000000000001",
+          "object": "Lead",
+          "data": {
+            "id": "00Q000000000001",
+            "object": "Lead",
+            "Name": "Avery · Northstar Labs",
+            "Company": "Northstar Labs",
+            "Score": 91,
+            "Employees": 420,
+            "StorageConsent": true,
+            "OwnerId": "005000000000002",
+            "Status": "Open"
+          },
+          "revision": 2
+        },
+        "localEffects": 1,
+        "history": [
+          {
+            "sequence": 5,
+            "kind": "evaluated",
+            "status": "pending_review",
+            "detail": {
+              "reasons": [
+                "enterprise_fit_and_intent"
+              ]
+            }
+          },
+          {
+            "sequence": 6,
+            "kind": "review_recorded",
+            "status": "reviewed",
+            "detail": {
+              "profile": "revops-reviewer"
+            }
+          },
+          {
+            "sequence": 7,
+            "kind": "local_update_confirmed",
+            "status": "completed",
+            "detail": {}
+          }
+        ],
+        "externalActions": 0,
+        "scope": "Synthetic Salesforce-shaped records and normalized events; local SQLite updates only. No Salesforce org connected. Reviewer profiles simulate permissions; they are not authenticated identities."
+      },
+      {
+        "receiptId": "37d5cf6b-1871-4a68-83a9-e57eca7a33cc",
+        "runId": "2bc51b01-53d0-4564-9e3d-ebe8bd24326a",
+        "recordId": "006000000000001",
+        "status": "completed",
+        "reasons": [
+          "proposal_followup_overdue"
+        ],
+        "before": {
+          "id": "006000000000001",
+          "object": "Opportunity",
+          "Name": "Northstar · Expansion",
+          "Amount": 48000,
+          "StageName": "Proposal",
+          "DaysWithoutNextStep": 9,
+          "NextStep": "Awaiting discovery notes",
+          "OwnerId": "005000000000001"
+        },
+        "patch": {
+          "NextStep": "Schedule expansion review; confirm decision owner and next milestone."
+        },
+        "expectedRevision": 1,
+        "sourceHash": "bb4e01b54851651d7aa3bcb4f0771da1e69866a0afe9686448699178a51d8553",
+        "reviewer": "revops-reviewer",
+        "attempts": 1,
+        "currentRecord": {
+          "run": "2bc51b01-53d0-4564-9e3d-ebe8bd24326a",
+          "id": "006000000000001",
+          "object": "Opportunity",
+          "data": {
+            "id": "006000000000001",
+            "object": "Opportunity",
+            "Name": "Northstar · Expansion",
+            "Amount": 48000,
+            "StageName": "Proposal",
+            "DaysWithoutNextStep": 9,
+            "NextStep": "Schedule expansion review; confirm decision owner and next milestone.",
+            "OwnerId": "005000000000001"
+          },
+          "revision": 2
+        },
+        "localEffects": 1,
+        "history": [
+          {
+            "sequence": 8,
+            "kind": "evaluated",
+            "status": "pending_review",
+            "detail": {
+              "reasons": [
+                "proposal_followup_overdue"
+              ]
+            }
+          },
+          {
+            "sequence": 9,
+            "kind": "review_recorded",
+            "status": "reviewed",
+            "detail": {
+              "profile": "revops-reviewer"
+            }
+          },
+          {
+            "sequence": 10,
+            "kind": "local_update_confirmed",
+            "status": "completed",
+            "detail": {}
+          }
+        ],
+        "externalActions": 0,
+        "scope": "Synthetic Salesforce-shaped records and normalized events; local SQLite updates only. No Salesforce org connected. Reviewer profiles simulate permissions; they are not authenticated identities."
+      }
+    ],
+    "externalActions": 0
+  },
+  "restartReceipt": {
+    "format": "salesforce-revenueops-local/v1",
+    "receiptId": "bd0bf6e7-ccfe-4868-bff4-ff7ffaf62ba4",
+    "runId": "62bfdaad-fbca-42d4-8667-413f7132a881",
+    "recordId": "00Q000000000001",
+    "status": "completed",
+    "reasons": [
+      "enterprise_fit_and_intent"
+    ],
+    "before": {
+      "id": "00Q000000000001",
+      "object": "Lead",
+      "Name": "Avery · Northstar Labs",
+      "Company": "Northstar Labs",
+      "Score": 91,
+      "Employees": 420,
+      "StorageConsent": true,
+      "OwnerId": "005000000000001",
+      "Status": "Open"
+    },
+    "patch": {
+      "OwnerId": "005000000000002"
+    },
+    "expectedRevision": 1,
+    "sourceHash": "bb4e01b54851651d7aa3bcb4f0771da1e69866a0afe9686448699178a51d8553",
+    "reviewer": "revops-reviewer",
+    "attempts": 1,
+    "currentRecord": {
+      "run": "62bfdaad-fbca-42d4-8667-413f7132a881",
+      "id": "00Q000000000001",
+      "object": "Lead",
+      "data": {
+        "id": "00Q000000000001",
+        "object": "Lead",
+        "Name": "Avery · Northstar Labs",
+        "Company": "Northstar Labs",
+        "Score": 91,
+        "Employees": 420,
+        "StorageConsent": true,
+        "OwnerId": "005000000000002",
+        "Status": "Open"
+      },
+      "revision": 2
+    },
+    "localEffects": 1,
+    "history": [
+      {
+        "sequence": 14,
+        "kind": "evaluated",
+        "status": "pending_review",
+        "detail": {
+          "reasons": [
+            "enterprise_fit_and_intent"
+          ]
+        }
+      },
+      {
+        "sequence": 15,
+        "kind": "review_recorded",
+        "status": "reviewed",
+        "detail": {
+          "profile": "revops-reviewer"
+        }
+      },
+      {
+        "sequence": 16,
+        "kind": "acknowledgement_lost",
+        "status": "uncertain",
+        "detail": {}
+      },
+      {
+        "sequence": 17,
+        "kind": "existing_update_reconciled",
+        "status": "completed",
+        "detail": {}
+      }
+    ],
+    "externalActions": 0,
+    "scope": "Synthetic Salesforce-shaped records and normalized events; local SQLite updates only. No Salesforce org connected. Reviewer profiles simulate permissions; they are not authenticated identities.",
+    "authority": "local_simulation_only",
+    "exportedAt": "2026-10-05T15:14:13.152Z"
+  },
+  "externalActions": 0
+}

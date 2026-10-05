@@ -296,6 +296,7 @@ FEATURE_COLUMNS = [
 @dataclass
 class ScoredAccount:
     """Result of scoring a single account for churn risk."""
+
     account_id: str
     churn_probability: float
     top_factors: list[dict]
@@ -417,7 +418,12 @@ response = client.messages.create(
     model="claude-sonnet-4-5",
     max_tokens=800,
     system=PLAYBOOK_SYSTEM_PROMPT,
-    messages=[{"role": "user", "content": build_playbook_prompt(scored_account, ticket_sentiment, usage_history)}],
+    messages=[
+        {
+            "role": "user",
+            "content": build_playbook_prompt(scored_account, ticket_sentiment, usage_history),
+        }
+    ],
 )
 ```
 
@@ -727,3 +733,8 @@ The most consequential early design decision was resisting the temptation to let
 
 ---
 *Part of the Enterprise Automation Portfolio. See [`14 SaaS/README.md`](../README.md) for navigation.*
+
+
+## Engineering amendment — 8 September 2026
+
+Revision 2026-09-08: Python artifacts were linted/formatted and local demos rerun. UTC defaults and usage timestamp normalization were repaired where applicable. Original n8n/API/database execution remains a separate acceptance gate; prior narrative production claims are not verified by local checks. See the root portfolio audit and the project showcase package for current evidence.

@@ -17,7 +17,7 @@ Run directly for a self-test against four sample cases:
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from datetime import datetime, timedelta
+from datetime import UTC, datetime, timedelta
 from enum import Enum
 
 
@@ -48,14 +48,14 @@ class CaseState(str, Enum):
     non-time-boxed states (recovered, paused).
     """
 
-    FAILED = "failed"                    # Day 0: case just created, Smart Retry window
-    RETRYING = "retrying"                # Stripe Smart Retry still in progress, < Day 3
+    FAILED = "failed"  # Day 0: case just created, Smart Retry window
+    RETRYING = "retrying"  # Stripe Smart Retry still in progress, < Day 3
     DAY3_EMAIL_SENT = "day3_email_sent"  # Day 3-6: first recovery email sent
     DAY7_WARNING_SENT = "day7_warning_sent"  # Day 7-13: escalation email/SMS/banner sent
     ENTERPRISE_CSM_TASK_OPEN = "enterprise_csm_task_open"  # Enterprise-only holding state
-    RECOVERED = "recovered"              # Terminal: payment succeeded
-    SUSPENDED = "suspended"              # Terminal: Day 14 grace period expired
-    PAUSED = "paused"                    # Manual override: clock frozen
+    RECOVERED = "recovered"  # Terminal: payment succeeded
+    SUSPENDED = "suspended"  # Terminal: Day 14 grace period expired
+    PAUSED = "paused"  # Manual override: clock frozen
 
 
 # Cadence boundaries, in days since `failed_at`. Configurable per Section 18.
@@ -149,7 +149,9 @@ def determine_state_and_action(case: DunningCase, now: datetime) -> tuple[CaseSt
         enterprise_prefix = "create_close_crm_csm_task+"
 
     if elapsed < DAY3_OFFSET:
-        action = f"{enterprise_prefix}await_smart_retry" if enterprise_prefix else "await_smart_retry"
+        action = (
+            f"{enterprise_prefix}await_smart_retry" if enterprise_prefix else "await_smart_retry"
+        )
         return CaseState.RETRYING, action
 
     if elapsed < DAY7_OFFSET:
@@ -273,7 +275,7 @@ def _build_sample_cases(now: datetime) -> list[DunningCase]:
 
 
 if __name__ == "__main__":
-    NOW = datetime(2026, 6, 30, 12, 0, 0)
+    NOW = datetime(2026, 6, 30, 12, 0, 0, tzinfo=UTC)
 
     print(f"Dunning state machine self-test — evaluated at {NOW.isoformat()}")
     print("=" * 78)
@@ -286,10 +288,11 @@ if __name__ == "__main__":
         print(f"Case: {sample_case.dunning_case_id}")
         print(f"  Plan tier:        {sample_case.plan_tier.value}")
         print(f"  Decline reason:   {sample_case.decline_reason.value}")
-        print(f"  MRR:              ${sample_case.mrr_cents / 100:,.2f}/mo "
-              f"(high_value={is_high_value(sample_case)})")
-        print(f"  Failed at:        {sample_case.failed_at.isoformat()} "
-              f"(~{elapsed_days} days ago)")
+        print(
+            f"  MRR:              ${sample_case.mrr_cents / 100:,.2f}/mo "
+            f"(high_value={is_high_value(sample_case)})"
+        )
+        print(f"  Failed at:        {sample_case.failed_at.isoformat()} (~{elapsed_days} days ago)")
         print(f"  Determined state: {result_state.value}")
         print(f"  Determined action: {result_action}")
         print(f"  Audit entry appended: {advanced.audit_trail[-1]}")

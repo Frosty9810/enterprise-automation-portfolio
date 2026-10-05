@@ -1,0 +1,32 @@
+{
+  "project": "LIFE-04",
+  "title": "Together Time",
+  "dataOrigin": "Invented example",
+  "input": {
+    "starts": [
+      9,
+      11,
+      10
+    ],
+    "ends": [
+      14,
+      15,
+      13
+    ]
+  },
+  "output": {
+    "summary": "Shared time from 11:00 to 13:00.",
+    "rows": [
+      {
+        "label": "Shared availability",
+        "value": 2
+      }
+    ],
+    "unit": "hours",
+    "details": {
+      "start": 11,
+      "end": 13,
+      "overlap": 2
+    }
+  }
+}

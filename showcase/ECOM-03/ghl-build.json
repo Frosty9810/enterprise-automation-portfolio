@@ -1,0 +1,22 @@
+{
+  "kind": "manual-configuration-blueprint-not-ghl-snapshot",
+  "projectId": "ECOM-03",
+  "relationshipRole": "Inventory operations owner",
+  "pipelineName": "Portfolio / ECOM-03",
+  "stages": [
+    "Observed",
+    "Reconcile",
+    "Exception",
+    "Resolved"
+  ],
+  "messagingEnabled": false,
+  "duplicateMatch": "email",
+  "contactFields": [
+    "firstName",
+    "lastName",
+    "email",
+    "source"
+  ],
+  "liveAcceptance": "pending",
+  "systemOfRecord": "original project system"
+}

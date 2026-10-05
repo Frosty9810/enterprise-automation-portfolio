@@ -1,0 +1,20 @@
+{
+  "projectId": "SAAS-04",
+  "format": "manual setup specification, not a native GHL snapshot",
+  "location": "DEMO_LOCATION",
+  "relationshipRole": "Finance account owner",
+  "proposedStages": [
+    "Reconcile",
+    "Exception",
+    "Finance review",
+    "Closed"
+  ],
+  "contactFields": [
+    "email",
+    "firstName",
+    "lastName",
+    "source"
+  ],
+  "automatedCommunications": false,
+  "acceptance": "Local simulator; hosted acceptance pending"
+}

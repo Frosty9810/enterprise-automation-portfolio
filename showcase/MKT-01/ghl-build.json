@@ -1,0 +1,22 @@
+{
+  "kind": "manual-configuration-blueprint-not-ghl-snapshot",
+  "projectId": "MKT-01",
+  "relationshipRole": "Agency client contact",
+  "pipelineName": "Portfolio / MKT-01",
+  "stages": [
+    "Monitoring",
+    "Anomaly",
+    "Budget review",
+    "Closed"
+  ],
+  "messagingEnabled": false,
+  "duplicateMatch": "email",
+  "contactFields": [
+    "firstName",
+    "lastName",
+    "email",
+    "source"
+  ],
+  "liveAcceptance": "pending",
+  "systemOfRecord": "original project system"
+}

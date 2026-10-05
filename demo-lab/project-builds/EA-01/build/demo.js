@@ -1,0 +1,11 @@
+import assert from 'node:assert/strict';
+import { commitments, extraProjects } from '../../../extra-scenarios.mjs';
+const input=structuredClone(extraProjects.find(p=>p.id==='EA-01').fixture);
+const output=commitments(input);
+assert.equal(output.retainedCount,1); assert.equal(output.items[0].status,'needs_owner_review'); assert.equal(output.externalActions,0);
+const first=input.items[0];
+assert.throws(()=>commitments({items:[first,{...first,owner:'Conflicting owner'}]}),/Conflicting/);
+assert.throws(()=>commitments({items:[]}),/1–100/);
+assert.equal(commitments({items:[{...first,confirmed:true}]}).items[0].status,'confirmed');
+const cases=['Dedupe and authorization','Conflicting identity rejection','Empty list rejection','Confirmed status'].map(name=>({name,passed:true}));
+console.log(JSON.stringify({projectId:'EA-01',output,evaluation:{passed:cases.length,total:cases.length,cases}},null,2));

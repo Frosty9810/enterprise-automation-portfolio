@@ -1,0 +1,81 @@
+{
+  "projectId": "AGT-01",
+  "evaluation": {
+    "passed": 5,
+    "total": 5,
+    "cases": [
+      {
+        "name": "Grounded draft",
+        "passed": true,
+        "expected": {
+          "queue": "draft_review",
+          "toolExecuted": false
+        },
+        "output": {
+          "queue": "draft_review",
+          "reasons": [],
+          "toolExecuted": false,
+          "replySent": false
+        }
+      },
+      {
+        "name": "Unauthorized tool",
+        "passed": true,
+        "expected": {
+          "queue": "human_review",
+          "reasons": [
+            "tool_not_allowed"
+          ]
+        },
+        "output": {
+          "queue": "human_review",
+          "reasons": [
+            "tool_not_allowed"
+          ],
+          "toolExecuted": false,
+          "replySent": false
+        }
+      },
+      {
+        "name": "Over budget",
+        "passed": true,
+        "expected": {
+          "reasons": [
+            "budget_exceeded"
+          ]
+        },
+        "output": {
+          "queue": "human_review",
+          "reasons": [
+            "budget_exceeded"
+          ],
+          "toolExecuted": false,
+          "replySent": false
+        }
+      },
+      {
+        "name": "Ungrounded response",
+        "passed": true,
+        "expected": {
+          "reasons": [
+            "grounding_review"
+          ]
+        },
+        "output": {
+          "queue": "human_review",
+          "reasons": [
+            "grounding_review"
+          ],
+          "toolExecuted": false,
+          "replySent": false
+        }
+      },
+      {
+        "name": "Invalid budget",
+        "passed": true,
+        "expectedRejection": "non-negative"
+      }
+    ]
+  },
+  "scope": "Local deterministic business rules; external tools and product integrations are not executed."
+}

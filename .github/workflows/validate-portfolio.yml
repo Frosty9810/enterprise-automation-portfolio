@@ -20,10 +20,95 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
+          python-version: "3.14"
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+
+      - name: Install quality dependencies
+        run: python -m pip install -r requirements-dev.txt
+
+      - name: Lint and formatting
+        run: |
+          python -m ruff check .
+          python -m ruff format --check .
+
+      - name: Verify generated showcase packages
+        run: python scripts/build_showcase.py --check
 
       - name: Validate executable artifacts
         run: python scripts/validate_portfolio.py
 
-      - name: Run ecommerce policy tests
+      - name: Run Python regression tests
         run: python -m unittest discover -s tests -p "test_*.py" -v
+
+      - name: Execute n8n handoff contracts
+        run: node --test tests/ghl-n8n.test.mjs
+
+      - name: Local demo contract and generation checks
+        run: |
+          node --test demo-lab/test.mjs
+          node demo-lab/generate.mjs --check
+
+      - name: Run local planner benchmark
+        run: node scripts/benchmark_handoff.mjs
+
+      - name: Preserve benchmark evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: handoff-benchmark
+          path: reports/handoff-benchmark.json
+
+  n8n-local-integration:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+      - run: |
+          python -m venv .venv
+          .venv/bin/python -m pip install -r requirements-dev.txt
+          npm ci --prefix demo-lab --no-audit --no-fund
+      - name: Check dashboard interactions against local fixtures
+        run: node --test demo-lab/*.test.mjs demo-lab/test.mjs
+      - name: Execute all local n8n demos
+        run: |
+          node demo-lab/server.mjs > /tmp/portfolio-demo.log 2>&1 &
+          DEMO_SERVER_PID=$!
+          trap 'kill "$DEMO_SERVER_PID"' EXIT
+          for attempt in $(seq 1 30); do
+            if curl -fsS http://127.0.0.1:5680/health; then break; fi
+            sleep 1
+          done
+          node demo-lab/verify.mjs
+          node demo-lab/audit-originals.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: n8n-local-evidence
+          path: |
+            reports/n8n-local-executions.json
+            reports/original-node-compatibility.json
+
+  public-flagship:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: 48 Enterprise Workflows/IMP-01 Import Company Agent Operating System/site
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - run: npm ci --ignore-scripts --no-audit --no-fund
+      - run: npm run lint
+      - run: npx tsc --noEmit --incremental false
+      - run: npm run build

@@ -1,0 +1,256 @@
+[
+  {
+    "id": "RE-01",
+    "title": "RE-01 Speed-to-Lead Response and Drip Nurture Engine",
+    "source": "07 Real Estate/RE-01 Speed-to-Lead Response and Drip Nurture Engine",
+    "ghlRole": "Buyer relationship",
+    "stages": [
+      "New inquiry",
+      "Qualified",
+      "Assigned",
+      "Closed"
+    ],
+    "demo": "Show lead scoring and the contact preview; do not send a drip.",
+    "evidence": "local reference; live acceptance pending",
+    "video": "pending recording"
+  },
+  {
+    "id": "RE-02",
+    "title": "RE-02 Transaction Coordination and Compliance Automation",
+    "source": "07 Real Estate/RE-02 Transaction Coordination and Compliance Automation",
+    "ghlRole": "Transaction stakeholder",
+    "stages": [
+      "Intake",
+      "Documents due",
+      "Review",
+      "Complete"
+    ],
+    "demo": "Show a deadline calculation; keep legal records outside CRM.",
+    "evidence": "local reference; live acceptance pending",
+    "video": "pending recording"
+  },
+  {
+    "id": "RE-03",
+    "title": "RE-03 AI-Powered Lead Qualification and Scoring Engine",
+    "source": "07 Real Estate/RE-03 AI-Powered Lead Qualification and Scoring Engine",
+    "ghlRole": "Qualified lead",
+    "stages": [
+      "New",
+      "Scored",
+      "Human review",
+      "Assigned"
+    ],
+    "demo": "Compare two lead scores and explain the routing decision.",
+    "evidence": "local reference; live acceptance pending",
+    "video": "pending recording"
+  },
+  {
+    "id": "RE-04",
+    "title": "RE-04 CRE Deal Pipeline and Comp Analysis Automation",
+    "source": "07 Real Estate/RE-04 CRE Deal Pipeline and Comp Analysis Automation",
+    "ghlRole": "Deal sponsor",
+    "stages": [
+      "Sourced",
+      "Analysis",
+      "Committee review",
+      "Decision"
+    ],
+    "demo": "Show comparable-property analysis; no investment approval.",
+    "evidence": "local reference; live acceptance pending",
+    "video": "pending recording"
+  },
+  {
+    "id": "REC-01",
+    "title": "REC-01 Candidate Consent Matching and Interview Operations",
+    "source": "12 Recruiting/REC-01 Candidate Consent Matching and Interview Operations",
+    "ghlRole": "Recruiter client contact",
+    "stages": [
+      "Intake",
+      "Matching",
+      "Interview review",
+      "Closed"
+    ],
+    "demo": "Show consent-gated matching; do not copy candidate dossiers.",
+    "evidence": "local reference; live acceptance pending",
+    "video": "pending recording"
+  },
+  {
+    "id": "MKT-01",
+    "title": "MKT-01 Multi-Channel Ad Operations Control Plane",
+    "source": "13 Marketing Agencies/MKT-01 Multi-Channel Ad Operations Control Plane",
+    "ghlRole": "Agency client contact",
+    "stages": [
+      "Monitoring",
+      "Anomaly",
+      "Budget review",
+      "Closed"
+    ],
+    "demo": "Show a budget recommendation awaiting human approval.",
+    "evidence": "local reference; live acceptance pending",
+    "video": "pending recording"
+  },
+  {
+    "id": "SAAS-01",
+    "title": "SAAS-01 Trial-to-Paid Conversion and Usage Nurture Engine",
+    "source": "14 SaaS/SAAS-01 Trial-to-Paid Conversion and Usage Nurture Engine",
+    "ghlRole": "Trial account owner",
+    "stages": [
+      "Trial",
+      "Activated",
+      "Sales review",
+      "Converted"
+    ],
+    "demo": "Show usage scoring and an owner relationship handoff.",
+    "evidence": "local reference; live acceptance pending",
+    "video": "pending recording"
+  },
+  {
+    "id": "SAAS-02",
+    "title": "SAAS-02 Automated Dunning and Failed-Payment Recovery Engine",
+    "source": "14 SaaS/SAAS-02 Automated Dunning and Failed-Payment Recovery Engine",
+    "ghlRole": "Billing contact",
+    "stages": [
+      "Payment issue",
+      "Owner review",
+      "Resolved"
+    ],
+    "demo": "Show dunning state transitions without charging or messaging.",
+    "evidence": "local reference; live acceptance pending",
+    "video": "pending recording"
+  },
+  {
+    "id": "SAAS-03",
+    "title": "SAAS-03 Churn Prediction and Proactive CS Intervention System",
+    "source": "14 SaaS/SAAS-03 Churn Prediction and Proactive CS Intervention System",
+    "ghlRole": "Customer success contact",
+    "stages": [
+      "Monitoring",
+      "At risk",
+      "CS review",
+      "Resolved"
+    ],
+    "demo": "Show churn risk classification and a proposed CS intervention.",
+    "evidence": "local reference; live acceptance pending",
+    "video": "pending recording"
+  },
+  {
+    "id": "SAAS-04",
+    "title": "SAAS-04 Usage-Based Billing Reconciliation and RevRec Pipeline",
+    "source": "14 SaaS/SAAS-04 Usage-Based Billing Reconciliation and RevRec Pipeline",
+    "ghlRole": "Finance account owner",
+    "stages": [
+      "Reconcile",
+      "Exception",
+      "Finance review",
+      "Closed"
+    ],
+    "demo": "Show a billing mismatch; keep accounting amounts in the ledger.",
+    "evidence": "local reference; live acceptance pending",
+    "video": "pending recording"
+  },
+  {
+    "id": "ECOM-01",
+    "title": "ECOM-01 Multi-Market Product Content Governance",
+    "source": "15 E-Commerce/ECOM-01 Multi-Market Product Content Governance",
+    "ghlRole": "Merchant stakeholder",
+    "stages": [
+      "Submitted",
+      "Policy review",
+      "Approved",
+      "Closed"
+    ],
+    "demo": "Show an unsafe product fact change being blocked.",
+    "evidence": "local reference; live acceptance pending",
+    "video": "pending recording"
+  },
+  {
+    "id": "ECOM-02",
+    "title": "ECOM-02 Review Intelligence and Response Queue",
+    "source": "15 E-Commerce/ECOM-02 Review Intelligence and Response Queue",
+    "ghlRole": "Merchant review owner",
+    "stages": [
+      "Received",
+      "Triage",
+      "Safety review",
+      "Resolved"
+    ],
+    "demo": "Show a safety complaint preventing automatic publication.",
+    "evidence": "local reference; live acceptance pending",
+    "video": "pending recording"
+  },
+  {
+    "id": "ECOM-03",
+    "title": "ECOM-03 Catalog Inventory Reconciliation",
+    "source": "15 E-Commerce/ECOM-03 Catalog Inventory Reconciliation",
+    "ghlRole": "Inventory operations owner",
+    "stages": [
+      "Observed",
+      "Reconcile",
+      "Exception",
+      "Resolved"
+    ],
+    "demo": "Compare fresh and stale inventory evidence.",
+    "evidence": "local reference; live acceptance pending",
+    "video": "pending recording"
+  },
+  {
+    "id": "ECOM-04",
+    "title": "ECOM-04 Support Routing and SLA Control",
+    "source": "15 E-Commerce/ECOM-04 Support Routing and SLA Control",
+    "ghlRole": "Support account owner",
+    "stages": [
+      "Open",
+      "Triaged",
+      "Escalated",
+      "Resolved"
+    ],
+    "demo": "Show redaction and SLA routing before a relationship handoff.",
+    "evidence": "local reference; live acceptance pending",
+    "video": "pending recording"
+  },
+  {
+    "id": "ACC-01",
+    "title": "ACC-01 Accounts Payable Match and Cash Control",
+    "source": "16 Accounting/ACC-01 Accounts Payable Match and Cash Control",
+    "ghlRole": "Vendor relationship owner",
+    "stages": [
+      "Received",
+      "Match",
+      "Exception review",
+      "Closed"
+    ],
+    "demo": "Show a duplicate invoice or changed bank detail being blocked.",
+    "evidence": "local reference; live acceptance pending",
+    "video": "pending recording"
+  },
+  {
+    "id": "CS-01",
+    "title": "CS-01 Support Quality and Knowledge Feedback Loop",
+    "source": "17 Customer Support/CS-01 Support Quality and Knowledge Feedback Loop",
+    "ghlRole": "Support quality owner",
+    "stages": [
+      "Sampled",
+      "QA review",
+      "Knowledge gap",
+      "Closed"
+    ],
+    "demo": "Show redacted QA and low-grounding escalation.",
+    "evidence": "local reference; live acceptance pending",
+    "video": "pending recording"
+  },
+  {
+    "id": "IMP-01",
+    "title": "IMP-01 Import Company Agent Operating System",
+    "source": "48 Enterprise Workflows/IMP-01 Import Company Agent Operating System",
+    "ghlRole": "Commercial counterpart",
+    "stages": [
+      "Intake",
+      "Evidence review",
+      "Decision pending",
+      "Closed"
+    ],
+    "demo": "Explain one evidence/review boundary; no shipment or payment action.",
+    "evidence": "local reference; live acceptance pending",
+    "video": "pending recording"
+  }
+]

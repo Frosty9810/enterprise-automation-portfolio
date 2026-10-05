@@ -1,0 +1,64 @@
+{
+  "projectId": "INV-01",
+  "evaluation": {
+    "passed": 5,
+    "total": 5,
+    "cases": [
+      {
+        "name": "Pack rounding",
+        "passed": true,
+        "expected": {
+          "proposedUnits": 48,
+          "queue": "buyer_review"
+        },
+        "output": {
+          "sku": "BOLT-10",
+          "available": 10,
+          "proposedUnits": 48,
+          "queue": "buyer_review",
+          "purchaseSent": false
+        }
+      },
+      {
+        "name": "Stale stock",
+        "passed": true,
+        "expected": {
+          "queue": "refresh_stock"
+        },
+        "output": {
+          "sku": "BOLT-10",
+          "available": 10,
+          "proposedUnits": 48,
+          "queue": "refresh_stock",
+          "purchaseSent": false
+        }
+      },
+      {
+        "name": "Enough stock",
+        "passed": true,
+        "expected": {
+          "proposedUnits": 0,
+          "queue": "no_order"
+        },
+        "output": {
+          "sku": "BOLT-10",
+          "available": 92,
+          "proposedUnits": 0,
+          "queue": "no_order",
+          "purchaseSent": false
+        }
+      },
+      {
+        "name": "Reservations exceed stock",
+        "passed": true,
+        "expectedRejection": "Invalid stock"
+      },
+      {
+        "name": "Invalid pack",
+        "passed": true,
+        "expectedRejection": "Invalid stock"
+      }
+    ]
+  },
+  "scope": "Local deterministic business rules; external tools and product integrations are not executed."
+}

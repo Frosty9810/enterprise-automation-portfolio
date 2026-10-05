@@ -1,0 +1,35 @@
+{
+  "project": "CARE-04",
+  "title": "Access Notes",
+  "dataOrigin": "Invented example",
+  "input": {
+    "flags": [
+      1,
+      0,
+      2,
+      1,
+      0
+    ]
+  },
+  "output": {
+    "summary": "Unknown access information stays unknown. Confirm current details with the place before a visit.",
+    "rows": [
+      {
+        "label": "Unknown",
+        "value": 2
+      },
+      {
+        "label": "Reported available",
+        "value": 2
+      },
+      {
+        "label": "Reported unavailable",
+        "value": 1
+      }
+    ],
+    "unit": "observations",
+    "details": {
+      "certified": false
+    }
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "measuredAt": "2026-09-13T15:46:22.571Z",
+  "scope": "Loopback HTTP plus in-memory SQLite contact upsert; excludes n8n, hosted GHL and disk durability",
+  "node": "v24.14.0",
+  "cpu": "AMD Ryzen 9 9950X3D 16-Core Processor          ",
+  "warmup": 100,
+  "phases": [
+    {
+      "concurrency": 1,
+      "requests": 1000,
+      "errors": 0,
+      "p50Ms": 0.25,
+      "p95Ms": 0.45750000000001023,
+      "p99Ms": 1.174900000000008,
+      "durationMs": 302.4869,
+      "requestsPerSecond": 3305.928289787095
+    },
+    {
+      "concurrency": 8,
+      "requests": 1000,
+      "errors": 0,
+      "p50Ms": 1.3958000000000652,
+      "p95Ms": 2.2197000000001026,
+      "p99Ms": 6.163200000000074,
+      "durationMs": 202.9361,
+      "requestsPerSecond": 4927.6594947867825
+    },
+    {
+      "concurrency": 32,
+      "requests": 1000,
+      "errors": 0,
+      "p50Ms": 4.6603999999999814,
+      "p95Ms": 9.93470000000002,
+      "p99Ms": 11.711599999999976,
+      "durationMs": 169.36109999999996,
+      "requestsPerSecond": 5904.543605349754
+    }
+  ],
+  "uniqueContacts": 100,
+  "passed": true
+}

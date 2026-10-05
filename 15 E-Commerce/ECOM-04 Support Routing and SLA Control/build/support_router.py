@@ -3,12 +3,11 @@
 
 from __future__ import annotations
 
-from dataclasses import asdict, dataclass
-from datetime import datetime, timedelta, timezone
-from hashlib import sha256
 import json
 import re
-
+from dataclasses import asdict, dataclass
+from datetime import UTC, datetime, timedelta
+from hashlib import sha256
 
 PII_PATTERNS = (
     (re.compile(r"[\w.+-]+@[\w.-]+\.[A-Za-z]{2,}"), "[EMAIL]"),
@@ -34,7 +33,7 @@ def redact(text: str) -> str:
 
 
 def route(ticket: Ticket, now: datetime | None = None) -> dict:
-    now = now or datetime.now(timezone.utc)
+    now = now or datetime.now(UTC)
     safe_text = redact(ticket.message)
     text = safe_text.lower()
     reasons: list[str] = []
@@ -73,7 +72,7 @@ def route(ticket: Ticket, now: datetime | None = None) -> dict:
 
 
 def demo() -> list[dict]:
-    fixed_now = datetime(2026, 8, 25, 12, 0, tzinfo=timezone.utc)
+    fixed_now = datetime(2026, 8, 25, 12, 0, tzinfo=UTC)
     tickets = [
         Ticket("evt-1", "DE", "Cancel order 991. Email me at person@example.com", 75),
         Ticket("evt-2", "US", "I will file a chargeback. Call +1 415 555 0184", 900, "vip"),

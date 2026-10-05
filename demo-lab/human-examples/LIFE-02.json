@@ -1,0 +1,30 @@
+{
+  "project": "LIFE-02",
+  "title": "Shared Table",
+  "dataOrigin": "Invented example",
+  "input": {
+    "cents": 1001,
+    "people": 3
+  },
+  "output": {
+    "summary": "An exact split, with leftover cents distributed one at a time.",
+    "rows": [
+      {
+        "label": "Person 1",
+        "value": 334
+      },
+      {
+        "label": "Person 2",
+        "value": 334
+      },
+      {
+        "label": "Person 3",
+        "value": 333
+      }
+    ],
+    "unit": "cents",
+    "details": {
+      "total": 1001
+    }
+  }
+}

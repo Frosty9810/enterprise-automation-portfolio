@@ -1,0 +1,20 @@
+{
+  "projectId": "SAAS-03",
+  "format": "manual setup specification, not a native GHL snapshot",
+  "location": "DEMO_LOCATION",
+  "relationshipRole": "Customer success contact",
+  "proposedStages": [
+    "Monitoring",
+    "At risk",
+    "CS review",
+    "Resolved"
+  ],
+  "contactFields": [
+    "email",
+    "firstName",
+    "lastName",
+    "source"
+  ],
+  "automatedCommunications": false,
+  "acceptance": "Local simulator; hosted acceptance pending"
+}

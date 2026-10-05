@@ -1,0 +1,1301 @@
+{
+  "measuredAt": "2026-09-09T12:55:20.289Z",
+  "shared": [
+    {
+      "projectId": "RE-01",
+      "scope": "Shared contact-planner cases executed on this request; not whole-business or hosted GHL acceptance.",
+      "passed": 7,
+      "total": 7,
+      "cases": [
+        {
+          "name": "Valid minimal handoff",
+          "passed": true
+        },
+        {
+          "name": "Cross-location rejection",
+          "passed": true
+        },
+        {
+          "name": "Cross-project rejection",
+          "passed": true
+        },
+        {
+          "name": "Strict consent",
+          "passed": true
+        },
+        {
+          "name": "Sensitive record rejection",
+          "passed": true
+        },
+        {
+          "name": "Invalid email rejection",
+          "passed": true
+        },
+        {
+          "name": "Minimal fields and no communication",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "projectId": "RE-02",
+      "scope": "Shared contact-planner cases executed on this request; not whole-business or hosted GHL acceptance.",
+      "passed": 7,
+      "total": 7,
+      "cases": [
+        {
+          "name": "Valid minimal handoff",
+          "passed": true
+        },
+        {
+          "name": "Cross-location rejection",
+          "passed": true
+        },
+        {
+          "name": "Cross-project rejection",
+          "passed": true
+        },
+        {
+          "name": "Strict consent",
+          "passed": true
+        },
+        {
+          "name": "Sensitive record rejection",
+          "passed": true
+        },
+        {
+          "name": "Invalid email rejection",
+          "passed": true
+        },
+        {
+          "name": "Minimal fields and no communication",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "projectId": "RE-03",
+      "scope": "Shared contact-planner cases executed on this request; not whole-business or hosted GHL acceptance.",
+      "passed": 7,
+      "total": 7,
+      "cases": [
+        {
+          "name": "Valid minimal handoff",
+          "passed": true
+        },
+        {
+          "name": "Cross-location rejection",
+          "passed": true
+        },
+        {
+          "name": "Cross-project rejection",
+          "passed": true
+        },
+        {
+          "name": "Strict consent",
+          "passed": true
+        },
+        {
+          "name": "Sensitive record rejection",
+          "passed": true
+        },
+        {
+          "name": "Invalid email rejection",
+          "passed": true
+        },
+        {
+          "name": "Minimal fields and no communication",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "projectId": "RE-04",
+      "scope": "Shared contact-planner cases executed on this request; not whole-business or hosted GHL acceptance.",
+      "passed": 7,
+      "total": 7,
+      "cases": [
+        {
+          "name": "Valid minimal handoff",
+          "passed": true
+        },
+        {
+          "name": "Cross-location rejection",
+          "passed": true
+        },
+        {
+          "name": "Cross-project rejection",
+          "passed": true
+        },
+        {
+          "name": "Strict consent",
+          "passed": true
+        },
+        {
+          "name": "Sensitive record rejection",
+          "passed": true
+        },
+        {
+          "name": "Invalid email rejection",
+          "passed": true
+        },
+        {
+          "name": "Minimal fields and no communication",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "projectId": "REC-01",
+      "scope": "Shared contact-planner cases executed on this request; not whole-business or hosted GHL acceptance.",
+      "passed": 7,
+      "total": 7,
+      "cases": [
+        {
+          "name": "Valid minimal handoff",
+          "passed": true
+        },
+        {
+          "name": "Cross-location rejection",
+          "passed": true
+        },
+        {
+          "name": "Cross-project rejection",
+          "passed": true
+        },
+        {
+          "name": "Strict consent",
+          "passed": true
+        },
+        {
+          "name": "Sensitive record rejection",
+          "passed": true
+        },
+        {
+          "name": "Invalid email rejection",
+          "passed": true
+        },
+        {
+          "name": "Minimal fields and no communication",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "projectId": "MKT-01",
+      "scope": "Shared contact-planner cases executed on this request; not whole-business or hosted GHL acceptance.",
+      "passed": 7,
+      "total": 7,
+      "cases": [
+        {
+          "name": "Valid minimal handoff",
+          "passed": true
+        },
+        {
+          "name": "Cross-location rejection",
+          "passed": true
+        },
+        {
+          "name": "Cross-project rejection",
+          "passed": true
+        },
+        {
+          "name": "Strict consent",
+          "passed": true
+        },
+        {
+          "name": "Sensitive record rejection",
+          "passed": true
+        },
+        {
+          "name": "Invalid email rejection",
+          "passed": true
+        },
+        {
+          "name": "Minimal fields and no communication",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "projectId": "SAAS-01",
+      "scope": "Shared contact-planner cases executed on this request; not whole-business or hosted GHL acceptance.",
+      "passed": 7,
+      "total": 7,
+      "cases": [
+        {
+          "name": "Valid minimal handoff",
+          "passed": true
+        },
+        {
+          "name": "Cross-location rejection",
+          "passed": true
+        },
+        {
+          "name": "Cross-project rejection",
+          "passed": true
+        },
+        {
+          "name": "Strict consent",
+          "passed": true
+        },
+        {
+          "name": "Sensitive record rejection",
+          "passed": true
+        },
+        {
+          "name": "Invalid email rejection",
+          "passed": true
+        },
+        {
+          "name": "Minimal fields and no communication",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "projectId": "SAAS-02",
+      "scope": "Shared contact-planner cases executed on this request; not whole-business or hosted GHL acceptance.",
+      "passed": 7,
+      "total": 7,
+      "cases": [
+        {
+          "name": "Valid minimal handoff",
+          "passed": true
+        },
+        {
+          "name": "Cross-location rejection",
+          "passed": true
+        },
+        {
+          "name": "Cross-project rejection",
+          "passed": true
+        },
+        {
+          "name": "Strict consent",
+          "passed": true
+        },
+        {
+          "name": "Sensitive record rejection",
+          "passed": true
+        },
+        {
+          "name": "Invalid email rejection",
+          "passed": true
+        },
+        {
+          "name": "Minimal fields and no communication",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "projectId": "SAAS-03",
+      "scope": "Shared contact-planner cases executed on this request; not whole-business or hosted GHL acceptance.",
+      "passed": 7,
+      "total": 7,
+      "cases": [
+        {
+          "name": "Valid minimal handoff",
+          "passed": true
+        },
+        {
+          "name": "Cross-location rejection",
+          "passed": true
+        },
+        {
+          "name": "Cross-project rejection",
+          "passed": true
+        },
+        {
+          "name": "Strict consent",
+          "passed": true
+        },
+        {
+          "name": "Sensitive record rejection",
+          "passed": true
+        },
+        {
+          "name": "Invalid email rejection",
+          "passed": true
+        },
+        {
+          "name": "Minimal fields and no communication",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "projectId": "SAAS-04",
+      "scope": "Shared contact-planner cases executed on this request; not whole-business or hosted GHL acceptance.",
+      "passed": 7,
+      "total": 7,
+      "cases": [
+        {
+          "name": "Valid minimal handoff",
+          "passed": true
+        },
+        {
+          "name": "Cross-location rejection",
+          "passed": true
+        },
+        {
+          "name": "Cross-project rejection",
+          "passed": true
+        },
+        {
+          "name": "Strict consent",
+          "passed": true
+        },
+        {
+          "name": "Sensitive record rejection",
+          "passed": true
+        },
+        {
+          "name": "Invalid email rejection",
+          "passed": true
+        },
+        {
+          "name": "Minimal fields and no communication",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "projectId": "ECOM-01",
+      "scope": "Shared contact-planner cases executed on this request; not whole-business or hosted GHL acceptance.",
+      "passed": 7,
+      "total": 7,
+      "cases": [
+        {
+          "name": "Valid minimal handoff",
+          "passed": true
+        },
+        {
+          "name": "Cross-location rejection",
+          "passed": true
+        },
+        {
+          "name": "Cross-project rejection",
+          "passed": true
+        },
+        {
+          "name": "Strict consent",
+          "passed": true
+        },
+        {
+          "name": "Sensitive record rejection",
+          "passed": true
+        },
+        {
+          "name": "Invalid email rejection",
+          "passed": true
+        },
+        {
+          "name": "Minimal fields and no communication",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "projectId": "ECOM-02",
+      "scope": "Shared contact-planner cases executed on this request; not whole-business or hosted GHL acceptance.",
+      "passed": 7,
+      "total": 7,
+      "cases": [
+        {
+          "name": "Valid minimal handoff",
+          "passed": true
+        },
+        {
+          "name": "Cross-location rejection",
+          "passed": true
+        },
+        {
+          "name": "Cross-project rejection",
+          "passed": true
+        },
+        {
+          "name": "Strict consent",
+          "passed": true
+        },
+        {
+          "name": "Sensitive record rejection",
+          "passed": true
+        },
+        {
+          "name": "Invalid email rejection",
+          "passed": true
+        },
+        {
+          "name": "Minimal fields and no communication",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "projectId": "ECOM-03",
+      "scope": "Shared contact-planner cases executed on this request; not whole-business or hosted GHL acceptance.",
+      "passed": 7,
+      "total": 7,
+      "cases": [
+        {
+          "name": "Valid minimal handoff",
+          "passed": true
+        },
+        {
+          "name": "Cross-location rejection",
+          "passed": true
+        },
+        {
+          "name": "Cross-project rejection",
+          "passed": true
+        },
+        {
+          "name": "Strict consent",
+          "passed": true
+        },
+        {
+          "name": "Sensitive record rejection",
+          "passed": true
+        },
+        {
+          "name": "Invalid email rejection",
+          "passed": true
+        },
+        {
+          "name": "Minimal fields and no communication",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "projectId": "ECOM-04",
+      "scope": "Shared contact-planner cases executed on this request; not whole-business or hosted GHL acceptance.",
+      "passed": 7,
+      "total": 7,
+      "cases": [
+        {
+          "name": "Valid minimal handoff",
+          "passed": true
+        },
+        {
+          "name": "Cross-location rejection",
+          "passed": true
+        },
+        {
+          "name": "Cross-project rejection",
+          "passed": true
+        },
+        {
+          "name": "Strict consent",
+          "passed": true
+        },
+        {
+          "name": "Sensitive record rejection",
+          "passed": true
+        },
+        {
+          "name": "Invalid email rejection",
+          "passed": true
+        },
+        {
+          "name": "Minimal fields and no communication",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "projectId": "ACC-01",
+      "scope": "Shared contact-planner cases executed on this request; not whole-business or hosted GHL acceptance.",
+      "passed": 7,
+      "total": 7,
+      "cases": [
+        {
+          "name": "Valid minimal handoff",
+          "passed": true
+        },
+        {
+          "name": "Cross-location rejection",
+          "passed": true
+        },
+        {
+          "name": "Cross-project rejection",
+          "passed": true
+        },
+        {
+          "name": "Strict consent",
+          "passed": true
+        },
+        {
+          "name": "Sensitive record rejection",
+          "passed": true
+        },
+        {
+          "name": "Invalid email rejection",
+          "passed": true
+        },
+        {
+          "name": "Minimal fields and no communication",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "projectId": "CS-01",
+      "scope": "Shared contact-planner cases executed on this request; not whole-business or hosted GHL acceptance.",
+      "passed": 7,
+      "total": 7,
+      "cases": [
+        {
+          "name": "Valid minimal handoff",
+          "passed": true
+        },
+        {
+          "name": "Cross-location rejection",
+          "passed": true
+        },
+        {
+          "name": "Cross-project rejection",
+          "passed": true
+        },
+        {
+          "name": "Strict consent",
+          "passed": true
+        },
+        {
+          "name": "Sensitive record rejection",
+          "passed": true
+        },
+        {
+          "name": "Invalid email rejection",
+          "passed": true
+        },
+        {
+          "name": "Minimal fields and no communication",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "projectId": "IMP-01",
+      "scope": "Shared contact-planner cases executed on this request; not whole-business or hosted GHL acceptance.",
+      "passed": 7,
+      "total": 7,
+      "cases": [
+        {
+          "name": "Valid minimal handoff",
+          "passed": true
+        },
+        {
+          "name": "Cross-location rejection",
+          "passed": true
+        },
+        {
+          "name": "Cross-project rejection",
+          "passed": true
+        },
+        {
+          "name": "Strict consent",
+          "passed": true
+        },
+        {
+          "name": "Sensitive record rejection",
+          "passed": true
+        },
+        {
+          "name": "Invalid email rejection",
+          "passed": true
+        },
+        {
+          "name": "Minimal fields and no communication",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "projectId": "PM-01",
+      "scope": "Shared contact-planner cases executed on this request; not whole-business or hosted GHL acceptance.",
+      "passed": 7,
+      "total": 7,
+      "cases": [
+        {
+          "name": "Valid minimal handoff",
+          "passed": true
+        },
+        {
+          "name": "Cross-location rejection",
+          "passed": true
+        },
+        {
+          "name": "Cross-project rejection",
+          "passed": true
+        },
+        {
+          "name": "Strict consent",
+          "passed": true
+        },
+        {
+          "name": "Sensitive record rejection",
+          "passed": true
+        },
+        {
+          "name": "Invalid email rejection",
+          "passed": true
+        },
+        {
+          "name": "Minimal fields and no communication",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "projectId": "EA-01",
+      "scope": "Shared contact-planner cases executed on this request; not whole-business or hosted GHL acceptance.",
+      "passed": 7,
+      "total": 7,
+      "cases": [
+        {
+          "name": "Valid minimal handoff",
+          "passed": true
+        },
+        {
+          "name": "Cross-location rejection",
+          "passed": true
+        },
+        {
+          "name": "Cross-project rejection",
+          "passed": true
+        },
+        {
+          "name": "Strict consent",
+          "passed": true
+        },
+        {
+          "name": "Sensitive record rejection",
+          "passed": true
+        },
+        {
+          "name": "Invalid email rejection",
+          "passed": true
+        },
+        {
+          "name": "Minimal fields and no communication",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "projectId": "CON-01",
+      "scope": "Shared contact-planner cases executed on this request; not whole-business or hosted GHL acceptance.",
+      "passed": 7,
+      "total": 7,
+      "cases": [
+        {
+          "name": "Valid minimal handoff",
+          "passed": true
+        },
+        {
+          "name": "Cross-location rejection",
+          "passed": true
+        },
+        {
+          "name": "Cross-project rejection",
+          "passed": true
+        },
+        {
+          "name": "Strict consent",
+          "passed": true
+        },
+        {
+          "name": "Sensitive record rejection",
+          "passed": true
+        },
+        {
+          "name": "Invalid email rejection",
+          "passed": true
+        },
+        {
+          "name": "Minimal fields and no communication",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "projectId": "MED-01",
+      "scope": "Shared contact-planner cases executed on this request; not whole-business or hosted GHL acceptance.",
+      "passed": 7,
+      "total": 7,
+      "cases": [
+        {
+          "name": "Valid minimal handoff",
+          "passed": true
+        },
+        {
+          "name": "Cross-location rejection",
+          "passed": true
+        },
+        {
+          "name": "Cross-project rejection",
+          "passed": true
+        },
+        {
+          "name": "Strict consent",
+          "passed": true
+        },
+        {
+          "name": "Sensitive record rejection",
+          "passed": true
+        },
+        {
+          "name": "Invalid email rejection",
+          "passed": true
+        },
+        {
+          "name": "Minimal fields and no communication",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "projectId": "LEGAL-01",
+      "scope": "Shared contact-planner cases executed on this request; not whole-business or hosted GHL acceptance.",
+      "passed": 7,
+      "total": 7,
+      "cases": [
+        {
+          "name": "Valid minimal handoff",
+          "passed": true
+        },
+        {
+          "name": "Cross-location rejection",
+          "passed": true
+        },
+        {
+          "name": "Cross-project rejection",
+          "passed": true
+        },
+        {
+          "name": "Strict consent",
+          "passed": true
+        },
+        {
+          "name": "Sensitive record rejection",
+          "passed": true
+        },
+        {
+          "name": "Invalid email rejection",
+          "passed": true
+        },
+        {
+          "name": "Minimal fields and no communication",
+          "passed": true
+        }
+      ]
+    },
+    {
+      "projectId": "INS-01",
+      "scope": "Shared contact-planner cases executed on this request; not whole-business or hosted GHL acceptance.",
+      "passed": 7,
+      "total": 7,
+      "cases": [
+        {
+          "name": "Valid minimal handoff",
+          "passed": true
+        },
+        {
+          "name": "Cross-location rejection",
+          "passed": true
+        },
+        {
+          "name": "Cross-project rejection",
+          "passed": true
+        },
+        {
+          "name": "Strict consent",
+          "passed": true
+        },
+        {
+          "name": "Sensitive record rejection",
+          "passed": true
+        },
+        {
+          "name": "Invalid email rejection",
+          "passed": true
+        },
+        {
+          "name": "Minimal fields and no communication",
+          "passed": true
+        }
+      ]
+    }
+  ],
+  "domain": [
+    {
+      "projectId": "CON-01",
+      "evaluation": {
+        "passed": 6,
+        "total": 6,
+        "cases": [
+          {
+            "name": "Current independent approvals",
+            "passed": true,
+            "expected": {
+              "queue": "release_review",
+              "releaseAllowed": false
+            },
+            "output": {
+              "queue": "release_review",
+              "reasons": [],
+              "ledger": [
+                {
+                  "index": 0,
+                  "requestId": "change-001",
+                  "actor": "manager-a",
+                  "role": "project_manager",
+                  "version": 2,
+                  "amountCents": 125000,
+                  "previous": "GENESIS",
+                  "hash": "5b0cdc70d0821289813285df15f0399762c887ffdab8dd3b83a05119e844193d"
+                },
+                {
+                  "index": 1,
+                  "requestId": "change-001",
+                  "actor": "finance-b",
+                  "role": "finance",
+                  "version": 2,
+                  "amountCents": 125000,
+                  "previous": "5b0cdc70d0821289813285df15f0399762c887ffdab8dd3b83a05119e844193d",
+                  "hash": "ba52bac70c042a51f64443fe063b3b01a74f8eccee69a888aae293d45b4d73d6"
+                }
+              ],
+              "ledgerHead": "ba52bac70c042a51f64443fe063b3b01a74f8eccee69a888aae293d45b4d73d6",
+              "releaseAllowed": false
+            }
+          },
+          {
+            "name": "Expired certificate blocks readiness",
+            "passed": true,
+            "expected": {
+              "queue": "exception_review"
+            },
+            "output": {
+              "queue": "exception_review",
+              "reasons": [
+                "expired_certificate"
+              ],
+              "ledger": [
+                {
+                  "index": 0,
+                  "requestId": "change-001",
+                  "actor": "manager-a",
+                  "role": "project_manager",
+                  "version": 2,
+                  "amountCents": 125000,
+                  "previous": "GENESIS",
+                  "hash": "5b0cdc70d0821289813285df15f0399762c887ffdab8dd3b83a05119e844193d"
+                },
+                {
+                  "index": 1,
+                  "requestId": "change-001",
+                  "actor": "finance-b",
+                  "role": "finance",
+                  "version": 2,
+                  "amountCents": 125000,
+                  "previous": "5b0cdc70d0821289813285df15f0399762c887ffdab8dd3b83a05119e844193d",
+                  "hash": "ba52bac70c042a51f64443fe063b3b01a74f8eccee69a888aae293d45b4d73d6"
+                }
+              ],
+              "ledgerHead": "ba52bac70c042a51f64443fe063b3b01a74f8eccee69a888aae293d45b4d73d6",
+              "releaseAllowed": false
+            }
+          },
+          {
+            "name": "Changed amount invalidates approvals",
+            "passed": true,
+            "expected": {
+              "queue": "exception_review"
+            },
+            "output": {
+              "queue": "exception_review",
+              "reasons": [
+                "independent_current_approvals_required"
+              ],
+              "ledger": [
+                {
+                  "index": 0,
+                  "requestId": "change-001",
+                  "actor": "manager-a",
+                  "role": "project_manager",
+                  "version": 2,
+                  "amountCents": 125000,
+                  "previous": "GENESIS",
+                  "hash": "5b0cdc70d0821289813285df15f0399762c887ffdab8dd3b83a05119e844193d"
+                },
+                {
+                  "index": 1,
+                  "requestId": "change-001",
+                  "actor": "finance-b",
+                  "role": "finance",
+                  "version": 2,
+                  "amountCents": 125000,
+                  "previous": "5b0cdc70d0821289813285df15f0399762c887ffdab8dd3b83a05119e844193d",
+                  "hash": "ba52bac70c042a51f64443fe063b3b01a74f8eccee69a888aae293d45b4d73d6"
+                }
+              ],
+              "ledgerHead": "ba52bac70c042a51f64443fe063b3b01a74f8eccee69a888aae293d45b4d73d6",
+              "releaseAllowed": false
+            }
+          },
+          {
+            "name": "Requester cannot approve own change",
+            "passed": true,
+            "expected": {
+              "queue": "exception_review"
+            },
+            "output": {
+              "queue": "exception_review",
+              "reasons": [
+                "independent_current_approvals_required"
+              ],
+              "ledger": [
+                {
+                  "index": 0,
+                  "requestId": "change-001",
+                  "actor": "manager-a",
+                  "role": "project_manager",
+                  "version": 2,
+                  "amountCents": 125000,
+                  "previous": "GENESIS",
+                  "hash": "5b0cdc70d0821289813285df15f0399762c887ffdab8dd3b83a05119e844193d"
+                },
+                {
+                  "index": 1,
+                  "requestId": "change-001",
+                  "actor": "finance-b",
+                  "role": "finance",
+                  "version": 2,
+                  "amountCents": 125000,
+                  "previous": "5b0cdc70d0821289813285df15f0399762c887ffdab8dd3b83a05119e844193d",
+                  "hash": "ba52bac70c042a51f64443fe063b3b01a74f8eccee69a888aae293d45b4d73d6"
+                }
+              ],
+              "ledgerHead": "ba52bac70c042a51f64443fe063b3b01a74f8eccee69a888aae293d45b4d73d6",
+              "releaseAllowed": false
+            }
+          },
+          {
+            "name": "Stale approval version",
+            "passed": true,
+            "expected": {
+              "queue": "exception_review"
+            },
+            "output": {
+              "queue": "exception_review",
+              "reasons": [
+                "independent_current_approvals_required"
+              ],
+              "ledger": [
+                {
+                  "index": 0,
+                  "requestId": "change-001",
+                  "actor": "manager-a",
+                  "role": "project_manager",
+                  "version": 2,
+                  "amountCents": 125000,
+                  "previous": "GENESIS",
+                  "hash": "5b0cdc70d0821289813285df15f0399762c887ffdab8dd3b83a05119e844193d"
+                },
+                {
+                  "index": 1,
+                  "requestId": "change-001",
+                  "actor": "finance-b",
+                  "role": "finance",
+                  "version": 2,
+                  "amountCents": 125000,
+                  "previous": "5b0cdc70d0821289813285df15f0399762c887ffdab8dd3b83a05119e844193d",
+                  "hash": "ba52bac70c042a51f64443fe063b3b01a74f8eccee69a888aae293d45b4d73d6"
+                }
+              ],
+              "ledgerHead": "ba52bac70c042a51f64443fe063b3b01a74f8eccee69a888aae293d45b4d73d6",
+              "releaseAllowed": false
+            }
+          },
+          {
+            "name": "Invalid amount is rejected",
+            "passed": true,
+            "expectedRejection": "Valid amount"
+          }
+        ]
+      },
+      "scope": "Synthetic administrative decision cases; no external actions or professional determinations."
+    },
+    {
+      "projectId": "MED-01",
+      "evaluation": {
+        "passed": 6,
+        "total": 6,
+        "cases": [
+          {
+            "name": "Complete fictional payer checklist",
+            "passed": true,
+            "expected": {
+              "queue": "authorization_staff_review",
+              "ready": true
+            },
+            "output": {
+              "queue": "authorization_staff_review",
+              "missing": [],
+              "ready": true,
+              "externalActions": 0
+            }
+          },
+          {
+            "name": "Missing order",
+            "passed": true,
+            "expected": {
+              "queue": "document_follow_up",
+              "missing": [
+                "order"
+              ]
+            },
+            "output": {
+              "queue": "document_follow_up",
+              "missing": [
+                "order"
+              ],
+              "ready": false,
+              "externalActions": 0
+            }
+          },
+          {
+            "name": "Unknown payer",
+            "passed": true,
+            "expected": {
+              "queue": "payer_review"
+            },
+            "output": {
+              "queue": "payer_review",
+              "missing": [],
+              "ready": false,
+              "externalActions": 0
+            }
+          },
+          {
+            "name": "Consent must be a boolean",
+            "passed": true,
+            "expected": {
+              "queue": "consent_review",
+              "ready": false
+            },
+            "output": {
+              "queue": "consent_review",
+              "missing": [],
+              "ready": false,
+              "externalActions": 0
+            }
+          },
+          {
+            "name": "Second payer requires supporting document",
+            "passed": true,
+            "expected": {
+              "missing": [
+                "supporting_document"
+              ]
+            },
+            "output": {
+              "queue": "document_follow_up",
+              "missing": [
+                "supporting_document"
+              ],
+              "ready": false,
+              "externalActions": 0
+            }
+          },
+          {
+            "name": "Malformed documents rejected",
+            "passed": true,
+            "expectedRejection": "String list"
+          }
+        ]
+      },
+      "scope": "Synthetic administrative decision cases; no external actions or professional determinations."
+    },
+    {
+      "projectId": "LEGAL-01",
+      "evaluation": {
+        "passed": 6,
+        "total": 6,
+        "cases": [
+          {
+            "name": "Exact normalized conflict",
+            "passed": true,
+            "expected": {
+              "queue": "conflict_review",
+              "matterCreationAllowed": false
+            },
+            "output": {
+              "queue": "conflict_review",
+              "matches": [
+                {
+                  "party": "NORTHSTAR, LTD",
+                  "kind": "exact"
+                }
+              ],
+              "matterCreationAllowed": false
+            }
+          },
+          {
+            "name": "Ambiguous shared entity token",
+            "passed": true,
+            "expected": {
+              "queue": "identity_review"
+            },
+            "output": {
+              "queue": "identity_review",
+              "matches": [
+                {
+                  "party": "Northstar Holdings",
+                  "kind": "ambiguous"
+                }
+              ],
+              "matterCreationAllowed": false
+            }
+          },
+          {
+            "name": "No match still requires attorney clearance",
+            "passed": true,
+            "expected": {
+              "queue": "attorney_clearance",
+              "matterCreationAllowed": false
+            },
+            "output": {
+              "queue": "attorney_clearance",
+              "matches": [],
+              "matterCreationAllowed": false
+            }
+          },
+          {
+            "name": "Empty party list rejected",
+            "passed": true,
+            "expectedRejection": "At least one"
+          },
+          {
+            "name": "Unicode names retain identity",
+            "passed": true,
+            "expected": {
+              "queue": "conflict_review"
+            },
+            "output": {
+              "queue": "conflict_review",
+              "matches": [
+                {
+                  "party": "Árbol SA",
+                  "kind": "exact"
+                }
+              ],
+              "matterCreationAllowed": false
+            }
+          },
+          {
+            "name": "Punctuation is not an entity",
+            "passed": true,
+            "expectedRejection": "Entity must"
+          }
+        ]
+      },
+      "scope": "Synthetic administrative decision cases; no external actions or professional determinations."
+    },
+    {
+      "projectId": "INS-01",
+      "evaluation": {
+        "passed": 6,
+        "total": 6,
+        "cases": [
+          {
+            "name": "Complete intake for adjuster",
+            "passed": true,
+            "expected": {
+              "queue": "adjuster_intake",
+              "coverageDecision": "not_made"
+            },
+            "output": {
+              "queue": "adjuster_intake",
+              "reasons": [],
+              "missing": [],
+              "coverageDecision": "not_made",
+              "externalActions": 0
+            }
+          },
+          {
+            "name": "Outside policy dates",
+            "passed": true,
+            "expected": {
+              "queue": "adjuster_exception_review",
+              "coverageDecision": "not_made"
+            },
+            "output": {
+              "queue": "adjuster_exception_review",
+              "reasons": [
+                "policy_date_review"
+              ],
+              "missing": [],
+              "coverageDecision": "not_made",
+              "externalActions": 0
+            }
+          },
+          {
+            "name": "Missing incident report",
+            "passed": true,
+            "expected": {
+              "missing": [
+                "incident_report"
+              ]
+            },
+            "output": {
+              "queue": "adjuster_exception_review",
+              "reasons": [
+                "missing_evidence"
+              ],
+              "missing": [
+                "incident_report"
+              ],
+              "coverageDecision": "not_made",
+              "externalActions": 0
+            }
+          },
+          {
+            "name": "Duplicate signal is a review flag",
+            "passed": true,
+            "expected": {
+              "reasons": [
+                "duplicate_signal_review"
+              ],
+              "coverageDecision": "not_made"
+            },
+            "output": {
+              "queue": "adjuster_exception_review",
+              "reasons": [
+                "duplicate_signal_review"
+              ],
+              "missing": [],
+              "coverageDecision": "not_made",
+              "externalActions": 0
+            }
+          },
+          {
+            "name": "Invalid calendar date rejected",
+            "passed": true,
+            "expectedRejection": "Valid ISO"
+          },
+          {
+            "name": "Reversed policy dates rejected",
+            "passed": true,
+            "expectedRejection": "Invalid policy"
+          }
+        ]
+      },
+      "scope": "Synthetic administrative decision cases; no external actions or professional determinations."
+    }
+  ]
+}

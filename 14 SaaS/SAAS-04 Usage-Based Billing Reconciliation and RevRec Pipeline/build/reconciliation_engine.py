@@ -27,9 +27,8 @@ from __future__ import annotations
 
 import hashlib
 import json
-from datetime import date, datetime, timedelta
+from datetime import UTC, date, datetime, timedelta
 from decimal import ROUND_HALF_UP, Decimal
-from typing import Optional
 
 # ---------------------------------------------------------------------------
 # Constants
@@ -89,8 +88,8 @@ def calculate_variance(internal_usage: dict, stripe_invoiced: dict) -> dict:
         ).quantize(FOUR_PLACES, rounding=ROUND_HALF_UP)
 
     requires_review = abs(variance_pct) >= VARIANCE_THRESHOLD_PCT
-    variance_direction = "underbilled" if variance_pct < 0 else (
-        "overbilled" if variance_pct > 0 else "matched"
+    variance_direction = (
+        "underbilled" if variance_pct < 0 else ("overbilled" if variance_pct > 0 else "matched")
     )
 
     # Estimated dollar impact: the delta in units priced at the invoice's
@@ -120,7 +119,7 @@ def calculate_variance(internal_usage: dict, stripe_invoiced: dict) -> dict:
     }
 
 
-def classify_variance(variance_pct: Decimal, context: Optional[dict] = None) -> str:
+def classify_variance(variance_pct: Decimal, context: dict | None = None) -> str:
     """Classify a variance as auto-resolved or needing Finance review.
 
     Applies the same 3% materiality threshold as `calculate_variance`
@@ -141,10 +140,12 @@ def classify_variance(variance_pct: Decimal, context: Optional[dict] = None) -> 
     if not isinstance(variance_pct, Decimal):
         variance_pct = Decimal(str(variance_pct))
 
-    return "needs_finance_review" if abs(variance_pct) >= VARIANCE_THRESHOLD_PCT else "auto_resolved"
+    return (
+        "needs_finance_review" if abs(variance_pct) >= VARIANCE_THRESHOLD_PCT else "auto_resolved"
+    )
 
 
-def generate_root_cause_hint(variance_pct: Decimal, context: Optional[dict] = None) -> str:
+def generate_root_cause_hint(variance_pct: Decimal, context: dict | None = None) -> str:
     """Rule-based root-cause heuristics (SOP Section 14.1 / step 7).
 
     `context` carries flags pulled from the metering DB's audit trail:
@@ -186,7 +187,7 @@ def generate_revrec_schedule(
     usage_portion: Decimal,
     start_date: date,
     end_date: date,
-    usage_events: Optional[list] = None,
+    usage_events: list | None = None,
 ) -> list:
     """Build a per-day/per-event revenue recognition schedule.
 
@@ -258,8 +259,9 @@ def generate_revrec_schedule(
     if usage_events:
         allocated = Decimal("0.00")
         for idx, event in enumerate(usage_events):
-            is_last_event = idx == len(usage_events) - 1
-            event_amount = Decimal(str(event["amount_usd"])).quantize(TWO_PLACES, rounding=ROUND_HALF_UP)
+            event_amount = Decimal(str(event["amount_usd"])).quantize(
+                TWO_PLACES, rounding=ROUND_HALF_UP
+            )
             allocated += event_amount
             schedule.append(
                 {
@@ -273,14 +275,16 @@ def generate_revrec_schedule(
                     "description": event.get("description", "Metered usage recognition event"),
                 }
             )
-    elif usage_portion and usage_portion != Decimal("0"):
+    elif usage_portion and usage_portion != Decimal(0):
         # Common case for this SOP: usage is confirmed and recognized as a
         # single event at period close (SOP Section 14.2, step 13).
         schedule.append(
             {
                 "component": "usage",
                 "recognition_date": end_date.isoformat(),
-                "amount_usd": str(Decimal(usage_portion).quantize(TWO_PLACES, rounding=ROUND_HALF_UP)),
+                "amount_usd": str(
+                    Decimal(usage_portion).quantize(TWO_PLACES, rounding=ROUND_HALF_UP)
+                ),
                 "method": "usage_triggered",
                 "asc606_ref": "ASC 606-10-32-40",
                 "description": "Confirmed metered overage recognized at period close",
@@ -311,11 +315,11 @@ def build_journal_entry(
     *,
     subscription_batch_id: str = "SUB-BATCH-UNSPECIFIED",
     period_end_date: str = "",
-    seat_recognized_amount: Optional[Decimal] = None,
-    usage_recognized_amount: Optional[Decimal] = None,
-    cost_center_class_ref: Optional[str] = None,
-    txn_date: Optional[str] = None,
-    doc_number: Optional[str] = None,
+    seat_recognized_amount: Decimal | None = None,
+    usage_recognized_amount: Decimal | None = None,
+    cost_center_class_ref: str | None = None,
+    txn_date: str | None = None,
+    doc_number: str | None = None,
 ) -> dict:
     """Construct a QuickBooks Online Journal Entry API payload.
 
@@ -377,10 +381,12 @@ def build_journal_entry(
         )
 
     class_ref_value = cost_center_class_ref or cost_center
-    resolved_txn_date = txn_date or period_end_date or date.today().isoformat()
+    resolved_txn_date = txn_date or period_end_date or datetime.now(UTC).date().isoformat()
 
     idempotency_key = compute_idempotency_key(
-        subscription_batch_id, period_end_date or resolved_txn_date, "recognized_revenue_period_close"
+        subscription_batch_id,
+        period_end_date or resolved_txn_date,
+        "recognized_revenue_period_close",
     )
 
     lines = [
@@ -509,8 +515,18 @@ if __name__ == "__main__":
 
     samples = [
         ("Account A — clean, immaterial variance", account_a_usage, account_a_invoiced, {}),
-        ("Account B — material variance, revenue leakage pattern", account_b_usage, account_b_invoiced, account_b_context),
-        ("Account C — mid-cycle plan change, not prorated", account_c_usage, account_c_invoiced, account_c_context),
+        (
+            "Account B — material variance, revenue leakage pattern",
+            account_b_usage,
+            account_b_invoiced,
+            account_b_context,
+        ),
+        (
+            "Account C — mid-cycle plan change, not prorated",
+            account_c_usage,
+            account_c_invoiced,
+            account_c_context,
+        ),
     ]
 
     _print_section("NIGHTLY RECONCILIATION — VARIANCE CLASSIFICATION")
@@ -542,16 +558,20 @@ if __name__ == "__main__":
     seat_records = [r for r in schedule if r["component"] == "seat"]
     usage_records = [r for r in schedule if r["component"] == "usage"]
 
-    print(f"\nTotal records generated: {len(schedule)} "
-          f"({len(seat_records)} seat/day, {len(usage_records)} usage-triggered)")
+    print(
+        f"\nTotal records generated: {len(schedule)} "
+        f"({len(seat_records)} seat/day, {len(usage_records)} usage-triggered)"
+    )
     print("\nFirst 3 seat recognition records:")
     for rec in seat_records[:3]:
         print(f"  {rec}")
     print("\nLast seat recognition record (absorbs rounding remainder):")
     print(f"  {seat_records[-1]}")
-    print(f"\nSum of seat recognition records: "
-          f"{sum(Decimal(r['amount_usd']) for r in seat_records)} "
-          f"(should equal seat_portion 84000.00)")
+    print(
+        f"\nSum of seat recognition records: "
+        f"{sum(Decimal(r['amount_usd']) for r in seat_records)} "
+        f"(should equal seat_portion 84000.00)"
+    )
     print("\nUsage-triggered recognition record(s):")
     for rec in usage_records:
         print(f"  {rec}")

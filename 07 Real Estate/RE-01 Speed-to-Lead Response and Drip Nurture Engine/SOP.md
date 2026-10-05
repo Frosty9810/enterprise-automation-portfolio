@@ -429,7 +429,9 @@ def should_escalate_to_hot(lead: CanonicalLead, now: datetime | None = None) -> 
     now = now or datetime.now(timezone.utc)
     if lead.engagement_event_at is None or lead.last_touch_at is None:
         return False
-    return (now - lead.last_touch_at) <= timedelta(hours=24) and lead.engagement_event_at >= lead.last_touch_at
+    return (now - lead.last_touch_at) <= timedelta(
+        hours=24
+    ) and lead.engagement_event_at >= lead.last_touch_at
 ```
 
 **Drip cadence structure (12 touches over 45 days, GoHighLevel workflow):**
@@ -711,3 +713,8 @@ Shadow-mode deployment (Section 30) proved essential rather than optional — th
 
 ---
 *Part of the Enterprise Automation Portfolio. See [`07 Real Estate`](../README.md) for section navigation.*
+
+
+## Engineering amendment — 8 September 2026
+
+Revision 2026-09-08: Python artifacts were linted/formatted and local demos rerun. UTC defaults and usage timestamp normalization were repaired where applicable. Original n8n/API/database execution remains a separate acceptance gate; prior narrative production claims are not verified by local checks. See the root portfolio audit and the project showcase package for current evidence.

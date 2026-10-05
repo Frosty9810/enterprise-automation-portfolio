@@ -1,0 +1,22 @@
+{
+  "kind": "manual-configuration-blueprint-not-ghl-snapshot",
+  "projectId": "RE-01",
+  "relationshipRole": "Buyer relationship",
+  "pipelineName": "Portfolio / RE-01",
+  "stages": [
+    "New inquiry",
+    "Qualified",
+    "Assigned",
+    "Closed"
+  ],
+  "messagingEnabled": false,
+  "duplicateMatch": "email",
+  "contactFields": [
+    "firstName",
+    "lastName",
+    "email",
+    "source"
+  ],
+  "liveAcceptance": "pending",
+  "systemOfRecord": "original project system"
+}

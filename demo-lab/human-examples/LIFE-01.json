@@ -1,0 +1,42 @@
+{
+  "project": "LIFE-01",
+  "title": "Room for Life",
+  "dataOrigin": "Invented example",
+  "input": {
+    "hours": [
+      8,
+      8,
+      3,
+      1
+    ]
+  },
+  "output": {
+    "summary": "4 hours remain unallocated. Leave room for rest and the unexpected.",
+    "rows": [
+      {
+        "label": "Sleep",
+        "value": 8
+      },
+      {
+        "label": "Work",
+        "value": 8
+      },
+      {
+        "label": "Care",
+        "value": 3
+      },
+      {
+        "label": "Travel",
+        "value": 1
+      },
+      {
+        "label": "Unallocated",
+        "value": 4
+      }
+    ],
+    "unit": "hours",
+    "details": {
+      "overbooked": false
+    }
+  }
+}

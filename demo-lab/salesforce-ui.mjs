@@ -15,6 +15,9 @@ export async function mountSalesforce(document, api, download) {
     function invalidate() { generation++; receipt = null; $('ack').checked = false; render(); }
     function render() {
         $('records').replaceChildren();
+        $('run-id').textContent = '';
+        $('confirmed').textContent = '0';
+        $('pending').textContent = '0';
         if (state) {
             $('run-id').textContent = 'RUN ' + state.runId.slice(0, 8);
             $('confirmed').textContent = state.receipts.filter(r => r.status === 'completed').length;
@@ -81,10 +84,11 @@ export async function mountSalesforce(document, api, download) {
                 $('notice').textContent = 'Another local operator changed the record. Earlier reviews cannot overwrite it.';
             }
             else {
-                receipt = result;
-                state = await api('state', { runId: state.runId });
+                const nextState = await api('state', { runId: state.runId });
                 if (revision !== generation)
                     return;
+                receipt = result;
+                state = nextState;
                 selected = state.records.find(r => r.id === selected.id);
                 $('notice').textContent = result.replayed ? 'Original receipt retained; no repeated update.' : result.status === 'uncertain' ? 'Acknowledgement lost. Reconcile before another attempt.' : 'Decision record updated.';
             }

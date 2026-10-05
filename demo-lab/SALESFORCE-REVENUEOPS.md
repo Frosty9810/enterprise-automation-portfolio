@@ -35,7 +35,7 @@ Requires the existing Node 24 environment; no extra package installation is need
 
 ```sh
 node demo-lab/server.mjs
-node --test demo-lab/salesforce.test.mjs demo-lab/salesforce-ui.test.mjs
+node --test demo-lab/salesforce*.test.mjs
 node demo-lab/run-salesforce.mjs
 ```
 

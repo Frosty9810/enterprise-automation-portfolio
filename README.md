@@ -1,5 +1,7 @@
 # Gabriel Acosta — automation engineering portfolio
 
+**New: [Reliability workshop for all 27 automation projects](demo-lab/RELIABILITY-WORKSHOP.md)** — open `/workshop` in the local lab to explore business passports, reviewed handoffs, duplicate events, timeout recovery and source-bound evidence. See the [ranked flagship roadmap](demo-lab/PORTFOLIO-ROADMAP.md) for the next projects to build deeply.
+
 **Start with the interactive product-governance case:** [walkthrough and engineering boundaries](demo-lab/PRODUCT-GOVERNANCE.md). After local setup, open `http://127.0.0.1:5680/product-governance` to edit a translation, inspect the original Python policy, record a review and export the exact reviewed draft. Synthetic inputs make the workflow shareable without client records.
 
 See [showcase depth and acceptance boundaries](SHOWCASE-DEPTH.md) for the strongest cases, collection-wide principles and the current verification limitation.

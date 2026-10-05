@@ -1,5 +1,7 @@
 # Instagram reference queue — September 8, 2026
 
+**5 October follow-up:** Five unique posts from the latest request were opened in the browser and their captions reviewed; linked technical claims were checked against primary sources. See [current research and proposed portfolio additions](REEL-RESEARCH-2026-10-05.md). This includes the new donimas model-routing and marc.kaz REA references. It does not mark the rest of the September queue reviewed.
+
 **September 9 update:** Nine reel pages were subsequently opened in signed-in Edge and captions were read; selected frames were inspected. Eight remain unreviewed. The table below is the original access-attempt log, not the current review status. See [reel-informed recommendations and exact review scope](REEL-RECOMMENDATIONS.md).
 
 The user supplied 17 reel links. The concatenated URL has been separated below. Public fetches were attempted for all 17 and returned cache-miss errors; no reel content or transcript was obtained. These are references pending content review, not sources used to justify implementation decisions. The Build Studio work follows the user's dashboard and presentation requirements directly.

@@ -7,6 +7,8 @@ import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
 import { createHash, randomUUID } from 'node:crypto';
 import { projects, projectById } from './catalog.mjs';
+import { projectPassports } from './project-passports.mjs';
+import { reliabilityDesk } from './reliability.mjs';
 import { maintenance, commitments } from './extra-scenarios.mjs';
 import { artifacts, toolProfile } from './showcase.mjs';
 import { evaluateIndustryDepth, openDecisionRegister, depthFixtures } from './industry-depth.mjs';
@@ -127,6 +129,7 @@ export async function runN8n(id, progress = () => {}) {
 
 export function createLabServer(db = openStore(), executeWorkflow = runN8n) {
   const desk = productDesk(db);
+  const reliability = reliabilityDesk(db);
   let busy = false;
   let activity = null;
   let domains = 0;
@@ -135,6 +138,16 @@ export function createLabServer(db = openStore(), executeWorkflow = runN8n) {
     const origin = request.headers.origin;
     if (origin && origin !== 'http://127.0.0.1:5680') return send(response, 403, { error: 'Local origin required' });
     if (request.method === 'GET') {
+      if (url.pathname === '/api/workshop/projects') return send(response,200,{projects:projectPassports()});
+      if (url.pathname === '/workshop') {
+        response.writeHead(200, {'Content-Type':'text/html; charset=utf-8','Cache-Control':'no-store',
+          'Content-Security-Policy': "default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; object-src 'none'"});
+        return response.end(readFileSync(join(directory,'workshop.html')));
+      }
+      if (['/workshop.css','/workshop.mjs'].includes(url.pathname)) {
+        response.writeHead(200, {'Content-Type':url.pathname.endsWith('.css')?'text/css; charset=utf-8':'text/javascript; charset=utf-8','X-Content-Type-Options':'nosniff'});
+        return response.end(readFileSync(join(directory,url.pathname.slice(1))));
+      }
       if (url.pathname === '/api/governance') return send(response,200,currentGovernance());
       if (url.pathname === '/build-review.json') {
         try { return send(response,200,JSON.parse(readFileSync(join(directory,'build-review.json'),'utf8'))); }
@@ -188,6 +201,11 @@ export function createLabServer(db = openStore(), executeWorkflow = runN8n) {
     if (request.headers['x-demo-client'] !== 'local-showcase') return send(response, 403, { error: 'Demo client header required' });
     try {
       const body = await readBody(request);
+      if (url.pathname === '/api/workshop/submit') return send(response,200,reliability.submit(body.projectId,body.event));
+      if (url.pathname === '/api/workshop/review') return send(response,200,reliability.review(body.receiptId,body.reviewer));
+      if (url.pathname === '/api/workshop/execute') return send(response,200,reliability.execute(body.receiptId,body.outcome));
+      if (url.pathname === '/api/workshop/reconcile') return send(response,200,reliability.reconcile(body.receiptId));
+      if (url.pathname === '/api/workshop/export') return send(response,200,reliability.export(body.receiptId));
       if (url.pathname === '/api/product/evaluate') {
         if (domains >= 2) return send(response,429,{error:'Demo worker busy'});
         domains++;

@@ -3,6 +3,8 @@
 import { useMemo, useState } from "react";
 import { agents, departments, knowledgeRecords, type DepartmentId, type AgentRunResult } from "./lib/agent-system";
 
+type RunResult = AgentRunResult;
+
 const defaultTasks: Record<DepartmentId, string> = {
   sales: "Build a qualified distributor handoff for the ELEC-440 product line and show the evidence used.",
   deals: "Prepare a commercial review packet for a 1,200-unit ELEC-440 opportunity with an 18% margin floor.",
@@ -18,7 +20,7 @@ export default function Home() {
   const [departmentId, setDepartmentId] = useState<DepartmentId>("operations");
   const [agentId, setAgentId] = useState("operations-016");
   const [task, setTask] = useState(defaultTasks.operations);
-  const [result, setResult] = useState<AgentRunResult | null>(null);
+  const [result, setResult] = useState<RunResult | null>(null);
   const [error, setError] = useState("");
   const [running, setRunning] = useState(false);
 
@@ -58,7 +60,7 @@ export default function Home() {
           ? payload.error : "Agent run failed.";
         throw new Error(message);
       }
-      setResult(payload as AgentRunResult);
+      setResult(payload as RunResult);
     } catch (runError) {
       setError(runError instanceof Error ? runError.message : "Agent run failed.");
     } finally {

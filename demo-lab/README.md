@@ -14,6 +14,8 @@ Select **Life and data** for a separate [20-prototype collection](HUMAN-COLLECTI
 
 With the server running, open **http://127.0.0.1:5680**. Select a project and click **Run demo in n8n**. The screen shows original business output, a verified local contact and source/workflow hashes. Click **Verify all projects** to run the entire suite. Repeat a project to show the same contact being updated without duplication.
 
+The local HTTP boundary requires the exact `127.0.0.1:<listening-port>` Host authority. Browser Origin, when supplied, must match that same origin; cross-site fetch metadata is rejected for reads and writes. Alternate hostnames, wrong ports and authority-changing request targets are rejected before route execution. Use the documented numeric loopback URL. These checks reduce browser cross-origin/rebinding exposure; they are not user authentication or protection against other local processes. Keep this synthetic lab on loopback. Run `node --test demo-lab/http-boundary.test.mjs` from the repository root to verify hostile requests do not execute workflows or write run history.
+
 From the portfolio root, after installing Python dependencies from `requirements-dev.txt`:
 
 ```sh

@@ -1,0 +1,2 @@
+# These sources are hashed byte-for-byte by the recorded repair evidence.
+/demo-lab/repair-example/*.mjs text eol=lf

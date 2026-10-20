@@ -139,9 +139,17 @@ export function createLabServer(db = openStore(), executeWorkflow = runN8n) {
   let activity = null;
   let domains = 0;
   return createServer(async (request, response) => {
-    const url = new URL(request.url, 'http://127.0.0.1:5680');
+    // Loopback binding alone does not validate a browser's requested authority.
+    const authority = `127.0.0.1:${request.socket.localPort}`;
+    const localOrigin = `http://${authority}`;
+    if (request.headers.host !== authority) return send(response, 403, { error: 'Local host required' });
+    if (!request.url?.startsWith('/') || request.url.startsWith('//')) return send(response, 400, { error: 'Invalid request target' });
+    let url;
+    try { url = new URL(request.url, localOrigin); }
+    catch { return send(response, 400, { error: 'Invalid request target' }); }
+    if (url.origin !== localOrigin) return send(response, 400, { error: 'Invalid request target' });
     const origin = request.headers.origin;
-    if (origin && origin !== 'http://127.0.0.1:5680') return send(response, 403, { error: 'Local origin required' });
+    if ((origin && origin !== localOrigin) || request.headers['sec-fetch-site'] === 'cross-site') return send(response, 403, { error: 'Local origin required' });
     if (request.method === 'GET') {
       if (url.pathname === '/api/flagships/catalog') return send(response,200,{projects:flagships.catalog(),history:flagships.history()});
       if (url.pathname.startsWith('/api/flagships/example/')) {

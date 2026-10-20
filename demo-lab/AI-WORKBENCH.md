@@ -27,6 +27,8 @@ Sources reviewed during this build. No source benchmark scores, branding or prod
 
 Run `node --test demo-lab/workbench.test.mjs` from the portfolio root. Downloaded reports contain user-entered fixtures; review them before sharing. The page does not store inputs or send them externally.
 
+The repair example records exact source-byte hashes. `.gitattributes` pins `demo-lab/repair-example/*.mjs` to LF so Windows `core.autocrlf=true` checkouts preserve that evidence. `node --test demo-lab/repair-checkout.test.mjs` performs real Git checkouts under `true`, `input` and `false` modes and compares their bytes to the recorded hashes. For a clone created before this rule, preserve any local fixture edits before restoring just these three files from the intended commit. Source changes still require rerunning the real repair acceptance; the hash check is not normalized or bypassed.
+
 ## Next implementation boundary
 
 An optional local model adapter, durable state, authenticated approvals, wider task datasets and calibrated semantic grading would deepen these systems. They are not implemented or implied by the current demos. The present value is visible, executable engineering behavior around potential model outputs, not a model-performance claim.

@@ -1,19 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { agents, departments, knowledgeRecords, type DepartmentId } from "./lib/agent-system";
-
-type RunResult = {
-  runId: string;
-  status: string;
-  summary: string;
-  steps: string[];
-  evidence: typeof knowledgeRecords;
-  decision: string;
-  constraint: string;
-  handoff: { owner: string; artifact: string; state: string };
-  routingConfidence: number;
-};
+import { agents, departments, knowledgeRecords, type DepartmentId, type AgentRunResult } from "./lib/agent-system";
 
 const defaultTasks: Record<DepartmentId, string> = {
   sales: "Build a qualified distributor handoff for the ELEC-440 product line and show the evidence used.",
@@ -30,7 +18,7 @@ export default function Home() {
   const [departmentId, setDepartmentId] = useState<DepartmentId>("operations");
   const [agentId, setAgentId] = useState("operations-016");
   const [task, setTask] = useState(defaultTasks.operations);
-  const [result, setResult] = useState<RunResult | null>(null);
+  const [result, setResult] = useState<AgentRunResult | null>(null);
   const [error, setError] = useState("");
   const [running, setRunning] = useState(false);
 
@@ -65,8 +53,12 @@ export default function Home() {
         body: JSON.stringify({ agentId: selectedAgent.id, task }),
       });
       const payload = await response.json();
-      if (!response.ok) throw new Error(payload.error ?? "Agent run failed.");
-      setResult(payload as RunResult);
+      if (!response.ok) {
+        const message = payload && typeof payload === "object" && "error" in payload && typeof payload.error === "string"
+          ? payload.error : "Agent run failed.";
+        throw new Error(message);
+      }
+      setResult(payload as AgentRunResult);
     } catch (runError) {
       setError(runError instanceof Error ? runError.message : "Agent run failed.");
     } finally {
@@ -88,7 +80,7 @@ export default function Home() {
       <section className="hero">
         <div className="eyebrow"><span>FUNCTIONAL SYSTEM MAP</span><b>{agents.length} AGENTS</b><b>{departments.length} DEPARTMENTS</b></div>
         <h1>An operating system for<br />the entire import company.</h1>
-        <p>Every agent has one job, one permission boundary, and one measurable handoff. The shared company brain keeps decisions grounded in the same supplier, product, logistics, and financial knowledge.</p>
+        <p>Explore the proposed job, permission boundary, and next owner for each agent. The shared company brain supplies synthetic reference fixtures; current task evidence and operational decisions still require review.</p>
       </section>
 
       <section className="network" aria-label="Agent department network">
@@ -119,10 +111,10 @@ export default function Home() {
       </section>
 
       <section className="proof-strip" aria-label="System design proof">
-        <article><span>01 / FLOW</span><h3>Input to handoff</h3><p>Each run produces evidence, a decision, a constraint, and an explicit next owner.</p></article>
-        <article><span>02 / SYSTEM</span><h3>Shared components</h3><p>Registry, knowledge brain, typed execution endpoint, permissions, and audit-ready run IDs.</p></article>
+        <article><span>01 / FLOW</span><h3>Input to handoff</h3><p>Each run prepares reference fixtures, suggested steps, a constraint, and a proposed next owner.</p></article>
+        <article><span>02 / SYSTEM</span><h3>Shared components</h3><p>Registry, reference knowledge, typed packet endpoint, proposed permissions, and run labels.</p></article>
         <article><span>03 / CONSTRAINT</span><h3>Human authority</h3><p>No payment, booking, promise, or external message is executed autonomously.</p></article>
-        <article><span>04 / DECISION</span><h3>Deterministic first</h3><p>Reference mode proves the workflow before an optional model adapter adds language intelligence.</p></article>
+        <article><span>04 / DECISION</span><h3>Deterministic first</h3><p>Reference mode demonstrates packet generation. Business validation and live integration remain future work.</p></article>
         <article><span>05 / CUT</span><h3>No agent theater</h3><p>We cut autonomous swarms and animated activity that cannot be tied to a useful output.</p></article>
       </section>
 
@@ -173,10 +165,11 @@ export default function Home() {
                     <section className="run-result" aria-live="polite">
                       <header><span>{result.runId}</span><b>{result.status.replaceAll("_", " ")}</b></header>
                       <h4>{result.summary}</h4>
+                      <p>Suggested playbook; these steps have not been executed.</p>
                       <ol>{result.steps.map((step) => <li key={step}>{step}</li>)}</ol>
-                      <div className="evidence-block"><span>EVIDENCE USED</span>{result.evidence.map((record) => <p key={record.id}><b>{record.id}</b> {record.title}</p>)}</div>
-                      <div className="decision-block"><span>DECISION</span><p>{result.decision}</p><span>HANDOFF</span><p>{result.handoff.artifact} → <b>{result.handoff.owner}</b></p></div>
-                      <footer><span>Routing confidence {Math.round(result.routingConfidence * 100)}%</span><span>Human review required</span></footer>
+                      <div className="evidence-block"><span>REFERENCE FIXTURES · TASK RELEVANCE UNVERIFIED</span>{result.evidence.map((record) => <p key={record.id}><b>{record.id}</b> {record.title}</p>)}<p>{result.routingBasis}</p></div>
+                      <div className="decision-block"><span>REVIEW REQUIRED</span><p>{result.decision}</p><span>PROPOSED HANDOFF</span><p>{result.handoff.artifact} → <b>{result.handoff.owner}</b></p></div>
+                      <footer><span>Task evidence: {result.evidenceStatus.replaceAll("_", " ")}</span><span>Human review required</span></footer>
                     </section>
                   )}
                 </div>

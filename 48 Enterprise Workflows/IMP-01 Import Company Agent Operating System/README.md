@@ -120,6 +120,14 @@ IMP-01 Import Company Agent Operating System/
 
 1. The registry throws during startup unless the generated catalog contains exactly 137 agents.
 2. The production build compiles the interactive interface and API endpoint.
-3. A representative Operations run returns three evidence records, four playbook steps, an explicit constraint, and a named Customer handoff.
+3. A representative Operations run returns three reference fixtures, four suggested (unexecuted) playbook steps, an explicit constraint, and a proposed Customer handoff.
 4. Reference fixtures and runtime mode are visible in both the source documentation and product interface.
+
+## Evidence and API authority
+
+The deterministic executor selects the first three static knowledge records sharing the selected agent's department tags. It does not evaluate their relevance to the task, fetch current documents, check business prerequisites or perform the suggested steps. Every response reports `status: reference_packet`, `evidenceStatus: unverified_for_task` and a handoff awaiting evidence review. A successful response means packet generation succeeded; it grants no operational authority.
+
+The API no longer returns `routingConfidence`: the previous percentage was calculated from an agent's registry number and was not measured confidence. Consumers should display `routingBasis` and `evidenceStatus` instead. The interface uses the exported executor return type to keep these fields aligned.
+
+From `site/`, run `node --experimental-strip-types --test tests/*.test.mjs`. The evidence tests check all 137 agents and adversarial task text. A dedicated dependency-free CI job repeats these tests; the existing build job checks compilation.
 

@@ -16,8 +16,8 @@ Run directly for a self-test against four sample cases:
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
-from datetime import datetime, timedelta
+from dataclasses import dataclass, field, replace
+from datetime import UTC, datetime, timedelta
 from enum import Enum
 
 
@@ -48,14 +48,14 @@ class CaseState(str, Enum):
     non-time-boxed states (recovered, paused).
     """
 
-    FAILED = "failed"                    # Day 0: case just created, Smart Retry window
-    RETRYING = "retrying"                # Stripe Smart Retry still in progress, < Day 3
+    FAILED = "failed"  # Day 0: case just created, Smart Retry window
+    RETRYING = "retrying"  # Stripe Smart Retry still in progress, < Day 3
     DAY3_EMAIL_SENT = "day3_email_sent"  # Day 3-6: first recovery email sent
     DAY7_WARNING_SENT = "day7_warning_sent"  # Day 7-13: escalation email/SMS/banner sent
     ENTERPRISE_CSM_TASK_OPEN = "enterprise_csm_task_open"  # Enterprise-only holding state
-    RECOVERED = "recovered"              # Terminal: payment succeeded
-    SUSPENDED = "suspended"              # Terminal: Day 14 grace period expired
-    PAUSED = "paused"                    # Manual override: clock frozen
+    RECOVERED = "recovered"  # Terminal: payment succeeded
+    SUSPENDED = "suspended"  # Terminal: Day 14 grace period expired
+    PAUSED = "paused"  # Manual override: clock frozen
 
 
 # Cadence boundaries, in days since `failed_at`. Configurable per Section 18.
@@ -137,44 +137,61 @@ def determine_state_and_action(case: DunningCase, now: datetime) -> tuple[CaseSt
     if case.status == CaseState.PAUSED:
         return CaseState.PAUSED, "no_action_case_paused"
 
-    if case.status == CaseState.RECOVERED:
-        return CaseState.RECOVERED, "no_action_case_closed"
+    if case.status in (CaseState.RECOVERED, CaseState.SUSPENDED):
+        return case.status, "no_action_case_closed"
 
-    elapsed = now - case.failed_at
-
-    # Enterprise CSM task fires at Day 0 in parallel with the standard
-    # cadence — it does not replace any step (SOP Section 18).
-    enterprise_prefix = ""
-    if requires_csm_task(case):
-        enterprise_prefix = "create_close_crm_csm_task+"
+    try:
+        elapsed = now - case.failed_at
+    except TypeError as exc:
+        raise ValueError("now and failed_at must have matching timezone awareness") from exc
+    if elapsed < timedelta(0):
+        return case.status, "no_action_before_failure"
 
     if elapsed < DAY3_OFFSET:
-        action = f"{enterprise_prefix}await_smart_retry" if enterprise_prefix else "await_smart_retry"
-        return CaseState.RETRYING, action
-
-    if elapsed < DAY7_OFFSET:
+        next_state, action = CaseState.RETRYING, "await_smart_retry"
+    elif elapsed < DAY7_OFFSET:
         template = email_template_for(case.decline_reason)
-        action = f"{enterprise_prefix}send_day3_email:{template}"
-        return CaseState.DAY3_EMAIL_SENT, action
-
-    if elapsed < DAY14_OFFSET:
+        next_state, action = CaseState.DAY3_EMAIL_SENT, f"send_day3_email:{template}"
+    elif elapsed < DAY14_OFFSET:
+        next_state = CaseState.DAY7_WARNING_SENT
         action = "send_day7_email_and_banner_and_restriction_warning"
         if is_high_value(case):
             action += "+sms_escalation"
-        action = f"{enterprise_prefix}{action}"
-        return CaseState.DAY7_WARNING_SENT, action
+    elif requires_csm_task(case):
+        next_state = CaseState.ENTERPRISE_CSM_TASK_OPEN
+        action = "defer_to_csm_signoff_before_suspension"
+    else:
+        next_state, action = CaseState.SUSPENDED, "trigger_downgrade_or_suspension"
 
-    # Day 14+: grace period has expired.
-    if case.plan_tier == PlanTier.ENTERPRISE:
-        # Enterprise suspension is deferred pending CSM sign-off (SOP
-        # Section 10, Step 10) — the automated system opens/holds the
-        # task rather than unilaterally suspending a negotiated contract.
-        return (
-            CaseState.ENTERPRISE_CSM_TASK_OPEN,
-            "defer_to_csm_signoff_before_suspension",
+    order = {
+        state: index
+        for index, state in enumerate(
+            (
+                CaseState.FAILED,
+                CaseState.RETRYING,
+                CaseState.DAY3_EMAIL_SENT,
+                CaseState.DAY7_WARNING_SENT,
+                CaseState.ENTERPRISE_CSM_TASK_OPEN,
+                CaseState.SUSPENDED,
+            )
         )
+    }
+    if order[next_state] < order[case.status]:
+        return case.status, "no_action_stale_tick"
 
-    return CaseState.SUSPENDED, "trigger_downgrade_or_suspension"
+    csm_was_planned = any(
+        "create_close_crm_csm_task" in entry.get("event", "").split("+")
+        for entry in case.audit_trail
+    )
+    needs_csm = requires_csm_task(case) and not case.csm_task_id and not csm_was_planned
+    if next_state == case.status:
+        return (
+            case.status,
+            "create_close_crm_csm_task" if needs_csm else "no_action_stage_already_planned",
+        )
+    if needs_csm:
+        action = f"create_close_crm_csm_task+{action}"
+    return next_state, action
 
 
 def advance_case(case: DunningCase, now: datetime) -> DunningCase:
@@ -192,6 +209,9 @@ def advance_case(case: DunningCase, now: datetime) -> DunningCase:
         A new DunningCase with updated `status` and an appended audit entry.
     """
     new_state, action = determine_state_and_action(case, now)
+
+    if action.startswith("no_action_"):
+        return replace(case, audit_trail=list(case.audit_trail))
 
     new_audit_trail = list(case.audit_trail)
     new_audit_trail.append(
@@ -273,7 +293,7 @@ def _build_sample_cases(now: datetime) -> list[DunningCase]:
 
 
 if __name__ == "__main__":
-    NOW = datetime(2026, 6, 30, 12, 0, 0)
+    NOW = datetime(2026, 6, 30, 12, 0, 0, tzinfo=UTC)
 
     print(f"Dunning state machine self-test — evaluated at {NOW.isoformat()}")
     print("=" * 78)
@@ -286,10 +306,11 @@ if __name__ == "__main__":
         print(f"Case: {sample_case.dunning_case_id}")
         print(f"  Plan tier:        {sample_case.plan_tier.value}")
         print(f"  Decline reason:   {sample_case.decline_reason.value}")
-        print(f"  MRR:              ${sample_case.mrr_cents / 100:,.2f}/mo "
-              f"(high_value={is_high_value(sample_case)})")
-        print(f"  Failed at:        {sample_case.failed_at.isoformat()} "
-              f"(~{elapsed_days} days ago)")
+        print(
+            f"  MRR:              ${sample_case.mrr_cents / 100:,.2f}/mo "
+            f"(high_value={is_high_value(sample_case)})"
+        )
+        print(f"  Failed at:        {sample_case.failed_at.isoformat()} (~{elapsed_days} days ago)")
         print(f"  Determined state: {result_state.value}")
         print(f"  Determined action: {result_action}")
         print(f"  Audit entry appended: {advanced.audit_trail[-1]}")

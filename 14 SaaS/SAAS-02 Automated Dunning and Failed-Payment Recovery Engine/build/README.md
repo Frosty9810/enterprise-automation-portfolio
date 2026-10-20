@@ -15,6 +15,8 @@ This folder contains a real, working reference implementation of the automation 
 
 ## Running the Python self-test
 
+See the [local proposal replay contract](REPLAY-CONTRACT.md) for repeated/stale ticks, terminal states and the delivery/outbox boundary.
+
 No dependencies, no credentials, no network calls required.
 
 ```bash

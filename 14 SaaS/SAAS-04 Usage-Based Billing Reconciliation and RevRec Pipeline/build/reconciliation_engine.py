@@ -27,9 +27,8 @@ from __future__ import annotations
 
 import hashlib
 import json
-from datetime import date, datetime, timedelta
-from decimal import ROUND_HALF_UP, Decimal
-from typing import Optional
+from datetime import date, timedelta
+from decimal import ROUND_HALF_UP, Decimal, InvalidOperation
 
 # ---------------------------------------------------------------------------
 # Constants
@@ -40,6 +39,44 @@ VARIANCE_THRESHOLD_PCT = Decimal("0.03")
 
 TWO_PLACES = Decimal("0.01")
 FOUR_PLACES = Decimal("0.0001")
+
+
+def _money(value: object, name: str) -> Decimal:
+    """Accept finite nonnegative cents without float coercion or silent rounding."""
+    if isinstance(value, bool) or not isinstance(value, (Decimal, str, int)):
+        raise ValueError(f"{name} must be Decimal, integer dollars or a decimal string")
+    try:
+        amount = Decimal(value)
+        if not amount.is_finite() or amount < 0:
+            raise ValueError(f"{name} must be finite and nonnegative")
+        cents = amount.quantize(TWO_PLACES, rounding=ROUND_HALF_UP)
+    except InvalidOperation as exc:
+        raise ValueError(f"{name} is not a supported monetary amount") from exc
+    if cents != amount:
+        raise ValueError(f"{name} must have at most two decimal places")
+    return cents
+
+
+def _units(value: object, name: str) -> int:
+    if isinstance(value, str) and value.isascii() and value.isdigit() and len(value) <= 16:
+        value = int(value)
+    if type(value) is not int or not 0 <= value <= 9_007_199_254_740_991:
+        raise ValueError(f"{name} must be a nonnegative safe integer count")
+    return value
+
+
+def _period_date(value: object, name: str) -> date:
+    if type(value) is date:
+        return value
+    if isinstance(value, str):
+        try:
+            parsed = date.fromisoformat(value)
+            if parsed.isoformat() == value:
+                return parsed
+        except ValueError:
+            pass
+    raise ValueError(f"{name} must be a date or YYYY-MM-DD string")
+
 
 # QuickBooks Online chart-of-accounts mapping (SOP Section 7, Dependencies —
 # stable account IDs maintained as a static mapping table).
@@ -57,6 +94,8 @@ def calculate_variance(internal_usage: dict, stripe_invoiced: dict) -> dict:
     """Compare internal metering counts against Stripe-invoiced amounts.
 
     Mirrors SOP Section 14.1: variance_pct = (invoiced - metered) / metered.
+    The review decision uses integer cross-multiplication; variance_pct is
+    unrounded diagnostic data and variance_pct_display is for presentation.
     A negative variance means Stripe invoiced *less* than metering recorded
     (revenue leakage — the primary risk this workflow exists to catch). A
     positive variance means Stripe invoiced *more* than metering recorded
@@ -74,9 +113,13 @@ def calculate_variance(internal_usage: dict, stripe_invoiced: dict) -> dict:
         minus the audit columns that are populated at persistence time.
     """
     account_id = internal_usage["account_id"]
-    metered_api_calls = int(internal_usage["metered_api_calls"])
-    invoiced_overage_units = int(stripe_invoiced["invoiced_overage_units"])
-    invoiced_amount = Decimal(str(stripe_invoiced.get("invoiced_overage_amount_usd", "0")))
+    metered_api_calls = _units(internal_usage["metered_api_calls"], "metered_api_calls")
+    invoiced_overage_units = _units(
+        stripe_invoiced["invoiced_overage_units"], "invoiced_overage_units"
+    )
+    invoiced_amount = _money(
+        stripe_invoiced.get("invoiced_overage_amount_usd", "0"), "invoiced amount"
+    )
 
     if metered_api_calls == 0:
         # Avoid division by zero. Any invoiced overage against zero metered
@@ -84,28 +127,38 @@ def calculate_variance(internal_usage: dict, stripe_invoiced: dict) -> dict:
         # dollar size (SOP 14.1).
         variance_pct = Decimal("1.00") if invoiced_overage_units > 0 else Decimal("0.00")
     else:
-        variance_pct = (
-            Decimal(invoiced_overage_units - metered_api_calls) / Decimal(metered_api_calls)
-        ).quantize(FOUR_PLACES, rounding=ROUND_HALF_UP)
+        variance_pct = Decimal(invoiced_overage_units - metered_api_calls) / Decimal(
+            metered_api_calls
+        )
 
-    requires_review = abs(variance_pct) >= VARIANCE_THRESHOLD_PCT
-    variance_direction = "underbilled" if variance_pct < 0 else (
-        "overbilled" if variance_pct > 0 else "matched"
+    # Compare integer counts before display rounding or Decimal division.
+    threshold_numerator, threshold_denominator = VARIANCE_THRESHOLD_PCT.as_integer_ratio()
+    requires_review = (
+        abs(invoiced_overage_units - metered_api_calls) * threshold_denominator
+        >= metered_api_calls * threshold_numerator
+        if metered_api_calls
+        else invoiced_overage_units > 0
+    )
+    amount_without_units = invoiced_overage_units == 0 and invoiced_amount > 0
+    requires_review = requires_review or amount_without_units
+    variance_direction = (
+        "underbilled" if variance_pct < 0 else ("overbilled" if variance_pct > 0 else "matched")
     )
 
     # Estimated dollar impact: the delta in units priced at the invoice's
     # effective per-unit rate, so Finance sees a dollar figure, not just a
     # percentage, when triaging the Slack queue (SOP Section 22).
     unit_delta = invoiced_overage_units - metered_api_calls
-    if invoiced_overage_units != 0:
-        effective_rate = (invoiced_amount / Decimal(invoiced_overage_units)).quantize(
-            FOUR_PLACES, rounding=ROUND_HALF_UP
+    if invoiced_overage_units and "invoiced_overage_amount_usd" in stripe_invoiced:
+        impact = (Decimal(unit_delta) * invoiced_amount / invoiced_overage_units).quantize(
+            TWO_PLACES, rounding=ROUND_HALF_UP
         )
+        estimated_dollar_impact_usd = str(impact)
+        impact_basis = "invoice_effective_rate"
+    elif unit_delta == 0 and not amount_without_units:
+        estimated_dollar_impact_usd, impact_basis = "0.00", "no_unit_variance"
     else:
-        effective_rate = Decimal("0.00")
-    estimated_dollar_impact_usd = (Decimal(unit_delta) * effective_rate).quantize(
-        TWO_PLACES, rounding=ROUND_HALF_UP
-    )
+        estimated_dollar_impact_usd, impact_basis = None, "unavailable_invoice_rate"
 
     return {
         "account_id": account_id,
@@ -114,13 +167,16 @@ def calculate_variance(internal_usage: dict, stripe_invoiced: dict) -> dict:
         "metered_api_calls": metered_api_calls,
         "invoiced_overage_units": invoiced_overage_units,
         "variance_pct": str(variance_pct),
+        "variance_pct_display": str(variance_pct.quantize(FOUR_PLACES, rounding=ROUND_HALF_UP)),
         "variance_direction": variance_direction,
-        "estimated_dollar_impact_usd": str(estimated_dollar_impact_usd),
+        "estimated_dollar_impact_usd": estimated_dollar_impact_usd,
+        "impact_basis": impact_basis,
+        "amount_without_units": amount_without_units,
         "status": "pending_review" if requires_review else "auto_resolved",
     }
 
 
-def classify_variance(variance_pct: Decimal, context: Optional[dict] = None) -> str:
+def classify_variance(variance_pct: Decimal, context: dict | None = None) -> str:
     """Classify a variance as auto-resolved or needing Finance review.
 
     Applies the same 3% materiality threshold as `calculate_variance`
@@ -139,12 +195,19 @@ def classify_variance(variance_pct: Decimal, context: Optional[dict] = None) -> 
         Either "auto_resolved" or "needs_finance_review".
     """
     if not isinstance(variance_pct, Decimal):
-        variance_pct = Decimal(str(variance_pct))
+        try:
+            variance_pct = Decimal(str(variance_pct))
+        except InvalidOperation as exc:
+            raise ValueError("variance_pct must be finite") from exc
+    if not variance_pct.is_finite():
+        raise ValueError("variance_pct must be finite")
 
-    return "needs_finance_review" if abs(variance_pct) >= VARIANCE_THRESHOLD_PCT else "auto_resolved"
+    return (
+        "needs_finance_review" if abs(variance_pct) >= VARIANCE_THRESHOLD_PCT else "auto_resolved"
+    )
 
 
-def generate_root_cause_hint(variance_pct: Decimal, context: Optional[dict] = None) -> str:
+def generate_root_cause_hint(variance_pct: Decimal, context: dict | None = None) -> str:
     """Rule-based root-cause heuristics (SOP Section 14.1 / step 7).
 
     `context` carries flags pulled from the metering DB's audit trail:
@@ -186,7 +249,7 @@ def generate_revrec_schedule(
     usage_portion: Decimal,
     start_date: date,
     end_date: date,
-    usage_events: Optional[list] = None,
+    usage_events: list | None = None,
 ) -> list:
     """Build a per-day/per-event revenue recognition schedule.
 
@@ -222,11 +285,15 @@ def generate_revrec_schedule(
         (usage-triggered, one per event). Amounts are strings holding
         Decimal values quantized to cents.
     """
+    start_date = _period_date(start_date, "start_date")
+    end_date = _period_date(end_date, "end_date")
+    _money(contract_value, "contract_value")
+    seat_portion = _money(seat_portion, "seat_portion")
+    usage_portion = _money(usage_portion, "usage_portion")
     if end_date < start_date:
         raise ValueError(f"end_date {end_date} precedes start_date {start_date}")
 
     total_days = (end_date - start_date).days + 1
-    daily_rate = (seat_portion / Decimal(total_days)).quantize(FOUR_PLACES, rounding=ROUND_HALF_UP)
 
     schedule = []
 
@@ -234,15 +301,11 @@ def generate_revrec_schedule(
     running_total = Decimal("0.00")
     for day_index in range(total_days):
         recognition_date = start_date + timedelta(days=day_index)
-        is_last_day = day_index == total_days - 1
-        if is_last_day:
-            # Final day absorbs any rounding remainder so the sum of daily
-            # seat recognition amounts equals seat_portion exactly to the
-            # cent (never leave an unreconciled fractional cent).
-            day_amount = (seat_portion - running_total).quantize(TWO_PLACES, rounding=ROUND_HALF_UP)
-        else:
-            day_amount = (daily_rate).quantize(TWO_PLACES, rounding=ROUND_HALF_UP)
-        running_total += day_amount
+        cumulative = (seat_portion * (day_index + 1) / total_days).quantize(
+            TWO_PLACES, rounding=ROUND_HALF_UP
+        )
+        day_amount = cumulative - running_total
+        running_total = cumulative
 
         schedule.append(
             {
@@ -255,32 +318,44 @@ def generate_revrec_schedule(
         )
 
     # -- Usage component: usage-triggered, one record per event -------------
-    if usage_events:
+    if usage_events is not None:
+        if not isinstance(usage_events, list):
+            raise ValueError("usage_events must be a complete list or None")
         allocated = Decimal("0.00")
-        for idx, event in enumerate(usage_events):
-            is_last_event = idx == len(usage_events) - 1
-            event_amount = Decimal(str(event["amount_usd"])).quantize(TWO_PLACES, rounding=ROUND_HALF_UP)
+        for event in usage_events:
+            if (
+                not isinstance(event, dict)
+                or "event_date" not in event
+                or "amount_usd" not in event
+            ):
+                raise ValueError("Each usage event requires event_date and amount_usd")
+            event_amount = _money(event["amount_usd"], "usage event amount")
+            event_date = _period_date(event["event_date"], "usage event date")
+            if not start_date <= event_date <= end_date:
+                raise ValueError("Usage event is outside the recognition period")
             allocated += event_amount
             schedule.append(
                 {
                     "component": "usage",
-                    "recognition_date": event["event_date"].isoformat()
-                    if isinstance(event["event_date"], date)
-                    else str(event["event_date"]),
+                    "recognition_date": event_date.isoformat(),
                     "amount_usd": str(event_amount),
                     "method": "usage_triggered",
                     "asc606_ref": "ASC 606-10-32-40",
                     "description": event.get("description", "Metered usage recognition event"),
                 }
             )
-    elif usage_portion and usage_portion != Decimal("0"):
+        if allocated != usage_portion:
+            raise ValueError("Usage events must reconcile to the confirmed usage_portion")
+    elif usage_portion and usage_portion != Decimal(0):
         # Common case for this SOP: usage is confirmed and recognized as a
         # single event at period close (SOP Section 14.2, step 13).
         schedule.append(
             {
                 "component": "usage",
                 "recognition_date": end_date.isoformat(),
-                "amount_usd": str(Decimal(usage_portion).quantize(TWO_PLACES, rounding=ROUND_HALF_UP)),
+                "amount_usd": str(
+                    Decimal(usage_portion).quantize(TWO_PLACES, rounding=ROUND_HALF_UP)
+                ),
                 "method": "usage_triggered",
                 "asc606_ref": "ASC 606-10-32-40",
                 "description": "Confirmed metered overage recognized at period close",
@@ -311,11 +386,11 @@ def build_journal_entry(
     *,
     subscription_batch_id: str = "SUB-BATCH-UNSPECIFIED",
     period_end_date: str = "",
-    seat_recognized_amount: Optional[Decimal] = None,
-    usage_recognized_amount: Optional[Decimal] = None,
-    cost_center_class_ref: Optional[str] = None,
-    txn_date: Optional[str] = None,
-    doc_number: Optional[str] = None,
+    seat_recognized_amount: Decimal | None = None,
+    usage_recognized_amount: Decimal | None = None,
+    cost_center_class_ref: str | None = None,
+    txn_date: str | None = None,
+    doc_number: str | None = None,
 ) -> dict:
     """Construct a QuickBooks Online Journal Entry API payload.
 
@@ -346,41 +421,62 @@ def build_journal_entry(
             the full `recognized_amount` is credited to Recognized Revenue
             - Seats (a degenerate but still balanced JE).
         cost_center_class_ref: QBO ClassRef.value; defaults to `cost_center`.
-        txn_date: ISO date string; defaults to `period_end_date`.
+        txn_date: ISO date string; defaults to the required `period_end_date`.
         doc_number: optional QBO DocNumber to request.
 
     Returns:
         A dict matching the QuickBooks Online Journal Entry POST body shape.
     """
-    deferred_amount = Decimal(deferred_amount).quantize(TWO_PLACES, rounding=ROUND_HALF_UP)
-    recognized_amount = Decimal(recognized_amount).quantize(TWO_PLACES, rounding=ROUND_HALF_UP)
+    deferred_amount = _money(deferred_amount, "deferred_amount")
+    recognized_amount = _money(recognized_amount, "recognized_amount")
+    if recognized_amount == 0:
+        raise ValueError("A revenue release must have a positive amount")
+    for name, value in (
+        ("cost_center", cost_center),
+        ("subscription_batch_id", subscription_batch_id),
+    ):
+        if not isinstance(value, str) or not value.strip():
+            raise ValueError(f"{name} must be an explicit nonblank identity")
+    if cost_center_class_ref is not None and (
+        not isinstance(cost_center_class_ref, str) or not cost_center_class_ref.strip()
+    ):
+        raise ValueError("cost_center_class_ref must be a nonblank string when supplied")
+    if subscription_batch_id == "SUB-BATCH-UNSPECIFIED":
+        raise ValueError("An explicit subscription_batch_id is required")
+    period_end_date = _period_date(period_end_date, "period_end_date").isoformat()
+    resolved_txn_date = _period_date(txn_date or period_end_date, "txn_date").isoformat()
 
     if seat_recognized_amount is None and usage_recognized_amount is None:
         seat_recognized_amount = recognized_amount
         usage_recognized_amount = Decimal("0.00")
     else:
-        seat_recognized_amount = Decimal(seat_recognized_amount or "0").quantize(
-            TWO_PLACES, rounding=ROUND_HALF_UP
+        seat_recognized_amount = _money(
+            "0" if seat_recognized_amount is None else seat_recognized_amount, "seat amount"
         )
-        usage_recognized_amount = Decimal(usage_recognized_amount or "0").quantize(
-            TWO_PLACES, rounding=ROUND_HALF_UP
+        usage_recognized_amount = _money(
+            "0" if usage_recognized_amount is None else usage_recognized_amount, "usage amount"
         )
 
     total_credits = seat_recognized_amount + usage_recognized_amount
     total_debits = deferred_amount
 
-    if total_debits != total_credits:
+    if total_debits != total_credits or recognized_amount != total_credits:
         raise ValueError(
-            "Unbalanced journal entry rejected before submission "
-            f"(debits={total_debits}, credits={total_credits}) — SOP Section 16 "
-            "requires debits to equal credits before any QBO API call."
+            "Inconsistent journal entry rejected before submission "
+            f"(recognized={recognized_amount}, debits={total_debits}, credits={total_credits}) "
+            "— the recognized total, debit and component credits must agree."
         )
 
     class_ref_value = cost_center_class_ref or cost_center
-    resolved_txn_date = txn_date or period_end_date or date.today().isoformat()
+
+    for amount in (deferred_amount, seat_recognized_amount, usage_recognized_amount):
+        if Decimal(str(float(amount))) != amount:
+            raise ValueError("Amount cannot be represented at the JSON numeric boundary")
 
     idempotency_key = compute_idempotency_key(
-        subscription_batch_id, period_end_date or resolved_txn_date, "recognized_revenue_period_close"
+        subscription_batch_id,
+        period_end_date or resolved_txn_date,
+        "recognized_revenue_period_close",
     )
 
     lines = [
@@ -509,8 +605,18 @@ if __name__ == "__main__":
 
     samples = [
         ("Account A — clean, immaterial variance", account_a_usage, account_a_invoiced, {}),
-        ("Account B — material variance, revenue leakage pattern", account_b_usage, account_b_invoiced, account_b_context),
-        ("Account C — mid-cycle plan change, not prorated", account_c_usage, account_c_invoiced, account_c_context),
+        (
+            "Account B — material variance, revenue leakage pattern",
+            account_b_usage,
+            account_b_invoiced,
+            account_b_context,
+        ),
+        (
+            "Account C — mid-cycle plan change, not prorated",
+            account_c_usage,
+            account_c_invoiced,
+            account_c_context,
+        ),
     ]
 
     _print_section("NIGHTLY RECONCILIATION — VARIANCE CLASSIFICATION")
@@ -542,16 +648,20 @@ if __name__ == "__main__":
     seat_records = [r for r in schedule if r["component"] == "seat"]
     usage_records = [r for r in schedule if r["component"] == "usage"]
 
-    print(f"\nTotal records generated: {len(schedule)} "
-          f"({len(seat_records)} seat/day, {len(usage_records)} usage-triggered)")
+    print(
+        f"\nTotal records generated: {len(schedule)} "
+        f"({len(seat_records)} seat/day, {len(usage_records)} usage-triggered)"
+    )
     print("\nFirst 3 seat recognition records:")
     for rec in seat_records[:3]:
         print(f"  {rec}")
-    print("\nLast seat recognition record (absorbs rounding remainder):")
+    print("\nLast seat recognition record (completes cumulative cent allocation):")
     print(f"  {seat_records[-1]}")
-    print(f"\nSum of seat recognition records: "
-          f"{sum(Decimal(r['amount_usd']) for r in seat_records)} "
-          f"(should equal seat_portion 84000.00)")
+    print(
+        f"\nSum of seat recognition records: "
+        f"{sum(Decimal(r['amount_usd']) for r in seat_records)} "
+        f"(should equal seat_portion 84000.00)"
+    )
     print("\nUsage-triggered recognition record(s):")
     for rec in usage_records:
         print(f"  {rec}")

@@ -14,8 +14,9 @@ and a reason; tenant mismatch takes precedence over approval and instruction
 flags. The UI displays those exclusions alongside the route and fixture result.
 
 Rejected proposals still consume their supplied scenario units. If the remaining
-budget cannot cover escalation, the route stops with no selected answer. If
-neither proposal verifies, no answer is selected. Expected labels grade the
+budget cannot cover escalation, the route is `budget_stop` with no selected
+answer. If neither affordable proposal verifies, the route is
+`no_verified_result` and no answer is selected. Expected labels grade the
 result after routing; they never authorize a source.
 
 The marker is caller supplied. An absent marker preserves compatibility with

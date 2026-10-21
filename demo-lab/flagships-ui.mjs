@@ -56,6 +56,8 @@ export async function mountFlagships(document, api, download, initialId = 'F01')
         if (id === 'F04') {
             box.append(node('p', `${r.spentScenarioUnits}/${r.budgetUnits} synthetic units · ${r.passed}/${r.total} labeled fixture checks`));
             box.append(table(['Case', 'Route', 'Fixture check'], r.trials.map(t => [t.id, t.route, t.passed ? 'pass' : 'review'])));
+            const excluded = r.trials.flatMap(t => t.excludedSources.map(source => [t.id, source.id, source.reason]));
+            if (excluded.length) box.append(table(['Case', 'Excluded source', 'Reason'], excluded));
         }
         if (id === 'F05') {
             const x = receipt.input;

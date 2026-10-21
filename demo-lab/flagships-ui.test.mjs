@@ -37,6 +37,13 @@ test('routing displays excluded sources and a budget stop without granting expor
         assert.match(x.d.getElementById('details').textContent, /budget_stop/);
         assert.equal(JSON.parse(x.d.getElementById('raw').textContent).trials[0].selected, null);
         assert.equal(x.d.getElementById('export').disabled, true);
+        input.budgetUnits = 6;
+        input.cases[0].escalation.result = structuredClone(input.cases[0].cheap.result);
+        await evaluate();
+        assert.match(x.d.getElementById('details').textContent, /no_verified_result/);
+        assert.doesNotMatch(x.d.getElementById('details').textContent, /budget_stop/);
+        assert.equal(JSON.parse(x.d.getElementById('raw').textContent).trials[0].selected, null);
+        assert.equal(x.d.getElementById('export').disabled, true);
     }
     finally { x.close(); }
 });

@@ -20,7 +20,11 @@ test('known instruction text cannot become a verified answer in either routing s
     assert.equal(result.passed, 1);
     assert.deepEqual(trial.excludedSources, [{ id: 'instruction', reason: 'flagged_instruction_text' }]);
     input.cases[0].escalation.result = answer(flagged);
-    assert.equal(routingLab(input).trials[0].selected, null);
+    const rejected = routingLab(input);
+    assert.equal(rejected.trials[0].selected, null);
+    assert.equal(rejected.trials[0].route, 'no_verified_result');
+    assert.equal(rejected.spentScenarioUnits, 6);
+    assert.deepEqual(rejected.trials[0].trace.map(row => row.status), ['rejected', 'rejected']);
 });
 
 test('eligible evidence determines retrieval relevance even when a flagged document scores higher', () => {

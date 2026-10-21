@@ -10,10 +10,10 @@ Usage must occur in the half-open period `[periodStart, periodEnd)`. A posting e
 
 `ledgerHashVersion: usage-ledger-v2` binds account, currency, price, canonical period boundaries, close instant and every unique normalized entry. Arrival permutations and equivalent repeats preserve the hash; changed timestamps or close evidence invalidate it even when amounts happen to match. This is an analysis fingerprint, not a provider action key, durable deduplication ledger or authority to bill. Consumers retaining v1 evidence must recalculate/review v2; do not treat a changed hash as permission to reissue an invoice.
 
-Run the six additional contract tests from the repository root:
+Run the domain regressions, including the six additional contract cases, from the repository root:
 
 ```sh
-node --test demo-lab/usage-ledger-contract.test.mjs
+node --test demo-lab/flagship-decisions.test.mjs
 node demo-lab/run-flagships.mjs
 ```
 

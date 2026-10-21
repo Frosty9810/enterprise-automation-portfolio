@@ -30,7 +30,7 @@ export const flagshipDescriptions = [
     ['F07', 'Salesforce Data Quality Studio', 'Preview identity conflicts, safe fields and conditional merge reversal.', 'CRM data stewardship', null, ['flagship-decisions.mjs', 'flagship-decisions.test.mjs']],
     ['F08', 'Product Governance Desk', 'Keep product facts and source-bound reviews intact.', 'Content operations', '/product-governance', ['product-governance.mjs', '../15 E-Commerce/ECOM-01 Multi-Market Product Content Governance/build/localization_engine.py', 'product-governance.test.mjs']],
     ['F09', 'Consent-aware Journey Simulator', 'Suppress revoked, expired or out-of-scope communication.', 'Lifecycle operations', null, ['flagship-decisions.mjs', 'flagship-decisions.test.mjs']],
-    ['F10', 'Usage-to-Invoice Ledger', 'Reconcile exact-cent charges and late adjustments.', 'Billing operations', null, ['flagship-decisions.mjs', 'flagship-decisions.test.mjs', 'usage-ledger-contract.test.mjs']],
+    ['F10', 'Usage-to-Invoice Ledger', 'Reconcile exact-cent charges and late adjustments.', 'Billing operations', null, ['flagship-decisions.mjs', 'flagship-decisions.test.mjs']],
     ['F11', 'Commitments & Scheduling Board', 'Resolve offset-aware conflicts, cancellations and dispatch constraints.', 'Executive / field operations', null, ['flagship-decisions.mjs', 'industry-depth.mjs', 'extra-scenarios.mjs', 'flagship-decisions.test.mjs']],
     ['F12', 'Owned-code Reconstruction Challenge', 'Test recovered behavior against a disclosed reference and adverse cases.', 'Coding / investigation', null, ['reconstruction.mjs', 'reconstruction-reference.mjs', 'reconstruction-candidates.mjs', 'flagship-decisions.test.mjs']],
 ];

@@ -1,0 +1,12 @@
+# Local billing calculation contract
+
+These Python functions prepare synthetic reconciliation results, schedules and draft journal payloads. They do not post to Stripe or QuickBooks and do not constitute provider or accounting acceptance.
+
+- Counts must be nonnegative integers (or ASCII digit strings) within JavaScript's safe-integer range. Boolean, float, fractional and negative counts are rejected.
+- Monetary inputs must be finite, nonnegative Decimal values, decimal strings or integer dollars with at most two decimal places. Floats, fractional cents and nonfinite values are rejected with ValueError rather than silently coerced. Reversal/credit journals require a separate, explicit policy.
+- The fixed 3% review boundary uses integer cross-multiplication before rounding. `variance_pct` retains the computed precision; `variance_pct_display` is a four-place presentation string. Never reclassify using the display string.
+- Dollar impact uses the invoice's unrounded effective rate and rounds only the final amount. When a unit discrepancy has no invoice rate, impact is null with `impact_basis: unavailable_invoice_rate`, rather than an asserted zero loss. Charges without invoiced units are held for review and flagged by `amount_without_units`.
+- Seat schedules use differences between cumulative rounded allocations. Every day is nonnegative and the total equals the confirmed seat portion exactly. Explicit usage event lists, including empty lists, must reconcile to the confirmed usage portion and all dates must lie inside the period. `None` means emit the documented synthetic period-close usage record. Contract value remains informational; it is validated but is not forced to equal the two recognized portions.
+- Draft revenue-release journals require an explicit batch, cost center and valid period-end date. Their positive recognized total must equal both the deferred debit and component credits. The transaction date defaults to the supplied period end, never the current clock. JSON numeric conversion is rejected if it would change the decimal amount. Existing idempotency-key derivation is preserved; generation alone is not a provider duplicate-prevention guarantee.
+
+From the repository root, run `python -m unittest discover -s tests -p test_billing_money.py -v`. The n8n Code-node implementation and database storage are separate contracts and need the same rules applied and accepted before integration. Consumers storing the former four-decimal ratio or nonnullable impact must adapt to the fields described above.

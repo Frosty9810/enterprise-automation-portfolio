@@ -36,6 +36,14 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Test agent request boundaries
+        run: npm test
+
+      - name: Lint and check types
+        run: |
+          npm run lint
+          npx tsc --noEmit --incremental false
+
       - name: Build site and API
         run: npm run build
 

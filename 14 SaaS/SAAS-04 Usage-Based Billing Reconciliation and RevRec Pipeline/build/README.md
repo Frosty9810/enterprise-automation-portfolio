@@ -48,6 +48,8 @@ Exit code `0` and no unhandled exceptions confirms the logic runs correctly.
 
 ## Idempotency mechanism (double-post prevention)
 
+See the [Python calculation and draft payload contract](MONEY-CONTRACT.md) for exact review thresholds, cent allocation, invalid-input rejection, explicit batch/period identity and remaining provider boundaries.
+
 Per SOP Section 18, financial postings to QuickBooks must never be duplicated. This is implemented at two layers, both visible in the build artifacts:
 
 - **Application layer:** `Code: Build JE Payload + Idempotency Key` computes `sha256(subscription_batch_id + ":" + period_end + ":" + je_type)` and embeds it both as an `Idempotency-Key` HTTP header on the QuickBooks POST node and inside the JE payload's `PrivateNote` field (QuickBooks Online has no native idempotency field — see SOP Section 38).

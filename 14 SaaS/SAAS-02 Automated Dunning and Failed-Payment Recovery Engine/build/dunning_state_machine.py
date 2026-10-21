@@ -16,7 +16,7 @@ Run directly for a self-test against four sample cases:
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from datetime import UTC, datetime, timedelta
 from enum import Enum
 
@@ -137,46 +137,61 @@ def determine_state_and_action(case: DunningCase, now: datetime) -> tuple[CaseSt
     if case.status == CaseState.PAUSED:
         return CaseState.PAUSED, "no_action_case_paused"
 
-    if case.status == CaseState.RECOVERED:
-        return CaseState.RECOVERED, "no_action_case_closed"
+    if case.status in (CaseState.RECOVERED, CaseState.SUSPENDED):
+        return case.status, "no_action_case_closed"
 
-    elapsed = now - case.failed_at
-
-    # Enterprise CSM task fires at Day 0 in parallel with the standard
-    # cadence — it does not replace any step (SOP Section 18).
-    enterprise_prefix = ""
-    if requires_csm_task(case):
-        enterprise_prefix = "create_close_crm_csm_task+"
+    try:
+        elapsed = now - case.failed_at
+    except TypeError as exc:
+        raise ValueError("now and failed_at must have matching timezone awareness") from exc
+    if elapsed < timedelta(0):
+        return case.status, "no_action_before_failure"
 
     if elapsed < DAY3_OFFSET:
-        action = (
-            f"{enterprise_prefix}await_smart_retry" if enterprise_prefix else "await_smart_retry"
-        )
-        return CaseState.RETRYING, action
-
-    if elapsed < DAY7_OFFSET:
+        next_state, action = CaseState.RETRYING, "await_smart_retry"
+    elif elapsed < DAY7_OFFSET:
         template = email_template_for(case.decline_reason)
-        action = f"{enterprise_prefix}send_day3_email:{template}"
-        return CaseState.DAY3_EMAIL_SENT, action
-
-    if elapsed < DAY14_OFFSET:
+        next_state, action = CaseState.DAY3_EMAIL_SENT, f"send_day3_email:{template}"
+    elif elapsed < DAY14_OFFSET:
+        next_state = CaseState.DAY7_WARNING_SENT
         action = "send_day7_email_and_banner_and_restriction_warning"
         if is_high_value(case):
             action += "+sms_escalation"
-        action = f"{enterprise_prefix}{action}"
-        return CaseState.DAY7_WARNING_SENT, action
+    elif requires_csm_task(case):
+        next_state = CaseState.ENTERPRISE_CSM_TASK_OPEN
+        action = "defer_to_csm_signoff_before_suspension"
+    else:
+        next_state, action = CaseState.SUSPENDED, "trigger_downgrade_or_suspension"
 
-    # Day 14+: grace period has expired.
-    if case.plan_tier == PlanTier.ENTERPRISE:
-        # Enterprise suspension is deferred pending CSM sign-off (SOP
-        # Section 10, Step 10) — the automated system opens/holds the
-        # task rather than unilaterally suspending a negotiated contract.
-        return (
-            CaseState.ENTERPRISE_CSM_TASK_OPEN,
-            "defer_to_csm_signoff_before_suspension",
+    order = {
+        state: index
+        for index, state in enumerate(
+            (
+                CaseState.FAILED,
+                CaseState.RETRYING,
+                CaseState.DAY3_EMAIL_SENT,
+                CaseState.DAY7_WARNING_SENT,
+                CaseState.ENTERPRISE_CSM_TASK_OPEN,
+                CaseState.SUSPENDED,
+            )
         )
+    }
+    if order[next_state] < order[case.status]:
+        return case.status, "no_action_stale_tick"
 
-    return CaseState.SUSPENDED, "trigger_downgrade_or_suspension"
+    csm_was_planned = any(
+        "create_close_crm_csm_task" in entry.get("event", "").split("+")
+        for entry in case.audit_trail
+    )
+    needs_csm = requires_csm_task(case) and not case.csm_task_id and not csm_was_planned
+    if next_state == case.status:
+        return (
+            case.status,
+            "create_close_crm_csm_task" if needs_csm else "no_action_stage_already_planned",
+        )
+    if needs_csm:
+        action = f"create_close_crm_csm_task+{action}"
+    return next_state, action
 
 
 def advance_case(case: DunningCase, now: datetime) -> DunningCase:
@@ -194,6 +209,9 @@ def advance_case(case: DunningCase, now: datetime) -> DunningCase:
         A new DunningCase with updated `status` and an appended audit entry.
     """
     new_state, action = determine_state_and_action(case, now)
+
+    if action.startswith("no_action_"):
+        return replace(case, audit_trail=list(case.audit_trail))
 
     new_audit_trail = list(case.audit_trail)
     new_audit_trail.append(

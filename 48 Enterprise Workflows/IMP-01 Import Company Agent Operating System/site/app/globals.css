@@ -83,13 +83,13 @@ button { font: inherit; }
 .app-shell > footer { min-height: 62px; display: flex; align-items: center; justify-content: space-between; color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: .06em; }
 
 .overlay { position: fixed; inset: 0; z-index: 20; display: flex; align-items: flex-end; background: rgba(13,18,19,.7); backdrop-filter: blur(8px); padding: 22px; }
-.drawer { width: min(1440px, 100%); max-height: 92vh; margin: 0 auto; overflow: hidden; background: #f8f7f2; border: 1px solid var(--ink); border-radius: 26px; box-shadow: 0 24px 80px rgba(0,0,0,.28); }
-.drawer-header { min-height: 94px; padding: 20px 24px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--ink); }
+.drawer { display: flex; flex-direction: column; width: min(1440px, 100%); max-height: 92vh; margin: 0 auto; overflow: hidden; background: #f8f7f2; border: 1px solid var(--ink); border-radius: 26px; box-shadow: 0 24px 80px rgba(0,0,0,.28); }
+.drawer-header { flex-shrink: 0; min-height: 94px; padding: 20px 24px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--ink); }
 .drawer-header span { font: 10px var(--font-geist-mono); letter-spacing: .12em; color: var(--muted); }
 .drawer-header h2 { margin: 5px 0 0; font-size: 27px; letter-spacing: -.04em; }
 .drawer-header button { border: 1px solid var(--ink); border-radius: 999px; background: transparent; padding: 9px 13px; cursor: pointer; }
 
-.agent-workspace { min-height: 620px; max-height: calc(92vh - 94px); display: grid; grid-template-columns: 300px minmax(0,1fr); }
+.agent-workspace { min-height: 0; height: 620px; max-height: calc(92vh - 94px); display: grid; grid-template-rows: minmax(0,1fr); grid-template-columns: 300px minmax(0,1fr); }
 .agent-list { overflow-y: auto; border-right: 1px solid var(--line); padding: 18px; }
 .agent-list > p { margin: 0 0 18px; color: var(--muted); font-size: 12px; line-height: 1.5; }
 .agent-list button { width: 100%; display: grid; grid-template-columns: 30px 1fr; text-align: left; gap: 7px; border: 0; border-top: 1px solid var(--line); background: transparent; padding: 11px 8px; font-size: 12px; cursor: pointer; }
@@ -116,6 +116,7 @@ button { font: inherit; }
 .run-result > header, .run-result > footer { display: flex; justify-content: space-between; padding: 12px 16px; background: var(--ink); color: white; font: 10px var(--font-geist-mono); letter-spacing: .06em; text-transform: uppercase; }
 .run-result > header b { color: var(--acid); }
 .run-result h4 { font-size: 18px; line-height: 1.45; margin: 18px 18px 10px; }
+.run-result > p { margin: 0 18px 10px; font-size: 12px; line-height: 1.5; }
 .run-result ol { margin: 0 18px 18px; padding-left: 24px; }
 .run-result li { padding: 4px 0; font-size: 12px; }
 .evidence-block, .decision-block { border-top: 1px solid var(--line); padding: 15px 18px; }
@@ -160,7 +161,7 @@ button { font: inherit; }
   .overlay { padding: 8px; }
   .drawer { max-height: 96vh; border-radius: 18px; }
   .drawer-header h2 { font-size: 20px; }
-  .agent-workspace { min-height: auto; max-height: calc(96vh - 94px); display: block; overflow-y: auto; }
+  .agent-workspace { min-height: 0; height: auto; max-height: calc(96vh - 94px); display: block; overflow-y: auto; }
   .agent-list { max-height: 185px; border-right: 0; border-bottom: 1px solid var(--line); }
   .executor { overflow: visible; padding: 20px; }
   .control-grid { grid-template-columns: 1fr; }

@@ -150,21 +150,23 @@ export function executeAgent(agentId: string, task: string) {
   const evidence = knowledgeRecords
     .filter((record) => record.tags.some((tag) => agent.knowledgeTags.includes(tag)))
     .slice(0, 3);
-  const routingConfidence = Math.min(0.96, 0.82 + ((agent.number % 8) * 0.02));
 
   return {
     runId: `RUN-${agent.departmentId.toUpperCase()}-${String(Date.now()).slice(-6)}`,
     mode: "deterministic-reference",
-    status: "ready_for_review",
+    status: "reference_packet",
     agent: { id: agent.id, name: agent.name, department: agent.department },
     task: cleanTask,
-    summary: `${agent.name} prepared a reviewable ${agent.department.toLowerCase()} work packet for: “${cleanTask}”`,
+    summary: `${agent.name} prepared a reference ${agent.department.toLowerCase()} work packet for: “${cleanTask}”`,
     steps: playbooks[agent.departmentId],
     evidence,
-    decision: `Proceed to human review because the required ${agent.department.toLowerCase()} evidence is present; execution remains inside the agent's permission boundary.`,
+    evidenceStatus: "unverified_for_task" as const,
+    routingBasis: "Selected agent and static department tags; task-specific relevance has not been evaluated.",
+    decision: "Task-specific evidence has not been verified. Review the reference fixtures and supply current task evidence before making an operational decision.",
     constraint: agent.guardrail,
-    handoff: { owner: agent.nextDepartment, artifact: `${agent.name} evidence packet`, state: "awaiting_review" },
-    routingConfidence,
+    handoff: { owner: agent.nextDepartment, artifact: `${agent.name} reference packet`, state: "awaiting_evidence_review" },
     createdAt: new Date().toISOString(),
   };
 }
+
+export type AgentRunResult = ReturnType<typeof executeAgent>;

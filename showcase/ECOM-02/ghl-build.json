@@ -1,0 +1,22 @@
+{
+  "kind": "manual-configuration-blueprint-not-ghl-snapshot",
+  "projectId": "ECOM-02",
+  "relationshipRole": "Merchant review owner",
+  "pipelineName": "Portfolio / ECOM-02",
+  "stages": [
+    "Received",
+    "Triage",
+    "Safety review",
+    "Resolved"
+  ],
+  "messagingEnabled": false,
+  "duplicateMatch": "email",
+  "contactFields": [
+    "firstName",
+    "lastName",
+    "email",
+    "source"
+  ],
+  "liveAcceptance": "pending",
+  "systemOfRecord": "original project system"
+}

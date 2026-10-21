@@ -1,0 +1,31 @@
+{
+  "project": "TRIP-02",
+  "title": "Pack Light",
+  "dataOrigin": "Invented example",
+  "input": {
+    "weights": [
+      2,
+      1.5,
+      0.8,
+      3
+    ],
+    "limit": 8
+  },
+  "output": {
+    "summary": "7.3 kg packed. Within your entered limit.",
+    "rows": [
+      {
+        "label": "Packed",
+        "value": 7.3
+      },
+      {
+        "label": "Room left",
+        "value": 0.7
+      }
+    ],
+    "unit": "kg",
+    "details": {
+      "overBy": 0
+    }
+  }
+}

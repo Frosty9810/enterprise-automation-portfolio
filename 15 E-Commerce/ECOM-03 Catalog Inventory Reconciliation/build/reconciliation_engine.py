@@ -3,10 +3,10 @@
 
 from __future__ import annotations
 
-from dataclasses import asdict, dataclass
-from datetime import datetime, timezone
-from hashlib import sha256
 import json
+from dataclasses import asdict, dataclass
+from datetime import UTC, datetime
+from hashlib import sha256
 
 
 @dataclass(frozen=True)
@@ -27,8 +27,7 @@ def reconcile(record: InventoryRecord) -> dict:
     reasons: list[str] = []
     expected = record.warehouse_on_hand - record.erp_reserved - record.safety_buffer
     key_raw = (
-        f"{record.sku}:{record.location}:{record.warehouse_version}:"
-        f"{record.erp_version}:{expected}"
+        f"{record.sku}:{record.location}:{record.warehouse_version}:{record.erp_version}:{expected}"
     )
     correction_key = sha256(key_raw.encode()).hexdigest()[:20]
 
@@ -52,7 +51,7 @@ def reconcile(record: InventoryRecord) -> dict:
         reasons.append("shopify_differs_from_authoritative_derivation")
 
     return {
-        "evaluated_at": datetime.now(timezone.utc).isoformat(),
+        "evaluated_at": datetime.now(UTC).isoformat(),
         "correction_key": correction_key,
         "record": asdict(record),
         "expected_sellable": expected,

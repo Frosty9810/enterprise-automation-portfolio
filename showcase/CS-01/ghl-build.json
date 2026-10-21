@@ -1,0 +1,22 @@
+{
+  "kind": "manual-configuration-blueprint-not-ghl-snapshot",
+  "projectId": "CS-01",
+  "relationshipRole": "Support quality owner",
+  "pipelineName": "Portfolio / CS-01",
+  "stages": [
+    "Sampled",
+    "QA review",
+    "Knowledge gap",
+    "Closed"
+  ],
+  "messagingEnabled": false,
+  "duplicateMatch": "email",
+  "contactFields": [
+    "firstName",
+    "lastName",
+    "email",
+    "source"
+  ],
+  "liveAcceptance": "pending",
+  "systemOfRecord": "original project system"
+}

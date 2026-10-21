@@ -1,0 +1,31 @@
+{
+  "project": "LIFE-03",
+  "title": "Pantry First",
+  "dataOrigin": "Invented example",
+  "input": {
+    "days": [
+      1,
+      5,
+      2,
+      8
+    ],
+    "soon": 2
+  },
+  "output": {
+    "summary": "Plan around the items with the nearest reminder dates. Dates alone do not establish food safety.",
+    "rows": [
+      {
+        "label": "Use soon reminders",
+        "value": 2
+      },
+      {
+        "label": "Later reminders",
+        "value": 2
+      }
+    ],
+    "unit": "items",
+    "details": {
+      "nextItem": 1
+    }
+  }
+}

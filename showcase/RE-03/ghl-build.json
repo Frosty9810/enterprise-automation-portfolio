@@ -1,0 +1,22 @@
+{
+  "kind": "manual-configuration-blueprint-not-ghl-snapshot",
+  "projectId": "RE-03",
+  "relationshipRole": "Qualified lead",
+  "pipelineName": "Portfolio / RE-03",
+  "stages": [
+    "New",
+    "Scored",
+    "Human review",
+    "Assigned"
+  ],
+  "messagingEnabled": false,
+  "duplicateMatch": "email",
+  "contactFields": [
+    "firstName",
+    "lastName",
+    "email",
+    "source"
+  ],
+  "liveAcceptance": "pending",
+  "systemOfRecord": "original project system"
+}

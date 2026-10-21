@@ -1,0 +1,5 @@
+import test from 'node:test';import assert from 'node:assert/strict';
+import {corpus,retrieve,extractAnswer,validateAnswer,evaluateEngineering} from './engineering-evals.mjs';
+test('offline retrieval preserves tenant and approval boundaries',()=>{const r=evaluateEngineering();assert.equal(r.evaluation.passed,7);assert.equal(r.datasetHash.length,64);assert.equal(retrieve('return','other-tenant').length,0);assert.equal(extractAnswer('unknown','deskpilot').status,'abstain');});
+test('fabricated citations and altered answers fail evidence validation',()=>{const a=extractAnswer('return','deskpilot');assert.equal(validateAnswer({...a,answer:'Refund issued'},'deskpilot'),false);assert.equal(validateAnswer({...a,citations:['private-v1']},'deskpilot'),false);assert.equal(validateAnswer({...a,action:'refund'},'deskpilot'),false);});
+test('extractive lookup remains stable under document order changes',()=>{for(let i=0;i<corpus.length;i++){const docs=[...corpus.slice(i),...corpus.slice(0,i)];assert.equal(extractAnswer('shipping','deskpilot',docs).citations[0],'shipping-v1');}});

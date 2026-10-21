@@ -1,0 +1,20 @@
+{
+  "projectId": "MED-01",
+  "format": "manual setup specification, not a native GHL snapshot",
+  "location": "DEMO_LOCATION",
+  "relationshipRole": "Clinic administration contact",
+  "proposedStages": [
+    "Received",
+    "Completeness",
+    "Staff review",
+    "Closed"
+  ],
+  "contactFields": [
+    "email",
+    "firstName",
+    "lastName",
+    "source"
+  ],
+  "automatedCommunications": false,
+  "acceptance": "Local simulator; hosted acceptance pending"
+}

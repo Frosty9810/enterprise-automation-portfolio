@@ -1,0 +1,22 @@
+{
+  "kind": "manual-configuration-blueprint-not-ghl-snapshot",
+  "projectId": "SAAS-04",
+  "relationshipRole": "Finance account owner",
+  "pipelineName": "Portfolio / SAAS-04",
+  "stages": [
+    "Reconcile",
+    "Exception",
+    "Finance review",
+    "Closed"
+  ],
+  "messagingEnabled": false,
+  "duplicateMatch": "email",
+  "contactFields": [
+    "firstName",
+    "lastName",
+    "email",
+    "source"
+  ],
+  "liveAcceptance": "pending",
+  "systemOfRecord": "original project system"
+}

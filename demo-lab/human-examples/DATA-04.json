@@ -1,0 +1,45 @@
+{
+  "project": "DATA-04",
+  "title": "Every Voice",
+  "dataOrigin": "Invented example",
+  "input": {
+    "scores": [
+      4,
+      5,
+      0,
+      3,
+      4,
+      0
+    ]
+  },
+  "output": {
+    "summary": "4 of 6 answered. Missing responses are excluded from the average.",
+    "rows": [
+      {
+        "label": "Rating 1",
+        "value": 0
+      },
+      {
+        "label": "Rating 2",
+        "value": 0
+      },
+      {
+        "label": "Rating 3",
+        "value": 1
+      },
+      {
+        "label": "Rating 4",
+        "value": 2
+      },
+      {
+        "label": "Rating 5",
+        "value": 1
+      }
+    ],
+    "unit": "responses",
+    "details": {
+      "mean": 4,
+      "missing": 2
+    }
+  }
+}

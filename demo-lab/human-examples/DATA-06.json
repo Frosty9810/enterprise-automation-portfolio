@@ -1,0 +1,38 @@
+{
+  "project": "DATA-06",
+  "title": "Near Enough",
+  "dataOrigin": "Invented example",
+  "input": {
+    "areaA": [
+      10,
+      12,
+      15
+    ],
+    "areaB": [
+      20,
+      25,
+      30,
+      40
+    ]
+  },
+  "output": {
+    "summary": "Compare reported journey times, while keeping sample size and selection bias visible.",
+    "rows": [
+      {
+        "label": "Area A median",
+        "value": 12
+      },
+      {
+        "label": "Area B median",
+        "value": 27.5
+      }
+    ],
+    "unit": "minutes",
+    "details": {
+      "sampleA": 3,
+      "sampleB": 4,
+      "medianGap": 15.5,
+      "causalClaim": false
+    }
+  }
+}

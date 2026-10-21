@@ -1,0 +1,7 @@
+target-version = "py312"
+line-length = 100
+extend-exclude = ["node_modules", "dist", ".next", ".runtime", ".n8n"]
+
+[lint]
+select = ["E4", "E7", "E9", "F", "I", "UP", "DTZ", "BLE", "FURB"]
+ignore = ["UP042"] # Preserve the existing str/Enum string representation in public demo APIs.

@@ -24,9 +24,8 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass, field
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from difflib import SequenceMatcher
-from typing import Optional
 
 # ---------------------------------------------------------------------------
 # Scoring weights (mirrors SOP Section 14 exactly)
@@ -52,12 +51,12 @@ class CanonicalLead:
     source: str
     price_band: str
     form_completeness: float  # 0.0-1.0, share of optional fields populated
-    first_name: Optional[str] = None
-    last_name: Optional[str] = None
-    email: Optional[str] = None
-    phone: Optional[str] = None
-    last_touch_at: Optional[datetime] = None
-    engagement_event_at: Optional[datetime] = None
+    first_name: str | None = None
+    last_name: str | None = None
+    email: str | None = None
+    phone: str | None = None
+    last_touch_at: datetime | None = None
+    engagement_event_at: datetime | None = None
     score: int = field(default=0)
     tier: str = field(default="unscored")
 
@@ -67,14 +66,14 @@ class CanonicalLead:
 # ---------------------------------------------------------------------------
 
 
-def normalize_email(raw_email: Optional[str]) -> Optional[str]:
+def normalize_email(raw_email: str | None) -> str | None:
     """Trim and lowercase an email address. Returns None if input is falsy."""
     if not raw_email:
         return None
     return raw_email.strip().lower()
 
 
-def normalize_phone_e164(raw_phone: Optional[str]) -> Optional[str]:
+def normalize_phone_e164(raw_phone: str | None) -> str | None:
     """Normalize a US phone number to E.164 (+1XXXXXXXXXX).
 
     Strips all non-digit characters, then handles the 10-digit and
@@ -92,7 +91,7 @@ def normalize_phone_e164(raw_phone: Optional[str]) -> Optional[str]:
     return None
 
 
-def parse_price(raw_price) -> Optional[int]:
+def parse_price(raw_price) -> int | None:
     """Cast a price value (int, float, or currency-formatted string) to int."""
     if raw_price is None:
         return None
@@ -107,7 +106,7 @@ def parse_price(raw_price) -> Optional[int]:
         return None
 
 
-def price_to_band(price: Optional[int]) -> str:
+def price_to_band(price: int | None) -> str:
     """Bucket a numeric price into the canonical price-band enum."""
     if price is None:
         return "unknown"
@@ -125,7 +124,7 @@ def price_to_band(price: Optional[int]) -> str:
 # ---------------------------------------------------------------------------
 
 
-def string_similarity(a: Optional[str], b: Optional[str]) -> float:
+def string_similarity(a: str | None, b: str | None) -> float:
     """Return a 0.0-1.0 similarity ratio between two strings.
 
     Stand-in for PostgreSQL's `pg_trgm` `similarity()` function used in
@@ -143,15 +142,15 @@ class DedupResult:
     """Result of a fuzzy-dedup lookup against an existing lead store."""
 
     matched: bool
-    matched_lead_index: Optional[int]
+    matched_lead_index: int | None
     email_similarity: float
     phone_similarity: float
     reason: str
 
 
 def find_duplicate(
-    candidate_email: Optional[str],
-    candidate_phone: Optional[str],
+    candidate_email: str | None,
+    candidate_phone: str | None,
     existing_leads: list[dict],
 ) -> DedupResult:
     """Fuzzy-match a candidate lead's normalized email/phone against a list
@@ -168,7 +167,7 @@ def find_duplicate(
     candidate_email_norm = normalize_email(candidate_email)
     candidate_phone_norm = normalize_phone_e164(candidate_phone)
 
-    best_match_index: Optional[int] = None
+    best_match_index: int | None = None
     best_email_sim = 0.0
     best_phone_sim = 0.0
 
@@ -234,16 +233,18 @@ def assign_tier(score: int) -> str:
     return "long_cycle"
 
 
-def should_escalate_to_hot(lead: CanonicalLead, now: Optional[datetime] = None) -> bool:
+def should_escalate_to_hot(lead: CanonicalLead, now: datetime | None = None) -> bool:
     """A lead escalates to the hot queue only if it engaged within 24 hours
     of its most recent outbound touch (SOP Section 14, Section 13
     Decision Tree) — engagement outside that window is treated as passive
     re-scoring, not urgent handoff.
     """
-    now = now or datetime.now(timezone.utc)
+    now = now or datetime.now(UTC)
     if lead.engagement_event_at is None or lead.last_touch_at is None:
         return False
-    return (now - lead.last_touch_at) <= timedelta(hours=24) and lead.engagement_event_at >= lead.last_touch_at
+    return (now - lead.last_touch_at) <= timedelta(
+        hours=24
+    ) and lead.engagement_event_at >= lead.last_touch_at
 
 
 def build_canonical_lead_from_raw(raw: dict) -> CanonicalLead:
@@ -262,7 +263,12 @@ def build_canonical_lead_from_raw(raw: dict) -> CanonicalLead:
         email = normalize_email(person.get("emailAddress"))
         phone = normalize_phone_e164(person.get("phoneNumber"))
         price = parse_price(raw.get("listPrice"))
-        optional_fields = [raw.get("propertyAddress"), raw.get("listingId"), price, raw.get("message")]
+        optional_fields = [
+            raw.get("propertyAddress"),
+            raw.get("listingId"),
+            price,
+            raw.get("message"),
+        ]
     elif source == "realtor_com":
         contact = raw.get("contact", {})
         listing = raw.get("listing", {})
@@ -273,7 +279,9 @@ def build_canonical_lead_from_raw(raw: dict) -> CanonicalLead:
         email = normalize_email(contact.get("email"))
         phone = normalize_phone_e164(contact.get("phone"))
         price = parse_price(listing.get("price"))
-        address = ", ".join(filter(None, [listing.get("address_line1"), listing.get("address_line2")]))
+        address = ", ".join(
+            filter(None, [listing.get("address_line1"), listing.get("address_line2")])
+        )
         optional_fields = [address or None, listing.get("mls_id"), price, raw.get("comments")]
     else:  # brokerage_site
         first_name = raw.get("firstName") or raw.get("first_name")
@@ -425,21 +433,27 @@ if __name__ == "__main__":
     print("\n" + "=" * 78)
     print("Hot-queue escalation check (24-hour engagement window, SOP Section 14)")
     print("=" * 78)
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
 
     engaged_lead = canonical_leads[0]
     engaged_lead.last_touch_at = now - timedelta(hours=2)
     engaged_lead.engagement_event_at = now - timedelta(hours=1)
-    print(f"  Lead #1 (touched 2h ago, engaged 1h ago) -> escalate: {should_escalate_to_hot(engaged_lead, now)}")
+    print(
+        f"  Lead #1 (touched 2h ago, engaged 1h ago) -> escalate: {should_escalate_to_hot(engaged_lead, now)}"
+    )
 
     stale_lead = canonical_leads[1]
     stale_lead.last_touch_at = now - timedelta(hours=48)
     stale_lead.engagement_event_at = now - timedelta(hours=1)
-    print(f"  Lead #2 (touched 48h ago, engaged 1h ago) -> escalate: {should_escalate_to_hot(stale_lead, now)}")
+    print(
+        f"  Lead #2 (touched 48h ago, engaged 1h ago) -> escalate: {should_escalate_to_hot(stale_lead, now)}"
+    )
 
     never_engaged_lead = canonical_leads[3]
     never_engaged_lead.last_touch_at = now - timedelta(hours=1)
     never_engaged_lead.engagement_event_at = None
-    print(f"  Lead #4 (touched 1h ago, no engagement)   -> escalate: {should_escalate_to_hot(never_engaged_lead, now)}")
+    print(
+        f"  Lead #4 (touched 1h ago, no engagement)   -> escalate: {should_escalate_to_hot(never_engaged_lead, now)}"
+    )
 
     print("\nSelf-test complete — all functions executed without error.")

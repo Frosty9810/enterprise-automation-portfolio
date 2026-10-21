@@ -1,0 +1,25 @@
+{
+  "name": "portfolio-local-demo-lab",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=24.0.0"
+  },
+  "scripts": {
+    "start": "node server.mjs",
+    "generate": "node generate.mjs",
+    "test": "node --test *.test.mjs test.mjs",
+    "verify": "node verify.mjs",
+    "benchmark": "node benchmark.mjs",
+    "review": "node review-portfolio.mjs",
+    "govern": "node governance.mjs",
+    "audit:originals": "node audit-originals.mjs",
+    "n8n": "node n8n.mjs"
+  },
+  "dependencies": {
+    "n8n": "2.38.1"
+  },
+  "devDependencies": {
+    "jsdom": "23.0.1"
+  }
+}

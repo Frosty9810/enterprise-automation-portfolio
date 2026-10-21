@@ -1,0 +1,22 @@
+{
+  "kind": "manual-configuration-blueprint-not-ghl-snapshot",
+  "projectId": "IMP-01",
+  "relationshipRole": "Commercial counterpart",
+  "pipelineName": "Portfolio / IMP-01",
+  "stages": [
+    "Intake",
+    "Evidence review",
+    "Decision pending",
+    "Closed"
+  ],
+  "messagingEnabled": false,
+  "duplicateMatch": "email",
+  "contactFields": [
+    "firstName",
+    "lastName",
+    "email",
+    "source"
+  ],
+  "liveAcceptance": "pending",
+  "systemOfRecord": "original project system"
+}

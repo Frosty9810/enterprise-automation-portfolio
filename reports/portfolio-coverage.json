@@ -1,0 +1,606 @@
+{
+  "date": "2026-09-09",
+  "scope": "Structural inventory of all numbered public Portfolio sections; dependency and runtime directories excluded. Private PORT-OS documents are not counted or republished. File counts are not quality scores.",
+  "sections": [
+    {
+      "section": "00 Executive Summary",
+      "files": {
+        "markdown": 1,
+        "python": 0,
+        "javascript": 0,
+        "sql": 0,
+        "workflow_exports": 0,
+        "word_documents": 0
+      },
+      "readmeStatus": "placeholder"
+    },
+    {
+      "section": "01 Consulting Methodology",
+      "files": {
+        "markdown": 1,
+        "python": 0,
+        "javascript": 0,
+        "sql": 0,
+        "workflow_exports": 0,
+        "word_documents": 0
+      },
+      "readmeStatus": "populated documentation or source; completeness not inferred"
+    },
+    {
+      "section": "02 Discovery",
+      "files": {
+        "markdown": 1,
+        "python": 0,
+        "javascript": 0,
+        "sql": 0,
+        "workflow_exports": 0,
+        "word_documents": 0
+      },
+      "readmeStatus": "placeholder"
+    },
+    {
+      "section": "03 Business Analysis",
+      "files": {
+        "markdown": 1,
+        "python": 0,
+        "javascript": 0,
+        "sql": 0,
+        "workflow_exports": 0,
+        "word_documents": 0
+      },
+      "readmeStatus": "placeholder"
+    },
+    {
+      "section": "04 Automation Framework",
+      "files": {
+        "markdown": 1,
+        "python": 0,
+        "javascript": 0,
+        "sql": 0,
+        "workflow_exports": 0,
+        "word_documents": 0
+      },
+      "readmeStatus": "placeholder"
+    },
+    {
+      "section": "05 CRM Architectures",
+      "files": {
+        "markdown": 1,
+        "python": 0,
+        "javascript": 0,
+        "sql": 0,
+        "workflow_exports": 0,
+        "word_documents": 0
+      },
+      "readmeStatus": "placeholder"
+    },
+    {
+      "section": "06 Property Management",
+      "files": {
+        "markdown": 1,
+        "python": 0,
+        "javascript": 0,
+        "sql": 0,
+        "workflow_exports": 0,
+        "word_documents": 0
+      },
+      "readmeStatus": "bounded demo"
+    },
+    {
+      "section": "07 Real Estate",
+      "files": {
+        "markdown": 9,
+        "python": 4,
+        "javascript": 0,
+        "sql": 4,
+        "workflow_exports": 4,
+        "word_documents": 0
+      },
+      "readmeStatus": "populated documentation or source; completeness not inferred"
+    },
+    {
+      "section": "08 Construction",
+      "files": {
+        "markdown": 1,
+        "python": 0,
+        "javascript": 0,
+        "sql": 0,
+        "workflow_exports": 0,
+        "word_documents": 0
+      },
+      "readmeStatus": "bounded demo"
+    },
+    {
+      "section": "09 Medical",
+      "files": {
+        "markdown": 1,
+        "python": 0,
+        "javascript": 0,
+        "sql": 0,
+        "workflow_exports": 0,
+        "word_documents": 0
+      },
+      "readmeStatus": "bounded demo"
+    },
+    {
+      "section": "10 Legal",
+      "files": {
+        "markdown": 1,
+        "python": 0,
+        "javascript": 0,
+        "sql": 0,
+        "workflow_exports": 0,
+        "word_documents": 0
+      },
+      "readmeStatus": "bounded demo"
+    },
+    {
+      "section": "11 Insurance",
+      "files": {
+        "markdown": 1,
+        "python": 0,
+        "javascript": 0,
+        "sql": 0,
+        "workflow_exports": 0,
+        "word_documents": 0
+      },
+      "readmeStatus": "bounded demo"
+    },
+    {
+      "section": "12 Recruiting",
+      "files": {
+        "markdown": 3,
+        "python": 1,
+        "javascript": 0,
+        "sql": 1,
+        "workflow_exports": 1,
+        "word_documents": 0
+      },
+      "readmeStatus": "populated documentation or source; completeness not inferred"
+    },
+    {
+      "section": "13 Marketing Agencies",
+      "files": {
+        "markdown": 3,
+        "python": 1,
+        "javascript": 0,
+        "sql": 1,
+        "workflow_exports": 1,
+        "word_documents": 0
+      },
+      "readmeStatus": "populated documentation or source; completeness not inferred"
+    },
+    {
+      "section": "14 SaaS",
+      "files": {
+        "markdown": 9,
+        "python": 4,
+        "javascript": 0,
+        "sql": 4,
+        "workflow_exports": 4,
+        "word_documents": 0
+      },
+      "readmeStatus": "populated documentation or source; completeness not inferred"
+    },
+    {
+      "section": "15 E-Commerce",
+      "files": {
+        "markdown": 9,
+        "python": 4,
+        "javascript": 0,
+        "sql": 4,
+        "workflow_exports": 4,
+        "word_documents": 0
+      },
+      "readmeStatus": "bounded demo"
+    },
+    {
+      "section": "16 Accounting",
+      "files": {
+        "markdown": 3,
+        "python": 1,
+        "javascript": 0,
+        "sql": 1,
+        "workflow_exports": 1,
+        "word_documents": 0
+      },
+      "readmeStatus": "populated documentation or source; completeness not inferred"
+    },
+    {
+      "section": "17 Customer Support",
+      "files": {
+        "markdown": 3,
+        "python": 1,
+        "javascript": 0,
+        "sql": 1,
+        "workflow_exports": 1,
+        "word_documents": 0
+      },
+      "readmeStatus": "populated documentation or source; completeness not inferred"
+    },
+    {
+      "section": "18 Executive Assistants",
+      "files": {
+        "markdown": 1,
+        "python": 0,
+        "javascript": 0,
+        "sql": 0,
+        "workflow_exports": 0,
+        "word_documents": 0
+      },
+      "readmeStatus": "bounded demo"
+    },
+    {
+      "section": "19 AI Agents",
+      "files": {
+        "markdown": 1,
+        "python": 0,
+        "javascript": 0,
+        "sql": 0,
+        "workflow_exports": 0,
+        "word_documents": 0
+      },
+      "readmeStatus": "placeholder"
+    },
+    {
+      "section": "20 Claude Code",
+      "files": {
+        "markdown": 1,
+        "python": 0,
+        "javascript": 0,
+        "sql": 0,
+        "workflow_exports": 0,
+        "word_documents": 0
+      },
+      "readmeStatus": "populated documentation or source; completeness not inferred"
+    },
+    {
+      "section": "21 n8n",
+      "files": {
+        "markdown": 1,
+        "python": 0,
+        "javascript": 0,
+        "sql": 0,
+        "workflow_exports": 0,
+        "word_documents": 0
+      },
+      "readmeStatus": "populated documentation or source; completeness not inferred"
+    },
+    {
+      "section": "22 Make.com",
+      "files": {
+        "markdown": 1,
+        "python": 0,
+        "javascript": 0,
+        "sql": 0,
+        "workflow_exports": 0,
+        "word_documents": 0
+      },
+      "readmeStatus": "placeholder"
+    },
+    {
+      "section": "23 Zapier",
+      "files": {
+        "markdown": 1,
+        "python": 0,
+        "javascript": 0,
+        "sql": 0,
+        "workflow_exports": 0,
+        "word_documents": 0
+      },
+      "readmeStatus": "placeholder"
+    },
+    {
+      "section": "24 GoHighLevel",
+      "files": {
+        "markdown": 1,
+        "python": 0,
+        "javascript": 0,
+        "sql": 0,
+        "workflow_exports": 0,
+        "word_documents": 0
+      },
+      "readmeStatus": "populated documentation or source; completeness not inferred"
+    },
+    {
+      "section": "25 Close CRM",
+      "files": {
+        "markdown": 1,
+        "python": 0,
+        "javascript": 0,
+        "sql": 0,
+        "workflow_exports": 0,
+        "word_documents": 0
+      },
+      "readmeStatus": "placeholder"
+    },
+    {
+      "section": "26 HubSpot",
+      "files": {
+        "markdown": 1,
+        "python": 0,
+        "javascript": 0,
+        "sql": 0,
+        "workflow_exports": 0,
+        "word_documents": 0
+      },
+      "readmeStatus": "placeholder"
+    },
+    {
+      "section": "27 Salesforce",
+      "files": {
+        "markdown": 1,
+        "python": 0,
+        "javascript": 0,
+        "sql": 0,
+        "workflow_exports": 0,
+        "word_documents": 0
+      },
+      "readmeStatus": "placeholder"
+    },
+    {
+      "section": "28 Airtable",
+      "files": {
+        "markdown": 1,
+        "python": 0,
+        "javascript": 0,
+        "sql": 0,
+        "workflow_exports": 0,
+        "word_documents": 0
+      },
+      "readmeStatus": "placeholder"
+    },
+    {
+      "section": "29 Integrations",
+      "files": {
+        "markdown": 1,
+        "python": 0,
+        "javascript": 0,
+        "sql": 0,
+        "workflow_exports": 0,
+        "word_documents": 0
+      },
+      "readmeStatus": "placeholder"
+    },
+    {
+      "section": "30 API Documentation",
+      "files": {
+        "markdown": 1,
+        "python": 0,
+        "javascript": 0,
+        "sql": 0,
+        "workflow_exports": 0,
+        "word_documents": 0
+      },
+      "readmeStatus": "placeholder"
+    },
+    {
+      "section": "31 Prompt Library",
+      "files": {
+        "markdown": 1,
+        "python": 0,
+        "javascript": 0,
+        "sql": 0,
+        "workflow_exports": 0,
+        "word_documents": 0
+      },
+      "readmeStatus": "placeholder"
+    },
+    {
+      "section": "32 SOP Library",
+      "files": {
+        "markdown": 2,
+        "python": 0,
+        "javascript": 0,
+        "sql": 0,
+        "workflow_exports": 0,
+        "word_documents": 0
+      },
+      "readmeStatus": "populated documentation or source; completeness not inferred"
+    },
+    {
+      "section": "33 Workflow Diagrams",
+      "files": {
+        "markdown": 1,
+        "python": 0,
+        "javascript": 0,
+        "sql": 0,
+        "workflow_exports": 0,
+        "word_documents": 0
+      },
+      "readmeStatus": "placeholder"
+    },
+    {
+      "section": "34 Database Schemas",
+      "files": {
+        "markdown": 1,
+        "python": 0,
+        "javascript": 0,
+        "sql": 0,
+        "workflow_exports": 0,
+        "word_documents": 0
+      },
+      "readmeStatus": "placeholder"
+    },
+    {
+      "section": "35 Security",
+      "files": {
+        "markdown": 1,
+        "python": 0,
+        "javascript": 0,
+        "sql": 0,
+        "workflow_exports": 0,
+        "word_documents": 0
+      },
+      "readmeStatus": "placeholder"
+    },
+    {
+      "section": "36 Monitoring",
+      "files": {
+        "markdown": 1,
+        "python": 0,
+        "javascript": 0,
+        "sql": 0,
+        "workflow_exports": 0,
+        "word_documents": 0
+      },
+      "readmeStatus": "placeholder"
+    },
+    {
+      "section": "37 Testing",
+      "files": {
+        "markdown": 1,
+        "python": 0,
+        "javascript": 0,
+        "sql": 0,
+        "workflow_exports": 0,
+        "word_documents": 0
+      },
+      "readmeStatus": "bounded demo"
+    },
+    {
+      "section": "38 Deployment",
+      "files": {
+        "markdown": 1,
+        "python": 0,
+        "javascript": 0,
+        "sql": 0,
+        "workflow_exports": 0,
+        "word_documents": 0
+      },
+      "readmeStatus": "placeholder"
+    },
+    {
+      "section": "39 Maintenance",
+      "files": {
+        "markdown": 1,
+        "python": 0,
+        "javascript": 0,
+        "sql": 0,
+        "workflow_exports": 0,
+        "word_documents": 0
+      },
+      "readmeStatus": "placeholder"
+    },
+    {
+      "section": "40 Troubleshooting",
+      "files": {
+        "markdown": 1,
+        "python": 0,
+        "javascript": 0,
+        "sql": 0,
+        "workflow_exports": 0,
+        "word_documents": 0
+      },
+      "readmeStatus": "placeholder"
+    },
+    {
+      "section": "41 Templates",
+      "files": {
+        "markdown": 6,
+        "python": 0,
+        "javascript": 0,
+        "sql": 0,
+        "workflow_exports": 0,
+        "word_documents": 0
+      },
+      "readmeStatus": "populated documentation or source; completeness not inferred"
+    },
+    {
+      "section": "42 Client Deliverables",
+      "files": {
+        "markdown": 1,
+        "python": 0,
+        "javascript": 0,
+        "sql": 0,
+        "workflow_exports": 0,
+        "word_documents": 0
+      },
+      "readmeStatus": "placeholder"
+    },
+    {
+      "section": "43 Case Studies",
+      "files": {
+        "markdown": 1,
+        "python": 0,
+        "javascript": 0,
+        "sql": 0,
+        "workflow_exports": 0,
+        "word_documents": 0
+      },
+      "readmeStatus": "placeholder"
+    },
+    {
+      "section": "44 ROI",
+      "files": {
+        "markdown": 1,
+        "python": 0,
+        "javascript": 0,
+        "sql": 0,
+        "workflow_exports": 0,
+        "word_documents": 0
+      },
+      "readmeStatus": "placeholder"
+    },
+    {
+      "section": "45 Dashboards",
+      "files": {
+        "markdown": 1,
+        "python": 0,
+        "javascript": 0,
+        "sql": 0,
+        "workflow_exports": 0,
+        "word_documents": 0
+      },
+      "readmeStatus": "placeholder"
+    },
+    {
+      "section": "46 AI Documentation",
+      "files": {
+        "markdown": 1,
+        "python": 0,
+        "javascript": 0,
+        "sql": 0,
+        "workflow_exports": 0,
+        "word_documents": 0
+      },
+      "readmeStatus": "placeholder"
+    },
+    {
+      "section": "47 Automation Blueprints",
+      "files": {
+        "markdown": 7,
+        "python": 0,
+        "javascript": 0,
+        "sql": 0,
+        "workflow_exports": 0,
+        "word_documents": 0
+      },
+      "readmeStatus": "populated documentation or source; completeness not inferred"
+    },
+    {
+      "section": "48 Enterprise Workflows",
+      "files": {
+        "markdown": 7,
+        "python": 0,
+        "javascript": 8,
+        "sql": 0,
+        "workflow_exports": 0,
+        "word_documents": 1
+      },
+      "readmeStatus": "populated documentation or source; completeness not inferred"
+    },
+    {
+      "section": "49 Internal Standards",
+      "files": {
+        "markdown": 1,
+        "python": 0,
+        "javascript": 0,
+        "sql": 0,
+        "workflow_exports": 0,
+        "word_documents": 0
+      },
+      "readmeStatus": "placeholder"
+    }
+  ]
+}

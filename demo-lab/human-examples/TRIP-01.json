@@ -1,0 +1,36 @@
+{
+  "project": "TRIP-01",
+  "title": "Gentle Day",
+  "dataOrigin": "Invented example",
+  "input": {
+    "walks": [
+      25,
+      40,
+      20
+    ],
+    "rest": 20,
+    "available": 180
+  },
+  "output": {
+    "summary": "This sample day leaves breathing room.",
+    "rows": [
+      {
+        "label": "Walking",
+        "value": 85
+      },
+      {
+        "label": "Rest",
+        "value": 60
+      },
+      {
+        "label": "Time left",
+        "value": 35
+      }
+    ],
+    "unit": "minutes",
+    "details": {
+      "fits": true,
+      "overBy": 0
+    }
+  }
+}

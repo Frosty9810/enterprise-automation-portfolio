@@ -16,9 +16,8 @@ Run directly to execute a self-test against sample transactions:
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from datetime import date, datetime, timedelta
+from datetime import UTC, date, datetime, timedelta
 from enum import Enum
-from typing import Optional
 
 
 class TransactionType(str, Enum):
@@ -65,7 +64,7 @@ class Deadline:
     milestone: str
     due_date: date
     status: DeadlineStatus = DeadlineStatus.PENDING
-    completed_at: Optional[datetime] = None
+    completed_at: datetime | None = None
 
 
 @dataclass
@@ -101,15 +100,14 @@ def select_template_id(transaction_type: str) -> str:
         return mapping[TransactionType(transaction_type)]
     except ValueError as exc:
         raise ValueError(
-            f"Unrecognized transaction_type '{transaction_type}'; "
-            "routing to TC exception queue."
+            f"Unrecognized transaction_type '{transaction_type}'; routing to TC exception queue."
         ) from exc
 
 
 def calculate_deadlines(
     contract_execution_date: date,
     transaction_type: str,
-    office_offsets: Optional[dict[str, int]] = None,
+    office_offsets: dict[str, int] | None = None,
 ) -> list[Deadline]:
     """Derive the deadline schedule from the contract execution date.
 
@@ -130,9 +128,7 @@ def calculate_deadlines(
     """
     offsets = office_offsets or DEFAULT_OFFSETS_DAYS
     excluded = (
-        SHORT_SALE_EXCLUDED_MILESTONES
-        if transaction_type == TransactionType.SHORT_SALE
-        else set()
+        SHORT_SALE_EXCLUDED_MILESTONES if transaction_type == TransactionType.SHORT_SALE else set()
     )
     return [
         Deadline(
@@ -171,7 +167,7 @@ def validate_office_offsets(offsets: dict[str, int]) -> None:
         )
 
 
-def notification_tier(deadline: Deadline, today: date) -> Optional[str]:
+def notification_tier(deadline: Deadline, today: date) -> str | None:
     """Return which notification window (if any) 'today' falls into for a deadline.
 
     Mirrors SOP Section 14 notification_windows(). Only pending deadlines are
@@ -202,10 +198,10 @@ def evaluate_escalation(deadline: Deadline, today: date) -> bool:
     return deadline.due_date <= today
 
 
-def mark_complete(deadline: Deadline, completed_at: Optional[datetime] = None) -> None:
+def mark_complete(deadline: Deadline, completed_at: datetime | None = None) -> None:
     """Mark a deadline complete, recording the completion timestamp."""
     deadline.status = DeadlineStatus.COMPLETE
-    deadline.completed_at = completed_at or datetime.utcnow()
+    deadline.completed_at = completed_at or datetime.now(UTC)
 
 
 def build_transaction_report(transaction: Transaction, today: date) -> list[str]:
@@ -272,7 +268,7 @@ def _build_sample_transactions(today: date) -> list[Transaction]:
     # Earnest money (T+3 from 5 days ago = 2 days overdue) already collected.
     for d in financed.deadlines:
         if d.milestone == "earnest_money":
-            mark_complete(d, completed_at=datetime.utcnow() - timedelta(days=1))
+            mark_complete(d, completed_at=datetime.now(UTC) - timedelta(days=1))
     transactions.append(financed)
 
     # 2. Cash purchase — contract executed today, so T-3 windows land soon;
@@ -313,7 +309,7 @@ def _build_sample_transactions(today: date) -> list[Transaction]:
 
 def main() -> None:
     """Run the self-test: build sample transactions and print a report."""
-    today = date.today()
+    today = datetime.now(UTC).date()
 
     print("=" * 78)
     print("RE-02 Deadline Engine — Self-Test Report")
@@ -338,9 +334,11 @@ def main() -> None:
 
     print()
     print("-" * 78)
-    print(f"Summary: {len(transactions)} transactions evaluated, "
-          f"{total_notifications} notification(s) due, "
-          f"{total_escalations} deadline(s) requiring broker escalation.")
+    print(
+        f"Summary: {len(transactions)} transactions evaluated, "
+        f"{total_notifications} notification(s) due, "
+        f"{total_escalations} deadline(s) requiring broker escalation."
+    )
     print("-" * 78)
 
     # Exercise select_template_id() and validate_office_offsets() as part of
@@ -358,22 +356,26 @@ def main() -> None:
     print()
     print("Office offset override validation check:")
     try:
-        validate_office_offsets({
-            "earnest_money": 2,
-            "inspection_contingency": 7,
-            "financing_contingency": 18,
-            "closing": 25,
-        })
+        validate_office_offsets(
+            {
+                "earnest_money": 2,
+                "inspection_contingency": 7,
+                "financing_contingency": 18,
+                "closing": 25,
+            }
+        )
         print("  Valid override accepted (2 < 7 < 18 < 25).")
     except ValueError as exc:
         print(f"  Unexpected rejection: {exc}")
 
     try:
-        validate_office_offsets({
-            "earnest_money": 10,
-            "inspection_contingency": 5,
-            "closing": 25,
-        })
+        validate_office_offsets(
+            {
+                "earnest_money": 10,
+                "inspection_contingency": 5,
+                "closing": 25,
+            }
+        )
     except ValueError as exc:
         print(f"  Invalid override correctly rejected: {exc}")
 

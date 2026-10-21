@@ -1,0 +1,20 @@
+{
+  "projectId": "EA-01",
+  "format": "manual setup specification, not a native GHL snapshot",
+  "location": "DEMO_LOCATION",
+  "relationshipRole": "Executive relationship contact",
+  "proposedStages": [
+    "Captured",
+    "Owner review",
+    "Confirmed",
+    "Closed"
+  ],
+  "contactFields": [
+    "email",
+    "firstName",
+    "lastName",
+    "source"
+  ],
+  "automatedCommunications": false,
+  "acceptance": "Local simulator; hosted acceptance pending"
+}

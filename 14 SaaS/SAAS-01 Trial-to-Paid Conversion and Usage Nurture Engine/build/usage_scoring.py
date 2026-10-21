@@ -21,9 +21,10 @@ No external dependencies, no credentials, no network calls.
 
 from __future__ import annotations
 
+from collections.abc import Iterable
 from dataclasses import dataclass, field
-from datetime import date, datetime, timedelta
-from typing import Iterable, Literal
+from datetime import UTC, date, datetime, timedelta
+from typing import Literal
 
 # ---------------------------------------------------------------------------
 # Constants — mirror the thresholds and weights defined in SOP Sections 13/14
@@ -146,14 +147,16 @@ def aggregate_daily_usage(
     features = 0
     last_event_at: datetime | None = None
 
-    cutoff = datetime(as_of.year, as_of.month, as_of.day, 23, 59, 59)
+    cutoff = datetime(as_of.year, as_of.month, as_of.day, 23, 59, 59, tzinfo=UTC)
 
     for evt in events:
         if evt.account_id != account_id:
             continue
         if evt.event_type not in VALID_EVENT_TYPES:
             continue  # malformed/unrecognized event type — excluded from scoring
-        if evt.timestamp > cutoff:
+        # Legacy naive timestamps are interpreted as UTC at this boundary.
+        event_time = evt.timestamp if evt.timestamp.tzinfo else evt.timestamp.replace(tzinfo=UTC)
+        if event_time > cutoff:
             continue  # not yet "as of" this scoring date
 
         if evt.event_type == "integration_connected":
@@ -165,8 +168,8 @@ def aggregate_daily_usage(
         elif evt.event_type == "feature_activated":
             features += 1
 
-        if last_event_at is None or evt.timestamp > last_event_at:
-            last_event_at = evt.timestamp
+        if last_event_at is None or event_time > last_event_at:
+            last_event_at = event_time
 
     trial_day = (as_of - trial_start).days + 1  # trial_day is 1-indexed
     no_usage_data = last_event_at is None
@@ -324,7 +327,7 @@ def _make_event(
     event_type: str, account_id: str, user_id: str, day_offset: int, event_id: str
 ) -> UsageEvent:
     """Helper: build a synthetic event `day_offset` days after a fixed epoch."""
-    epoch = datetime(2026, 6, 1, 9, 0, 0)
+    epoch = datetime(2026, 6, 1, 9, 0, 0, tzinfo=UTC)
     return UsageEvent(
         event_type=event_type,
         account_id=account_id,

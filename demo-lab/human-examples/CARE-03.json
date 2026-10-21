@@ -1,0 +1,30 @@
+{
+  "project": "CARE-03",
+  "title": "Story Keep",
+  "dataOrigin": "Invented example",
+  "input": {
+    "shared": [
+      1,
+      0,
+      1,
+      0
+    ]
+  },
+  "output": {
+    "summary": "Only explicitly permitted memories are included in this proposed collection. Nothing is uploaded.",
+    "rows": [
+      {
+        "label": "Permission recorded",
+        "value": 2
+      },
+      {
+        "label": "Keep private",
+        "value": 2
+      }
+    ],
+    "unit": "memories",
+    "details": {
+      "published": false
+    }
+  }
+}

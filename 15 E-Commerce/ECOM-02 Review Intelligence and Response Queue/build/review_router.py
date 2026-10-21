@@ -3,10 +3,9 @@
 
 from __future__ import annotations
 
+import json
 from dataclasses import asdict, dataclass
 from hashlib import sha256
-import json
-
 
 SAFETY_TERMS = ("fire", "hot", "burn", "injury", "smoke", "unsafe")
 LEGAL_TERMS = ("lawyer", "lawsuit", "consumer authority", "chargeback")

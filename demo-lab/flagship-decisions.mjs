@@ -63,9 +63,12 @@ export function routingLab(x) {
             text(d.text, 'Source');
             text(d.tenant, 'Source tenant');
             bool(d.approved, 'Approved');
+            if (Object.hasOwn(d, 'instructionLike')) bool(d.instructionLike, 'Instruction marker');
             list(d.topics, 'Topics');
             d.topics.forEach(t => text(t, 'Topic'));
         }
+        const eligible = c.documents.filter(d => d.tenant === c.tenant && d.approved && d.instructionLike !== true);
+        const excludedSources = c.documents.filter(d => !eligible.includes(d)).map(d => ({ id: d.id, reason: d.tenant !== c.tenant ? 'tenant_mismatch' : !d.approved ? 'not_approved' : 'flagged_instruction_text' }));
         if (c.expectedCitation !== null)
             text(c.expectedCitation, 'Expected citation');
         const start = performance.now(), trace = [];
@@ -79,8 +82,8 @@ export function routingLab(x) {
                 break;
             }
             spent += proposal.units;
-            const valid = validateAnswer(proposal.result, c.tenant, c.documents);
-            const reference = extractAnswer(c.query, c.tenant, c.documents);
+            const valid = validateAnswer(proposal.result, c.tenant, eligible);
+            const reference = extractAnswer(c.query, c.tenant, eligible);
             const relevant = valid && JSON.stringify(proposal.result.citations) === JSON.stringify(reference.citations) && proposal.result.status === reference.status;
             trace.push({ name, status: relevant ? 'verified' : 'rejected', units: proposal.units });
             if (relevant) {
@@ -92,10 +95,10 @@ export function routingLab(x) {
         const actual = selected?.citations[0] ?? null, passed = !!selected && actual === c.expectedCitation;
         const latency = performance.now() - start;
         latencies.push(latency);
-        trials.push({ id: c.id, route, selected, trace, passed, expectedCitation: c.expectedCitation, localDurationMs: latency });
+        trials.push({ id: c.id, route, selected, trace, excludedSources, passed, expectedCitation: c.expectedCitation, localDurationMs: latency });
     }
     const sorted = [...latencies].sort((a, b) => a - b), accepted = trials.filter(t => t.selected).length;
-    return { action: trials.every(t => t.passed) ? 'fixture_gate_passed' : 'evaluation_review', datasetHash: hash({ version: x.datasetVersion, cases: x.cases, trainingIds: x.trainingIds }), trials, passed: trials.filter(t => t.passed).length, total: trials.length, spentScenarioUnits: spent, budgetUnits: x.budgetUnits, scenarioUnitsPerVerifiedResult: accepted ? spent / accepted : null, p50LocalMs: sorted.length ? sorted[Math.ceil(sorted.length * .5) - 1] : null, p95LocalMs: sorted.length ? sorted[Math.ceil(sorted.length * .95) - 1] : null, sampleCount: latencies.length, externalActions: 0, scope: 'Proposals and unit costs are synthetic fixtures. Durations measure the local verifier, not model latency. No paid inference, empirical provider cost, blind holdout or general semantic grounding claim.' };
+    return { action: trials.every(t => t.passed) ? 'fixture_gate_passed' : 'evaluation_review', datasetHash: hash({ version: x.datasetVersion, cases: x.cases, trainingIds: x.trainingIds }), trials, passed: trials.filter(t => t.passed).length, total: trials.length, spentScenarioUnits: spent, budgetUnits: x.budgetUnits, scenarioUnitsPerVerifiedResult: accepted ? spent / accepted : null, p50LocalMs: sorted.length ? sorted[Math.ceil(sorted.length * .5) - 1] : null, p95LocalMs: sorted.length ? sorted[Math.ceil(sorted.length * .95) - 1] : null, sampleCount: latencies.length, externalActions: 0, scope: 'Proposals and unit costs are synthetic fixtures. Instruction markers are caller supplied; absent markers are not a safety guarantee. Durations measure the local verifier, not model latency. No paid inference, empirical provider cost, blind holdout or general semantic grounding claim.' };
 }
 export function mergePreview(x) {
     text(x.tenant, 'Tenant');

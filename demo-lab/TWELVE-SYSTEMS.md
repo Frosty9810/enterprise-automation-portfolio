@@ -34,6 +34,16 @@ The next improvements with the strongest evidence value are an authorized Salesf
 
 ## Evidence and authority
 
+### Inspect an execution map
+
+Open `/flagships#F06` and run the Architecture Explorer. Its cards separate authored wiring from the latest saved local evaluation for each system. An unrun system says **No saved evaluation**; current and stale receipts show the receipt ID, save time, executed/current source hashes and result hash without opening JSON. Expand a card's source list to inspect the full explicit implementation/fixture/test manifest, or explore that system and run its synthetic example. Rerun the explorer to capture those new receipts. The map is a point-in-time snapshot, not live telemetry; the explorer's own new receipt is saved after its map is captured.
+
+Every manifest file has an allowlisted source link bound to its SHA-256. A mismatched link returns HTTP 409 instead of showing newer bytes under an old fingerprint. Malformed fingerprints return 400; unknown projects/indices remain 404. Unversioned legacy source URLs still serve current allowlisted bytes and expose their hash in `X-Source-SHA256`. Paths cannot be supplied by the caller.
+
+The explorer's source fingerprint includes all files explicitly listed by the twelve mapped manifests, plus their shared request/presentation/acceptance files. Source drift requires a restart before a new evaluation, and mapped revisions are rechecked before acknowledging or exporting an old map, including after restart. Previously saved individual evaluations remain visible as historical evidence with their stale label; reviewing a new map that reports stale history does not make those old runs current.
+
+This remains an explicit source map, not complete automatic dependency discovery. A file hash establishes byte identity, not test passage, correctness, authenticated provenance or provider acceptance. Source manifest expansion intentionally invalidates receipts created with the older listed set; rerun and acknowledge current analysis. Reproduce restart, hash-bound HTTP and empty/current/stale DOM cases with `node --test demo-lab/explorer-evidence.test.mjs`.
+
 The shared SQLite layer stores analysis inputs, results, source hashes and acknowledgement history. Acknowledgements retain their original label across restarts and grant **no operational authority**. Source changes invalidate review/export, and changed listed files require a server restart so old loaded code cannot claim a new disk hash. Manifests explicitly list selected implementation/test files; they are not a complete inferred dependency graph.
 
 F01/F02 execute scripted local durable transitions; F07 applies and reverses cloned records. Other tools calculate analysis or drafts. All provider effects remain zero. Do not upload confidential evidence to this unauthenticated local demonstration. The reconstruction reference and candidates are newly authored in this repository; no third-party licensing or shipped-client provenance is asserted. The public regression cases are fully disclosed.

@@ -157,7 +157,15 @@ export function createLabServer(db = openStore(), executeWorkflow = runN8n) {
         catch(error) { return send(response,400,{error:error.message}); }
       }
       if (url.pathname.startsWith('/api/flagships/source/')) {
-        try { const parts=url.pathname.split('/'); if(parts.length!==6)throw Error('Invalid artifact');const file=sourceArtifact(parts[4],Number(parts[5]));response.writeHead(200,{'Content-Type':'text/plain; charset=utf-8','X-Content-Type-Options':'nosniff','Cache-Control':'no-store'});return response.end(readFileSync(file.path)); }
+        try {
+          const parts=url.pathname.split('/'); if(parts.length!==6)throw Error('Invalid artifact');
+          const file=sourceArtifact(parts[4],Number(parts[5]));
+          const bytes=readFileSync(file.path), sha256=digest(bytes), expected=url.searchParams.get('sha256');
+          if(expected!==null&&!/^[a-f0-9]{64}$/.test(expected)) return send(response,400,{error:'Invalid source fingerprint'});
+          if(expected!==null&&expected!==sha256) return send(response,409,{error:'Source changed; refresh the catalog after restarting the lab'});
+          response.writeHead(200,{'Content-Type':'text/plain; charset=utf-8','X-Content-Type-Options':'nosniff','Cache-Control':'no-store','X-Source-SHA256':sha256});
+          return response.end(bytes);
+        }
         catch(error) { return send(response,404,{error:error.message}); }
       }
       if (url.pathname === '/flagships') {

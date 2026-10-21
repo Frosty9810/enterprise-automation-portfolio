@@ -72,12 +72,13 @@ export function routingLab(x) {
         if (c.expectedCitation !== null)
             text(c.expectedCitation, 'Expected citation');
         const start = performance.now(), trace = [];
-        let selected = null, route = 'budget_stop';
+        let selected = null, route = 'no_verified_result';
         for (const [name, proposal] of [['cheap', c.cheap], ['escalation', c.escalation]]) {
             if (!proposal)
                 continue;
             integer(proposal.units, 'Scenario units', 1);
             if (spent + proposal.units > x.budgetUnits) {
+                route = 'budget_stop';
                 trace.push({ name, status: 'budget_stop' });
                 break;
             }

@@ -9,8 +9,9 @@ import { evaluateIndustryDepth } from './industry-depth.mjs';
 import { supportDesk, routingLab, mergePreview, journey, usageLedger, scheduleBoard, text } from './flagship-decisions.mjs';
 import { reconstructionChallenge } from './reconstruction.mjs';
 import { flagshipFixtures, flagshipDescriptions } from './flagship-fixtures.mjs';
+import { reservationExercise } from './reservation-ledger.mjs';
 const hash = x => createHash('sha256').update(typeof x === 'string' || Buffer.isBuffer(x) ? x : JSON.stringify(x)).digest('hex');
-export const flagshipScope = 'Twelve executable local business demonstrations with synthetic data. Reviews acknowledge analysis only; they do not authorize live operations. No hosted Salesforce, paid model inference, external messages, payments, publishing or calendar writes.';
+export const flagshipScope = 'Twelve executable local business demonstrations with synthetic data. Reviews acknowledge analysis only; they do not authorize live operations. No hosted Salesforce, paid model inference, external messages, payments, publishing or provider calendar writes.';
 export function sourceManifest(id) { const row = flagshipDescriptions.find(r => r[0] === id); if (!row)
     throw Error('Unknown flagship'); const paths = [...new Set([...row[5], 'flagship-suite.mjs', 'flagship-fixtures.mjs', 'server.mjs', 'flagship-acceptance.mjs', 'flagships-ui.mjs', 'flagships-ui.test.mjs', 'flagship-http.test.mjs'])]; const files = paths.map(path => ({ path, sha256: hash(readFileSync(new URL(path, import.meta.url))) })); return { hash: hash(files), files, scope: 'Explicit checked-in source/test manifest, not automatic discovery of every runtime dependency.' }; }
 export function sourceArtifact(id, index) { const row = flagshipDescriptions.find(r => r[0] === id); if (!row || !Number.isSafeInteger(index) || index < 0 || index >= row[5].length)
@@ -109,7 +110,7 @@ export function flagshipSuite(db, manifest = sourceManifest) {
                     result = usageLedger(input);
                     break;
                 case 'F11':
-                    result = { ...scheduleBoard(input), industryChecks: { maintenance: evaluateIndustryDepth('PM-01'), commitments: evaluateIndustryDepth('EA-01') } };
+                    result = { ...scheduleBoard(input), reservationExercise: reservationExercise(), industryChecks: { maintenance: evaluateIndustryDepth('PM-01'), commitments: evaluateIndustryDepth('EA-01') } };
                     break;
                 case 'F12':
                     result = reconstructionChallenge(input);

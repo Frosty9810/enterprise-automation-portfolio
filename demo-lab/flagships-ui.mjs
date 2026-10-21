@@ -87,8 +87,13 @@ export async function mountFlagships(document, api, download, initialId = 'F01')
             box.append(table(['Journal account', 'Debit cents', 'Credit cents'], r.journal.map(j => [j.account, j.debitCents, j.creditCents])));
             box.append(node('p', r.balanced ? 'Draft journal balances. No invoice issued.' : 'Unbalanced draft.'));
         }
-        if (id === 'F11')
+        if (id === 'F11') {
             box.append(table(['Slot', 'UTC start', 'Decision'], r.decisions.map(d => [d.id, d.startUTC, d.action])));
+            box.append(node('h4', 'Separate local reservation exercise'));
+            box.append(node('p', r.reservationExercise.scope, 'small'));
+            box.append(table(['Fixed-calendar step', 'Local result', 'New local effects'], r.reservationExercise.steps.map(step => [step.step, step.action, step.newLocalEffects])));
+            box.append(node('p', `${r.reservationExercise.activeReservations} active local reservation · ${r.reservationExercise.auditEvents} audit events · 0 external actions`, 'small'));
+        }
         if (id === 'F12')
             box.append(table(['Regression case', 'Reference', 'Candidate'], r.cases.map(c => [c.id, c.reference.kind === 'value' ? c.reference.value : 'reject', c.passed ? 'matches' : fmt(c.actual)])));
     }

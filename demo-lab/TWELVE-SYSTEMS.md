@@ -7,7 +7,7 @@ node demo-lab/run-flagships.mjs
 node --test demo-lab/*.test.mjs demo-lab/test.mjs
 ```
 
-The acceptance runner performs four checks per project: an independent expected domain result, current listed source evidence with zero external actions, acknowledgement/export, and an adverse boundary. The resulting **12-project / 48-check** report lives in `reports/twelve-project-acceptance.json`. It is authored local acceptance, not a blind benchmark, measured client ROI or production certification. Browser interaction tests independently execute all twelve cards, review/export and stale-response handling.
+The acceptance runner performs four checks per project: an independent expected domain result, current listed source evidence with zero external actions, acknowledgement/export, and an adverse boundary. The resulting **12-project / 48-check** report lives in `reports/twelve-project-acceptance.json`. It is authored local acceptance, not a blind benchmark, measured client ROI or production certification. DOM interaction tests independently execute all twelve cards, review/export and stale-response handling.
 
 | ID / system | Business decision and engineering signal | Local result to inspect | Remaining integration work |
 |---|---|---|---|

@@ -24,12 +24,29 @@ class InventoryRecord:
 
 
 def reconcile(record: InventoryRecord) -> dict:
+    # Reject malformed intake before arithmetic, hashing or a correction proposal.
+    for field in ("sku", "location", "warehouse_version", "erp_version"):
+        value = getattr(record, field)
+        if not isinstance(value, str) or not value.strip():
+            raise ValueError(f"{field} must be a nonblank string")
+    for field in ("shopify_available", "warehouse_on_hand", "erp_reserved", "safety_buffer"):
+        value = getattr(record, field)
+        if type(value) is not int or not 0 <= value <= 2**31 - 1:
+            raise ValueError(f"{field} must be a nonnegative PostgreSQL INTEGER")
+    if type(record.age_minutes) is not int or record.age_minutes < 0:
+        raise ValueError("age_minutes must be a nonnegative integer")
+    if type(record.mapped) is not bool:
+        raise ValueError("mapped must be a boolean")
     reasons: list[str] = []
     expected = record.warehouse_on_hand - record.erp_reserved - record.safety_buffer
-    key_raw = (
-        f"{record.sku}:{record.location}:{record.warehouse_version}:{record.erp_version}:{expected}"
+    if expected < -(2**31):
+        raise ValueError("Derived sellable quantity must fit a PostgreSQL INTEGER")
+    key_raw = json.dumps(
+        [record.sku, record.location, record.warehouse_version, record.erp_version, expected],
+        ensure_ascii=True,
+        separators=(",", ":"),
     )
-    correction_key = sha256(key_raw.encode()).hexdigest()[:20]
+    correction_key = "inventory-v2-" + sha256(key_raw.encode("utf-8")).hexdigest()
 
     if not record.mapped:
         action = "quarantine"
@@ -56,6 +73,7 @@ def reconcile(record: InventoryRecord) -> dict:
         "record": asdict(record),
         "expected_sellable": expected,
         "decision": {"action": action, "reasons": reasons},
+        "automatic_write_allowed": False,
     }
 
 

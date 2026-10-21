@@ -80,7 +80,11 @@ def analyze(s: Snapshot) -> dict:
         return _hold(snapshot, [], "unrepresentable_derived_metric")
     roas = s.revenue / s.spend if s.spend else None
     pacing = s.spend / denominator
-    if not _finite_number(pacing) or (roas is not None and not _finite_number(roas)):
+    if (
+        not _finite_number(pacing)
+        or (s.spend > 0 and pacing == 0)
+        or (roas is not None and (not _finite_number(roas) or (s.revenue > 0 and roas == 0)))
+    ):
         return _hold(snapshot, [], "unrepresentable_derived_metric")
     reasons = []
     if s.attribution_completeness < 0.8:
@@ -97,7 +101,8 @@ def analyze(s: Snapshot) -> dict:
         if name in identity_fields:
             canonical[name] = value
         else:
-            text = format(Decimal(str(value)), "f")
+            exact = int(value) if isinstance(value, float) and value.is_integer() else value
+            text = format(Decimal(str(exact)), "f")
             canonical[name] = text.rstrip("0").rstrip(".") if "." in text else text
             if value == 0:
                 canonical[name] = "0"

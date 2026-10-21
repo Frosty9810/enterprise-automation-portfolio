@@ -12,6 +12,8 @@ The Python reference accepts nonblank platform/campaign identifiers and finite, 
 
 Invalid inputs or unrepresentable derived ratios produce `data_quality_review` before recommendations, with JSON-safe snapshot values, an explicit reason, no analysis key and no derived metrics. Incomplete attribution retains precedence over optimization. Both review outcomes require human approval; every result explicitly denies automatic budget changes. Zero spend remains an undefined ROAS with a defined pacing ratio, rather than an invented return.
 
+A positive numerator that underflows to a zero ROAS/pacing quotient is unrepresentable and held; genuine zero revenue/spend retains its defined behavior. Integral floats are canonicalized through their exact integer value, including values above 2^53, so equivalent inputs share a key and rounded display strings cannot collide with a different integer. Recompute any cached ad-v2 identities created from affected large integral floats before comparison; this remains an analysis fingerprint, not provider-action authority.
+
 `analysis_version: ad-review-v2` and the versioned `idempotency_key` cover all decision-relevant fields, including budget, elapsed time, baseline ROAS and attribution completeness. Equivalent integer/float values share an identity. This key identifies the full local analysis snapshot; it does not prove event identity or prevent duplicate provider actions. Consumers of the previous four-field key must migrate/recompute cached analysis identities.
 
 Run `python -m unittest discover -s tests -p test_ad_metric_contract.py -v` from the repository root. The n8n export, database adapter and live Meta/Google acceptance are separate implementations; they are not certified by these local Python checks.

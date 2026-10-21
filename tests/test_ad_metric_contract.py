@@ -83,6 +83,36 @@ class AdMetricContractTests(unittest.TestCase):
             ad.analyze(replace(BASE, spend=500.0, revenue=1500.0))["idempotency_key"],
         )
 
+    def test_large_integral_floats_use_exact_integer_identity_without_display_collisions(self):
+        exact = 2**60
+        floating = float(exact)
+        rounded_display = 1152921504606847000
+        self.assertEqual(exact, floating)
+        self.assertNotEqual(floating, rounded_display)
+        self.assertEqual(
+            ad.analyze(replace(BASE, spend=exact))["idempotency_key"],
+            ad.analyze(replace(BASE, spend=floating))["idempotency_key"],
+        )
+        self.assertNotEqual(
+            ad.analyze(replace(BASE, spend=floating))["idempotency_key"],
+            ad.analyze(replace(BASE, spend=rounded_display))["idempotency_key"],
+        )
+
+    def test_positive_ratio_underflow_is_held_but_genuine_zero_is_valid(self):
+        for changes in (
+            {"spend": 1e308, "revenue": 1e-308, "budget": 1e308, "elapsed_ratio": 1},
+            {"spend": 5e-324, "revenue": 0, "budget": 1e308, "elapsed_ratio": 1},
+        ):
+            with self.subTest(changes=changes):
+                result = ad.analyze(replace(BASE, **changes))
+                self.assertEqual(result["decision"]["action"], "data_quality_review")
+                self.assertEqual(result["decision"]["reasons"], ["unrepresentable_derived_metric"])
+                self.assertIsNone(result["idempotency_key"])
+                self.assertEqual(result["metrics"], {"roas": None, "pacing": None})
+                json.dumps(result, allow_nan=False)
+        self.assertEqual(ad.analyze(replace(BASE, spend=0))["metrics"], {"roas": None, "pacing": 0})
+        self.assertEqual(ad.analyze(replace(BASE, revenue=0))["metrics"]["roas"], 0)
+
     def test_reviews_require_authority_and_no_result_permits_budget_writes(self):
         for snapshot in (
             BASE,

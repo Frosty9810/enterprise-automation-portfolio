@@ -15,6 +15,46 @@ function temporary() {
     return { path, cleanup() { for (const file of [path, path + '-wal', path + '-shm', path + '-journal']) if (existsSync(file)) unlinkSync(file); rmdirSync(directory); } };
 }
 
+test('ill-formed Unicode and NUL command identifiers reject before any SQLite writes', () => memory((desk, db) => {
+    for (const bad of ['bad-\ud800', 'bad-\udc00', 'bad-\ud800suffix', 'bad\0suffix']) {
+        for (const field of ['tenant', 'resourceId', 'requestId', 'reviewerLabel'])
+            assert.throws(() => desk.reserve({ ...input(), [field]: bad }), /well-formed|NUL/);
+    }
+    for (const table of ['local_reservations', 'local_reservation_commands', 'local_reservation_audit'])
+        assert.equal(db.prepare(`SELECT COUNT(*) AS count FROM ${table}`).get().count, 0);
+}));
+
+test('malformed read and cancellation identities cannot alias stored Unicode or lose suffixes', () => memory(desk => {
+    const first = desk.reserve(input());
+    for (const bad of ['bad-\ud800', 'bad\0suffix']) {
+        assert.throws(() => desk.state(bad, 'calendar-a'), /well-formed|NUL/);
+        assert.throws(() => desk.state('team-a', bad), /well-formed|NUL/);
+        assert.throws(() => desk.audit(bad), /well-formed|NUL/);
+        for (const field of ['tenant', 'requestId', 'reservationId', 'reviewerLabel'])
+            assert.throws(() => desk.cancel({ ...cancel(first.reservation), [field]: bad }), /well-formed|NUL/);
+    }
+    assert.equal(desk.state('team-a', 'calendar-a')[0].status, 'active');
+    assert.equal(desk.audit('team-a').length, 1);
+}));
+
+test('well-formed Unicode identities round-trip exactly and remain distinct without normalization', () => memory(desk => {
+    const tenants = ['equipo-\ufffd', 'equipo-😀', 'equipo-e\u0301', 'equipo-é'];
+    const ids = new Set();
+    for (const tenant of tenants) {
+        const command = { ...input('solicitud-⛄'), tenant, resourceId: 'calendario-📅', reviewerLabel: 'Revisión 合成' };
+        const first = desk.reserve(command);
+        ids.add(first.reservation.id);
+        assert.equal(first.reservation.resourceId, command.resourceId);
+        assert.equal(desk.reserve(command).replayed, true);
+        assert.deepEqual(desk.state(tenant, command.resourceId), [first.reservation]);
+        assert.equal(desk.audit(tenant)[0].requestId, command.requestId);
+        assert.equal(desk.audit(tenant)[0].detail.reviewerLabel, command.reviewerLabel);
+        const done = desk.cancel({ ...cancel(first.reservation, 'cancelar-❄'), tenant, reviewerLabel: command.reviewerLabel });
+        assert.equal(done.reservation.status, 'cancelled');
+    }
+    assert.equal(ids.size, tenants.length);
+}));
+
 test('half-open reservations reject overlaps and allow touching endpoints', () => memory(desk => {
     desk.reserve(input());
     assert.equal(desk.reserve({ ...input('overlap'), start: '2026-11-01T09:59:59Z', end: '2026-11-01T11:00:00Z' }).action, 'reservation_held');

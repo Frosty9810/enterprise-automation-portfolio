@@ -6,7 +6,8 @@ const version = 'local-reservations/v1';
 const scope = 'Synthetic local SQLite reservations only. Tenant IDs and reviewer labels are supplied, not authenticated. No provider calendar, vendor dispatch or operational authority.';
 const hash = value => createHash('sha256').update(JSON.stringify(value)).digest('hex');
 function identifier(value, label) {
-    if (typeof value !== 'string' || !value.trim() || value.length > 200) throw Error(label + ' must be bounded nonblank text');
+    if (typeof value !== 'string' || !value.trim() || value.length > 200 || !value.isWellFormed() || value.includes('\0'))
+        throw Error(label + ' must be bounded nonblank well-formed text without NUL');
     return value;
 }
 function commandInput(input, fields, kind) {

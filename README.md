@@ -1,6 +1,8 @@
 # Gabriel Acosta — automation engineering portfolio
 
-**[Complete project inventory and missing work](PROJECT-INVENTORY.md)** — all 27 automation demos, 20 life/data tools, nine engineering prototypes, twelve-system views and blueprint/industry/section gaps in one place. The collections overlap; this is not a claim of 68 independent delivered products. Current catalog work is in the showcase PR and remains unmerged into default main.
+**[Complete project inventory and missing work](PROJECT-INVENTORY.md)** — open the local `/projects` page to search all 73 named entries: 27 automation demos, 20 life/data tools, nine engineering prototypes, twelve-system views and five research tracks. The collections share components; four research entries remain designs. Current work is in the showcase PR and remains unmerged into default main.
+
+**[AtlasGraph local build](demo-lab/ATLASGRAPH.md)** — open `http://127.0.0.1:5680/research?project=AtlasGraph` to compile versioned synthetic pages, follow a two-hop evidence path, inspect exact citations and retain failed paths for correction. SQLite restart/replay and stale evidence are tested; semantic retrieval, real source adapters and research baseline comparisons remain pending.
 
 **[Twelve executable business systems](demo-lab/TWELVE-SYSTEMS.md)** — open `http://127.0.0.1:5680/flagships` to explore Salesforce operations, recovery, grounded support, routing evaluation, invoice controls, architecture evidence, merge previews, product governance, consent, billing, scheduling and reconstruction. Cross-check all twelve, edit evidence and export reviewed local analysis. These are synthetic local demonstrations; live integration and business-impact acceptance remain separate.
 

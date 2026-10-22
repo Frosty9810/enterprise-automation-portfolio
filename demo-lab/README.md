@@ -1,5 +1,9 @@
 # Local portfolio demo lab
 
+**All projects:** open **http://127.0.0.1:5680/projects** for the unified searchable inventory. Every entry opens its matching project across automation, life/data, engineering, business-system and research collections. It lists 73 entries, including four blueprint-only designs; overlapping views are not counted as independent production products. [Complete status and remaining work](../PROJECT-INVENTORY.md).
+
+**[AtlasGraph](ATLASGRAPH.md):** open **http://127.0.0.1:5680/research?project=AtlasGraph**. Compile structured synthetic sources, search/read/follow the graph, collect exact versioned citations and review persisted failed paths. This is a partial local implementation of the research blueprint, without semantic model retrieval or provider calls. The other four research entries expose their design and pending scope.
+
 **[Twelve-system collection](TWELVE-SYSTEMS.md):** open **http://127.0.0.1:5680/flagships**. Run twelve distinct business decision engines, inspect their source passports, cross-check all twelve and export acknowledged analysis. Reproduce the acceptance report with `node demo-lab/run-flagships.mjs`. Live providers remain pending.
 
 **[Salesforce RevenueOS](SALESFORCE-REVENUEOPS.md):** open **http://127.0.0.1:5680/salesforce** and run the complete local Lead/Opportunity/Case demonstration. Reproduce its acceptance report with `node demo-lab/run-salesforce.mjs`.

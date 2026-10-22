@@ -222,6 +222,11 @@ function bindMeasurement() { const update = () => { const values = ['beforeMinut
     drawGallery();
     setBusy(d.busy);
     status('Choose a project, run its scenario, then present the evidence.');
+    const route = new URLSearchParams(window.location.search);
+    const target = route.get('project');
+    if (projects.some(p=>p.id===target)) openPortfolioProject(target);
+    else if (route.has('human')) $('openHuman').click();
+    else if (target) status('Unknown project link. Open All projects to choose an existing build.', true);
 }
 catch (e) {
     status(e.message, true);

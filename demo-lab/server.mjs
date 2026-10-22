@@ -20,6 +20,8 @@ import {currentGovernance} from './governance-state.mjs';
 import {evaluateProduct, productDesk, productExample, policyHash} from './product-governance.mjs';
 import { evaluateExpansion, expansionSuites } from './business-expansion.mjs';
 import { evaluateRoadmap, suites } from './roadmap-scenarios.mjs';
+import { portfolioInventory } from './project-inventory.mjs';
+import { atlasGraph } from './atlasgraph-core.mjs';
 
 const exec = promisify(execFile);
 const directory = fileURLToPath(new URL('.', import.meta.url));
@@ -135,6 +137,7 @@ export function createLabServer(db = openStore(), executeWorkflow = runN8n) {
   const reliability = reliabilityDesk(db);
   const salesforce = salesforceDesk(db);
   const flagships = flagshipSuite(db);
+  const research = atlasGraph(db);
   let busy = false;
   let activity = null;
   let domains = 0;
@@ -151,6 +154,24 @@ export function createLabServer(db = openStore(), executeWorkflow = runN8n) {
     const origin = request.headers.origin;
     if ((origin && origin !== localOrigin) || request.headers['sec-fetch-site'] === 'cross-site') return send(response, 403, { error: 'Local origin required' });
     if (request.method === 'GET') {
+      if (url.pathname === '/api/project-inventory') return send(response,200,portfolioInventory());
+      if (url.pathname === '/api/research/catalog') return send(response,200,{projects:portfolioInventory().filter(p=>p.collection==='research')});
+      if (url.pathname === '/api/research/example') return send(response,200,JSON.parse(readFileSync(join(directory,'atlasgraph-example.json'),'utf8')));
+      if (url.pathname === '/api/research/blueprint') {
+        const names = new Map([['AtlasGraph','01-atlasgraph.md'],['ChronosRank','02-chronosrank.md'],['TrustGate','03-trustgate.md'],['DocksideSLM','04-docksideslm.md'],['VeilRAG','05-veilrag.md']]);
+        const name = names.get(url.searchParams.get('project'));
+        if(!name)return send(response,404,{error:'Unknown research project'});
+        response.writeHead(200,{'Content-Type':'text/plain; charset=utf-8','X-Content-Type-Options':'nosniff','Cache-Control':'no-store'});
+        return response.end(readFileSync(join(root,'47 Automation Blueprints','2026 Research-to-Production',name)));
+      }
+      if (['/projects','/research'].includes(url.pathname)) {
+        response.writeHead(200,{'Content-Type':'text/html; charset=utf-8','Cache-Control':'no-store','X-Content-Type-Options':'nosniff','Content-Security-Policy':"default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; object-src 'none'"});
+        return response.end(readFileSync(join(directory,url.pathname.slice(1)+'.html')));
+      }
+      if (['/projects.css','/projects-ui.mjs','/research.css','/research-ui.mjs'].includes(url.pathname)) {
+        response.writeHead(200,{'Content-Type':url.pathname.endsWith('.css')?'text/css; charset=utf-8':'text/javascript; charset=utf-8','X-Content-Type-Options':'nosniff','Cache-Control':'no-store'});
+        return response.end(readFileSync(join(directory,url.pathname.slice(1))));
+      }
       if (url.pathname === '/api/flagships/catalog') return send(response,200,{projects:flagships.catalog(),history:flagships.history()});
       if (url.pathname.startsWith('/api/flagships/example/')) {
         try { return send(response,200,flagships.example(url.pathname.split('/').pop())); }
@@ -243,6 +264,16 @@ export function createLabServer(db = openStore(), executeWorkflow = runN8n) {
     if (request.headers['x-demo-client'] !== 'local-showcase') return send(response, 403, { error: 'Demo client header required' });
     try {
       const body = await readBody(request);
+      const researchActions = new Map([
+        ['compile',x=>research.compile(x)],['search',x=>research.search(x)],['read',x=>research.read(x)],['follow',x=>research.follow(x)],
+        ['answer',x=>research.answer(x)],['history',x=>research.history(x)],['errors',x=>research.errors(x)],['receipt',x=>research.receipt(x)],
+        ['record-error',x=>research.recordError(x)],['review-error',x=>research.reviewError(x)],
+      ]);
+      if (url.pathname.startsWith('/api/research/')) {
+        const action = researchActions.get(url.pathname.slice('/api/research/'.length));
+        if(!action)return send(response,404,{error:'Unknown research operation'});
+        return send(response,200,action(body));
+      }
       if (url.pathname === '/api/flagships/evaluate' || url.pathname === '/api/flagships/run-all') {
         if(domains>=2)return send(response,429,{error:'Local evaluator busy'});domains++;
         try { return send(response,200,url.pathname.endsWith('run-all')?await crossCheckFlagships(flagships):await flagships.evaluate(body.toolId,body.input)); }

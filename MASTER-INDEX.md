@@ -1,6 +1,6 @@
 # Master Build-Status Index
 
-**October 22 coverage audit:** [Complete project inventory and missing work](PROJECT-INVENTORY.md) lists all four runnable catalogs, five blueprint-only concepts, six partial industry flagships and remaining section gaps. The 17 original showcase entries are included in the 27 automation demos; the twelve-system views reuse some existing engines. Current work is in the open showcase PR, not default main.
+**October 22 coverage and build pass:** [Complete project inventory and missing work](PROJECT-INVENTORY.md) lists the four established catalogs and five research tracks. The unified local `/projects` page exposes all 73 entries: 68 existing catalog views plus AtlasGraph's partial local build and four blueprint-only concepts. Six industry flagships remain partial. Nine placeholder READMEs now contain source-linked material; section population is not project completion. Current work is in the open showcase PR, not default main.
 
 This is the single source of truth for what has been populated in this portfolio versus what remains pending. Update this table whenever a folder's status changes. This file exists specifically to coordinate work across multiple staged sessions (per [`49 Internal Standards/`](49%20Internal%20Standards/README.md), Section 9).
 
@@ -20,11 +20,11 @@ Every SOP, workflow doc, and case study authored from this point forward must in
 
 | # | Section | Status | Notes |
 |---|---|---|---|
-| 00 | Executive Summary | ⬜ | Stub only. Populate using [`41 Templates/executive-summary-template.md`](41%20Templates/executive-summary-template.md). |
+| 00 | Executive Summary | ✅ | Public portfolio brief, three review cases and evidence boundaries; no client or production result claim. |
 | 01 | Consulting Methodology | ✅ | Full six-phase methodology written. |
-| 02 | Discovery | ⬜ | Stub only. |
-| 03 | Business Analysis | ⬜ | Stub only. |
-| 04 | Automation Framework | ⬜ | Stub only. |
+| 02 | Discovery | ✅ | Source-linked discovery worksheet, ownership and failure questions, synthetic handoff example. |
+| 03 | Business Analysis | ✅ | Concrete decision requirements, acceptance criteria and explicitly illustrative ROI assumptions. |
+| 04 | Automation Framework | ✅ | Implemented local architecture, source-linked controls and platform selection boundaries. |
 | 05 | CRM Architectures | 🟡 | CRM-01 canonical agency handoff and ownership/version rules; provider-specific CRM mappings remain pending. |
 
 ## Industry Verticals (06–18) — one verified flagship suite minimum
@@ -43,7 +43,7 @@ Every SOP, workflow doc, and case study authored from this point forward must in
 | 15 | E-Commerce | ✅ | Flagship suite delivered: 4 connected Shopify operations projects covering multi-market content, review triage, inventory reconciliation, and support routing; each includes runnable Python, n8n JSON, PostgreSQL schema, and tests. |
 | 16 | Accounting | ✅ | ACC-01 flagship delivered: AP three-way match, duplicate controls, approval separation, and draft-only ERP handoff. |
 | 17 | Customer Support | ✅ | CS-01 flagship delivered: privacy-minimized support QA, grounding evaluation, and knowledge-gap feedback loop. |
-| 18 | Executive Assistants | 🟡 | EA-01 runnable commitment deduplication and owner-review demo; ingestion and durable decision-register scope remain pending. |
+| 18 | Executive Assistants | 🟡 | EA-01 local commitment deduplication, owner review and durable SQLite decision register exist; permission-aware real ingestion and authorized follow-up integration remain pending. |
 
 ## Platform & Technology Depth (19–31)
 
@@ -52,15 +52,15 @@ Every SOP, workflow doc, and case study authored from this point forward must in
 | 19 | AI Agents | 🟡 | AGT-01 local tool allowlist, cost and grounding-flag gate; no model or tool invocation is established. |
 | 20 | Claude Code | 🟡 | Source-backed Codex examples and delivery loop; historical authorship not inferred. |
 | 21 | n8n | 🟡 | 16 original workflow exports and 27 runnable local n8n wrappers. Recorded wrapper execution does not establish full original workflow acceptance. |
-| 22 | Make.com | ⬜ | Stub only. |
-| 23 | Zapier | ⬜ | Stub only. |
+| 22 | Make.com | 🟡 | Source-backed translation and acceptance plan; native scenario/connector import and provider execution remain pending. |
+| 23 | Zapier | 🟡 | Source-backed translation and acceptance plan; native Zap/connector setup and provider execution remain pending. |
 | 24 | GoHighLevel | 🟡 | 27 local setup blueprints and shared contact contract; real n8n calls a local GHL simulator. Hosted GHL acceptance remains pending. |
 | 25 | Close CRM | 🟡 | CRM-01 topic link and canonical contact proposal; no Close-specific adapter or hosted acceptance yet. |
 | 26 | HubSpot | 🟡 | CRM-01 topic link and canonical contact proposal; no HubSpot-specific adapter or hosted acceptance yet. |
 | 27 | Salesforce | 🟡 | F01 Salesforce RevenueOS has a dedicated local SQLite Lead/Opportunity/Case adapter, reviewed patches and recovery; real Salesforce sandbox/API/event acceptance remains pending. |
 | 28 | Airtable | 🟡 | INV-01 wholesale replenishment logic and fixtures; Airtable connector and base configuration remain pending. |
 | 29 | Integrations | 🟡 | Shared CRM contract and OPS-01 recovery planning; authenticated provider ingestion and durable external replay controls remain pending. |
-| 30 | API Documentation | ⬜ | Stub only. |
+| 30 | API Documentation | ✅ | Implemented loopback routes, request/response contracts, boundaries, research service and reproducible calls. |
 | 31 | Prompt Library | 🟡 | Existing AGT-01 source-backed topic link; a reusable prompt/version/evaluation library remains pending. |
 
 ## Operational Libraries (32–40)
@@ -73,7 +73,7 @@ Every SOP, workflow doc, and case study authored from this point forward must in
 | 35 | Security | 🟡 | AGT-01 permission and budget gate plus local handoff checks; broader threat models and production controls remain pending. |
 | 36 | Monitoring | 🟡 | Recorded execution history, node timings and OPS-01 recovery planning; production monitoring and SLOs remain pending. |
 | 37 | Testing | 🟡 | Reproducible local quality runner, lint, behavioral tests and bounded CPU evidence. |
-| 38 | Deployment | ⬜ | Stub only. |
+| 38 | Deployment | ✅ | Reproducible local setup, validation, persistence and recovery runbook; production deployment remains outside verified scope. |
 | 39 | Maintenance | 🟡 | OPS-01 operator recovery notes; durable worker and maintenance schedule remain pending. |
 | 40 | Troubleshooting | 🟡 | OPS-01 uncertain-write and failure review paths; broader incident playbooks remain pending. |
 
@@ -82,7 +82,7 @@ Every SOP, workflow doc, and case study authored from this point forward must in
 | # | Section | Status | Notes |
 |---|---|---|---|
 | 41 | Templates | ✅ | 5 canonical templates written (SOP, workflow doc, case study, ROI, exec summary). All three automation-facing templates now carry a mandatory Video Walkthrough field. |
-| 42 | Client Deliverables | ⬜ | Stub only. |
+| 42 | Client Deliverables | ✅ | Public synthetic handoff checklist with evidence, limitations and operator takeover; no private client package published. |
 | 43 | Case Studies | 🟡 | Local dashboard exports project case studies with saved evidence; curated standalone case studies remain pending. |
 | 44 | ROI | 🟡 | Blank time-comparison worksheet in the dashboard; verified business baselines and standalone ROI framework remain pending. |
 | 45 | Dashboards | 🟡 | Build Studio includes project summaries, workflow graphs, run charts and evidence views; production BI contracts remain pending. |

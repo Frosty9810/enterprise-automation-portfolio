@@ -1,12 +1,14 @@
 # Master Build-Status Index
 
+**October 22 coverage audit:** [Complete project inventory and missing work](PROJECT-INVENTORY.md) lists all four runnable catalogs, five blueprint-only concepts, six partial industry flagships and remaining section gaps. The 17 original showcase entries are included in the 27 automation demos; the twelve-system views reuse some existing engines. Current work is in the open showcase PR, not default main.
+
 This is the single source of truth for what has been populated in this portfolio versus what remains pending. Update this table whenever a folder's status changes. This file exists specifically to coordinate work across multiple staged sessions (per [`49 Internal Standards/`](49%20Internal%20Standards/README.md), Section 9).
 
 **September 2026 review:** Start with the [27-demo local catalog](demo-lab/README.md) and [17 original showcase entries](showcase/README.md) and [dated audit](PORTFOLIO-AUDIT-2026-09-08.md). Populated does not mean deployed.
 
 **Legend:** ✅ Populated · 🟡 Partially populated · ⬜ Pending
 
-**AI engineering expansion:** [Nine working workbench prototypes](demo-lab/AI-WORKBENCH.md), ENG-01–ENG-09, supplement the 27 automation demos and 20 Life and data tools. Implemented: exact-excerpt verification, in-memory action replay controls and paired output evaluation. No external model calls, authenticated approvals or durable production ledger. The expanded collection adds review controls, text-page field verification, comparison replay, recommendation ranking, measured logistic learning and a Codex-assisted repair with recorded tests. The combined Node suite passes 68 tests. See the exact [implementation scope](demo-lab/ENGINEERING-BUILD-REVIEW.md).
+**AI engineering expansion:** [Nine working workbench prototypes](demo-lab/AI-WORKBENCH.md), ENG-01–ENG-09, supplement the 27 automation demos and 20 Life and data tools. Implemented: exact-excerpt verification, in-memory action replay controls and paired output evaluation. No external model calls, authenticated approvals or durable production ledger. The expanded collection adds review controls, text-page field verification, comparison replay, recommendation ranking, measured logistic learning and a Codex-assisted repair with recorded tests. Current regression counts belong to exact-head CI and PR evidence; the nine prototypes are a separate collection, not nine model/provider integrations. See the exact [implementation scope](demo-lab/ENGINEERING-BUILD-REVIEW.md).
 
 **Life and data collection:** [20 working local interactive prototypes](demo-lab/HUMAN-COLLECTION.md) supplement the 27 automation demos. Six cover descriptive data analysis, three travel, four community care and seven everyday life. Editable invented fixtures, visible calculations and JSON exports are implemented; live datasets, production integrations and user validation are pending. PORT / OS uses the existing public IMP-01 example. PaceAtlas AI is confirmed by name, but its original repository has not yet been located. These browser tools are distinct from the n8n/SQL flagship suites below.
 
@@ -55,11 +57,11 @@ Every SOP, workflow doc, and case study authored from this point forward must in
 | 24 | GoHighLevel | 🟡 | 27 local setup blueprints and shared contact contract; real n8n calls a local GHL simulator. Hosted GHL acceptance remains pending. |
 | 25 | Close CRM | 🟡 | CRM-01 topic link and canonical contact proposal; no Close-specific adapter or hosted acceptance yet. |
 | 26 | HubSpot | 🟡 | CRM-01 topic link and canonical contact proposal; no HubSpot-specific adapter or hosted acceptance yet. |
-| 27 | Salesforce | 🟡 | CRM-01 topic link and canonical contact proposal; no Salesforce-specific adapter or hosted acceptance yet. |
+| 27 | Salesforce | 🟡 | F01 Salesforce RevenueOS has a dedicated local SQLite Lead/Opportunity/Case adapter, reviewed patches and recovery; real Salesforce sandbox/API/event acceptance remains pending. |
 | 28 | Airtable | 🟡 | INV-01 wholesale replenishment logic and fixtures; Airtable connector and base configuration remain pending. |
 | 29 | Integrations | 🟡 | Shared CRM contract and OPS-01 recovery planning; authenticated provider ingestion and durable external replay controls remain pending. |
 | 30 | API Documentation | ⬜ | Stub only. |
-| 31 | Prompt Library | ⬜ | Stub only. |
+| 31 | Prompt Library | 🟡 | Existing AGT-01 source-backed topic link; a reusable prompt/version/evaluation library remains pending. |
 
 ## Operational Libraries (32–40)
 
@@ -67,7 +69,7 @@ Every SOP, workflow doc, and case study authored from this point forward must in
 |---|---|---|---|
 | 32 | SOP Library | 🟡 | `video-index.md` now tracks 26 SOPs (all pending recording). Cross-industry function-based SOP index still pending further industry build-out. |
 | 33 | Workflow Diagrams | 🟡 | Dashboard renders 27 local graphs and 16 original source graphs; a standalone diagram catalog remains pending. |
-| 34 | Database Schemas | ⬜ | Stub only. |
+| 34 | Database Schemas | 🟡 | Existing project SQL and INV-01 evidence are linked; a canonical schema catalog and PostgreSQL engine acceptance remain pending. |
 | 35 | Security | 🟡 | AGT-01 permission and budget gate plus local handoff checks; broader threat models and production controls remain pending. |
 | 36 | Monitoring | 🟡 | Recorded execution history, node timings and OPS-01 recovery planning; production monitoring and SLOs remain pending. |
 | 37 | Testing | 🟡 | Reproducible local quality runner, lint, behavioral tests and bounded CPU evidence. |
@@ -86,7 +88,7 @@ Every SOP, workflow doc, and case study authored from this point forward must in
 | 45 | Dashboards | 🟡 | Build Studio includes project summaries, workflow graphs, run charts and evidence views; production BI contracts remain pending. |
 | 46 | AI Documentation | 🟡 | AGT-01 scope and limitations documented; full AI system cards and model evaluations remain pending. |
 | 47 | Automation Blueprints | 🟡 | 5 research-to-production AI engineering blueprints completed: agentic retrieval, memory reranking, agent security, edge SLM deployment, and privacy-preserving RAG. |
-| 48 | Enterprise Workflows | 🟡 | IMP-01 delivered with executable 137-agent operating system, interactive prototype, B2B SaaS playbook, official-source CRM/ERP benchmark, universal cross-business architecture, fully personalized 137-agent service catalog, and separate TCO/unit-economics model. |
+| 48 | Enterprise Workflows | 🟡 | IMP-01 public typed agent prototype, 137-entry registry, review UI and architecture/TCO references; registry entries are not 137 independent delivered applications or autonomous production agents. |
 | 49 | Internal Standards | ✅ | Style guide, confidentiality rules, diagram conventions, and the video-walkthrough requirement (Section 8) written. |
 
 ## Root-Level Files

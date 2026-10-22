@@ -1,5 +1,7 @@
 # Gabriel Acosta — automation engineering portfolio
 
+**[Complete project inventory and missing work](PROJECT-INVENTORY.md)** — all 27 automation demos, 20 life/data tools, nine engineering prototypes, twelve-system views and blueprint/industry/section gaps in one place. The collections overlap; this is not a claim of 68 independent delivered products. Current catalog work is in the showcase PR and remains unmerged into default main.
+
 **[Twelve executable business systems](demo-lab/TWELVE-SYSTEMS.md)** — open `http://127.0.0.1:5680/flagships` to explore Salesforce operations, recovery, grounded support, routing evaluation, invoice controls, architecture evidence, merge previews, product governance, consent, billing, scheduling and reconstruction. Cross-check all twelve, edit evidence and export reviewed local analysis. These are synthetic local demonstrations; live integration and business-impact acceptance remain separate.
 
 **[RevenueOS — Salesforce control room](demo-lab/SALESFORCE-REVENUEOPS.md)** is the new local flagship: lead assignment, opportunity follow-up and case escalation, with reviewed field changes, revision checks and durable recovery. Open `/salesforce` in the lab and run the full demonstration. The 27 n8n demos remain a separate collection; this flagship performs local SQLite record updates and makes no hosted Salesforce calls.
@@ -64,7 +66,7 @@ The runner preserves independent exit codes, strips provider credentials from de
 
 The original 50 numbered sections remain available for architecture, SOPs and operating material. [MASTER-INDEX.md](MASTER-INDEX.md) separates populated references from placeholders; [COMPLETION-ROADMAP.md](COMPLETION-ROADMAP.md) tracks unfinished work. Five research-to-production concepts remain blueprints.
 
-GitHub: [Frosty9810](https://github.com/Frosty9810). A [profile README draft](github-profile/README.md) is ready for review.
+GitHub: [Frosty9810](https://github.com/Frosty9810). [Public profile repository](https://github.com/Frosty9810/Frosty9810).
 
 ---
 Part of the Enterprise Automation Portfolio.

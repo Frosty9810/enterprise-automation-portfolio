@@ -114,7 +114,8 @@ export async function mountResearch(d, api, download = () => {}, location = d.de
     $('researchTitle').textContent = selected?.title || 'Unknown research project';
     $('researchScope').textContent = selected?.scope || 'Select a known project from the collection.';
     $('blueprint').href = selected ? '/api/research/blueprint?project=' + encodeURIComponent(selected.id) : '/projects';
-    $('researchNotice').textContent = selected?.id === 'AtlasGraph' ? 'Compile the synthetic example, then follow its evidence.' : 'Blueprint available. A runnable implementation is still pending.';
+    $('researchBuild').hidden = selected?.id !== 'TrustGate';
+    $('researchNotice').textContent = selected?.id === 'AtlasGraph' ? 'Compile the synthetic example, then follow its evidence.' : selected?.id === 'TrustGate' ? 'A partial local tool gateway is available. Open the build to inspect source-bound arguments and execution controls.' : 'Blueprint available. A runnable implementation is still pending.';
     $('researchProject').value = selected?.id || '';
     for (const id of ['researchHistory', 'researchErrors', 'pageEvidence', 'searchResults']) $(id).replaceChildren();
     $('researchResult').replaceChildren(node('p', 'Compile the example, then collect evidence.'));

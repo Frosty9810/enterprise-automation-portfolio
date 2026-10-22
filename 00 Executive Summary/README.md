@@ -10,7 +10,7 @@ This portfolio demonstrates how business rules, integration boundaries and opera
 
 ## Complication
 
-A successful script does not establish hosted integration acceptance or business impact. Contact planning, durable recovery and domain decisions have different evidence boundaries. Several industry flagships remain partial. [AtlasGraph](../demo-lab/atlasgraph-core.mjs) now has a bounded local structured-evidence compiler and graph traversal; its full research blueprint remains unfinished. ChronosRank, TrustGate, DocksideSLM and VeilRAG remain blueprint-only. The inventory identifies those gaps instead of treating their names as completed implementations.
+A successful script does not establish hosted integration acceptance or business impact. Contact planning, durable recovery and domain decisions have different evidence boundaries. Several industry flagships remain partial. [AtlasGraph](../demo-lab/ATLASGRAPH.md) provides bounded local structured-evidence compilation and graph traversal. [TrustGate](../demo-lab/TRUSTGATE.md) adds source-bound arguments, review and execution for three synthetic SQLite tools. Both full research blueprints remain unfinished; ChronosRank, DocksideSLM and VeilRAG remain blueprint-only. The inventory identifies those gaps instead of treating their names as completed implementations.
 
 ## Recommendation
 

@@ -23,7 +23,8 @@ All routes below use GET. Normal JSON responses use `Cache-Control: no-store`.
 | `/health` | `{status: "ok", mode: "local-demo"}` |
 | `/api/projects` | Automation catalog, engine label, simulator mode and workflow busy flag |
 | `/api/project-inventory` | Unified array of collection entries with ID, status, scope and destination link |
-| `/api/research/catalog` | Five research tracks; AtlasGraph is partial-local, the other four blueprint-only |
+| `/api/research/catalog` | Five research tracks; AtlasGraph and TrustGate are partial local builds, the other three blueprint-only |
+| `/api/trustgate/catalog` | Closed tool schemas, server-held synthetic sources, actor grants and runnable proposal scenarios |
 | `/api/research/example` | Bundled AtlasGraph input object containing `compile` and `answer` examples |
 | `/api/research/blueprint?project=<name>` | Allowlisted blueprint text for AtlasGraph, ChronosRank, TrustGate, DocksideSLM or VeilRAG; unknown name gives 404 |
 | `/api/showcase/:id` | Project presentation/profile; unknown ID gives 404 |
@@ -76,7 +77,7 @@ Controllers: [flagship receipts](../demo-lab/flagship-suite.mjs), [recovery](../
 
 ## AtlasGraph research operations
 
-These POST routes use the same Host/Origin, intent-header and 32,768-byte HTTP body boundary. They dispatch to the [AtlasGraph controller](../demo-lab/atlasgraph-core.mjs); the other research tracks have no runnable API. The [example JSON](../demo-lab/atlasgraph-example.json) supplies complete compile/answer payloads. Compile its `compile` object first, then submit its `answer` object.
+These POST routes use the same Host/Origin, intent-header and 32,768-byte HTTP body boundary. They dispatch to the [AtlasGraph controller](../demo-lab/atlasgraph-core.mjs). TrustGate has a separate gateway described below; the three blueprint-only tracks have no runnable API. The [example JSON](../demo-lab/atlasgraph-example.json) supplies complete compile/answer payloads. Compile its `compile` object first, then submit its `answer` object.
 
 | Route | JSON fields and result |
 |---|---|
@@ -94,6 +95,25 @@ These POST routes use the same Host/Origin, intent-header and 32,768-byte HTTP b
 Tenant labels and approval flags are supplied data, not authenticated permissions. Compilation checks unique identities, immutable source versions, exact claim substrings and reference quotes naming existing approved target pages. It accepts up to 12 sources and 32 pages total. A changed source version/content produces a different snapshot; old receipts remain inspectable with `stale: true`. Exact query replay retains its original evidence; use a fresh request ID to collect current evidence after source changes. Reusing an ID for a different query fails.
 
 The `answer` operation collects deterministic graph evidence for explicit claim keys. It returns `supported` or abstains for missing start/evidence, contradictory claims, hop limit or evidence-byte budget; it does not generate or semantically verify an answer. The budget measures serialized UTF-8 citation bytes, not model tokens. Abstention creates a pending Error Book entry. Accepting a correction does not edit sources; compile a reviewed new source revision separately. Controller validation errors, absent tenant/page/receipt and identity conflicts are returned by this HTTP adapter as **400 `{error}`**, rather than exposing the controller's internal error codes as HTTP statuses. An unknown research POST operation returns 404. See [core adverse tests](../demo-lab/atlasgraph.test.mjs) and [UI interaction tests](../demo-lab/research-ui.test.mjs).
+
+## TrustGate local tool operations
+
+Open `/trustgate` for the [local gateway](../demo-lab/TRUSTGATE.md). It runs three fixed tools: `read-public-policy` queries a synthetic policy in SQLite; `create-review-task` writes an internal review draft; `stage-public-note` writes a synthetic note into a local SQLite outbox. The outbox has no sender or Internet publication mechanism. All POST routes use the same loopback, origin, intent-header and body-size checks as the rest of the lab.
+
+| Route | JSON fields and result |
+|---|---|
+| `/api/trustgate/prepare` | `tenant`, `commandId`, `actor`, `tool`, `bindings`; each required argument binds `{sourceId,key}`. Resolves values from the server-held registry, records immutable intent and returns `blocked`, `pending_review` or `ready`; replay returns the existing receipt |
+| `/api/trustgate/review` | `tenant`, `receiptId`, `reviewer`, `decision` (`approve` or `reject`), `note` (1–500 characters), `expectedHash` (exact `proposalHash`); requires a different registered local reviewer in the same tenant. Only pending mutations may be reviewed |
+| `/api/trustgate/execute` | `tenant`, `receiptId`; rechecks the saved proposal, current policy/source identity, audit integrity and required review, then performs one local tool effect atomically. Repeat execution returns the saved effect |
+| `/api/trustgate/receipt` | `tenant`, `receiptId`; original saved receipt with current staleness metadata, after stored integrity checks |
+| `/api/trustgate/history` | `tenant`; saved local receipts after stored integrity checks |
+| `/api/trustgate/state` | `tenant`; actual internal tasks and locally staged public notes after stored integrity checks |
+| `/api/trustgate/audit` | `tenant`; linked local audit events |
+| `/api/trustgate/verify-audit` | `tenant`; verifies audit linkage and consistency with saved receipts/effects |
+
+Preparation cannot supply free argument values, source classifications, grants or approval flags. Every tool argument must name a registered source/key; the gateway derives the value and label. Internal values cannot enter a public sink, instruction-marked sources are blocked, and untrusted documents cannot select case identity. A safe untrusted summary is accepted only for an internal draft that still requires review. All mutations require a hash-bound review. Reusing a command ID for different intent fails. Changed source/configuration/code makes older receipts stale; use a new command after restarting when implementation changed.
+
+The fixed `acme`/`beta` tenants and actor/reviewer IDs are **unauthenticated fixture selectors**, not a multi-tenant identity service. Instruction labels are registered synthetic markers, not automated prompt-injection detection. The local SHA-256 audit chain detects inconsistent records against its stored head; it is not a signed external witness or protection against an administrator rewriting the complete database. The controller's internal error codes are returned by this HTTP adapter as **400 `{error}`**. Unknown TrustGate operations return 404. See [HTTP boundary and execution tests](../demo-lab/trustgate-http.test.mjs) and [core tests](../demo-lab/trustgate.test.mjs).
 
 ## Runnable analysis example
 

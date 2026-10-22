@@ -50,6 +50,7 @@ test('editing inputs discards a pending answer and malformed source JSON cannot 
   await x.click('resetResearch');assert.equal(JSON.parse(x.d.getElementById('compileInput').value).tenant,fixture.compile.tenant);
 });
 test('blueprint-only projects hide execution controls and unknown projects do not impersonate AtlasGraph',async t=>{
-  const x=await setup(t);for(const id of ['ChronosRank','TrustGate','DocksideSLM','VeilRAG']){x.view.select(id);assert.equal(x.d.getElementById('researchWorkbench').hidden,true);assert.match(x.d.getElementById('researchNotice').textContent,/still pending/);}
+  const x=await setup(t);for(const id of ['ChronosRank','DocksideSLM','VeilRAG']){x.view.select(id);assert.equal(x.d.getElementById('researchWorkbench').hidden,true);assert.match(x.d.getElementById('researchNotice').textContent,/still pending/);}
+  x.view.select('TrustGate');assert.equal(x.d.getElementById('researchWorkbench').hidden,true);assert.equal(x.d.getElementById('researchBuild').hidden,false);assert.equal(x.d.getElementById('researchBuild').getAttribute('href'),'/trustgate?project=TrustGate');assert.match(x.d.getElementById('researchNotice').textContent,/partial local tool gateway/);
   x.view.select('__proto__');assert.equal(x.d.getElementById('researchWorkbench').hidden,true);assert.equal(x.d.getElementById('researchTitle').textContent,'Unknown research project');
 });

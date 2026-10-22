@@ -41,7 +41,9 @@ test('six industry tracks stay partial and research design names cannot inflate 
   const research = entries.filter(entry => entry.collection === 'research');
   assert.equal(research.find(entry => entry.id === 'AtlasGraph').status, 'partial-local');
   assert.match(research.find(entry => entry.id === 'AtlasGraph').scope, /No LLM, dense-vector baseline/);
-  assert.deepEqual(research.filter(entry => entry.status === 'blueprint-only').map(entry => entry.id), ['ChronosRank', 'TrustGate', 'DocksideSLM', 'VeilRAG']);
+  assert.equal(research.find(entry=>entry.id==='TrustGate').status,'partial-local');
+  assert.equal(research.find(entry=>entry.id==='TrustGate').href,'/trustgate?project=TrustGate');
+  assert.deepEqual(research.filter(entry => entry.status === 'blueprint-only').map(entry => entry.id), ['ChronosRank', 'DocksideSLM', 'VeilRAG']);
   assert.match(html, /count does not represent independent production deployments/);
 });
 
@@ -58,7 +60,7 @@ test('search normalizes case and whitespace; words intersect with collection and
   assert.deepEqual(filterInventory(entries, { query: '  pM-01   ' }).map(entry => entry.id), ['PM-01']);
   assert.deepEqual(filterInventory(entries, { query: 'temporal RERANKING', collection: 'research', status: 'blueprint-only' }).map(entry => entry.id), ['ChronosRank']);
   assert.deepEqual(filterInventory(entries, { query: 'temporal reranking', collection: 'engineering' }), []);
-  assert.equal(filterInventory(entries, { collection: 'research', status: 'blueprint-only' }).length, 4);
+  assert.equal(filterInventory(entries, { collection: 'research', status: 'blueprint-only' }).length, 3);
   assert.equal(filterInventory(entries, { query: '  ' }).length, entries.length);
   assert.deepEqual(filterInventory(entries, { query: 'nonexistent-catalog-name' }), []);
 });
@@ -84,9 +86,10 @@ test('browser renders every catalog entry with explicit scopes and valid links',
     assert.equal(d.getElementById('inventory-results').getAttribute('aria-busy'), 'false');
     assert.match(d.getElementById('inventory-overview').textContent, /27 automation.*20 life and data.*9 ai engineering.*12 business systems.*5 research builds/);
     assert.equal(d.querySelectorAll('.project-scope').length, 73);
-    assert.equal(d.querySelectorAll('.status[data-status="blueprint-only"]').length, 4);
+    assert.equal(d.querySelectorAll('.status[data-status="blueprint-only"]').length, 3);
     assert.match(d.querySelector('[data-project="ChronosRank"] a').textContent, /Read the design/);
     assert.equal(d.querySelector('[data-project="AtlasGraph"] a').getAttribute('href'), '/research?project=AtlasGraph');
+    assert.equal(d.querySelector('[data-project="TrustGate"] a').getAttribute('href'), '/trustgate?project=TrustGate');
   } finally { dom.window.close(); }
 });
 
@@ -99,7 +102,7 @@ test('browser filters combine; no results announce clearly and clearing restores
     d.getElementById('project-collection').dispatchEvent(new dom.window.Event('change'));
     d.getElementById('project-status').value = 'blueprint-only';
     d.getElementById('project-status').dispatchEvent(new dom.window.Event('change'));
-    assert.equal(d.querySelectorAll('.project-card').length, 4);
+    assert.equal(d.querySelectorAll('.project-card').length, 3);
     d.getElementById('project-search').value = 'temporal';
     d.getElementById('project-search').dispatchEvent(new dom.window.Event('input'));
     assert.equal(d.querySelector('.project-card').dataset.project, 'ChronosRank');
@@ -126,7 +129,7 @@ test('shared search URL and browser navigation restore filters, invalid filters 
     assert.equal(d.querySelector('.project-card').dataset.project, 'PM-01');
     dom.window.history.pushState(null, '', '/projects?collection=research&status=blueprint-only');
     dom.window.dispatchEvent(new dom.window.PopStateEvent('popstate'));
-    assert.equal(d.querySelectorAll('.project-card').length, 4);
+    assert.equal(d.querySelectorAll('.project-card').length, 3);
     dom.window.history.pushState(null, '', '/projects?collection=__proto__&status=production-ready');
     dom.window.dispatchEvent(new dom.window.PopStateEvent('popstate'));
     assert.equal(d.getElementById('project-collection').value, 'all');

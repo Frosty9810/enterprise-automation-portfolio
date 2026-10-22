@@ -1,6 +1,6 @@
 # Master Build-Status Index
 
-**October 22 coverage and build pass:** [Complete project inventory and missing work](PROJECT-INVENTORY.md) lists the four established catalogs and five research tracks. The unified local `/projects` page exposes all 73 entries: 68 existing catalog views plus AtlasGraph's partial local build and four blueprint-only concepts. Six industry flagships remain partial. Nine placeholder READMEs now contain source-linked material; section population is not project completion. Current work is in the open showcase PR, not default main.
+**October 22 coverage and build pass:** [Complete project inventory and missing work](PROJECT-INVENTORY.md) lists the four established catalogs and five research tracks. The unified local `/projects` page exposes all 73 entries: 68 existing catalog views, AtlasGraph and TrustGate partial local builds, and three blueprint-only concepts. Six industry flagships remain partial. Nine placeholder READMEs now contain source-linked material; section population is not project completion. Current work is in the open showcase PR, not default main.
 
 This is the single source of truth for what has been populated in this portfolio versus what remains pending. Update this table whenever a folder's status changes. This file exists specifically to coordinate work across multiple staged sessions (per [`49 Internal Standards/`](49%20Internal%20Standards/README.md), Section 9).
 

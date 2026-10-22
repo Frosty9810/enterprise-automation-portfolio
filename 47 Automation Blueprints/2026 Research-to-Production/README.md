@@ -2,6 +2,8 @@
 
 > **Status:** Blueprint-ready. These are reference projects, not client engagements. Resume impact bullets contain placeholders until measured by a completed implementation.
 
+Local implementation progress: [AtlasGraph](../../demo-lab/ATLASGRAPH.md) has a structured evidence compiler and graph traversal; [TrustGate](../../demo-lab/TRUSTGATE.md) has a source-bound gateway for three synthetic SQLite tools. Both are partial builds with explicit remaining scope. The other three concepts remain designs. None of these local fixtures establishes a paper reproduction, model benchmark or production result.
+
 ## Research themes
 
 ### 1. Retrieval is becoming an active reasoning process

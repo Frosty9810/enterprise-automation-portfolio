@@ -6,8 +6,8 @@ Audited October 22, 2026. **The portfolio is not complete.** This inventory sepa
 
 1. Public default main was checked at `f3c3daf0f5e0729ded2673f97017a4f5bbea992f`. Its overview lists 17 reference projects; the four local catalogs below are absent from that tree. They are present in the unmerged [showcase PR #12](https://github.com/Frosty9810/enterprise-automation-portfolio/pull/12), audited from `c74b4349a31fa7ca46cce0d6f1fa4a42b340ecd8`. This audit does not merge or deploy that work.
 2. Build Studio starts with selected automation cases. Its **All projects** filter covers the 27 automation demos, not the other collections. Life and data, AI engineering and Twelve systems have their own navigation.
-3. AtlasGraph now has a named partial local implementation; four other research concepts remain blueprint-only. Six industry entries have bounded demos, not their full roadmap flagship.
-4. Open the local `/projects` page for a searchable inventory with direct project selection across all collections. It lists 73 entries: the original 68 catalog views plus five research tracks. Four research entries are designs; counts are not completion claims.
+3. AtlasGraph and TrustGate now have named partial local implementations; three other research concepts remain blueprint-only. Six industry entries have bounded demos, not their full roadmap flagship.
+4. Open the local `/projects` page for a searchable inventory with direct project selection across all collections. It lists 73 entries: the original 68 catalog views plus five research tracks. Three research entries are designs; counts are not completion claims.
 
 ## Coverage by collection
 
@@ -17,9 +17,9 @@ Audited October 22, 2026. **The portfolio is not complete.** This inventory sepa
 | Life and data | 20 | Root navigation: Life and data | Editable browser-local prototypes; no live datasets or hosted APIs |
 | AI engineering workbench | 9 | `/engineering` | Deterministic local examples and recorded repair evidence; no paid model integration |
 | Twelve business systems | 12 | `/flagships` | Distinct local decision views; some extend/reuse automation engines |
-| Research tracks | 5 | `/research` | AtlasGraph has a bounded local compiler/retrieval build; four designs have no runnable implementation |
+| Research tracks | 5 | `/research`; TrustGate at `/trustgate` | AtlasGraph and TrustGate have partial local builds; three designs have no runnable implementation |
 
-These are **73 listed entries: 68 established catalog views plus five research tracks**. AtlasGraph adds one partial runnable research build; four research entries are designs. They are not 73 independent production products. The 17 original showcase packages are a subset of the 27 automation entries. Salesforce/product/recovery dedicated pages and IMP-01 registry entries are not counted as additional projects.
+These are **73 listed entries: 68 established catalog views plus five research tracks**. AtlasGraph and TrustGate add two partial runnable research builds; three research entries are designs. They are not 73 independent production products. The 17 original showcase packages are a subset of the 27 automation entries. Salesforce/product/recovery dedicated pages and IMP-01 registry entries are not counted as additional projects.
 
 ## Automation: all 27 entries
 
@@ -115,13 +115,13 @@ See [implementation and integration boundaries](demo-lab/TWELVE-SYSTEMS.md). The
 
 ## Research builds and remaining blueprint work
 
-The five source documents exist under [Research-to-Production](47%20Automation%20Blueprints/2026%20Research-to-Production/README.md). [AtlasGraph's local build](demo-lab/ATLASGRAPH.md) now compiles structured JSON into immutable source versions, follows a bidirectional graph, abstains on missing/conflicting/over-budget evidence and persists receipts/corrections in SQLite. It is a bounded implementation, not completion of the full research blueprint. The other four names remain designs.
+The five source documents exist under [Research-to-Production](47%20Automation%20Blueprints/2026%20Research-to-Production/README.md). [AtlasGraph's local build](demo-lab/ATLASGRAPH.md) compiles structured JSON into immutable source versions, follows a bidirectional graph, abstains on missing/conflicting/over-budget evidence and persists receipts/corrections in SQLite. [TrustGate's local build](demo-lab/TRUSTGATE.md) resolves arguments from server-held synthetic sources, applies integrity/confidentiality policy, requires review for writes and executes three narrow SQLite tools with durable receipts and a hash-linked audit. Both are bounded implementations, not completion of their full research blueprints. The other three names remain designs.
 
 | Project | Blueprint | Missing implementation scope |
 |---|---|---|
 | AtlasGraph — partial local build | [Design](47%20Automation%20Blueprints/2026%20Research-to-Production/01-atlasgraph.md) | Source adapters, semantic/vector retrieval, model-selected tools, authentication and independently measured multi-hop baseline comparisons |
 | ChronosRank | [Design](47%20Automation%20Blueprints/2026%20Research-to-Production/02-chronosrank.md) | Distillation/reranking training, temporal memory and measured retrieval comparisons |
-| TrustGate | [Design](47%20Automation%20Blueprints/2026%20Research-to-Production/03-trustgate.md) | Information-flow enforcement over real tool execution and adversarial acceptance |
+| TrustGate — partial local build | [Design](47%20Automation%20Blueprints/2026%20Research-to-Production/03-trustgate.md) | Authenticated agent/tool integration, complete runtime provenance, signed remote receipts, LM/saliency screeners and independent adversarial acceptance |
 | DocksideSLM | [Design](47%20Automation%20Blueprints/2026%20Research-to-Production/04-docksideslm.md) | Actual edge-model compression, hardware execution and measured quality/latency |
 | VeilRAG | [Design](47%20Automation%20Blueprints/2026%20Research-to-Production/05-veilrag.md) | Reversible privacy pipeline, retrieval integration and leakage evaluation |
 
@@ -166,5 +166,5 @@ The public owner-repository endpoint currently returns 13 repositories: this por
 - Executed the 20 human and nine engineering bundled fixtures. This is local fixture evidence, not a new full n8n/provider run or a semantic benchmark.
 - Compared public main with the showcase branch and reconciled all 50 section labels against current linked artifacts.
 - Added the unified in-app inventory/deep links across all five collections and a partial AtlasGraph build. Tests cover destination selection, compiler persistence, adverse evidence, stale exports and local HTTP boundaries. See [AtlasGraph reproduction](demo-lab/ATLASGRAPH.md); exact-head validation belongs in the delivery log and PR evidence.
-- Next: deepen AtlasGraph with an independently labeled retrieval comparison, or implement a real TrustGate tool-execution boundary; then continue the six industry flagship flows. Provider/authentication, hardware/model measurements and recording acceptance remain separate.
+- Next: deepen AtlasGraph with an independently labeled retrieval comparison, extend TrustGate's independent adversarial cases, or continue the six industry flagship flows. Provider/authentication, hardware/model measurements and recording acceptance remain separate.
 - Existing open PRs remain subject to review/backlog controls. Default-main visibility requires separately authorized integration; this audit does not silently merge the stack.

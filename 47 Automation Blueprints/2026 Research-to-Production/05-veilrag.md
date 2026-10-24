@@ -1,5 +1,7 @@
 # VeilRAG — A Privacy Proxy for External Language Models
 
+**Partial local implementation — October 24:** [Declared-literal alias boundary](../../demo-lab/VEILRAG.md) aliases exact supplied literals, encrypts their local mapping, checks a synthetic child fixture and restores only through explicit configured local selectors. Automatic detection, authenticated retrieval/provider integration, production key management and measured privacy/utility remain open. The hard external privacy constraint below is not established by this local fixture; no external transmission is enabled.
+
 ## Project title and concept
 
 VeilRAG lets a company use strong external models without sending customer names, supplier identities, account numbers, or confidential deal terms to the provider. A local model replaces sensitive entities with consistent aliases before generation and restores only authorized values after the response returns.

@@ -1,13 +1,13 @@
 # Complete portfolio inventory and missing work
 
-Audited October 22, 2026. **The portfolio is not complete.** This inventory separates existing catalog entries, missing flagship depth, blueprint-only work and unmerged visibility. Catalog presence is not provider acceptance, deployment, a recorded video or a production result.
+Updated October 23, 2026. **The portfolio is not complete.** This inventory separates existing catalog entries, missing flagship depth, blueprint-only work and unmerged visibility. Catalog presence is not provider acceptance, deployment, a recorded video or a production result.
 
 ## Why projects appear missing
 
-1. Public default main was checked at `f3c3daf0f5e0729ded2673f97017a4f5bbea992f`. Its overview lists 17 reference projects; the four local catalogs below are absent from that tree. They are present in the unmerged [showcase PR #12](https://github.com/Frosty9810/enterprise-automation-portfolio/pull/12), audited from `c74b4349a31fa7ca46cce0d6f1fa4a42b340ecd8`. This audit does not merge or deploy that work.
+1. Public main was checked at `8d3662c1a34e4fe2cbb59665feb4b13337f240a0`. It now contains the unified catalog and partial AtlasGraph, TrustGate and ChronosRank builds following [showcase PR #12](https://github.com/Frosty9810/enterprise-automation-portfolio/pull/12) and its seven child integrations. This branch adds DocksideSLM's partial local queue. The older 17-project overview is no longer the full discovery surface; use `/projects`.
 2. Build Studio starts with selected automation cases. Its **All projects** filter covers the 27 automation demos, not the other collections. Life and data, AI engineering and Twelve systems have their own navigation.
-3. AtlasGraph, TrustGate and ChronosRank now have named partial local implementations; two other research concepts remain blueprint-only. Six industry entries have bounded demos, not their full roadmap flagship.
-4. Open the local `/projects` page for a searchable inventory with direct project selection across all collections. It lists 73 entries: the original 68 catalog views plus five research tracks. Two research entries are designs; counts are not completion claims.
+3. AtlasGraph, TrustGate, ChronosRank and DocksideSLM now have named partial local implementations; VeilRAG remains blueprint-only. Six industry entries have bounded demos, not their full roadmap flagship.
+4. Open the local `/projects` page for a searchable inventory with direct project selection across all collections. It lists 73 entries: the original 68 catalog views plus five research tracks. One research entry is a design; counts are not completion claims.
 
 ## Coverage by collection
 
@@ -17,9 +17,9 @@ Audited October 22, 2026. **The portfolio is not complete.** This inventory sepa
 | Life and data | 20 | Root navigation: Life and data | Editable browser-local prototypes; no live datasets or hosted APIs |
 | AI engineering workbench | 9 | `/engineering` | Deterministic local examples and recorded repair evidence; no paid model integration |
 | Twelve business systems | 12 | `/flagships` | Distinct local decision views; some extend/reuse automation engines |
-| Research tracks | 5 | `/research`; `/trustgate`; `/chronosrank` | AtlasGraph, TrustGate and ChronosRank have partial local builds; two designs have no runnable implementation |
+| Research tracks | 5 | `/research`; `/trustgate`; `/chronosrank`; `/dockside` | Four partial local builds; VeilRAG has no runnable implementation |
 
-These are **73 listed entries: 68 established catalog views plus five research tracks**. AtlasGraph, TrustGate and ChronosRank add three partial runnable research builds; two research entries are designs. They are not 73 independent production products. The 17 original showcase packages are a subset of the 27 automation entries. Salesforce/product/recovery dedicated pages and IMP-01 registry entries are not counted as additional projects.
+These are **73 listed entries: 68 established catalog views plus five research tracks**. AtlasGraph, TrustGate, ChronosRank and DocksideSLM add four partial runnable research builds; one research entry is a design. They are not 73 independent production products. The 17 original showcase packages are a subset of the 27 automation entries. Salesforce/product/recovery dedicated pages and IMP-01 registry entries are not counted as additional projects.
 
 ## Automation: all 27 entries
 
@@ -115,14 +115,14 @@ See [implementation and integration boundaries](demo-lab/TWELVE-SYSTEMS.md). The
 
 ## Research builds and remaining blueprint work
 
-The five source documents exist under [Research-to-Production](47%20Automation%20Blueprints/2026%20Research-to-Production/README.md). [AtlasGraph's local build](demo-lab/ATLASGRAPH.md) compiles structured JSON into immutable source versions, follows a bidirectional graph, abstains on missing/conflicting/over-budget evidence and persists receipts/corrections in SQLite. [TrustGate's local build](demo-lab/TRUSTGATE.md) resolves arguments from server-held synthetic sources, applies integrity/confidentiality policy, requires review for writes and executes three narrow SQLite tools with durable receipts and a hash-linked audit. [ChronosRank's local build](demo-lab/CHRONOSRANK.md) stores temporal memory events, filters expired/superseded facts, scores deterministic token matches and saves retrieval receipts with feedback. These are bounded implementations, not completion of their full research blueprints. The other two names remain designs.
+The five source documents exist under [Research-to-Production](47%20Automation%20Blueprints/2026%20Research-to-Production/README.md). [AtlasGraph's local build](demo-lab/ATLASGRAPH.md) compiles structured JSON into immutable source versions, follows a bidirectional graph, abstains on missing/conflicting/over-budget evidence and persists receipts/corrections in SQLite. [TrustGate's local build](demo-lab/TRUSTGATE.md) resolves arguments from server-held synthetic sources, applies integrity/confidentiality policy, requires review for writes and executes three narrow SQLite tools with durable receipts and a hash-linked audit. [ChronosRank's local build](demo-lab/CHRONOSRANK.md) stores temporal memory events, filters expired/superseded facts, scores deterministic token matches and saves retrieval receipts with feedback. These are bounded implementations, not completion of their full research blueprints. [DocksideSLM's local build](demo-lab/DOCKSIDE.md) validates supplied structured extraction, requires local review and demonstrates durable offline delivery to an idempotent synthetic receiver. VeilRAG remains a design.
 
 | Project | Blueprint | Missing implementation scope |
 |---|---|---|
 | AtlasGraph — partial local build | [Design](47%20Automation%20Blueprints/2026%20Research-to-Production/01-atlasgraph.md) | Source adapters, semantic/vector retrieval, model-selected tools, authentication and independently measured multi-hop baseline comparisons |
 | ChronosRank — partial local build | [Design](47%20Automation%20Blueprints/2026%20Research-to-Production/02-chronosrank.md) | Distillation/reranker training, vector candidate retrieval, calibrated abstention and measured retrieval comparisons |
 | TrustGate — partial local build | [Design](47%20Automation%20Blueprints/2026%20Research-to-Production/03-trustgate.md) | Authenticated agent/tool integration, complete runtime provenance, signed remote receipts, LM/saliency screeners and independent adversarial acceptance |
-| DocksideSLM | [Design](47%20Automation%20Blueprints/2026%20Research-to-Production/04-docksideslm.md) | Actual edge-model compression, hardware execution and measured quality/latency |
+| DocksideSLM — partial local build | [Design](47%20Automation%20Blueprints/2026%20Research-to-Production/04-docksideslm.md) | OCR/SLM extraction, actual edge-model compression, hardware execution, measured quality/latency and real ERP acceptance |
 | VeilRAG | [Design](47%20Automation%20Blueprints/2026%20Research-to-Production/05-veilrag.md) | Reversible privacy pipeline, retrieval integration and leakage evaluation |
 
 ## Six industry flagships still partial
@@ -167,4 +167,4 @@ The public owner-repository endpoint currently returns 13 repositories: this por
 - Compared public main with the showcase branch and reconciled all 50 section labels against current linked artifacts.
 - Added the unified in-app inventory/deep links across all five collections and a partial AtlasGraph build. Tests cover destination selection, compiler persistence, adverse evidence, stale exports and local HTTP boundaries. See [AtlasGraph reproduction](demo-lab/ATLASGRAPH.md); exact-head validation belongs in the delivery log and PR evidence.
 - Next: deepen AtlasGraph with an independently labeled retrieval comparison, extend TrustGate's independent adversarial cases, evaluate ChronosRank against independently labeled queries, or continue the six industry flagship flows. Provider/authentication, hardware/model measurements and recording acceptance remain separate.
-- Existing open PRs remain subject to review/backlog controls. Default-main visibility requires separately authorized integration; this audit does not silently merge the stack.
+- The prior showcase and its seven child changes are on main. New research PRs remain subject to review/backlog controls; this delivery does not merge or deploy them.

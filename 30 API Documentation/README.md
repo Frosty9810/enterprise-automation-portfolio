@@ -23,9 +23,10 @@ All routes below use GET. Normal JSON responses use `Cache-Control: no-store`.
 | `/health` | `{status: "ok", mode: "local-demo"}` |
 | `/api/projects` | Automation catalog, engine label, simulator mode and workflow busy flag |
 | `/api/project-inventory` | Unified array of collection entries with ID, status, scope and destination link |
-| `/api/research/catalog` | Five research tracks; AtlasGraph, TrustGate and ChronosRank are partial local builds, the other two blueprint-only |
+| `/api/research/catalog` | Five research tracks; AtlasGraph, TrustGate, ChronosRank and DocksideSLM are partial local builds; VeilRAG is blueprint-only |
 | `/api/trustgate/catalog` | Closed tool schemas, server-held synthetic sources, actor grants and runnable proposal scenarios |
 | `/api/chronosrank/catalog` | Local memory scope, synthetic event stream and retrieval example |
+| `/api/dockside/catalog` | Supplied-extraction schemas, local reviewer labels and synthetic document scenarios |
 | `/api/research/example` | Bundled AtlasGraph input object containing `compile` and `answer` examples |
 | `/api/research/blueprint?project=<name>` | Allowlisted blueprint text for AtlasGraph, ChronosRank, TrustGate, DocksideSLM or VeilRAG; unknown name gives 404 |
 | `/api/showcase/:id` | Project presentation/profile; unknown ID gives 404 |
@@ -78,7 +79,7 @@ Controllers: [flagship receipts](../demo-lab/flagship-suite.mjs), [recovery](../
 
 ## AtlasGraph research operations
 
-These POST routes use the same Host/Origin, intent-header and 32,768-byte HTTP body boundary. They dispatch to the [AtlasGraph controller](../demo-lab/atlasgraph-core.mjs). TrustGate has a separate gateway described below; ChronosRank has its own memory API; the two blueprint-only tracks have no runnable API. The [example JSON](../demo-lab/atlasgraph-example.json) supplies complete compile/answer payloads. Compile its `compile` object first, then submit its `answer` object.
+These POST routes use the same Host/Origin, intent-header and 32,768-byte HTTP body boundary. They dispatch to the [AtlasGraph controller](../demo-lab/atlasgraph-core.mjs). TrustGate has a separate gateway described below; ChronosRank has its own memory API; DocksideSLM has a document queue API; VeilRAG has no runnable API. The [example JSON](../demo-lab/atlasgraph-example.json) supplies complete compile/answer payloads. Compile its `compile` object first, then submit its `answer` object.
 
 | Route | JSON fields and result |
 |---|---|
@@ -96,6 +97,20 @@ These POST routes use the same Host/Origin, intent-header and 32,768-byte HTTP b
 Tenant labels and approval flags are supplied data, not authenticated permissions. Compilation checks unique identities, immutable source versions, exact claim substrings and reference quotes naming existing approved target pages. It accepts up to 12 sources and 32 pages total. A changed source version/content produces a different snapshot; old receipts remain inspectable with `stale: true`. Exact query replay retains its original evidence; use a fresh request ID to collect current evidence after source changes. Reusing an ID for a different query fails.
 
 The `answer` operation collects deterministic graph evidence for explicit claim keys. It returns `supported` or abstains for missing start/evidence, contradictory claims, hop limit or evidence-byte budget; it does not generate or semantically verify an answer. The budget measures serialized UTF-8 citation bytes, not model tokens. Abstention creates a pending Error Book entry. Accepting a correction does not edit sources; compile a reviewed new source revision separately. Controller validation errors, absent tenant/page/receipt and identity conflicts are returned by this HTTP adapter as **400 `{error}`**, rather than exposing the controller's internal error codes as HTTP statuses. An unknown research POST operation returns 404. See [core adverse tests](../demo-lab/atlasgraph.test.mjs) and [UI interaction tests](../demo-lab/research-ui.test.mjs).
+
+## DocksideSLM local document queue
+
+Open `/dockside` for the [document queue](../demo-lab/DOCKSIDE.md). GET `/api/dockside/catalog` supplies executable synthetic `scenarios[].input`. POST one input to `/api/dockside/submit`; invalid extraction is retained as a rejected receipt and cannot reach the receiver. These routes share the Host/Origin, intent-header and 32,768-byte body boundary. Controller errors return 400 `{error}`; unknown operations return 404.
+
+| POST route suffix under `/api/dockside/` | Input |
+|---|---|
+| `submit` | `{commandId,tenant,actor,document:{id,version,text},extraction:{kind,vendorId,reference,issuedOn,currency,lines:[{itemId,quantity,unitPriceMinor,lineTotalMinor}],totalMinor}}` |
+| `review` | `{tenant,receiptId,reviewer,expectedHash,decision:"approve" or "reject",note}` |
+| `sync` | `{tenant,receiptId,receiverProfileId:"online" or "offline" or "lose-response"}` |
+| `reconcile`, `receipt` | `{tenant,receiptId}` |
+| `history`, `state`, `audit`, `verify-audit` | `{tenant}` |
+
+The local receiver modes are closed fault simulations. They do not set arbitrary success flags or contact an ERP. Delivery is an actual SQLite receiver insert tied to the approved content. Offline attempts preserve queued work; a lost response requires receiver reconciliation before current delivery evidence is confirmed. Repeating an identical submission preserves its receipt, while changed intent under the same ID is rejected. Review labels are fixture selectors rather than authenticated users. The supplied extraction is not generated from the document: OCR, SLM inference, trusted source verification and edge measurements remain unimplemented. See [HTTP behavior and boundary tests](../demo-lab/dockside-http.test.mjs).
 
 ## ChronosRank local memory operations
 

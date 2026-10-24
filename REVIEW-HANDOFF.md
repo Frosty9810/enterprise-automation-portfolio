@@ -2,11 +2,15 @@
 
 This batch adds the unified 73-entry project inventory and partial local AtlasGraph, TrustGate and ChronosRank research builds alongside the demonstration phase of the [portfolio roadmap](demo-lab/PORTFOLIO-ROADMAP.md): executable synthetic business decisions, adverse cases, readable evidence and reproducible local checks. Review readiness covers that scope. Hosted integrations, authentication, recordings, business impact and the broader [completion roadmap](COMPLETION-ROADMAP.md) remain separate work.
 
-## Review the PR stack
+## Current research delivery
+
+The previous showcase and all seven child changes are integrated into main at `8d3662c1a34e4fe2cbb59665feb4b13337f240a0`. This branch adds the partial local DocksideSLM document queue and reconciles discovery/status text. Review its complete diff and exact-head checks against main. Local checks do not authorize merging, deployment or external-provider access.
+
+## Previous integrated PR stack
 
 | PR | Bounded change | Current integration status |
 |---|---|---|
-| [#12](https://github.com/Frosty9810/enterprise-automation-portfolio/pull/12) | Unified inventory, three partial research builds, twelve-system showcase and shared reliability/evidence controls | Open against `main`; includes all seven child changes below |
+| [#12](https://github.com/Frosty9810/enterprise-automation-portfolio/pull/12) | Unified inventory, three partial research builds, twelve-system showcase and shared reliability/evidence controls | Merged into `main`; includes all seven child changes below |
 | [#20](https://github.com/Frosty9810/enterprise-automation-portfolio/pull/20) | Ad metric validation and exact analysis identity | Merged into #12 |
 | [#21](https://github.com/Frosty9810/enterprise-automation-portfolio/pull/21) | Consent-gated, duplicate-invariant skill coverage | Merged into #12 |
 | [#22](https://github.com/Frosty9810/enterprise-automation-portfolio/pull/22) | UTC trial-window usage/evidence contract | Merged into #12 |
@@ -15,7 +19,7 @@ This batch adds the unified 73-entry project inventory and partial local AtlasGr
 | [#25](https://github.com/Frosty9810/enterprise-automation-portfolio/pull/25) | Canonical usage ingestion, credits and balanced draft journal | Merged into #12 |
 | [#26](https://github.com/Frosty9810/enterprise-automation-portfolio/pull/26) | Durable local reservation ledger and separate UI exercise | Merged into #24, then #12 |
 
-As checked on October 23, #12 is the remaining open PR. The child links retain their original bounded diffs and validation history; their code is now present in #12. Review its complete diff against `main` and current exact-head CI. Other GitHub activity integrated those children; this ChronosRank delivery preserved their changes and did not merge any GitHub PR. Default main still has its older overview until integration is separately authorized. Ready status and green checks do not authorize a merge or deployment.
+All rows above are now merged. The child links preserve their original bounded diffs and evidence; current main contains them. New research work is delivered through separate feature PRs. Always reconcile GitHub state before continuing a delivery; historical ready status and green checks do not authorize a merge or deployment.
 
 ## Reproduce acceptance
 
@@ -36,6 +40,7 @@ node --test demo-lab/reservation-ledger.test.mjs demo-lab/reservation-ui.test.mj
 node demo-lab/run-chronosrank.mjs
 node --test demo-lab/chronosrank-core.test.mjs demo-lab/chronosrank-ui.test.mjs demo-lab/chronosrank-http.test.mjs
 node demo-lab/run-trustgate.mjs
+node demo-lab/run-dockside.mjs
 ```
 
 The quality runner covers artifact generation/validation, Python policies, lint/format, handoff contracts, the Node regressions, benchmark and Python examples. The [governor](PORTFOLIO-AGENTS.md) requires one unchanged source snapshot; its approval covers automated local checks. Independent reviewer findings and their closure are recorded separately in PR descriptions. Portfolio CI also runs the public site's lint/type/build checks and all 27 local n8n wrappers plus replay; separate path-filtered agent workflows run their request/evidence tests. Wrapper execution does not establish complete original-workflow or hosted-provider acceptance.
@@ -61,7 +66,7 @@ Release tags and each pinned `action.yml` were verified against the official rep
 
 ## Remaining acceptance boundaries
 
-The five research tracks remain partial or unbuilt: AtlasGraph, TrustGate and ChronosRank provide bounded local workflows; DocksideSLM and VeilRAG remain blueprint-only. See [the current inventory](PROJECT-INVENTORY.md) for all 73 entries and the six unfinished industry flagships. ChronosRank uses deterministic token overlap and supplied time/source labels; no trained reranker, calibrated probability or research benchmark is claimed. [Its runbook](demo-lab/CHRONOSRANK.md) documents ingestion watermarks, immutable retries and fresh-request recovery.
+The five research tracks remain partial or unbuilt: AtlasGraph, TrustGate, ChronosRank and DocksideSLM provide bounded local workflows; VeilRAG remains blueprint-only. See [the current inventory](PROJECT-INVENTORY.md) for all 73 entries and the six unfinished industry flagships. ChronosRank uses deterministic token overlap and supplied time/source labels; no trained reranker, calibrated probability or research benchmark is claimed. [Its runbook](demo-lab/CHRONOSRANK.md) documents ingestion watermarks, immutable retries and fresh-request recovery.
 
 
 The first integration target is an explicitly authorized Salesforce sandbox, followed by one real provider timeout/reconciliation case and an independent support evaluation dataset. Reviewer labels and tenant IDs in the local demos are supplied and unauthenticated. Routing instruction markers are supplied; absent markers do not establish safety. Invoice/payment, hiring, calendar/dispatch and publishing authority remain outside this demonstration.

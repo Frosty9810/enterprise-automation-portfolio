@@ -49,7 +49,10 @@ test('six industry tracks stay partial and research design names cannot inflate 
   assert.equal(research.find(entry=>entry.id==='DocksideSLM').status,'partial-local');
   assert.equal(research.find(entry=>entry.id==='DocksideSLM').href,'/dockside?project=DocksideSLM');
   assert.match(research.find(entry=>entry.id==='DocksideSLM').scope,/No OCR, SLM inference/);
-  assert.deepEqual(research.filter(entry => entry.status === 'blueprint-only').map(entry => entry.id), ['VeilRAG']);
+  assert.equal(research.find(entry=>entry.id==='VeilRAG').status,'partial-local');
+  assert.equal(research.find(entry=>entry.id==='VeilRAG').href,'/veilrag?project=VeilRAG');
+  assert.match(research.find(entry=>entry.id==='VeilRAG').scope,/No automatic entity detector/);
+  assert.deepEqual(research.filter(entry => entry.status === 'blueprint-only').map(entry => entry.id), []);
   assert.match(html, /count does not represent independent production deployments/);
 });
 
@@ -66,7 +69,7 @@ test('search normalizes case and whitespace; words intersect with collection and
   assert.deepEqual(filterInventory(entries, { query: '  pM-01   ' }).map(entry => entry.id), ['PM-01']);
   assert.deepEqual(filterInventory(entries, { query: 'temporal memory', collection: 'research', status: 'partial-local' }).map(entry => entry.id), ['ChronosRank']);
   assert.deepEqual(filterInventory(entries, { query: 'temporal reranking', collection: 'engineering' }), []);
-  assert.equal(filterInventory(entries, { collection: 'research', status: 'blueprint-only' }).length, 1);
+  assert.equal(filterInventory(entries, { collection: 'research', status: 'blueprint-only' }).length, 0);
   assert.equal(filterInventory(entries, { query: '  ' }).length, entries.length);
   assert.deepEqual(filterInventory(entries, { query: 'nonexistent-catalog-name' }), []);
 });
@@ -92,7 +95,7 @@ test('browser renders every catalog entry with explicit scopes and valid links',
     assert.equal(d.getElementById('inventory-results').getAttribute('aria-busy'), 'false');
     assert.match(d.getElementById('inventory-overview').textContent, /27 automation.*20 life and data.*9 ai engineering.*12 business systems.*5 research builds/);
     assert.equal(d.querySelectorAll('.project-scope').length, 73);
-    assert.equal(d.querySelectorAll('.status[data-status="blueprint-only"]').length, 1);
+    assert.equal(d.querySelectorAll('.status[data-status="blueprint-only"]').length, 0);
     assert.match(d.querySelector('[data-project="ChronosRank"] a').textContent, /Open project/);
     assert.equal(d.querySelector('[data-project="AtlasGraph"] a').getAttribute('href'), '/research?project=AtlasGraph');
     assert.equal(d.querySelector('[data-project="TrustGate"] a').getAttribute('href'), '/trustgate?project=TrustGate');
@@ -108,7 +111,7 @@ test('browser filters combine; no results announce clearly and clearing restores
     d.getElementById('project-collection').dispatchEvent(new dom.window.Event('change'));
     d.getElementById('project-status').value = 'blueprint-only';
     d.getElementById('project-status').dispatchEvent(new dom.window.Event('change'));
-    assert.equal(d.querySelectorAll('.project-card').length, 1);
+    assert.equal(d.querySelectorAll('.project-card').length, 0);
     d.getElementById('project-status').value = 'partial-local';
     d.getElementById('project-status').dispatchEvent(new dom.window.Event('change'));
     d.getElementById('project-search').value = 'temporal';
@@ -137,7 +140,7 @@ test('shared search URL and browser navigation restore filters, invalid filters 
     assert.equal(d.querySelector('.project-card').dataset.project, 'PM-01');
     dom.window.history.pushState(null, '', '/projects?collection=research&status=blueprint-only');
     dom.window.dispatchEvent(new dom.window.PopStateEvent('popstate'));
-    assert.equal(d.querySelectorAll('.project-card').length, 1);
+    assert.equal(d.querySelectorAll('.project-card').length, 0);
     dom.window.history.pushState(null, '', '/projects?collection=__proto__&status=production-ready');
     dom.window.dispatchEvent(new dom.window.PopStateEvent('popstate'));
     assert.equal(d.getElementById('project-collection').value, 'all');

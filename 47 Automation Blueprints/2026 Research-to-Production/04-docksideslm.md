@@ -1,5 +1,7 @@
 # DocksideSLM — Offline Document Intelligence for the Warehouse Edge
 
+**Partial local implementation — October 23:** [Validated document queue](../../demo-lab/DOCKSIDE.md) accepts supplied synthetic structured fields, applies schema/arithmetic checks, requires local review and demonstrates durable delivery/reconciliation against an idempotent SQLite receiver. Scan ingestion, OCR, SLM extraction, confidence calibration, actual ERP integration and hardware/compression benchmarks below remain research targets.
+
 ## Project title and concept
 
 DocksideSLM extracts and validates invoices, packing lists, and bills of lading on low-cost warehouse hardware even when connectivity is unreliable. It chooses compression based on measured end-device behavior, not model size alone, and falls back safely when confidence or output structure degrades.

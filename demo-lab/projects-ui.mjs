@@ -10,7 +10,7 @@ const routeFor = (collection, id) => ({
   automation: `/?project=${encodeURIComponent(id)}`, 'life-data': `/?human=${encodeURIComponent(id)}`,
   engineering: `/engineering?project=${encodeURIComponent(id)}`,
   'business-systems': `/flagships?project=${encodeURIComponent(id)}`,
-  research: `${id==='TrustGate'?'/trustgate':id==='ChronosRank'?'/chronosrank':'/research'}?project=${encodeURIComponent(id)}`,
+  research: `${id==='TrustGate'?'/trustgate':id==='ChronosRank'?'/chronosrank':id==='DocksideSLM'?'/dockside':'/research'}?project=${encodeURIComponent(id)}`,
 })[collection];
 
 /** Validate the response as a whole. A broken catalog must not silently hide projects. */

@@ -24,6 +24,7 @@ import { portfolioInventory } from './project-inventory.mjs';
 import { atlasGraph } from './atlasgraph-core.mjs';
 import { trustGate } from './trustgate-core.mjs';
 import { chronosRank } from './chronosrank-core.mjs';
+import { dockside } from './dockside-core.mjs';
 
 const exec = promisify(execFile);
 const directory = fileURLToPath(new URL('.', import.meta.url));
@@ -142,6 +143,7 @@ export function createLabServer(db = openStore(), executeWorkflow = runN8n) {
   const research = atlasGraph(db);
   const gateway = trustGate(db);
   const memory = chronosRank(db);
+  const dock = dockside(db);
   let busy = false;
   let activity = null;
   let domains = 0;
@@ -161,6 +163,7 @@ export function createLabServer(db = openStore(), executeWorkflow = runN8n) {
       if (url.pathname === '/api/project-inventory') return send(response,200,portfolioInventory());
       if (url.pathname === '/api/trustgate/catalog') return send(response,200,gateway.catalog());
       if (url.pathname === '/api/chronosrank/catalog') return send(response,200,memory.catalog());
+      if (url.pathname === '/api/dockside/catalog') return send(response,200,dock.catalog());
       if (url.pathname === '/api/research/catalog') return send(response,200,{projects:portfolioInventory().filter(p=>p.collection==='research')});
       if (url.pathname === '/api/research/example') return send(response,200,JSON.parse(readFileSync(join(directory,'atlasgraph-example.json'),'utf8')));
       if (url.pathname === '/api/research/blueprint') {
@@ -170,11 +173,11 @@ export function createLabServer(db = openStore(), executeWorkflow = runN8n) {
         response.writeHead(200,{'Content-Type':'text/plain; charset=utf-8','X-Content-Type-Options':'nosniff','Cache-Control':'no-store'});
         return response.end(readFileSync(join(root,'47 Automation Blueprints','2026 Research-to-Production',name)));
       }
-      if (['/projects','/research','/trustgate','/chronosrank'].includes(url.pathname)) {
+      if (['/projects','/research','/trustgate','/chronosrank','/dockside'].includes(url.pathname)) {
         response.writeHead(200,{'Content-Type':'text/html; charset=utf-8','Cache-Control':'no-store','X-Content-Type-Options':'nosniff','Content-Security-Policy':"default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; object-src 'none'"});
         return response.end(readFileSync(join(directory,url.pathname.slice(1)+'.html')));
       }
-      if (['/projects.css','/projects-ui.mjs','/research.css','/research-ui.mjs','/trustgate.css','/trustgate-ui.mjs','/chronosrank.css','/chronosrank-ui.mjs'].includes(url.pathname)) {
+      if (['/projects.css','/projects-ui.mjs','/research.css','/research-ui.mjs','/trustgate.css','/trustgate-ui.mjs','/chronosrank.css','/chronosrank-ui.mjs','/dockside.css','/dockside-ui.mjs'].includes(url.pathname)) {
         response.writeHead(200,{'Content-Type':url.pathname.endsWith('.css')?'text/css; charset=utf-8':'text/javascript; charset=utf-8','X-Content-Type-Options':'nosniff','Cache-Control':'no-store'});
         return response.end(readFileSync(join(directory,url.pathname.slice(1))));
       }
@@ -296,6 +299,15 @@ export function createLabServer(db = openStore(), executeWorkflow = runN8n) {
         const action = actions.get(url.pathname.slice('/api/chronosrank/'.length));
         if(!action)return send(response,404,{error:'Unknown memory operation'});
         return send(response,200,action(body));
+      }
+      if (url.pathname.startsWith('/api/dockside/')) {
+        const actions = new Map([
+          ['submit',x=>dock.submit(x)],['review',x=>dock.review(x)],['sync',x=>dock.sync(x)],['reconcile',x=>dock.reconcile(x)],
+          ['receipt',x=>dock.receipt(x)],['history',x=>dock.history(x)],['state',x=>dock.state(x)],['audit',x=>dock.audit(x)],['verify-audit',x=>dock.verifyAudit(x)],
+        ]);
+        const action = actions.get(url.pathname.slice('/api/dockside/'.length));
+        if(!action)return send(response,404,{error:'Unknown document operation'});
+        return send(response,200,await action(body));
       }
       const researchActions = new Map([
         ['compile',x=>research.compile(x)],['search',x=>research.search(x)],['read',x=>research.read(x)],['follow',x=>research.follow(x)],

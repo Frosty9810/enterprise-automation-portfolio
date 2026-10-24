@@ -11,13 +11,13 @@ node --test demo-lab/maintenance-core.test.mjs
 node demo-lab/run-maintenance.mjs
 ```
 
-The test suite exercises 44 cases, including two real independent processes competing for one appointment, a separate process reopening an uncertain dispatch, SQL-trigger rollback, consent and lease/window boundaries, tenant/role selectors, independent review, immutable replay, and durable corruption checks. The runner uses a fresh in-memory database and asserts a routine offline â†’ uncertain â†’ reconciled â†’ reported-complete workflow and a separate emergency hold. Its single receiver/booking/outbox are actual rows in that local SQLite database. No provider acceptance or physical service is implied.
+The test suite exercises 44 cases, including two real independent processes competing for one appointment, a separate process reopening an uncertain dispatch, SQL-trigger rollback, consent and lease/window boundaries, tenant/role selectors, independent review, immutable replay, and durable corruption checks. The runner uses a fresh in-memory database and asserts a routine offline -> uncertain -> reconciled -> reported-complete workflow and a separate emergency hold. Its single receiver/booking/outbox are actual rows in that local SQLite database. No provider acceptance or physical service is implied.
 
 ## Clock and fixtures
 
 The default trusted clock is deliberately fixed at **2026-10-24T12:00:00.000Z**. The catalog labels this fixed synthetic scenario clock. Access/vendor appointments are on that synthetic date; browser examples remain reproducible on later days because this clock never follows wall time. SLA readouts are elapsed minutes from caller-provided synthetic `receivedAt` to this clock, with a 5-minute emergency / 1440-minute routine target. They are not active monitoring or a provider SLA. An internally injected `clock` factory option supports boundary tests; HTTP callers cannot choose a clock.
 
-Two fixture tenants, `acme` and `beta`, have separate active leases, occupants, operators, reviewers and vendors. Plumbing vendors are available 13:00â€“18:00Z and electrical vendors 15:00â€“18:00Z. Example occupant access is 13:00â€“16:00Z. Actor and tenant labels are **unauthenticated fixture selectors**, not an authorization system. Server-held registries determine the permitted roles, occupant ownership, lease dates, vendor approval, skills and availability; callers cannot supply approval booleans or vendor URLs. Dual-role fixture labels exist to demonstrate self-review rejection.
+Two fixture tenants, `acme` and `beta`, have separate active leases, occupants, operators, reviewers and vendors. Plumbing vendors are available 13:00-18:00Z and electrical vendors 15:00-18:00Z. Example occupant access is 13:00-16:00Z. Actor and tenant labels are **unauthenticated fixture selectors**, not an authorization system. Server-held registries determine the permitted roles, occupant ownership, lease dates, vendor approval, skills and availability; callers cannot supply approval booleans or vendor URLs. Dual-role fixture labels exist to demonstrate self-review rejection.
 
 ## Lifecycle and invariants
 

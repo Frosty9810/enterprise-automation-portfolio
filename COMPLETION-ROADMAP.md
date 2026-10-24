@@ -33,6 +33,8 @@ An industry flagship must include:
 
 PM-01 now has a [bounded durable maintenance workbench](demo-lab/MAINTENANCE.md): registered synthetic lease intake, deterministic emergency holds, occupant access consent, independent exact-hash review, vendor/window booking, local receiver recovery and operator-reported closure. Its fixed fixture clock does not monitor live deadlines. The full milestone stays open: authentication, wider lease lifecycle, real property/vendor adapters, live escalation delivery and recorded acceptance remain unfinished.
 
+CON-01 now has a [bounded compliance and change-order ledger](demo-lab/CONSTRUCTION.md): supplied legacy-source document receipts, time-bound readiness holds, independently reviewed change versions and atomic local cost commitments against a fixed project budget. The full milestone stays open: actual email/PDF ingestion, issuer verification, authenticated role enforcement, real site/project-system integration and recorded acceptance are unfinished. No payment or authority to start site work is implied.
+
 Real Estate, SaaS, and E-Commerce already meet the flagship-suite standard. The import-company operating system remains the cross-department enterprise flagship.
 
 ## Platform evidence backlog

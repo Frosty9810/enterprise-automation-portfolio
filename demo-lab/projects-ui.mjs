@@ -7,7 +7,7 @@ export const statusLabels = Object.freeze({
   'partial-local': 'Partial build', 'blueprint-only': 'Blueprint only',
 });
 const routeFor = (collection, id) => ({
-  automation: `${id === 'PM-01' ? '/maintenance' : '/'}?project=${encodeURIComponent(id)}`, 'life-data': `/?human=${encodeURIComponent(id)}`,
+  automation: `${id === 'PM-01' ? '/maintenance' : id === 'CON-01' ? '/construction' : '/'}?project=${encodeURIComponent(id)}`, 'life-data': `/?human=${encodeURIComponent(id)}`,
   engineering: `/engineering?project=${encodeURIComponent(id)}`,
   'business-systems': `/flagships?project=${encodeURIComponent(id)}`,
   research: `${id==='TrustGate'?'/trustgate':id==='ChronosRank'?'/chronosrank':id==='DocksideSLM'?'/dockside':id==='VeilRAG'?'/veilrag':'/research'}?project=${encodeURIComponent(id)}`,

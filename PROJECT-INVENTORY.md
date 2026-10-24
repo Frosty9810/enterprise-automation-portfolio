@@ -4,7 +4,7 @@ Updated October 24, 2026. **The portfolio is not complete.** This inventory sepa
 
 ## Why projects appear missing
 
-1. Public main was checked at `8d3662c1a34e4fe2cbb59665feb4b13337f240a0`. It now contains the unified catalog and partial AtlasGraph, TrustGate and ChronosRank builds following [showcase PR #12](https://github.com/Frosty9810/enterprise-automation-portfolio/pull/12) and its seven child integrations. This branch adds DocksideSLM's partial local queue and VeilRAG's declared-literal alias boundary; those new slices remain subject to feature PR review. The older 17-project overview is no longer the full discovery surface; use `/projects`.
+1. Public main was checked at `80f78be633996c8b37870c1bf6326f64cb53e956`. The unified catalog, all five partial research builds and PM-01 maintenance operations are integrated following PRs #12, #27, #29 and #30. This branch deepens CON-01. Use `/projects` for the full discovery surface; catalog presence is not completion.
 2. Build Studio starts with selected automation cases. Its **All projects** filter covers the 27 automation demos, not the other collections. Life and data, AI engineering and Twelve systems have their own navigation.
 3. All five research tracks now have named partial local implementations; none completes its full research blueprint. Six industry entries have bounded demos, not their full roadmap flagship.
 4. Open the local `/projects` page for a searchable inventory with direct project selection across all collections. It lists 73 entries: the original 68 catalog views plus five research tracks. All five research entries are partial local builds; counts are not completion claims.
@@ -46,7 +46,7 @@ The source path and local wrapper JSON were checked for every row. Open the root
 | IMP-01 | Import Company Agent Operating System | [Inspect](48%20Enterprise%20Workflows/IMP-01%20Import%20Company%20Agent%20Operating%20System/README.md) |
 | PM-01 | Maintenance operations with access and reviewed local dispatch | [Runbook](demo-lab/MAINTENANCE.md) |
 | EA-01 | Commitments and owner review | [Inspect](demo-lab/extra-scenarios.mjs) |
-| CON-01 | Subcontractor Readiness and Change Approval Review | [Inspect](demo-lab/roadmap-scenarios.mjs) |
+| CON-01 | Compliance and reviewed local change-order commitments | [Runbook](demo-lab/CONSTRUCTION.md) |
 | MED-01 | Referral Completeness and Authorization Staff Queue | [Inspect](demo-lab/roadmap-scenarios.mjs) |
 | LEGAL-01 | Matter Conflict and Entity Review Gate | [Inspect](demo-lab/roadmap-scenarios.mjs) |
 | INS-01 | Loss Intake and Evidence Review Queue | [Inspect](demo-lab/roadmap-scenarios.mjs) |
@@ -132,7 +132,7 @@ Each ID below has a bounded local demo/build artifact set. The broader end-to-en
 | ID | Industry | Remaining flagship scope |
 |---|---|---|
 | [PM-01](demo-lab/project-builds/PM-01/README.md) | Property Management | Local maintenance intake, access consent, reviewed appointment and receiver recovery now implemented ([runbook](demo-lab/MAINTENANCE.md)); full lease lifecycle, authenticated occupants/vendors, live clock/escalation delivery, real property/provider acceptance and recordings remain open |
-| [CON-01](demo-lab/project-builds/CON-01/README.md) | Construction | Complete compliance/change-order pipeline and legacy document approval provenance |
+| [CON-01](demo-lab/project-builds/CON-01/README.md) | Construction | Local supplied-document provenance, compliance holds, versioned reviews and budget commitment ledger now implemented ([runbook](demo-lab/CONSTRUCTION.md)); full legacy document ingestion/issuer verification, authenticated roles, real site/provider acceptance and recordings remain open |
 | [MED-01](demo-lab/project-builds/MED-01/README.md) | Medical | Complete synthetic referral/prior-authorization work queue and controlled intake integration |
 | [LEGAL-01](demo-lab/project-builds/LEGAL-01/README.md) | Legal | Complete matter intake/conflict/deadline workflow and reviewed jurisdiction rules |
 | [INS-01](demo-lab/project-builds/INS-01/README.md) | Insurance | Complete loss-evidence pipeline and adjuster/coverage-system integration without automated coverage decisions |

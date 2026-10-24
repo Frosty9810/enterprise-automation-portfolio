@@ -7,6 +7,12 @@ Expired certificates and stale or self-approved change orders route to review. A
 **Video Walkthrough:** _Pending recording — see script in this SOP's project folder._
 **Real Build Artifacts:** [Runbook and build files →](build/README.md)
 
+## Durable local ledger
+
+Open `http://127.0.0.1:5680/construction?project=CON-01` after starting the lab. The [construction runbook](../../CONSTRUCTION.md) covers supplied document provenance, independent compliance review, expiry/readiness holds, versioned change orders and local budget commitments. Run `node demo-lab/run-construction.mjs` for reproducible synthetic acceptance.
+
+The ledger uses SQLite and a fixed synthetic scenario clock. Actor labels are not authentication. It does not parse real PDFs, verify an issuer, authorize site work or make payments. The older n8n decision example below remains separate; its `releaseAllowed: false` does not describe the new local commitment operation. The full CON-01 industry flagship remains partial.
+
 ## Business flow
 
 Change amount and version → independent approval checks → release review.

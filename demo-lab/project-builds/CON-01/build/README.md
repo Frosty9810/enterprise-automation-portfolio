@@ -2,6 +2,10 @@
 
 Status: **Populated — local script and copied workflow available; PostgreSQL execution pending.**
 
+## Durable compliance and change-order desk
+
+The [construction controller and runbook](../../../CONSTRUCTION.md) add supplied document provenance, expiry/readiness holds, version-bound reviews and actual SQLite budget commitments. Start the lab and open `/construction?project=CON-01`, or run `node demo-lab/run-construction.mjs`. Fixed scenario time and unauthenticated fixture labels are explicit boundaries. The PostgreSQL schema below is a separate proposal, not this controller's runtime schema. The legacy n8n script retains its original review-only contract.
+
 ## Files
 
 - `demo.js`: imports the existing business implementation and executes assertions against synthetic fixtures.

@@ -21,14 +21,16 @@ export function portfolioInventory() {
   return [
     ...projects.map(project => ({
       collection: 'automation', id: project.id, title: project.title,
-      summary: project.demo || 'Inspect the supplied local business scenario and its decision.',
+      summary: project.id === 'CON-01' ? 'Inspect supplied document provenance, expiry holds, independent change reviews and the local cost commitment ledger.' : project.demo || 'Inspect the supplied local business scenario and its decision.',
       scope: project.id === 'PM-01'
         ? 'Partial industry build: durable synthetic maintenance intake, deterministic emergency holds, access consent, reviewed vendor proposals and local dispatch recovery. Fixed fixture clock, unauthenticated actor labels; real property/provider acceptance remains unfinished.'
+        : project.id === 'CON-01'
+        ? 'Partial industry build: supplied document provenance, time-bound compliance holds, versioned change orders, independent reviews and atomic local budget commitments. Fixed synthetic clock and unauthenticated labels; real document, site and provider acceptance remain open.'
         : industryTracks.has(project.id)
         ? 'Partial industry build: this bounded synthetic scenario is executable; the full industry flagship and live provider acceptance remain unfinished.'
         : 'Executable local scenario with synthetic evidence. Wrapper presence does not establish hosted integration or production acceptance.',
       status: industryTracks.has(project.id) ? 'partial-local' : 'local-demo',
-      href: `${project.id === 'PM-01' ? '/maintenance' : '/'}?project=${encodeURIComponent(project.id)}`,
+      href: `${project.id === 'PM-01' ? '/maintenance' : project.id === 'CON-01' ? '/construction' : '/'}?project=${encodeURIComponent(project.id)}`,
     })),
     ...humanProjects.map(project => ({
       collection: 'life-data', id: project.id, title: project.title,

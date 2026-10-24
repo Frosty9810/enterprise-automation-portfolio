@@ -10,6 +10,7 @@ export async function mountFlagships(document, api, download, initialId = 'F01')
     } return t; }
     function controls() { $('input').disabled = loading; $('evaluate').disabled = busy || loading || !selected; $('runAll').disabled = busy || loading; $('reset').disabled = busy || !selected; $('review').disabled = busy || loading || !receipt || !!receipt.review || !$('ack').checked || !$('actor').value.trim(); $('export').disabled = busy || loading || !receipt?.review; }
     function render() {
+        document.querySelector('.lab-grid').classList.toggle('explorer-layout', selected?.id === 'F06');
         $('projects').replaceChildren();
         for (const p of projects) {
             const b = node('button', '', `project${selected?.id === p.id ? ' active' : ''}`), checked = report?.results.find(r => r.id === p.id);
@@ -64,17 +65,39 @@ export async function mountFlagships(document, api, download, initialId = 'F01')
             box.append(node('p', r.decision.reasons.length ? r.decision.reasons.join(' · ') : 'All supplied match controls passed. Payment release remains disabled.'));
         }
         if (id === 'F06') {
+            const observed = new Map(r.observed.map(row => [row.toolId, row]));
+            box.append(node('p', 'Evidence snapshot · ' + r.capturedAt, 'small'));
+            box.append(node('p', 'Authored wiring describes the intended connection. Saved evaluations below are local execution evidence, checked against the listed source at capture time. A current source file alone does not prove execution.', 'architecture-intro'));
             for (const n of r.nodes) {
                 const b = node('div', '', 'architecture-node');
-                b.append(node('strong', n.id + ' · ' + n.title), node('p', n.sourceCurrent ? 'Listed source is current' : 'Source changed'), node('small', 'Authored edge → durable analysis receipt'));
+                const saved = observed.get(n.id), state = !saved ? 'missing' : saved.sourceCurrent && n.sourceCurrent ? 'current' : 'stale';
+                b.append(node('strong', n.id + ' · ' + n.title), node('p', 'Authored wiring → durable analysis receipt', 'small'));
+                const evidence = node('section', '', 'architecture-evidence');
+                evidence.dataset.evidenceState = state;
+                evidence.append(node('strong', state === 'missing' ? 'No saved evaluation' : state === 'stale' ? 'Stale execution evidence' : 'Current execution evidence'));
+                if (saved) {
+                    const metadata = document.createElement('dl');
+                    for (const [label, value] of [['Receipt', saved.receiptId], ['Saved at (UTC)', saved.created], ['Executed source SHA-256', saved.sourceHash], ['Current source SHA-256', saved.currentSourceHash], ['Result SHA-256', saved.resultHash]])
+                        metadata.append(node('dt', label), node('dd', value));
+                    evidence.append(metadata);
+                    if (state === 'stale') evidence.append(node('p', 'Reevaluate this system before using its result as current evidence. The old receipt remains historical analysis.', 'small'));
+                } else evidence.append(node('p', 'The source is inspectable, but no local run was saved for this system when this map was captured.', 'small'));
+                b.append(evidence);
+                const files = document.createElement('details');
+                files.className = 'architecture-files';
+                files.append(node('summary', `${n.sources.length} listed source and test files · ${n.sourceCurrent ? 'current at capture' : 'restart required'}`));
                 for (const s of n.sources) {
-                    const a = node('a', s.name);
+                    const item = node('div', '', 'architecture-file'), a = node('a', s.path);
                     a.href = s.url;
-                    b.append(a);
+                    item.append(a, node('small', s.role + ' · SHA-256 ' + s.sha256));
+                    files.append(item);
                 }
+                const explore = node('button', 'Explore this system', 'secondary');
+                explore.addEventListener('click', () => select(n.id));
+                b.append(files, explore);
                 box.append(b);
             }
-            box.append(node('p', r.observed.length + ' actual saved evaluations in this source map. Inspect JSON for freshness and result hashes.'));
+            box.append(node('p', r.observed.length + ' systems have a saved evaluation in this snapshot. This is not a distributed trace or proof of live provider execution.', 'small'));
         }
         if (id === 'F07') {
             box.append(table(['Record', 'Before', 'Applied / restored'], [['Survivor company', r.before?.find(x => x.id === r.plan.keepId)?.company ?? 'Not applied', r.after?.find(x => x.id === r.plan.keepId)?.company ?? r.action], ['Protected fields', r.plan.protectedFields.join(', '), r.restored ? 'Restored exactly' : 'No reversal applied']]));
@@ -89,8 +112,13 @@ export async function mountFlagships(document, api, download, initialId = 'F01')
             box.append(table(['Journal account', 'Debit cents', 'Credit cents'], r.journal.map(j => [j.account, j.debitCents, j.creditCents])));
             box.append(node('p', r.balanced ? 'Draft journal balances. No invoice issued.' : 'Unbalanced draft.'));
         }
-        if (id === 'F11')
+        if (id === 'F11') {
             box.append(table(['Slot', 'UTC start', 'Decision'], r.decisions.map(d => [d.id, d.startUTC, d.action])));
+            box.append(node('h4', 'Separate local reservation exercise'));
+            box.append(node('p', r.reservationExercise.scope, 'small'));
+            box.append(table(['Fixed-calendar step', 'Local result', 'New local effects'], r.reservationExercise.steps.map(step => [step.step, step.action, step.newLocalEffects])));
+            box.append(node('p', `${r.reservationExercise.activeReservations} active local reservation · ${r.reservationExercise.auditEvents} audit events · 0 external actions`, 'small'));
+        }
         if (id === 'F12')
             box.append(table(['Regression case', 'Reference', 'Candidate'], r.cases.map(c => [c.id, c.reference.kind === 'value' ? c.reference.value : 'reject', c.passed ? 'matches' : fmt(c.actual)])));
     }

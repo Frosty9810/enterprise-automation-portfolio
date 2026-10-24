@@ -9,12 +9,26 @@ import { evaluateIndustryDepth } from './industry-depth.mjs';
 import { supportDesk, routingLab, mergePreview, journey, usageLedger, scheduleBoard, text } from './flagship-decisions.mjs';
 import { reconstructionChallenge } from './reconstruction.mjs';
 import { flagshipFixtures, flagshipDescriptions } from './flagship-fixtures.mjs';
+import { reservationExercise } from './reservation-ledger.mjs';
 const hash = x => createHash('sha256').update(typeof x === 'string' || Buffer.isBuffer(x) ? x : JSON.stringify(x)).digest('hex');
-export const flagshipScope = 'Twelve executable local business demonstrations with synthetic data. Reviews acknowledge analysis only; they do not authorize live operations. No hosted Salesforce, paid model inference, external messages, payments, publishing or calendar writes.';
-export function sourceManifest(id) { const row = flagshipDescriptions.find(r => r[0] === id); if (!row)
-    throw Error('Unknown flagship'); const paths = [...new Set([...row[5], 'flagship-suite.mjs', 'flagship-fixtures.mjs', 'server.mjs', 'flagship-acceptance.mjs', 'flagships-ui.mjs', 'flagships-ui.test.mjs', 'flagship-http.test.mjs'])]; const files = paths.map(path => ({ path, sha256: hash(readFileSync(new URL(path, import.meta.url))) })); return { hash: hash(files), files, scope: 'Explicit checked-in source/test manifest, not automatic discovery of every runtime dependency.' }; }
-export function sourceArtifact(id, index) { const row = flagshipDescriptions.find(r => r[0] === id); if (!row || !Number.isSafeInteger(index) || index < 0 || index >= row[5].length)
-    throw Error('Unknown source artifact'); return { path: fileURLToPath(new URL(row[5][index], import.meta.url)), name: row[5][index].split('/').at(-1) }; }
+export const flagshipScope = 'Twelve executable local business demonstrations with synthetic data. Reviews acknowledge analysis only; they do not authorize live operations. No hosted Salesforce, paid model inference, external messages, payments, publishing or provider calendar writes.';
+function sourcePaths(id) {
+    const row = flagshipDescriptions.find(r => r[0] === id);
+    if (!row) throw Error('Unknown flagship');
+    const shared = ['flagship-suite.mjs', 'flagship-fixtures.mjs', 'server.mjs', 'flagship-acceptance.mjs', 'flagships-ui.mjs', 'flagships.html', 'flagships.css', 'flagships-ui.test.mjs', 'flagship-http.test.mjs'];
+    // An explorer snapshot describes all twelve manifests, so bind all listed sources.
+    const mapped = id === 'F06' ? flagshipDescriptions.flatMap(r => r[5]) : [];
+    return [...new Set([...row[5], ...shared, ...mapped])];
+}
+export function sourceManifest(id, readSource = path => readFileSync(new URL(path, import.meta.url))) {
+    const files = sourcePaths(id).map(path => ({ path, sha256: hash(readSource(path)) }));
+    return { hash: hash(files), files, scope: 'Explicit checked-in source/test manifest, not automatic discovery of every runtime dependency.' };
+}
+export function sourceArtifact(id, index) {
+    const paths = sourcePaths(id);
+    if (!Number.isSafeInteger(index) || index < 0 || index >= paths.length) throw Error('Unknown source artifact');
+    return { path: fileURLToPath(new URL(paths[index], import.meta.url)), name: paths[index].split('/').at(-1) };
+}
 export function evaluateInvoice(input) {
     if (!input || typeof input !== 'object' || Array.isArray(input) || !Array.isArray(input.knownFingerprints) || input.knownFingerprints.some(x => typeof x !== 'string' || !/^[a-f0-9]{20}$/.test(x)))
         return Promise.reject(Error('Known fingerprints must be a list of 20-character hexadecimal invoice identities'));
@@ -44,8 +58,13 @@ export function flagshipSuite(db, manifest = sourceManifest) {
     const receipt = id => { const row = db.prepare('SELECT * FROM flagship_receipts WHERE id=?').get(text(id, 'Receipt')); if (!row)
         throw Error('Unknown receipt'); return row; };
     const view = row => ({ receiptId: row.id, toolId: row.tool, input: JSON.parse(row.input), result: JSON.parse(row.result), sourceHash: row.source_hash, created: row.created, review: db.prepare('SELECT actor FROM flagship_reviews WHERE receipt=?').get(row.id) ?? null, externalActions: 0, scope: flagshipScope });
-    const fresh = row => { if (current(row.tool).hash !== row.source_hash)
-        throw Error('Receipt source changed'); };
+    const fresh = row => {
+        if (current(row.tool).hash !== row.source_hash) throw Error('Receipt source changed');
+        if (row.tool === 'F06') {
+            for (const node of JSON.parse(row.result).nodes)
+                if (current(node.id).hash !== node.sourceHash) throw Error('Mapped source changed; reevaluate the explorer');
+        }
+    };
     const tx = fn => { db.exec('BEGIN IMMEDIATE'); try {
         const value = fn();
         db.exec('COMMIT');
@@ -56,9 +75,9 @@ export function flagshipSuite(db, manifest = sourceManifest) {
         throw error;
     } };
     const suite = {
-        catalog() { return flagshipDescriptions.map(([id, title, problem, discipline, deepLink, paths]) => ({ id, title, problem, discipline, deepLink, sources: paths.map((path, index) => ({ name: path.split('/').at(-1), url: `/api/flagships/source/${id}/${index}` })), source: loaded.get(id), sourceCurrent: manifest(id).hash === loaded.get(id).hash, status: 'local_demo', integrationStatus: 'live_acceptance_pending' })); },
+        catalog() { return flagshipDescriptions.map(([id, title, problem, discipline, deepLink]) => ({ id, title, problem, discipline, deepLink, sources: loaded.get(id).files.map(({path, sha256}, index) => ({ path, sha256, name: path.split('/').at(-1), role: /(?:\.test\.mjs$|\/tests\/)/.test(path) ? 'test' : path.includes('fixture') ? 'fixture' : 'implementation', url: `/api/flagships/source/${id}/${index}?sha256=${sha256}` })), source: loaded.get(id), sourceCurrent: manifest(id).hash === loaded.get(id).hash, status: 'local_demo', integrationStatus: 'live_acceptance_pending' })); },
         example(id) { current(id); return structuredClone(flagshipFixtures[id]); },
-        architecture() { return { action: 'source_map', nodes: suite.catalog().map(p => ({ id: p.id, title: p.title, sourceHash: p.source.hash, sourceCurrent: p.sourceCurrent, sources: p.sources })), edges: flagshipDescriptions.map(([id]) => ({ from: id, to: 'durable_analysis_receipt', kind: 'authored_wiring' })), observed: db.prepare('SELECT r.* FROM flagship_receipts r JOIN (SELECT tool,MAX(rowid) AS last FROM flagship_receipts GROUP BY tool) latest ON r.rowid=latest.last').all().map(r => ({ toolId: r.tool, receiptId: r.id, sourceCurrent: r.source_hash === manifest(r.tool).hash, resultHash: hash(r.result), created: r.created })), externalActions: 0, scope: 'Edges describe authored wiring. Observed entries identify actual saved evaluations and explicitly expose stale source evidence.' }; },
+        architecture() { return { action: 'source_map', capturedAt: new Date().toISOString(), nodes: suite.catalog().map(p => ({ id: p.id, title: p.title, sourceHash: p.source.hash, sourceCurrent: p.sourceCurrent, sources: p.sources })), edges: flagshipDescriptions.map(([id]) => ({ from: id, to: 'durable_analysis_receipt', kind: 'authored_wiring' })), observed: db.prepare('SELECT r.* FROM flagship_receipts r JOIN (SELECT tool,MAX(rowid) AS last FROM flagship_receipts GROUP BY tool) latest ON r.rowid=latest.last').all().map(r => ({ toolId: r.tool, receiptId: r.id, sourceHash: r.source_hash, currentSourceHash: manifest(r.tool).hash, sourceCurrent: r.source_hash === manifest(r.tool).hash, resultHash: hash(r.result), created: r.created })), externalActions: 0, scope: 'Point-in-time snapshot. Edges describe authored wiring, not traces. Observed entries identify the latest saved local evaluation per system at capture time and explicitly expose stale source evidence. No complete dependency discovery or provider execution claim.' }; },
         async evaluate(id, input) {
             const source = current(id);
             if (!input || typeof input !== 'object' || Array.isArray(input))
@@ -95,6 +114,8 @@ export function flagshipSuite(db, manifest = sourceManifest) {
                     if (Object.keys(input).length)
                         throw Error('Source explorer takes no fields');
                     result = suite.architecture();
+                    if (result.nodes.some(node => !node.sourceCurrent))
+                        throw Error('Mapped source changed since server startup; restart the lab and reevaluate');
                     break;
                 case 'F07':
                     result = mergePreview(input);
@@ -109,7 +130,7 @@ export function flagshipSuite(db, manifest = sourceManifest) {
                     result = usageLedger(input);
                     break;
                 case 'F11':
-                    result = { ...scheduleBoard(input), industryChecks: { maintenance: evaluateIndustryDepth('PM-01'), commitments: evaluateIndustryDepth('EA-01') } };
+                    result = { ...scheduleBoard(input), reservationExercise: reservationExercise(), industryChecks: { maintenance: evaluateIndustryDepth('PM-01'), commitments: evaluateIndustryDepth('EA-01') } };
                     break;
                 case 'F12':
                     result = reconstructionChallenge(input);

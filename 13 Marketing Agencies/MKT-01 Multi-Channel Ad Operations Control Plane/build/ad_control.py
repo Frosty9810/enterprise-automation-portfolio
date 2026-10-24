@@ -2,7 +2,9 @@
 """Canonical ad metrics and approval-only optimization recommendations."""
 
 import json
+import math
 from dataclasses import asdict, dataclass
+from decimal import Decimal
 from hashlib import sha256
 
 
@@ -18,9 +20,72 @@ class Snapshot:
     attribution_completeness: float
 
 
+def _finite_number(value: object) -> bool:
+    if type(value) not in (int, float):
+        return False
+    try:
+        return math.isfinite(value)
+    except OverflowError:
+        return False
+
+
+def _hold(snapshot: dict, invalid_fields: list[str], reason: str) -> dict:
+    return {
+        "snapshot": snapshot,
+        "analysis_version": "ad-review-v2",
+        "idempotency_key": None,
+        "invalid_fields": invalid_fields,
+        "metrics": {"roas": None, "pacing": None},
+        "decision": {
+            "action": "data_quality_review",
+            "reasons": [reason],
+            "requires_approval": True,
+            "automatic_budget_change_allowed": False,
+        },
+    }
+
+
 def analyze(s: Snapshot) -> dict:
+    raw = asdict(s)
+    identity_fields = {"platform", "campaign_id"}
+    invalid_fields = [
+        name
+        for name, value in raw.items()
+        if name in identity_fields and (not isinstance(value, str) or not value.strip())
+    ]
+    # Sanitize before returning invalid evidence: no NaN/Infinity or arbitrary
+    # object can leak into a JSON snapshot that a downstream service persists.
+    snapshot = {
+        name: value if isinstance(value, str) else None
+        for name, value in raw.items()
+        if name in identity_fields
+    }
+    for name, value in raw.items():
+        if name in identity_fields:
+            continue
+        finite = _finite_number(value)
+        snapshot[name] = value if finite else None
+        if (
+            not finite
+            or value < 0
+            or (name in {"budget", "elapsed_ratio"} and value == 0)
+            or (name in {"elapsed_ratio", "attribution_completeness"} and value > 1)
+        ):
+            invalid_fields.append(name)
+    if invalid_fields:
+        return _hold(snapshot, invalid_fields, "invalid_snapshot")
+
+    denominator = s.budget * s.elapsed_ratio
+    if not _finite_number(denominator) or denominator <= 0:
+        return _hold(snapshot, [], "unrepresentable_derived_metric")
     roas = s.revenue / s.spend if s.spend else None
-    pacing = s.spend / (s.budget * s.elapsed_ratio) if s.budget and s.elapsed_ratio else None
+    pacing = s.spend / denominator
+    if (
+        not _finite_number(pacing)
+        or (s.spend > 0 and pacing == 0)
+        or (roas is not None and (not _finite_number(roas) or (s.revenue > 0 and roas == 0)))
+    ):
+        return _hold(snapshot, [], "unrepresentable_derived_metric")
     reasons = []
     if s.attribution_completeness < 0.8:
         action = "data_quality_review"
@@ -31,15 +96,29 @@ def analyze(s: Snapshot) -> dict:
         if roas is not None and roas < s.baseline_roas * 0.7:
             reasons.append("roas_below_baseline")
         action = "optimization_review" if reasons else "monitor"
-    key = sha256(f"{s.platform}:{s.campaign_id}:{s.spend}:{s.revenue}".encode()).hexdigest()[:20]
+    canonical = {}
+    for name, value in snapshot.items():
+        if name in identity_fields:
+            canonical[name] = value
+        else:
+            exact = int(value) if isinstance(value, float) and value.is_integer() else value
+            text = format(Decimal(str(exact)), "f")
+            canonical[name] = text.rstrip("0").rstrip(".") if "." in text else text
+            if value == 0:
+                canonical[name] = "0"
+    encoded = json.dumps(canonical, sort_keys=True, separators=(",", ":"), allow_nan=False)
+    key = "ad-v2-" + sha256(encoded.encode()).hexdigest()[:32]
     return {
-        "snapshot": asdict(s),
+        "snapshot": snapshot,
+        "analysis_version": "ad-review-v2",
         "idempotency_key": key,
+        "invalid_fields": [],
         "metrics": {"roas": roas, "pacing": pacing},
         "decision": {
             "action": action,
             "reasons": reasons,
-            "requires_approval": action == "optimization_review",
+            "requires_approval": action != "monitor",
+            "automatic_budget_change_allowed": False,
         },
     }
 

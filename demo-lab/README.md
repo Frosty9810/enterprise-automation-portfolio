@@ -1,10 +1,12 @@
 # Local portfolio demo lab
 
-**All projects:** open **http://127.0.0.1:5680/projects** for the unified searchable inventory. Every entry opens its matching project across automation, life/data, engineering, business-system and research collections. It lists 73 entries, including three blueprint-only designs; overlapping views are not counted as independent production products. [Complete status and remaining work](../PROJECT-INVENTORY.md).
+**All projects:** open **http://127.0.0.1:5680/projects** for the unified searchable inventory. Every entry opens its matching project across automation, life/data, engineering, business-system and research collections. It lists 73 entries, including two blueprint-only designs; overlapping views are not counted as independent production products. [Complete status and remaining work](../PROJECT-INVENTORY.md).
 
 **[AtlasGraph](ATLASGRAPH.md):** open **http://127.0.0.1:5680/research?project=AtlasGraph**. Compile structured synthetic sources, search/read/follow the graph, collect exact versioned citations and review persisted failed paths. This is a partial local implementation of the research blueprint, without semantic model retrieval or provider calls.
 
-**[TrustGate](TRUSTGATE.md):** open **http://127.0.0.1:5680/trustgate**. Inspect source-to-argument bindings, confidentiality/integrity holds, local review and the actual SQLite effects of three fixed tools. The registry and labels are server-held synthetic fixtures, not authenticated user permissions. No provider, message, payment or Internet publishing tool exists. The three other research entries expose their design and pending scope.
+**[ChronosRank](CHRONOSRANK.md):** open **http://127.0.0.1:5680/chronosrank**. Append synthetic memory events, choose an as-of time and inspect why facts were retrieved or excluded. SQLite persistence, source receipts and feedback form the local scope. No trained model, vector retrieval or calibrated accuracy claim.
+
+**[TrustGate](TRUSTGATE.md):** open **http://127.0.0.1:5680/trustgate**. Inspect source-to-argument bindings, confidentiality/integrity holds, local review and the actual SQLite effects of three fixed tools. The registry and labels are server-held synthetic fixtures, not authenticated user permissions. No provider, message, payment or Internet publishing tool exists. DocksideSLM and VeilRAG expose their design and pending scope.
 
 **[Twelve-system collection](TWELVE-SYSTEMS.md):** open **http://127.0.0.1:5680/flagships**. Run twelve distinct business decision engines, inspect their source passports, cross-check all twelve and export acknowledged analysis. Reproduce the acceptance report with `node demo-lab/run-flagships.mjs`. Live providers remain pending.
 

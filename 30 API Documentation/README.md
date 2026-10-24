@@ -23,8 +23,9 @@ All routes below use GET. Normal JSON responses use `Cache-Control: no-store`.
 | `/health` | `{status: "ok", mode: "local-demo"}` |
 | `/api/projects` | Automation catalog, engine label, simulator mode and workflow busy flag |
 | `/api/project-inventory` | Unified array of collection entries with ID, status, scope and destination link |
-| `/api/research/catalog` | Five research tracks; AtlasGraph and TrustGate are partial local builds, the other three blueprint-only |
+| `/api/research/catalog` | Five research tracks; AtlasGraph, TrustGate and ChronosRank are partial local builds, the other two blueprint-only |
 | `/api/trustgate/catalog` | Closed tool schemas, server-held synthetic sources, actor grants and runnable proposal scenarios |
+| `/api/chronosrank/catalog` | Local memory scope, synthetic event stream and retrieval example |
 | `/api/research/example` | Bundled AtlasGraph input object containing `compile` and `answer` examples |
 | `/api/research/blueprint?project=<name>` | Allowlisted blueprint text for AtlasGraph, ChronosRank, TrustGate, DocksideSLM or VeilRAG; unknown name gives 404 |
 | `/api/showcase/:id` | Project presentation/profile; unknown ID gives 404 |
@@ -77,7 +78,7 @@ Controllers: [flagship receipts](../demo-lab/flagship-suite.mjs), [recovery](../
 
 ## AtlasGraph research operations
 
-These POST routes use the same Host/Origin, intent-header and 32,768-byte HTTP body boundary. They dispatch to the [AtlasGraph controller](../demo-lab/atlasgraph-core.mjs). TrustGate has a separate gateway described below; the three blueprint-only tracks have no runnable API. The [example JSON](../demo-lab/atlasgraph-example.json) supplies complete compile/answer payloads. Compile its `compile` object first, then submit its `answer` object.
+These POST routes use the same Host/Origin, intent-header and 32,768-byte HTTP body boundary. They dispatch to the [AtlasGraph controller](../demo-lab/atlasgraph-core.mjs). TrustGate has a separate gateway described below; ChronosRank has its own memory API; the two blueprint-only tracks have no runnable API. The [example JSON](../demo-lab/atlasgraph-example.json) supplies complete compile/answer payloads. Compile its `compile` object first, then submit its `answer` object.
 
 | Route | JSON fields and result |
 |---|---|
@@ -95,6 +96,26 @@ These POST routes use the same Host/Origin, intent-header and 32,768-byte HTTP b
 Tenant labels and approval flags are supplied data, not authenticated permissions. Compilation checks unique identities, immutable source versions, exact claim substrings and reference quotes naming existing approved target pages. It accepts up to 12 sources and 32 pages total. A changed source version/content produces a different snapshot; old receipts remain inspectable with `stale: true`. Exact query replay retains its original evidence; use a fresh request ID to collect current evidence after source changes. Reusing an ID for a different query fails.
 
 The `answer` operation collects deterministic graph evidence for explicit claim keys. It returns `supported` or abstains for missing start/evidence, contradictory claims, hop limit or evidence-byte budget; it does not generate or semantically verify an answer. The budget measures serialized UTF-8 citation bytes, not model tokens. Abstention creates a pending Error Book entry. Accepting a correction does not edit sources; compile a reviewed new source revision separately. Controller validation errors, absent tenant/page/receipt and identity conflicts are returned by this HTTP adapter as **400 `{error}`**, rather than exposing the controller's internal error codes as HTTP statuses. An unknown research POST operation returns 404. See [core adverse tests](../demo-lab/atlasgraph.test.mjs) and [UI interaction tests](../demo-lab/research-ui.test.mjs).
+
+## ChronosRank local memory operations
+
+Open `/chronosrank` for the workbench. GET `/api/chronosrank/catalog` supplies `scope` and an `example` with `events` and `retrieval`. POST the example events to `/api/chronosrank/append` in order, then its retrieval object to `/api/chronosrank/retrieve`. These routes share the loopback, intent-header and body-size boundary above. All local controller errors return 400 `{error}`; unknown operations return 404.
+
+| POST route suffix under `/api/chronosrank/` | Exact input |
+|---|---|
+| `append` — remember | `{commandId,tenant,kind:"remember",memoryId,entity,text,provenance:{sourceId,quote},recordedAt,validFrom,expiresAt}` |
+| `append` — supersede | Same memory fields with `kind:"supersede"` and `supersedes` naming a memory of the same tenant/entity |
+| `append` — expire | `{commandId,tenant,kind:"expire",memoryId,recordedAt}` |
+| `retrieve` | `{requestId,tenant,entity,query,asOf,threshold,limit}` |
+| `receipt` | `{tenant,receiptId}` |
+| `feedback` | `{commandId,tenant,receiptId,outcome:"useful" or "not-useful",note}` |
+| `history`, `audit`, `verify-audit` | `{tenant}` |
+
+Timestamps use canonical UTC milliseconds, such as `2026-10-22T12:00:00.000Z`; `expiresAt` is null or a canonical timestamp. `threshold` is an integer from 1 to 100 measuring exact query-token coverage, not a calibrated probability; `limit` is an integer from 1 to 10. Retrieval applies the supplied `asOf` time to both known events and validity intervals. Caller-supplied tenant/entity labels and provenance do not authenticate a user or verify external truth. The local source quote must contain the supplied memory text exactly.
+
+Each tenant has a knowledge watermark: the latest recorded event time or saved retrieval `asOf`, whichever is later. New memory events cannot precede it; a query into the future advances it. This local ingestion policy prevents later backdating into previously observed windows. It does not establish a trusted wall clock. Append the example timeline before trying its future query cases; unchanged commands can still replay after the watermark advances.
+
+Commands and retrieval request IDs are immutable within their tenant: an identical repeat replays its original record, and conflicting payloads are rejected. Saved receipts identify their original ledger snapshot; they do not become a new answer when later memory arrives. Feedback records a supplied judgment without modifying memory or training a model. See [the full memory contract and limitations](../demo-lab/CHRONOSRANK.md) and [HTTP adverse-case tests](../demo-lab/chronosrank-http.test.mjs). No trained reranker, vector store, authenticated service, provider call or latency result is exposed by this API.
 
 ## TrustGate local tool operations
 

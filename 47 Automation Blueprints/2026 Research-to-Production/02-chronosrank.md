@@ -1,5 +1,7 @@
 # ChronosRank — A Reasoning-Aware Memory Layer for Long-Running Agents
 
+**Implementation status — October 22:** [Local memory workbench](../../demo-lab/CHRONOSRANK.md) implements SQLite memory events, as-of filtering, deterministic token-overlap scoring, threshold abstention, source receipts and append-only feedback. The model-based system described below remains a research target: no cross-encoder training, vector retrieval, calibrated probability, benchmark improvement or concurrent p95 result is claimed.
+
 ## Project title and concept
 
 ChronosRank gives agents useful long-term memory instead of a pile of semantically similar notes. A compact reranker understands temporal order, cause and effect, conversation context, and entity references, then returns only the memories that are actually needed for the current task.

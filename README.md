@@ -1,10 +1,12 @@
 # Gabriel Acosta — automation engineering portfolio
 
-**[Complete project inventory and missing work](PROJECT-INVENTORY.md)** — open the local `/projects` page to search all 73 named entries: 27 automation demos, 20 life/data tools, nine engineering prototypes, twelve-system views and five research tracks. The collections share components; three research entries remain designs. Current work is in the showcase PR and remains unmerged into default main.
+**[Complete project inventory and missing work](PROJECT-INVENTORY.md)** — open the local `/projects` page to search all 73 named entries: 27 automation demos, 20 life/data tools, nine engineering prototypes, twelve-system views and five research tracks. The collections share components; two research entries remain designs. Current work is in the showcase PR and remains unmerged into default main.
 
 **[AtlasGraph local build](demo-lab/ATLASGRAPH.md)** — open `http://127.0.0.1:5680/research?project=AtlasGraph` to compile versioned synthetic pages, follow a two-hop evidence path, inspect exact citations and retain failed paths for correction. SQLite restart/replay and stale evidence are tested; semantic retrieval, real source adapters and research baseline comparisons remain pending.
 
 **[TrustGate local tool gateway](demo-lab/TRUSTGATE.md)** — open `http://127.0.0.1:5680/trustgate` to resolve tool arguments from registered synthetic sources, inspect policy holds, review proposed writes and execute three narrow SQLite tools. Outbound providers and authenticated agent integration remain outside this partial research build.
+
+**[ChronosRank local memory workbench](demo-lab/CHRONOSRANK.md)** — open `http://127.0.0.1:5680/chronosrank` to append synthetic memory events, retrieve as of a chosen time, inspect excluded facts and preserve source receipts with feedback. Token-overlap scores are deterministic; no trained reranker or calibrated probability is claimed.
 
 **[Twelve executable business systems](demo-lab/TWELVE-SYSTEMS.md)** — open `http://127.0.0.1:5680/flagships` to explore Salesforce operations, recovery, grounded support, routing evaluation, invoice controls, architecture evidence, merge previews, product governance, consent, billing, scheduling and reconstruction. Cross-check all twelve, edit evidence and export reviewed local analysis. These are synthetic local demonstrations; live integration and business-impact acceptance remain separate.
 
@@ -68,7 +70,7 @@ The runner preserves independent exit codes, strips provider credentials from de
 
 ## Deeper library
 
-The original 50 numbered sections remain available for architecture, SOPs and operating material. [MASTER-INDEX.md](MASTER-INDEX.md) distinguishes populated references from partial sections; [COMPLETION-ROADMAP.md](COMPLETION-ROADMAP.md) tracks unfinished work. All five research designs remain available: AtlasGraph and TrustGate have partial local implementations, while ChronosRank, DocksideSLM and VeilRAG remain blueprint-only.
+The original 50 numbered sections remain available for architecture, SOPs and operating material. [MASTER-INDEX.md](MASTER-INDEX.md) distinguishes populated references from partial sections; [COMPLETION-ROADMAP.md](COMPLETION-ROADMAP.md) tracks unfinished work. All five research designs remain available: AtlasGraph, TrustGate and ChronosRank have partial local implementations, while DocksideSLM and VeilRAG remain blueprint-only.
 
 GitHub: [Frosty9810](https://github.com/Frosty9810). [Public profile repository](https://github.com/Frosty9810/Frosty9810).
 

@@ -7,7 +7,7 @@ import { flagshipDescriptions } from './flagship-fixtures.mjs';
 const industryTracks = new Set(['PM-01', 'CON-01', 'MED-01', 'LEGAL-01', 'INS-01', 'EA-01']);
 const research = [
   ['AtlasGraph', 'Compile supplied operational evidence into a versioned graph and inspect retrieval paths.', 'partial-local', 'Local deterministic graph compiler, SQLite evidence versions and graph retrieval. No LLM, dense-vector baseline, live provider or production integration. The full research blueprint remains unfinished.'],
-  ['ChronosRank', 'A planned memory layer with temporal retrieval and compact reranking.', 'blueprint-only', 'Design only. Distillation, reranker training, temporal memory and measured retrieval comparisons are not implemented.'],
+  ['ChronosRank', 'Inspect temporal memory retrieval, supersession, source receipts and feedback.', 'partial-local', 'Local SQLite memory events with as-of filtering, deterministic token scores and threshold abstention. No trained reranker, calibrated probability, vector store, authentication or measured research comparison. The full research blueprint remains unfinished.'],
   ['TrustGate', 'Inspect source-bound arguments, policy holds, reviewed local tools and durable execution receipts.', 'partial-local', 'Local gateway for three fixed synthetic SQLite tools, server-held source labels, review and replay controls. No authenticated agent runtime, external action, LM screener or general prompt-injection benchmark. The full research blueprint remains unfinished.'],
   ['DocksideSLM', 'Planned offline document intelligence on warehouse edge hardware.', 'blueprint-only', 'Design only. Model compression, end-device execution and measured hardware quality or latency are not implemented.'],
   ['VeilRAG', 'A planned reversible privacy proxy for external language models.', 'blueprint-only', 'Design only. The reversible privacy pipeline, retrieval integration and leakage evaluation are not implemented.'],
@@ -45,7 +45,7 @@ export function portfolioInventory() {
     })),
     ...research.map(([id, summary, status, scope]) => ({
       collection: 'research', id, title: id, summary, status, scope,
-      href: `${id==='TrustGate'?'/trustgate':'/research'}?project=${encodeURIComponent(id)}`,
+      href: `${id==='TrustGate'?'/trustgate':id==='ChronosRank'?'/chronosrank':'/research'}?project=${encodeURIComponent(id)}`,
     })),
   ];
 }

@@ -2,7 +2,7 @@
 
 > Status: **Active** — five research-to-production AI engineering blueprints completed.
 
-Implementation status: [AtlasGraph](../demo-lab/ATLASGRAPH.md) and [TrustGate](../demo-lab/TRUSTGATE.md) now have bounded local builds. ChronosRank, DocksideSLM and VeilRAG remain blueprint-only. The completed design documents do not establish full research implementation or measured production results; see the [current inventory](../PROJECT-INVENTORY.md).
+Implementation status: [AtlasGraph](../demo-lab/ATLASGRAPH.md) and [TrustGate](../demo-lab/TRUSTGATE.md) now have bounded local builds. [ChronosRank](../demo-lab/CHRONOSRANK.md) adds a bounded local temporal memory build. DocksideSLM and VeilRAG remain blueprint-only. The completed design documents do not establish full research implementation or measured production results; see the [current inventory](../PROJECT-INVENTORY.md).
 
 ## Purpose
 

@@ -2,7 +2,7 @@
 
 > **Status:** Blueprint-ready. These are reference projects, not client engagements. Resume impact bullets contain placeholders until measured by a completed implementation.
 
-Local implementation progress: [AtlasGraph](../../demo-lab/ATLASGRAPH.md) has a structured evidence compiler and graph traversal; [TrustGate](../../demo-lab/TRUSTGATE.md) has a source-bound gateway for three synthetic SQLite tools. Both are partial builds with explicit remaining scope. The other three concepts remain designs. None of these local fixtures establishes a paper reproduction, model benchmark or production result.
+Local implementation progress: [AtlasGraph](../../demo-lab/ATLASGRAPH.md) has a structured evidence compiler and graph traversal; [TrustGate](../../demo-lab/TRUSTGATE.md) has a source-bound gateway for three synthetic SQLite tools. [ChronosRank](../../demo-lab/CHRONOSRANK.md) adds a local temporal memory ledger and deterministic retrieval. All three are partial builds with explicit remaining scope. The other two concepts remain designs. None of these local fixtures establishes a paper reproduction, model benchmark or production result.
 
 ## Research themes
 

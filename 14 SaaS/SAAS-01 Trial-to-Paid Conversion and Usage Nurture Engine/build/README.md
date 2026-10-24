@@ -69,6 +69,14 @@ Creates:
 
 The script is idempotent (`CREATE TABLE IF NOT EXISTS`, `CREATE INDEX IF NOT EXISTS`, `CREATE OR REPLACE` for the trigger function and view) and wrapped in a transaction.
 
+## Python trial-window and evidence contract
+
+The Python rollup includes only the selected account's recognized events between trial start and the full scoring day, inclusive in UTC. Pre-trial history and next-day events cannot qualify an account; fractional seconds are preserved. Aware timestamps normalize to UTC and legacy naive datetimes explicitly mean UTC. Relevant malformed timestamps, non-calendar dates and reversed scoring windows raise ValueError. Unknown event types and other accounts are excluded before inspecting timestamps. Event-ID deduplication remains an upstream/persistence responsibility; this function does not make a raw replay-safe ledger.
+
+Score, tier and milestone consumers share validation: counts are nonnegative integers (no booleans, fractions or nonfinite values), trial day is a positive integer, and the no-data flag must agree with timestamp evidence. Positive counts require an event timestamp within the scored trial window. A valid empty rollup scores zero, has no hit milestones and cannot be high intent. Malformed or contradictory snapshots raise ValueError before producing a sales tier or personalization payload; adapters must route errors to their intake review path. Existing adapters that construct snapshots directly must supply consistent evidence.
+
+The score uses illustrative fixed policy weights, not an observed conversion probability. High intent requires at least three integrations and two seats on days 1–9. This stateless reference neither persists sticky tiers nor creates opportunities/sends messages. The separate n8n export and provider adapters have not been updated or accepted by these Python tests. From the repository root run `python -m unittest discover -s tests -p 'test_trial_usage*.py' -v`.
+
 ## Required credentials / environment variables
 
 | Credential | Used by | Notes |

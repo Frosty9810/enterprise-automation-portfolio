@@ -44,7 +44,7 @@ The source path and local wrapper JSON were checked for every row. Open the root
 | ACC-01 | Accounts Payable Match and Cash Control | [Inspect](16%20Accounting/ACC-01%20Accounts%20Payable%20Match%20and%20Cash%20Control/build/README.md) |
 | CS-01 | Support Quality and Knowledge Feedback Loop | [Inspect](17%20Customer%20Support/CS-01%20Support%20Quality%20and%20Knowledge%20Feedback%20Loop/build/README.md) |
 | IMP-01 | Import Company Agent Operating System | [Inspect](48%20Enterprise%20Workflows/IMP-01%20Import%20Company%20Agent%20Operating%20System/README.md) |
-| PM-01 | Maintenance triage and access review | [Inspect](demo-lab/extra-scenarios.mjs) |
+| PM-01 | Maintenance operations with access and reviewed local dispatch | [Runbook](demo-lab/MAINTENANCE.md) |
 | EA-01 | Commitments and owner review | [Inspect](demo-lab/extra-scenarios.mjs) |
 | CON-01 | Subcontractor Readiness and Change Approval Review | [Inspect](demo-lab/roadmap-scenarios.mjs) |
 | MED-01 | Referral Completeness and Authorization Staff Queue | [Inspect](demo-lab/roadmap-scenarios.mjs) |
@@ -131,7 +131,7 @@ Each ID below has a bounded local demo/build artifact set. The broader end-to-en
 
 | ID | Industry | Remaining flagship scope |
 |---|---|---|
-| [PM-01](demo-lab/project-builds/PM-01/README.md) | Property Management | Full lease-to-maintenance flow, vendor/access-window ownership and provider acceptance |
+| [PM-01](demo-lab/project-builds/PM-01/README.md) | Property Management | Local maintenance intake, access consent, reviewed appointment and receiver recovery now implemented ([runbook](demo-lab/MAINTENANCE.md)); full lease lifecycle, authenticated occupants/vendors, live clock/escalation delivery, real property/provider acceptance and recordings remain open |
 | [CON-01](demo-lab/project-builds/CON-01/README.md) | Construction | Complete compliance/change-order pipeline and legacy document approval provenance |
 | [MED-01](demo-lab/project-builds/MED-01/README.md) | Medical | Complete synthetic referral/prior-authorization work queue and controlled intake integration |
 | [LEGAL-01](demo-lab/project-builds/LEGAL-01/README.md) | Legal | Complete matter intake/conflict/deadline workflow and reviewed jurisdiction rules |

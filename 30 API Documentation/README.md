@@ -14,12 +14,19 @@ Base URL: `http://127.0.0.1:5680`. The [server implementation](../demo-lab/serve
 
 The service has no user login, tenant authorization layer or public webhook authentication. Other local processes can supply these headers. Do not expose it beyond loopback or submit private evidence. Verify the boundary with [HTTP adverse-case tests](../demo-lab/http-boundary.test.mjs).
 
+## PM-01 maintenance operations
+
+Open `/maintenance?project=PM-01` and follow the [maintenance runbook](../demo-lab/MAINTENANCE.md). POST prefix `/api/maintenance/` exposes `intake`, `grant-access`, `revoke-access`, `propose`, `review`, `dispatch`, `reconcile`, `cancel`, `complete`, `receipt`, `history`, `state`, `audit` and `verify-audit`. All mutations require immutable `commandId`; selectors are `tenant` and, for saved cases, `caseId`. Grant requires occupant `actor` and canonical UTC `windows`; review requires independent `reviewer`, exact `expectedHash`, `decision` and `note`. Dispatch uses an operator `actor` and fixed `receiverProfileId` (`online`, `offline`, `lose-response`); cancel/complete require `expectedRevision` and a note. Full strict DTOs are exercised by [HTTP tests](../demo-lab/maintenance-http.test.mjs).
+
+Known emergency flags/text hold routine dispatch. Routine work needs occupant consent and a reviewed vendor/window proposal; dispatch rechecks saved authority and booking conflicts. Offline work remains queued; an uncertain acknowledgement requires actual local receiver reconciliation. State exposes bookings, outbox and receiver records; audit verification checks a local anchored chain, not an external signature. Actor/tenant labels are fixtures, not authentication. The clock is a fixed synthetic snapshot, not live SLA monitoring. There is no tenant/vendor contact, real emergency response or proof of a physical repair; the full industry flagship remains partial.
+
 ## Read routes
 
 All routes below use GET. Normal JSON responses use `Cache-Control: no-store`.
 
 | Route | Result |
 |---|---|
+| `/api/maintenance/catalog` | Fixed synthetic clock, lease/vendor/actor fixtures, access windows and intake scenarios |
 | `/health` | `{status: "ok", mode: "local-demo"}` |
 | `/api/projects` | Automation catalog, engine label, simulator mode and workflow busy flag |
 | `/api/project-inventory` | Unified array of collection entries with ID, status, scope and destination link |

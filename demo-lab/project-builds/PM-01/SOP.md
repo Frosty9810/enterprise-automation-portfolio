@@ -1,10 +1,16 @@
 # PM-01 Maintenance triage and access review
 
 Status: **Populated — bounded local implementation; integration acceptance pending.**
-Version: 1.0 · Owner: portfolio maintainer
+Version: 1.1 · Owner: portfolio maintainer
 
 **Video Walkthrough:** _Pending recording — see script in this SOP's project folder._
 **Real Build Artifacts:** [Runbook and build files →](build/README.md)
+
+## Added procedure: durable local maintenance
+
+Use the [maintenance runbook](../../MAINTENANCE.md) for `/maintenance?project=PM-01`. Save a synthetic intake. Known emergency flags/text stop routine dispatch for human emergency procedure; this app sends no emergency notification. Routine requests need occupant fixture access consent, a saved vendor/window proposal and approval by a distinct reviewer label of its exact hash. Inspect the saved appointment before dispatch. Offline delivery stays queued; a lost acknowledgement requires actual receiver reconciliation. Cancel with the current revision to release the local booking, or record operator-reported completion without claiming a physical repair. Access revocation invalidates routine authority and may require human follow-up after receiver handoff.
+
+Recover saved cases and inspect bookings, outbox, receiver records and audit verification. The SLA uses the catalog's fixed synthetic clock. No background monitor, authenticated tenant, real vendor communication or property-system write is installed. The legacy triage/n8n procedure below retains its original no-dispatch contract.
 
 ## 1. Purpose
 

@@ -2,6 +2,10 @@
 
 Status: **Populated — local script and copied workflow available; PostgreSQL execution pending.**
 
+## Durable maintenance workbench
+
+The [separate maintenance controller and runbook](../../../MAINTENANCE.md) add SQLite intake, consent, reviewed bookings and receiver recovery. Start the lab and open `/maintenance?project=PM-01`, or run `node demo-lab/run-maintenance.mjs`. Fixed scenario time, synthetic labels and a local receiver are explicit boundaries. This proposed PostgreSQL schema is not the controller's runtime schema. The n8n script below tests the narrower triage-only contract.
+
 ## Files
 
 - `demo.js`: imports the existing business implementation and executes assertions against synthetic fixtures.
@@ -24,7 +28,7 @@ No external credentials are needed for this local run. A hosted deployment needs
 
 ## Expected evidence
 
-Compare emergency escalation, missing access and approved access. Dispatch stays disabled. Keep actual failure output when an assertion fails. Do not replace it with a success claim. See [SOP](../SOP.md) and [recording script](../walkthrough-script.md).
+The legacy triage script compares emergency escalation, missing access and approved access; its `dispatchAllowed` stays false. Reproduce reviewed local dispatch and uncertain acknowledgement recovery separately using the maintenance runbook. Keep actual failure output when an assertion fails. Do not replace it with a success claim. See [SOP](../SOP.md) and [recording script](../walkthrough-script.md).
 
 ---
 *Part of the Enterprise Automation Portfolio. See [project overview](../README.md).*

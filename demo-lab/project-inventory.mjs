@@ -22,11 +22,13 @@ export function portfolioInventory() {
     ...projects.map(project => ({
       collection: 'automation', id: project.id, title: project.title,
       summary: project.demo || 'Inspect the supplied local business scenario and its decision.',
-      scope: industryTracks.has(project.id)
+      scope: project.id === 'PM-01'
+        ? 'Partial industry build: durable synthetic maintenance intake, deterministic emergency holds, access consent, reviewed vendor proposals and local dispatch recovery. Fixed fixture clock, unauthenticated actor labels; real property/provider acceptance remains unfinished.'
+        : industryTracks.has(project.id)
         ? 'Partial industry build: this bounded synthetic scenario is executable; the full industry flagship and live provider acceptance remain unfinished.'
         : 'Executable local scenario with synthetic evidence. Wrapper presence does not establish hosted integration or production acceptance.',
       status: industryTracks.has(project.id) ? 'partial-local' : 'local-demo',
-      href: `/?project=${encodeURIComponent(project.id)}`,
+      href: `${project.id === 'PM-01' ? '/maintenance' : '/'}?project=${encodeURIComponent(project.id)}`,
     })),
     ...humanProjects.map(project => ({
       collection: 'life-data', id: project.id, title: project.title,

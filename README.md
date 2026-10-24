@@ -2,6 +2,8 @@
 
 **[Complete project inventory and missing work](PROJECT-INVENTORY.md)** — open the local `/projects` page to search all 73 named entries: 27 automation demos, 20 life/data tools, nine engineering prototypes, twelve-system views and five research tracks. The collections share components; all five research entries have partial local builds. The unified catalog and the first three research builds are on main. New partial builds are reviewed in feature PRs.
 
+**[PM-01 maintenance operations](demo-lab/MAINTENANCE.md)** — open `http://127.0.0.1:5680/maintenance?project=PM-01` for synthetic tenant intake, deterministic emergency holds, access windows, independently reviewed vendor proposals and recoverable local receiver delivery. The clock is a fixed scenario; labels are not authentication and operator-reported completion is not a verified property visit. The full industry flagship remains unfinished.
+
 **[AtlasGraph local build](demo-lab/ATLASGRAPH.md)** — open `http://127.0.0.1:5680/research?project=AtlasGraph` to compile versioned synthetic pages, follow a two-hop evidence path, inspect exact citations and retain failed paths for correction. SQLite restart/replay and stale evidence are tested; semantic retrieval, real source adapters and research baseline comparisons remain pending.
 
 **[TrustGate local tool gateway](demo-lab/TRUSTGATE.md)** — open `http://127.0.0.1:5680/trustgate` to resolve tool arguments from registered synthetic sources, inspect policy holds, review proposed writes and execute three narrow SQLite tools. Outbound providers and authenticated agent integration remain outside this partial research build.

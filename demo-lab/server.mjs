@@ -1,4 +1,5 @@
 import { createServer } from 'node:http';
+import { maintenanceDesk } from './maintenance-core.mjs';
 import { DatabaseSync } from 'node:sqlite';
 import { mkdirSync, readFileSync, readdirSync, existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
@@ -138,6 +139,7 @@ export async function runN8n(id, progress = () => {}) {
 
 export function createLabServer(db = openStore(), executeWorkflow = runN8n) {
   const desk = productDesk(db);
+  const property = maintenanceDesk(db);
   const reliability = reliabilityDesk(db);
   const salesforce = salesforceDesk(db);
   const flagships = flagshipSuite(db);
@@ -162,6 +164,15 @@ export function createLabServer(db = openStore(), executeWorkflow = runN8n) {
     const origin = request.headers.origin;
     if ((origin && origin !== localOrigin) || request.headers['sec-fetch-site'] === 'cross-site') return send(response, 403, { error: 'Local origin required' });
     if (request.method === 'GET') {
+      if (url.pathname === '/api/maintenance/catalog') return send(response,200,property.catalog());
+      if (url.pathname === '/maintenance') {
+        response.writeHead(200,{'Content-Type':'text/html; charset=utf-8','Cache-Control':'no-store','X-Content-Type-Options':'nosniff','Content-Security-Policy':"default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; object-src 'none'"});
+        return response.end(readFileSync(join(directory,'maintenance.html')));
+      }
+      if (['/maintenance.css','/maintenance-ui.mjs'].includes(url.pathname)) {
+        response.writeHead(200,{'Content-Type':url.pathname.endsWith('.css')?'text/css; charset=utf-8':'text/javascript; charset=utf-8','X-Content-Type-Options':'nosniff','Cache-Control':'no-store'});
+        return response.end(readFileSync(join(directory,url.pathname.slice(1))));
+      }
       if (url.pathname === '/api/project-inventory') return send(response,200,portfolioInventory());
       if (url.pathname === '/api/trustgate/catalog') return send(response,200,gateway.catalog());
       if (url.pathname === '/api/chronosrank/catalog') return send(response,200,memory.catalog());
@@ -284,6 +295,18 @@ export function createLabServer(db = openStore(), executeWorkflow = runN8n) {
     if (request.headers['x-demo-client'] !== 'local-showcase') return send(response, 403, { error: 'Demo client header required' });
     try {
       const body = await readBody(request);
+      if (url.pathname.startsWith('/api/maintenance/')) {
+        const actions = new Map([
+          ['intake',x=>property.intake(x)],['grant-access',x=>property.grantAccess(x)],['revoke-access',x=>property.revokeAccess(x)],
+          ['propose',x=>property.propose(x)],['review',x=>property.review(x)],['dispatch',x=>property.dispatch(x)],
+          ['reconcile',x=>property.reconcile(x)],['cancel',x=>property.cancel(x)],['complete',x=>property.complete(x)],
+          ['receipt',x=>property.receipt(x)],['history',x=>property.history(x)],['state',x=>property.state(x)],
+          ['audit',x=>property.audit(x)],['verify-audit',x=>property.verifyAudit(x)],
+        ]);
+        const action = actions.get(url.pathname.slice('/api/maintenance/'.length));
+        if(!action)return send(response,404,{error:'Unknown maintenance operation'});
+        return send(response,200,await action(body));
+      }
       if (url.pathname.startsWith('/api/trustgate/')) {
         const actions = new Map([
           ['prepare',x=>gateway.prepare(x)],['review',x=>gateway.review(x)],['execute',x=>gateway.execute(x)],

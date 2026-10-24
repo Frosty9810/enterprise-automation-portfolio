@@ -1,6 +1,6 @@
 # Gabriel Acosta — automation engineering portfolio
 
-**[Complete project inventory and missing work](PROJECT-INVENTORY.md)** — open the local `/projects` page to search all 73 named entries: 27 automation demos, 20 life/data tools, nine engineering prototypes, twelve-system views and five research tracks. The collections share components; VeilRAG remains a design. The unified catalog and the first three research builds are on main. New partial builds are reviewed in feature PRs.
+**[Complete project inventory and missing work](PROJECT-INVENTORY.md)** — open the local `/projects` page to search all 73 named entries: 27 automation demos, 20 life/data tools, nine engineering prototypes, twelve-system views and five research tracks. The collections share components; all five research entries have partial local builds. The unified catalog and the first three research builds are on main. New partial builds are reviewed in feature PRs.
 
 **[AtlasGraph local build](demo-lab/ATLASGRAPH.md)** — open `http://127.0.0.1:5680/research?project=AtlasGraph` to compile versioned synthetic pages, follow a two-hop evidence path, inspect exact citations and retain failed paths for correction. SQLite restart/replay and stale evidence are tested; semantic retrieval, real source adapters and research baseline comparisons remain pending.
 
@@ -9,6 +9,8 @@
 **[ChronosRank local memory workbench](demo-lab/CHRONOSRANK.md)** — open `http://127.0.0.1:5680/chronosrank` to append synthetic memory events, retrieve as of a chosen time, inspect excluded facts and preserve source receipts with feedback. Token-overlap scores are deterministic; no trained reranker or calibrated probability is claimed.
 
 **[DocksideSLM local document queue](demo-lab/DOCKSIDE.md)** — open `http://127.0.0.1:5680/dockside` to validate supplied synthetic document fields, review exact content and exercise offline/retry/reconciliation against a local receiver. OCR, learned extraction, real ERP and edge-hardware measurements remain outside this partial build.
+
+**[VeilRAG local alias boundary](demo-lab/VEILRAG.md)** — open `http://127.0.0.1:5680/veilrag` to alias explicitly declared literals, inspect sanitized child-fixture transport and request local restoration. The reversible map is encrypted; protocol metadata remains plaintext. No automatic detection, external provider or general privacy guarantee is claimed.
 
 **[Twelve executable business systems](demo-lab/TWELVE-SYSTEMS.md)** — open `http://127.0.0.1:5680/flagships` to explore Salesforce operations, recovery, grounded support, routing evaluation, invoice controls, architecture evidence, merge previews, product governance, consent, billing, scheduling and reconstruction. Cross-check all twelve, edit evidence and export reviewed local analysis. These are synthetic local demonstrations; live integration and business-impact acceptance remain separate.
 
@@ -72,7 +74,7 @@ The runner preserves independent exit codes, strips provider credentials from de
 
 ## Deeper library
 
-The original 50 numbered sections remain available for architecture, SOPs and operating material. [MASTER-INDEX.md](MASTER-INDEX.md) distinguishes populated references from partial sections; [COMPLETION-ROADMAP.md](COMPLETION-ROADMAP.md) tracks unfinished work. All five research designs remain available: AtlasGraph, TrustGate, ChronosRank and DocksideSLM have partial local implementations; VeilRAG remains blueprint-only.
+The original 50 numbered sections remain available for architecture, SOPs and operating material. [MASTER-INDEX.md](MASTER-INDEX.md) distinguishes populated references from partial sections; [COMPLETION-ROADMAP.md](COMPLETION-ROADMAP.md) tracks unfinished work. All five research designs remain available: All five have partial local implementations; their model, hardware, provider and full research requirements remain unfinished.
 
 GitHub: [Frosty9810](https://github.com/Frosty9810). [Public profile repository](https://github.com/Frosty9810/Frosty9810).
 

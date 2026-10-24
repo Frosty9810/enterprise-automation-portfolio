@@ -10,7 +10,7 @@ const research = [
   ['ChronosRank', 'Inspect temporal memory retrieval, supersession, source receipts and feedback.', 'partial-local', 'Local SQLite memory events with as-of filtering, deterministic token scores and threshold abstention. No trained reranker, calibrated probability, vector store, authentication or measured research comparison. The full research blueprint remains unfinished.'],
   ['TrustGate', 'Inspect source-bound arguments, policy holds, reviewed local tools and durable execution receipts.', 'partial-local', 'Local gateway for three fixed synthetic SQLite tools, server-held source labels, review and replay controls. No authenticated agent runtime, external action, LM screener or general prompt-injection benchmark. The full research blueprint remains unfinished.'],
   ['DocksideSLM', 'Validate supplied warehouse document fields, review a durable queue and reconcile local delivery.', 'partial-local', 'Local structured-extraction validation, SQLite review queue and idempotent synthetic ERP receiver. No OCR, SLM inference, real ERP integration, edge-hardware or compression benchmark. The full research blueprint remains unfinished.'],
-  ['VeilRAG', 'A planned reversible privacy proxy for external language models.', 'blueprint-only', 'Design only. The reversible privacy pipeline, retrieval integration and leakage evaluation are not implemented.'],
+  ['VeilRAG', 'Inspect declared-literal aliases, encrypted local mappings and checked fixture generation.', 'partial-local', 'Local exact declared-literal matching, AES-GCM mappings and a sanitized child fixture with explicit restoration. No automatic entity detector, authenticated users, external provider, general privacy guarantee or research benchmark. The full research blueprint remains unfinished.'],
 ];
 
 /** All public lab catalog views, derived from the same catalogs as their destinations.
@@ -45,7 +45,7 @@ export function portfolioInventory() {
     })),
     ...research.map(([id, summary, status, scope]) => ({
       collection: 'research', id, title: id, summary, status, scope,
-      href: `${id==='TrustGate'?'/trustgate':id==='ChronosRank'?'/chronosrank':id==='DocksideSLM'?'/dockside':'/research'}?project=${encodeURIComponent(id)}`,
+      href: `${id==='TrustGate'?'/trustgate':id==='ChronosRank'?'/chronosrank':id==='DocksideSLM'?'/dockside':id==='VeilRAG'?'/veilrag':'/research'}?project=${encodeURIComponent(id)}`,
     })),
   ];
 }

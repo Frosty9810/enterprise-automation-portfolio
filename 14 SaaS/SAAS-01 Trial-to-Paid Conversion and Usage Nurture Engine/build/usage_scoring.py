@@ -113,6 +113,44 @@ class CheckpointResult:
 # ---------------------------------------------------------------------------
 
 
+def _utc_timestamp(value: object) -> datetime:
+    if not isinstance(value, datetime):
+        raise ValueError("Usage timestamps must be datetime values")
+    # Preserve the documented legacy interpretation; never use the host timezone.
+    if value.utcoffset() is None:
+        return value.replace(tzinfo=UTC)
+    return value.astimezone(UTC)
+
+
+def _validate_snapshot(snapshot: UsageSnapshot) -> None:
+    if not isinstance(snapshot.account_id, str) or not snapshot.account_id.strip():
+        raise ValueError("account_id must be a nonblank string")
+    if type(snapshot.score_date) is not date:
+        raise ValueError("score_date must be a calendar date")
+    if type(snapshot.trial_day) is not int or snapshot.trial_day < 1:
+        raise ValueError("trial_day must be a positive integer")
+    counts = (
+        snapshot.integrations_connected,
+        snapshot.seats_invited,
+        snapshot.workflows_created,
+        snapshot.features_activated,
+    )
+    if any(type(value) is not int or value < 0 for value in counts):
+        raise ValueError("Usage counts must be nonnegative integers")
+    if type(snapshot.no_usage_data) is not bool:
+        raise ValueError("no_usage_data must be a boolean")
+    if snapshot.no_usage_data != (snapshot.last_event_at is None):
+        raise ValueError("Usage evidence and no_usage_data must agree")
+    if snapshot.last_event_at is None:
+        if any(counts):
+            raise ValueError("Positive usage counts require event evidence")
+    else:
+        last_date = _utc_timestamp(snapshot.last_event_at).date()
+        elapsed = (snapshot.score_date - last_date).days
+        if elapsed < 0 or elapsed >= snapshot.trial_day:
+            raise ValueError("Event evidence must be within the scored trial window")
+
+
 def aggregate_daily_usage(
     events: Iterable[UsageEvent],
     account_id: str,
@@ -123,8 +161,8 @@ def aggregate_daily_usage(
 
     This mirrors the nightly/incremental rollup job in SOP Section 12,
     Step 2: cumulative counts per account for each of the four tracked
-    event types, computed over all events for `account_id` with a
-    timestamp on or before `as_of` (inclusive, end-of-day UTC semantics).
+    event types, computed over events for `account_id` from `trial_start`
+    through `as_of` (both inclusive UTC calendar dates).
 
     Deduplication (SOP Section 17, Scenario 2) is handled by the caller /
     the Postgres unique constraint on `event_id` in production; this
@@ -141,23 +179,24 @@ def aggregate_daily_usage(
         A UsageSnapshot with cumulative counts, last_event_at, and the
         no_usage_data flag set per SOP Section 17 Scenario 5.
     """
+    if type(trial_start) is not date or type(as_of) is not date or as_of < trial_start:
+        raise ValueError("Scoring requires calendar dates with as_of >= trial_start")
+    if not isinstance(account_id, str) or not account_id.strip():
+        raise ValueError("account_id must be a nonblank string")
     integrations = 0
     seats = 0
     workflows = 0
     features = 0
     last_event_at: datetime | None = None
 
-    cutoff = datetime(as_of.year, as_of.month, as_of.day, 23, 59, 59, tzinfo=UTC)
-
     for evt in events:
         if evt.account_id != account_id:
             continue
         if evt.event_type not in VALID_EVENT_TYPES:
             continue  # malformed/unrecognized event type — excluded from scoring
-        # Legacy naive timestamps are interpreted as UTC at this boundary.
-        event_time = evt.timestamp if evt.timestamp.tzinfo else evt.timestamp.replace(tzinfo=UTC)
-        if event_time > cutoff:
-            continue  # not yet "as of" this scoring date
+        event_time = _utc_timestamp(evt.timestamp)
+        if not trial_start <= event_time.date() <= as_of:
+            continue  # excludes pre-trial history and future events, with full UTC days
 
         if evt.event_type == "integration_connected":
             integrations += 1
@@ -191,16 +230,15 @@ def compute_intent_score(snapshot: UsageSnapshot) -> float:
     """Compute a weighted 0-100 intent score from usage counts.
 
     Direct implementation of the scoring function in SOP Section 14.
-    Weights reflect observed correlation with historical conversions:
-    integration depth and team expansion are the strongest predictors,
-    workflow creation is a moderate predictor, raw feature activation
-    is a weak but non-zero predictor of engagement.
+    These are illustrative fixed policy weights, not a calibrated conversion
+    probability or evidence of measured historical business outcomes.
 
     An account with no usage data at all (SOP Section 17, Scenario 5)
     scores 0.0 explicitly, distinct from an account that has some usage
     but simply hasn't hit any weighted milestones.
     """
-    if snapshot.no_usage_data or snapshot.last_event_at is None:
+    _validate_snapshot(snapshot)
+    if snapshot.no_usage_data:
         return 0.0
 
     score = (
@@ -226,6 +264,9 @@ def is_high_intent(snapshot: UsageSnapshot) -> bool:
     signal alone (e.g., 5 integrations, 0 seats) intentionally does not
     qualify — see SOP Section 37 FAQ for the rationale.
     """
+    _validate_snapshot(snapshot)
+    if snapshot.no_usage_data:
+        return False
     meets_integration_threshold = snapshot.integrations_connected >= HIGH_INTENT_MIN_INTEGRATIONS
     meets_seat_threshold = snapshot.seats_invited >= HIGH_INTENT_MIN_SEATS
     within_window = snapshot.trial_day < HIGH_INTENT_DAY_CUTOFF
@@ -292,6 +333,7 @@ def build_checkpoint_milestones(snapshot: UsageSnapshot) -> tuple[list[str], lis
     integration yet" branch; seats_invited: 4 -> "you've invited 4
     teammates" branch.
     """
+    _validate_snapshot(snapshot)
     hit: list[str] = []
     missed: list[str] = []
 

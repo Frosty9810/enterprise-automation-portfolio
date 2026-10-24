@@ -196,23 +196,30 @@ export function usageLedger(x) {
     if (start >= end || close < end)
         throw Error('Invalid billing period or close');
     list(x.events, 'Usage events');
+    const normalized = new Map();
+    for (const event of x.events) {
+        if (!event || typeof event !== 'object' || Array.isArray(event) ||
+            Object.keys(event).some(key => !['id', 'units', 'occurredAt', 'postedAt', 'adjusts'].includes(key)))
+            throw Error('Unsupported usage event fields');
+        text(event.id, 'Usage ID');
+        if (!Number.isSafeInteger(event.units) || event.units === 0 || Math.abs(event.units) > 1e6)
+            throw Error('Whole nonzero bounded units required');
+        const occurred = instant(event.occurredAt), posted = instant(event.postedAt);
+        if (posted < occurred) throw Error('Posting precedes usage');
+        if (occurred < start || occurred >= end) throw Error('Usage outside half-open period');
+        if (event.units < 0) text(event.adjusts, 'Adjustment reference');
+        else if (Object.hasOwn(event, 'adjusts')) throw Error('Adjustment reference only allowed for credits');
+        const value = { id: event.id, units: event.units, occurredAt: new Date(occurred).toISOString(), postedAt: new Date(posted).toISOString(), ...(event.units < 0 ? { adjusts: event.adjusts } : {}) };
+        const previous = normalized.get(value.id);
+        if (previous && hash(previous) !== hash(value)) throw Error('Conflicting usage event identity');
+        normalized.set(value.id, value);
+    }
+    const events = [...normalized.values()].sort((a, b) => Date.parse(a.postedAt) - Date.parse(b.postedAt) ||
+        Number(a.units < 0) - Number(b.units < 0) || (a.id < b.id ? -1 : a.id > b.id ? 1 : 0));
     const entries = [], seen = new Map();
     let units = 0, nextPeriodUnits = 0;
-    for (const e of x.events) {
-        text(e.id, 'Usage ID');
-        const occurred = instant(e.occurredAt), posted = instant(e.postedAt);
-        if (posted < occurred)
-            throw Error('Posting precedes usage');
-        if (!Number.isSafeInteger(e.units) || e.units === 0 || Math.abs(e.units) > 1e6)
-            throw Error('Whole nonzero bounded units required');
-        const previous = seen.get(e.id);
-        if (previous) {
-            if (previous.hash !== hash(e))
-                throw Error('Conflicting usage event identity');
-            continue;
-        }
-        if (occurred < start || occurred >= end)
-            throw Error('Usage outside half-open period');
+    for (const e of events) {
+        const posted = instant(e.postedAt);
         if (e.units < 0) {
             const original = seen.get(e.adjusts);
             if (!original || original.units <= 0 || original.occurredAt !== e.occurredAt || posted < original.posted)
@@ -222,12 +229,12 @@ export function usageLedger(x) {
             original.remaining += e.units;
         }
         const late = posted > close;
-        seen.set(e.id, { hash: hash(e), units: e.units, remaining: e.units, occurredAt: e.occurredAt, posted });
+        seen.set(e.id, { units: e.units, remaining: e.units, occurredAt: e.occurredAt, posted });
         if (late)
             nextPeriodUnits += e.units;
         else
             units += e.units;
-        entries.push({ id: e.id, units: e.units, classification: late ? 'next_invoice_adjustment' : 'period_charge', adjusts: e.adjusts ?? null });
+        entries.push({ ...e, classification: late ? 'next_invoice_adjustment' : 'period_charge', adjusts: e.adjusts ?? null });
     }
     const amount = Number(BigInt(units) * BigInt(x.priceCents)), adjustment = Number(BigInt(nextPeriodUnits) * BigInt(x.priceCents));
     if (!Number.isSafeInteger(amount) || !Number.isSafeInteger(adjustment))
@@ -235,7 +242,8 @@ export function usageLedger(x) {
     if (amount < 0)
         throw Error('Negative base invoice');
     const journal = [{ account: 'receivable', debitCents: amount, creditCents: 0 }, { account: 'usage_revenue', debitCents: 0, creditCents: amount }], balanced = journal.reduce((n, r) => n + r.debitCents - r.creditCents, 0) === 0;
-    return { action: 'invoice_review', currency: x.currency, periodUnits: units, amountCents: amount, nextInvoiceAdjustmentCents: adjustment, entries, journal, balanced, ledgerHash: hash({ account: x.account, periodStart: x.periodStart, periodEnd: x.periodEnd, priceCents: x.priceCents, entries }), externalActions: 0, scope: 'Exact-cent local usage calculation and balanced draft journal. Late entries roll to a proposed next-invoice adjustment; no invoice issued, tax/revenue-recognition advice or live ledger integration.' };
+    const evidence = { version: 'usage-ledger-v2', account: x.account, currency: x.currency, periodStart: new Date(start).toISOString(), periodEnd: new Date(end).toISOString(), closedAt: new Date(close).toISOString(), priceCents: x.priceCents, entries };
+    return { action: 'invoice_review', currency: x.currency, periodUnits: units, amountCents: amount, nextInvoiceAdjustmentCents: adjustment, entries, journal, balanced, ledgerHashVersion: evidence.version, ledgerHash: hash(evidence), externalActions: 0, scope: 'Exact-cent local usage calculation and balanced draft journal. Late entries roll to a proposed next-invoice adjustment; no invoice issued, tax/revenue-recognition advice or live ledger integration.' };
 }
 export function scheduleBoard(x) {
     const now = instant(x.asOf);

@@ -431,10 +431,7 @@ def build_claude_request(transcript: str, lead_source: str) -> dict[str, Any]:
         "messages": [
             {
                 "role": "user",
-                "content": (
-                    f"Lead source: {lead_source}\n\n"
-                    f"Transcript:\n{transcript}"
-                ),
+                "content": (f"Lead source: {lead_source}\n\nTranscript:\n{transcript}"),
             }
         ],
     }
@@ -452,9 +449,14 @@ RESPONSE_JSON_SCHEMA = {
     "properties": {
         "intent": {
             "enum": [
-                "schedule_tour", "pricing_inquiry", "seller_valuation_request",
-                "immediate_move", "relocation_1_3mo", "just_browsing",
-                "renter_not_buyer", "unresponsive",
+                "schedule_tour",
+                "pricing_inquiry",
+                "seller_valuation_request",
+                "immediate_move",
+                "relocation_1_3mo",
+                "just_browsing",
+                "renter_not_buyer",
+                "unresponsive",
             ]
         },
         "confidence": {"type": "number", "minimum": 0, "maximum": 1},
@@ -465,12 +467,23 @@ RESPONSE_JSON_SCHEMA = {
                 "budget_range": {"type": ["string", "null"]},
                 "bedroom_count": {"type": ["integer", "null"]},
                 "timeline": {
-                    "enum": ["immediate", "1_3_months", "3_6_months",
-                              "6_12_months", "12_plus_months", "unknown"]
+                    "enum": [
+                        "immediate",
+                        "1_3_months",
+                        "3_6_months",
+                        "6_12_months",
+                        "12_plus_months",
+                        "unknown",
+                    ]
                 },
                 "financing_status": {
-                    "enum": ["preapproved", "prequalified_not_approved",
-                              "not_started", "cash_buyer", "unknown"]
+                    "enum": [
+                        "preapproved",
+                        "prequalified_not_approved",
+                        "not_started",
+                        "cash_buyer",
+                        "unknown",
+                    ]
                 },
                 "property_address_if_seller": {"type": ["string", "null"]},
             },
@@ -488,9 +501,9 @@ def parse_and_validate_claude_response(api_response: dict) -> dict:
         jsonschema.ValidationError: if the tool_use input fails schema validation.
     """
     tool_use_blocks = [
-        block for block in api_response.get("content", [])
-        if block.get("type") == "tool_use"
-        and block.get("name") == "classify_and_extract_lead"
+        block
+        for block in api_response.get("content", [])
+        if block.get("type") == "tool_use" and block.get("name") == "classify_and_extract_lead"
     ]
     if not tool_use_blocks:
         raise ValueError("No classify_and_extract_lead tool_use block in response")
@@ -565,9 +578,7 @@ def compute_composite_score(
 
     recency_component = max(0, 100 - (hours_since_last_engagement * 2)) * 0.10
 
-    total = round(
-        intent_component + entity_component + source_component + recency_component
-    )
+    total = round(intent_component + entity_component + source_component + recency_component)
     total = max(0, min(100, total))
 
     rationale = (
@@ -1032,3 +1043,7 @@ Including the directional revenue estimate as a secondary, clearly-labeled upsid
 ## 43. Lessons Learned
 
 The single largest calibration effort in this engagement was not the Claude integration itself — tool-calling with a well-specified schema produced structurally valid output from early testing — but tuning the composite score formula's weights and the routing thresholds against what Harborview's own ISAs actually agreed constituted a "hot" lead. The initial formula draft weighted entity completeness more heavily than intent, on the theory that more data points meant more confidence; UAT testing showed this produced high scores for chatty but low-intent leads (browsers who happily answer every qualifying question without any real urgency) and under-scored terse, high-intent leads. Re-weighting toward intent-dominant scoring, with entity completeness as a secondary modifier, aligned the automated output with ISA judgment far more closely than any prompt-engineering change did — a reminder that in scoring-engine work, the deterministic formula sitting downstream of the LLM call is often where the real business logic tuning happens, not the LLM prompt itself. A second lesson: building the `needs_human_review` branch (Section 13) as a first-class routing outcome, rather than treating anything below the disqualifica
+
+## Engineering amendment — 8 September 2026
+
+Revision 2026-09-08: Python artifacts were linted/formatted and local demos rerun. UTC defaults and usage timestamp normalization were repaired where applicable. Original n8n/API/database execution remains a separate acceptance gate; prior narrative production claims are not verified by local checks. See the root portfolio audit and the project showcase package for current evidence.

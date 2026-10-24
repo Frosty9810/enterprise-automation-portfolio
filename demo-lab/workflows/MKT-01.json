@@ -1,0 +1,168 @@
+{
+  "id": "local-MKT-01",
+  "name": "MKT-01 | Original logic to local GHL demo",
+  "active": false,
+  "nodes": [
+    {
+      "id": "manual",
+      "name": "Run local showcase",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "parameters": {},
+      "position": [
+        0,
+        300
+      ]
+    },
+    {
+      "id": "business",
+      "name": "Run original business logic",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "parameters": {
+        "method": "POST",
+        "url": "http://127.0.0.1:5680/api/domain/MKT-01",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Demo-Client",
+              "value": "local-showcase"
+            },
+            {
+              "name": "Authorization",
+              "value": "Bearer LOCAL_DEMO_ONLY"
+            },
+            {
+              "name": "Version",
+              "value": "v3"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 180000
+        }
+      },
+      "position": [
+        260,
+        300
+      ]
+    },
+    {
+      "id": "plan",
+      "name": "Validate contact handoff",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "jsCode": "/** Pure contact handoff planner, also embedded verbatim in n8n exports.\n * Configuration belongs to the workflow operator; event data cannot select a tenant.\n * This module performs no I/O and grants no authority to contact a person.\n */\nfunction planContact(event, config) {\n  const fail = (reason) => ({ status: 'rejected', reason });\n  if (!event || typeof event !== 'object' || Array.isArray(event)) return fail('invalid_event');\n  if (!config || typeof config.locationId !== 'string' || !/^[A-Za-z0-9_-]{1,80}$/.test(config.locationId)) return fail('invalid_location');\n  if (typeof config.projectId !== 'string' || !/^[A-Z]+-[0-9]{2}$/.test(config.projectId)) return fail('invalid_project');\n  if (event.projectId !== config.projectId) return fail('project_mismatch');\n  if (event.locationId !== undefined && event.locationId !== config.locationId) return fail('tenant_mismatch');\n  if (typeof event.eventId !== 'string' || !/^[A-Za-z0-9_-]{1,128}$/.test(event.eventId)) return fail('invalid_event_id');\n  // Contact storage consent is distinct from permission to send marketing.\n  if (event.storageConsent !== true) return fail('storage_consent_required');\n  if (event.sensitive === true) return fail('sensitive_record');\n  const contact = event.contact;\n  if (!contact || typeof contact !== 'object' || Array.isArray(contact)) return fail('invalid_contact');\n  const email = typeof contact.email === 'string' ? contact.email.trim().toLowerCase() : '';\n  if (email.length > 254 || !/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email)) return fail('invalid_email');\n  const body = { locationId: config.locationId, email, source: `portfolio:${config.projectId}` };\n  for (const key of ['firstName', 'lastName']) {\n    if (contact[key] !== undefined) {\n      if (typeof contact[key] !== 'string' || contact[key].length > 100) return fail('invalid_name');\n      body[key] = contact[key].trim();\n    }\n  }\n  // Deliberately omit tags, DND, phone, free text and custom fields: an upsert\n  // must not replace tags, loosen existing opt-outs or copy sensitive records.\n  return {\n    status: 'ready', projectId: config.projectId,\n    eventKey: `${config.locationId}:${config.projectId}:${event.eventId}`,\n    request: { method: 'POST', url: 'https://services.leadconnectorhq.com/contacts/upsert',\n      headers: { Version: 'v3', 'Content-Type': 'application/json' }, body },\n    communicationAllowed: false,\n  };\n}\n\nconst domain = $input.first().json;\nif (domain.status !== 'passed') throw new Error('Business demo did not pass');\nconst plan = planContact({\"projectId\":\"MKT-01\",\"eventId\":\"showcase-001\",\"storageConsent\":true,\"contact\":{\"firstName\":\"Demo\",\"lastName\":\"MKT-01\",\"email\":\"mkt-01@example.com\"}}, {projectId: 'MKT-01', locationId: 'DEMO_LOCATION'});\nif (plan.status !== 'ready') throw new Error(plan.reason);\nreturn [{json: {...plan, domain}}];"
+      },
+      "position": [
+        520,
+        300
+      ]
+    },
+    {
+      "id": "upsert",
+      "name": "GHL simulator - Upsert contact",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "parameters": {
+        "method": "POST",
+        "url": "http://127.0.0.1:5680/contacts/upsert",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.request.body) }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Demo-Client",
+              "value": "local-showcase"
+            },
+            {
+              "name": "Authorization",
+              "value": "Bearer LOCAL_DEMO_ONLY"
+            },
+            {
+              "name": "Version",
+              "value": "v3"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 180000
+        }
+      },
+      "position": [
+        780,
+        300
+      ]
+    },
+    {
+      "id": "verify",
+      "name": "Verify result and preserve evidence",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "parameters": {
+        "jsCode": "const response = $input.first().json;\nconst planned = $('Validate contact handoff').first().json;\nif (!response.contact?.id || response.contact.locationId !== planned.request.body.locationId || response.contact.email !== planned.request.body.email) throw new Error('Contact result mismatch');\nreturn [{json: {projectId: 'MKT-01', status: 'passed', engine: 'n8n', ghlMode: 'local simulator', contactId: response.contact.id, created: response.new, businessEvidence: planned.domain, communicationSent: false}}];"
+      },
+      "position": [
+        1040,
+        300
+      ]
+    }
+  ],
+  "connections": {
+    "Run local showcase": {
+      "main": [
+        [
+          {
+            "node": "Run original business logic",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Run original business logic": {
+      "main": [
+        [
+          {
+            "node": "Validate contact handoff",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate contact handoff": {
+      "main": [
+        [
+          {
+            "node": "GHL simulator - Upsert contact",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "GHL simulator - Upsert contact": {
+      "main": [
+        [
+          {
+            "node": "Verify result and preserve evidence",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {}
+}

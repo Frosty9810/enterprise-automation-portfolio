@@ -1,0 +1,22 @@
+{
+  "kind": "manual-configuration-blueprint-not-ghl-snapshot",
+  "projectId": "ECOM-01",
+  "relationshipRole": "Merchant stakeholder",
+  "pipelineName": "Portfolio / ECOM-01",
+  "stages": [
+    "Submitted",
+    "Policy review",
+    "Approved",
+    "Closed"
+  ],
+  "messagingEnabled": false,
+  "duplicateMatch": "email",
+  "contactFields": [
+    "firstName",
+    "lastName",
+    "email",
+    "source"
+  ],
+  "liveAcceptance": "pending",
+  "systemOfRecord": "original project system"
+}

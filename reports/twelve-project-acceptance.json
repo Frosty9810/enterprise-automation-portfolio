@@ -1,0 +1,325 @@
+{
+  "format": "portfolio-twelve-acceptance/v1",
+  "measuredAt": "2026-10-05T16:32:24.899Z",
+  "passed": true,
+  "passedProjects": 12,
+  "totalProjects": 12,
+  "passedChecks": 48,
+  "totalChecks": 48,
+  "results": [
+    {
+      "id": "F01",
+      "title": "Salesforce RevenueOS",
+      "passed": true,
+      "checks": [
+        {
+          "name": "Distinct domain result matches independently stated expected facts",
+          "passed": true
+        },
+        {
+          "name": "Current source and zero external actions",
+          "passed": true
+        },
+        {
+          "name": "Reviewed analysis export",
+          "passed": true
+        },
+        {
+          "name": "Adverse boundary produces the expected hold, rejection or exposed regression",
+          "passed": true
+        }
+      ],
+      "receiptId": "ced8040a15e8b37e96f335cc6bf0e77eaf7082af71da149bb0b389d6b75d251f",
+      "sourceHash": "b75c989a611641170f1a1928eac249716e26b47d334b42707835d091422e7380",
+      "localDurationMs": 10.264900000000004
+    },
+    {
+      "id": "F02",
+      "title": "Incident & Recovery Console",
+      "passed": true,
+      "checks": [
+        {
+          "name": "Distinct domain result matches independently stated expected facts",
+          "passed": true
+        },
+        {
+          "name": "Current source and zero external actions",
+          "passed": true
+        },
+        {
+          "name": "Reviewed analysis export",
+          "passed": true
+        },
+        {
+          "name": "Adverse boundary produces the expected hold, rejection or exposed regression",
+          "passed": true
+        }
+      ],
+      "receiptId": "01debc4666a6e656eb3a6afdcce483fbaded3dbb8eb39a5987136471ed506faf",
+      "sourceHash": "1341fbd30afe9ce88d357778bcbd8c69d5c4085115aa633238e398f007d5717a",
+      "localDurationMs": 13.11679999999999
+    },
+    {
+      "id": "F03",
+      "title": "Evidence-grounded Support Desk",
+      "passed": true,
+      "checks": [
+        {
+          "name": "Distinct domain result matches independently stated expected facts",
+          "passed": true
+        },
+        {
+          "name": "Current source and zero external actions",
+          "passed": true
+        },
+        {
+          "name": "Reviewed analysis export",
+          "passed": true
+        },
+        {
+          "name": "Adverse boundary produces the expected hold, rejection or exposed regression",
+          "passed": true
+        }
+      ],
+      "receiptId": "d5d97e0a47a8c4c3c12aff235fb06b116659a6b7f392a73f3fbea98a92e51950",
+      "sourceHash": "893ad9208f5b4d4e7e18516eba16db0e26ea8470153bab19021876ed1e697057",
+      "localDurationMs": 4.954099999999997
+    },
+    {
+      "id": "F04",
+      "title": "Routing Evaluation Lab",
+      "passed": true,
+      "checks": [
+        {
+          "name": "Distinct domain result matches independently stated expected facts",
+          "passed": true
+        },
+        {
+          "name": "Current source and zero external actions",
+          "passed": true
+        },
+        {
+          "name": "Reviewed analysis export",
+          "passed": true
+        },
+        {
+          "name": "Adverse boundary produces the expected hold, rejection or exposed regression",
+          "passed": true
+        }
+      ],
+      "receiptId": "46d2b3b0797d19d5adb263352a7d3638960fc7a146e726bd79fd4fa718297cf3",
+      "sourceHash": "d0368da9c891df65013f13be16c19b82f131f1614484a0b80c41b239a4d2f540",
+      "localDurationMs": 4.709999999999994
+    },
+    {
+      "id": "F05",
+      "title": "Accounts Payable Review Desk",
+      "passed": true,
+      "checks": [
+        {
+          "name": "Distinct domain result matches independently stated expected facts",
+          "passed": true
+        },
+        {
+          "name": "Current source and zero external actions",
+          "passed": true
+        },
+        {
+          "name": "Reviewed analysis export",
+          "passed": true
+        },
+        {
+          "name": "Adverse boundary produces the expected hold, rejection or exposed regression",
+          "passed": true
+        }
+      ],
+      "receiptId": "5ba5df0fdca4f53e933a1bd36357d2ceac83ccc667c718d579756bddc19ed94b",
+      "sourceHash": "1745a84e2599cb97576172b852d0842b7592a028708bb9ed5d8ce72c7fc91f9f",
+      "localDurationMs": 144.331
+    },
+    {
+      "id": "F06",
+      "title": "Source-linked Architecture Explorer",
+      "passed": true,
+      "checks": [
+        {
+          "name": "Distinct domain result matches independently stated expected facts",
+          "passed": true
+        },
+        {
+          "name": "Current source and zero external actions",
+          "passed": true
+        },
+        {
+          "name": "Reviewed analysis export",
+          "passed": true
+        },
+        {
+          "name": "Adverse boundary produces the expected hold, rejection or exposed regression",
+          "passed": true
+        }
+      ],
+      "receiptId": "963571d719605eb99ce74fa5c1a15a8b57356bb76d4babeae47e8e431846e2ed",
+      "sourceHash": "6385abb20c9e0797057f2d09290d093e2c77c2ea2bfb8709cbafddb9e4d0bd6c",
+      "localDurationMs": 11.107
+    },
+    {
+      "id": "F07",
+      "title": "Salesforce Data Quality Studio",
+      "passed": true,
+      "checks": [
+        {
+          "name": "Distinct domain result matches independently stated expected facts",
+          "passed": true
+        },
+        {
+          "name": "Current source and zero external actions",
+          "passed": true
+        },
+        {
+          "name": "Reviewed analysis export",
+          "passed": true
+        },
+        {
+          "name": "Adverse boundary produces the expected hold, rejection or exposed regression",
+          "passed": true
+        }
+      ],
+      "receiptId": "7c0394d06dd8b47d3f53ff122dfd1a5ea21f778c80c72acd7e058a65c7b81738",
+      "sourceHash": "f8541b29bc7e72c2140c7e935ec6bdb23a724691f79f7a0f934aed58e61bea70",
+      "localDurationMs": 4.2834
+    },
+    {
+      "id": "F08",
+      "title": "Product Governance Desk",
+      "passed": true,
+      "checks": [
+        {
+          "name": "Distinct domain result matches independently stated expected facts",
+          "passed": true
+        },
+        {
+          "name": "Current source and zero external actions",
+          "passed": true
+        },
+        {
+          "name": "Reviewed analysis export",
+          "passed": true
+        },
+        {
+          "name": "Adverse boundary produces the expected hold, rejection or exposed regression",
+          "passed": true
+        }
+      ],
+      "receiptId": "223088c92c50c9a1e1a38c90e3b8fdb8d368326628f4f115dfaad2b8be48a85e",
+      "sourceHash": "27af45fc954d7b4a09f3797bdf0e4c337942ca2b4ced3702293a9aac4541f056",
+      "localDurationMs": 143.5659
+    },
+    {
+      "id": "F09",
+      "title": "Consent-aware Journey Simulator",
+      "passed": true,
+      "checks": [
+        {
+          "name": "Distinct domain result matches independently stated expected facts",
+          "passed": true
+        },
+        {
+          "name": "Current source and zero external actions",
+          "passed": true
+        },
+        {
+          "name": "Reviewed analysis export",
+          "passed": true
+        },
+        {
+          "name": "Adverse boundary produces the expected hold, rejection or exposed regression",
+          "passed": true
+        }
+      ],
+      "receiptId": "cdfb299749c850412d97cbf69af853e9c2eb5a5ecf43ac27e222d4b0d8957d95",
+      "sourceHash": "f8541b29bc7e72c2140c7e935ec6bdb23a724691f79f7a0f934aed58e61bea70",
+      "localDurationMs": 4.5172000000000025
+    },
+    {
+      "id": "F10",
+      "title": "Usage-to-Invoice Ledger",
+      "passed": true,
+      "checks": [
+        {
+          "name": "Distinct domain result matches independently stated expected facts",
+          "passed": true
+        },
+        {
+          "name": "Current source and zero external actions",
+          "passed": true
+        },
+        {
+          "name": "Reviewed analysis export",
+          "passed": true
+        },
+        {
+          "name": "Adverse boundary produces the expected hold, rejection or exposed regression",
+          "passed": true
+        }
+      ],
+      "receiptId": "a15801a4a89023f9d801beae222b30e93cd5762f13baa982b1eee3e27e36dd3c",
+      "sourceHash": "f8541b29bc7e72c2140c7e935ec6bdb23a724691f79f7a0f934aed58e61bea70",
+      "localDurationMs": 3.4879000000000246
+    },
+    {
+      "id": "F11",
+      "title": "Commitments & Scheduling Board",
+      "passed": true,
+      "checks": [
+        {
+          "name": "Distinct domain result matches independently stated expected facts",
+          "passed": true
+        },
+        {
+          "name": "Current source and zero external actions",
+          "passed": true
+        },
+        {
+          "name": "Reviewed analysis export",
+          "passed": true
+        },
+        {
+          "name": "Adverse boundary produces the expected hold, rejection or exposed regression",
+          "passed": true
+        }
+      ],
+      "receiptId": "f224cc32d0923debe1019699b6a791217836b8ccba10784001559819e1f0cbbd",
+      "sourceHash": "34c484288020796e2f760d0446b3f4b8a48c73fb140045d73ffd5e7b1aeefe95",
+      "localDurationMs": 6.074299999999994
+    },
+    {
+      "id": "F12",
+      "title": "Owned-code Reconstruction Challenge",
+      "passed": true,
+      "checks": [
+        {
+          "name": "Distinct domain result matches independently stated expected facts",
+          "passed": true
+        },
+        {
+          "name": "Current source and zero external actions",
+          "passed": true
+        },
+        {
+          "name": "Reviewed analysis export",
+          "passed": true
+        },
+        {
+          "name": "Adverse boundary produces the expected hold, rejection or exposed regression",
+          "passed": true
+        }
+      ],
+      "receiptId": "6fa1d471939d6f6a7f0cc284c9154b5d1cb8f75221760dcf7f7a312e413fbcfb",
+      "sourceHash": "5571994141099dfeadb2c8a71c6f40e945830a47987564afd452e60281059218",
+      "localDurationMs": 5.007000000000005
+    }
+  ],
+  "externalActions": 0,
+  "scope": "Authored local acceptance and adverse cases across twelve distinct executable demonstrations. Not live acceptance, blind evaluation, measured business ROI or authenticated operator authorization."
+}

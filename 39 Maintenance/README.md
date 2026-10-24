@@ -12,3 +12,7 @@ This folder is currently a placeholder within the Portfolio directory scaffold. 
 
 ---
 *Part of the Enterprise Automation Portfolio. See root [README.md](../README.md) for navigation.*
+
+## September 10 implementation evidence
+
+[OPS-01 ClearSlot Booking Handoff Recovery Desk](../demo-lab/business-builds/OPS-01/README.md) supplies runnable local business logic, fixtures and an n8n wrapper for this topic. This is partial section evidence; hosted platform acceptance and the broader section backlog remain open.

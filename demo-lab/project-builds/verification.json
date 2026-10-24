@@ -1,0 +1,108 @@
+{
+  "checkedAt": "2026-09-10T13:06:01.447Z",
+  "projects": 10,
+  "businessCases": 52,
+  "postgresExecuted": false,
+  "rows": [
+    {
+      "id": "AGT-01",
+      "cases": 5,
+      "script": "passed",
+      "workflowNodes": 5,
+      "workflowCopy": "exact",
+      "sql": "structural checks passed; not executed by PostgreSQL",
+      "sopSections": 44,
+      "video": "pending recording"
+    },
+    {
+      "id": "CON-01",
+      "cases": 6,
+      "script": "passed",
+      "workflowNodes": 5,
+      "workflowCopy": "exact",
+      "sql": "structural checks passed; not executed by PostgreSQL",
+      "sopSections": 44,
+      "video": "pending recording"
+    },
+    {
+      "id": "CRM-01",
+      "cases": 5,
+      "script": "passed",
+      "workflowNodes": 5,
+      "workflowCopy": "exact",
+      "sql": "structural checks passed; not executed by PostgreSQL",
+      "sopSections": 44,
+      "video": "pending recording"
+    },
+    {
+      "id": "EA-01",
+      "cases": 4,
+      "script": "passed",
+      "workflowNodes": 5,
+      "workflowCopy": "exact",
+      "sql": "structural checks passed; not executed by PostgreSQL",
+      "sopSections": 44,
+      "video": "pending recording"
+    },
+    {
+      "id": "INS-01",
+      "cases": 6,
+      "script": "passed",
+      "workflowNodes": 5,
+      "workflowCopy": "exact",
+      "sql": "structural checks passed; not executed by PostgreSQL",
+      "sopSections": 44,
+      "video": "pending recording"
+    },
+    {
+      "id": "INV-01",
+      "cases": 5,
+      "script": "passed",
+      "workflowNodes": 5,
+      "workflowCopy": "exact",
+      "sql": "structural checks passed; not executed by PostgreSQL",
+      "sopSections": 44,
+      "video": "pending recording"
+    },
+    {
+      "id": "LEGAL-01",
+      "cases": 6,
+      "script": "passed",
+      "workflowNodes": 5,
+      "workflowCopy": "exact",
+      "sql": "structural checks passed; not executed by PostgreSQL",
+      "sopSections": 44,
+      "video": "pending recording"
+    },
+    {
+      "id": "MED-01",
+      "cases": 6,
+      "script": "passed",
+      "workflowNodes": 5,
+      "workflowCopy": "exact",
+      "sql": "structural checks passed; not executed by PostgreSQL",
+      "sopSections": 44,
+      "video": "pending recording"
+    },
+    {
+      "id": "OPS-01",
+      "cases": 5,
+      "script": "passed",
+      "workflowNodes": 5,
+      "workflowCopy": "exact",
+      "sql": "structural checks passed; not executed by PostgreSQL",
+      "sopSections": 44,
+      "video": "pending recording"
+    },
+    {
+      "id": "PM-01",
+      "cases": 4,
+      "script": "passed",
+      "workflowNodes": 5,
+      "workflowCopy": "exact",
+      "sql": "structural checks passed; not executed by PostgreSQL",
+      "sopSections": 44,
+      "video": "pending recording"
+    }
+  ]
+}

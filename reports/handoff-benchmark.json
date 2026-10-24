@@ -1,0 +1,16 @@
+{
+  "measuredAt": "2026-10-05T14:02:17.510Z",
+  "scope": "local pure planner; batch-averaged latency",
+  "runtime": "v24.19.0",
+  "platform": "win32 x64",
+  "cpu": "AMD Ryzen 9 9950X3D 16-Core Processor          ",
+  "warmup": 10000,
+  "iterations": 100000,
+  "batchSize": 1000,
+  "medianMs": 0.0001244000000000014,
+  "p95BatchAverageMs": 0.00020630000000000236,
+  "throughputPerSecond": 7196419.061874813,
+  "budgetMs": 1,
+  "passed": true,
+  "limitations": "Synthetic valid contact only. Excludes network, persistence, n8n, concurrency and provider cost. Budget is a smoke regression ceiling, not a production SLO."
+}

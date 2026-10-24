@@ -1,0 +1,140 @@
+{
+  "reviewedAt": "2026-09-13T15:46:22.604Z",
+  "passed": true,
+  "checks": [
+    {
+      "name": "Repair evidence",
+      "passed": true,
+      "durationMs": 230,
+      "testCount": null,
+      "error": null,
+      "output": "{\"verified\":true,\"runs\":[{\"variant\":\"baseline\",\"exitCode\":1,\"elapsedMs\":89},{\"variant\":\"candidate\",\"exitCode\":0,\"elapsedMs\":90}]}\n"
+    },
+    {
+      "name": "Regression suite",
+      "passed": true,
+      "durationMs": 2827,
+      "testCount": 72,
+      "error": null,
+      "output": "TAP version 13\n# (node:13576) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n# (Use `node --trace-warnings ...` to show where the warning was created)\n# Subtest: new business fixtures execute through actual domain entry points\nok 1 - new business fixtures execute through actual domain entry points\n  ---\n  duration_ms: 9.4151\n  type: 'test'\n  ...\n# Subtest: independent boundary cases preserve operational controls\nok 2 - independent boundary cases preserve operational controls\n  ---\n  duration_ms: 0.1229\n  type: 'test'\n  ...\n# Subtest: computed quantities and uncertain write flags reject malformed inputs\nok 3 - computed quantities and uncertain write flags reject malformed inputs\n  ---\n  duration_ms: 0.1023\n  type: 'test'\n  ...\n# (node:11404) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n# (Use `node --trace-warnings ...` to show where the warning was created)\n# Subtest: dashboard renders every project, architecture, measurements and failed-run presentation\nok 4 - dashboard renders every project, architecture, measurements and failed-run presentation\n  ---\n  duration_ms: 2341.4848\n  type: 'test'\n  ...\n# Subtest: offline retrieval preserves tenant and approval boundaries\nok 5 - offline retrieval preserves tenant and approval boundaries\n  ---\n  duration_ms: 7.6633\n  type: 'test'\n  ...\n# Subtest: fabricated citations and altered answers fail evidence validation\nok 6 - fabricated citations and altered answers fail evidence validation\n  ---\n  duration_ms: 0.1614\n  type: 'test'\n  ...\n# Subtest: extractive lookup remains stable under document order changes\nok 7 - extractive lookup remains stable under document order changes\n  ---\n  duration_ms: 0.1262\n  type: 'test'\n  ...\n# Subtest: governor requires all roles on one stable snapshot\nok 8 - governor requires all roles on one stable snapshot\n  ---\n  duration_ms: 0.8466\n  type: 'test'\n  ...\n# Subtest: current assessment rejects stale, malformed and falsely green evidence\nok 9 - current assessment rejects stale, malformed and falsely green evidence\n  ---\n  duration_ms: 0.3507\n  type: 'test'\n  ...\n# Subtest: LIFE-01 computes its independently expected result and rejects invalid input\nok 10 - LIFE-01 computes its independently expected result and rejects invalid input\n  ---\n  duration_ms: 0.7695\n  type: 'test'\n  ...\n# Subtest: LIFE-02 computes its independently expected result and rejects invalid input\nok 11 - LIFE-02 computes its independently expected result and rejects invalid input\n  ---\n  duration_ms: 0.4763\n  type: 'test'\n  ...\n# Subtest: LIFE-03 computes its independently expected result and rejects invalid input\nok 12 - LIFE-03 computes its independently expected result and rejects invalid input\n  ---\n  duration_ms: 0.1378\n  type: 'test'\n  ...\n# Subtest: TRIP-01 computes its independently expected result and rejects invalid input\nok 13 - TRIP-01 computes its independently expected result and rejects invalid input\n  ---\n  duration_ms: 0.1104\n  type: 'test'\n  ...\n# Subtest: TRIP-02 computes its independently expected result and rejects invalid input\nok 14 - TRIP-02 computes its independently expected result and rejects invalid input\n  ---\n  duration_ms: 0.1011\n  type: 'test'\n  ...\n# Subtest: TRIP-03 computes its independently expected result and rejects invalid input\nok 15 - TRIP-03 computes its independently expected result and rejects invalid input\n  ---\n  duration_ms: 0.1064\n  type: 'test'\n  ...\n# Subtest: LIFE-04 computes its independently expected result and rejects invalid input\nok 16 - LIFE-04 computes its independently expected result and rejects invalid input\n  ---\n  duration_ms: 0.0972\n  type: 'test'\n  ...\n# Subtest: LIFE-05 computes its independently expected result and rejects invalid input\nok 17 - LIFE-05 computes its independently expected result and rejects invalid input\n  ---\n  duration_ms: 0.0707\n  type: 'test'\n  ...\n# Subtest: LIFE-06 computes its independently expected result and rejects invalid input\nok 18 - LIFE-06 computes its independently expected result and rejects invalid input\n  ---\n  duration_ms: 0.0937\n  type: 'test'\n  ...\n# Subtest: CARE-01 computes its independently expected result and rejects invalid input\nok 19 - CARE-01 computes its independently expected result and rejects invalid input\n  ---\n  duration_ms: 0.1723\n  type: 'test'\n  ...\n# Subtest: CARE-02 computes its independently expected result and rejects invalid input\nok 20 - CARE-02 computes its independently expected result and rejects invalid input\n  ---\n  duration_ms: 0.1576\n  type: 'test'\n  ...\n# Subtest: LIFE-07 computes its independently expected result and rejects invalid input\nok 21 - LIFE-07 computes its independently expected result and rejects invalid input\n  ---\n  duration_ms: 0.1238\n  type: 'test'\n  ...\n# Subtest: DATA-01 computes its independently expected result and rejects invalid input\nok 22 - DATA-01 computes its independently expected result and rejects invalid input\n  ---\n  duration_ms: 0.1043\n  type: 'test'\n  ...\n# Subtest: DATA-02 computes its independently expected result and rejects invalid input\nok 23 - DATA-02 computes its independently expected result and rejects invalid input\n  ---\n  duration_ms: 0.1492\n  type: 'test'\n  ...\n# Subtest: CARE-03 computes its independently expected result and rejects invalid input\nok 24 - CARE-03 computes its independently expected result and rejects invalid input\n  ---\n  duration_ms: 0.079\n  type: 'test'\n  ...\n# Subtest: CARE-04 computes its independently expected result and rejects invalid input\nok 25 - CARE-04 computes its independently expected result and rejects invalid input\n  ---\n  duration_ms: 0.0922\n  type: 'test'\n  ...\n# Subtest: DATA-03 computes its independently expected result and rejects invalid input\nok 26 - DATA-03 computes its independently expected result and rejects invalid input\n  ---\n  duration_ms: 0.0804\n  type: 'test'\n  ...\n# Subtest: DATA-04 computes its independently expected result and rejects invalid input\nok 27 - DATA-04 computes its independently expected result and rejects invalid input\n  ---\n  duration_ms: 0.1052\n  type: 'test'\n  ...\n# Subtest: DATA-05 computes its independently expected result and rejects invalid input\nok 28 - DATA-05 computes its independently expected result and rejects invalid input\n  ---\n  duration_ms: 0.0763\n  type: 'test'\n  ...\n# Subtest: DATA-06 computes its independently expected result and rejects invalid input\nok 29 - DATA-06 computes its independently expected result and rejects invalid input\n  ---\n  duration_ms: 0.0877\n  type: 'test'\n  ...\n# Subtest: human tools preserve missingness, limits and no-action boundaries\nok 30 - human tools preserve missingness, limits and no-action boundaries\n  ---\n  duration_ms: 0.1949\n  type: 'test'\n  ...\n# Subtest: all 20 human interfaces calculate, recover from bad inputs and filter\nok 31 - all 20 human interfaces calculate, recover from bad inputs and filter\n  ---\n  duration_ms: 127.9552\n  type: 'test'\n  ...\n# (node:28036) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n# (Use `node --trace-warnings ...` to show where the warning was created)\n# Subtest: maintenance dispatch respects exact window boundaries and deterministic vendor ordering\nok 32 - maintenance dispatch respects exact window boundaries and deterministic vendor ordering\n  ---\n  duration_ms: 2.2877\n  type: 'test'\n  ...\n# Subtest: maintenance rejects impossible calendar timestamps and duplicate vendor IDs\nok 33 - maintenance rejects impossible calendar timestamps and duplicate vendor IDs\n  ---\n  duration_ms: 0.5731\n  type: 'test'\n  ...\n# Subtest: durable register survives reopen and never overwrites a conflicting identity\nok 34 - durable register survives reopen and never overwrites a conflicting identity\n  ---\n  duration_ms: 24.7918\n  type: 'test'\n  ...\n# Subtest: source permissions fail closed and denied message contents never persist\nok 35 - source permissions fail closed and denied message contents never persist\n  ---\n  duration_ms: 1.6075\n  type: 'test'\n  ...\n# Subtest: decisions and commitments retain owner review and distinct source identities\nok 36 - decisions and commitments retain owner review and distinct source identities\n  ---\n  duration_ms: 0.5458\n  type: 'test'\n  ...\n# Subtest: showcase evaluation executes six checks for each deeper industry demo\nok 37 - showcase evaluation executes six checks for each deeper industry demo\n  ---\n  duration_ms: 0.7954\n  type: 'test'\n  ...\n# (node:23540) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n# (Use `node --trace-warnings ...` to show where the warning was created)\n# Subtest: latest project evidence survives more than 100 runs of another project and resolves equal timestamps\nok 38 - latest project evidence survives more than 100 runs of another project and resolves equal timestamps\n  ---\n  duration_ms: 30.9562\n  type: 'test'\n  ...\n# (node:46040) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n# (Use `node --trace-warnings ...` to show where the warning was created)\n# Subtest: maintenance emergency rule overrides routine access routing\nok 39 - maintenance emergency rule overrides routine access routing\n  ---\n  duration_ms: 0.7137\n  type: 'test'\n  ...\n# Subtest: commitment dedupe and sharing rules are explicit\nok 40 - commitment dedupe and sharing rules are explicit\n  ---\n  duration_ms: 0.3492\n  type: 'test'\n  ...\n# Subtest: new scenario domain entry points execute source\nok 41 - new scenario domain entry points execute source\n  ---\n  duration_ms: 25.9825\n  type: 'test'\n  ...\n# Subtest: GHL simulator validates, updates, deduplicates and reports faults over HTTP\nok 42 - GHL simulator validates, updates, deduplicates and reports faults over HTTP\n  ---\n  duration_ms: 168.6761\n  type: 'test'\n  ...\n# Subtest: execution activity reports observed stages and persists failed and successful runs\nok 43 - execution activity reports observed stages and persists failed and successful runs\n  ---\n  duration_ms: 42.9787\n  type: 'test'\n  ...\n# Subtest: showcase exposes source-backed inventories and only whitelisted downloads\nok 44 - showcase exposes source-backed inventories and only whitelisted downloads\n  ---\n  duration_ms: 304.6827\n  type: 'test'\n  ...\n# Subtest: roadmap projects execute normal and adverse expected-output cases\nok 45 - roadmap projects execute normal and adverse expected-output cases\n  ---\n  duration_ms: 1.805\n  type: 'test'\n  ...\n# Subtest: every project passes the shared adversarial handoff matrix\nok 46 - every project passes the shared adversarial handoff matrix\n  ---\n  duration_ms: 0.3674\n  type: 'test'\n  ...\n# Subtest: separate regression cases pass and never imply blind holdout coverage\nok 47 - separate regression cases pass and never imply blind holdout coverage\n  ---\n  duration_ms: 0.3203\n  type: 'test'\n  ...\n# Subtest: external dashboard assets and workflow architecture match the source\nok 48 - external dashboard assets and workflow architecture match the source\n  ---\n  duration_ms: 7.5716\n  type: 'test'\n  ...\n# (node:25624) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n# (Use `node --trace-warnings ...` to show where the warning was created)\n# Subtest: project deep links and hash navigation select the matching source\nok 49 - project deep links and hash navigation select the matching source\n  ---\n  duration_ms: 57.9727\n  type: 'test'\n  ...\n# Subtest: recorded review is available through the local server with its separate timestamps\nok 50 - recorded review is available through the local server with its separate timestamps\n  ---\n  duration_ms: 31.8294\n  type: 'test'\n  ...\n# Subtest: review excludes missing labels, detects overlap and frozen-data edits\nok 51 - review excludes missing labels, detects overlap and frozen-data edits\n  ---\n  duration_ms: 6.771\n  type: 'test'\n  ...\n# Subtest: catalog requires corrected evidence, all fields and approval; conflicts block export\nok 52 - catalog requires corrected evidence, all fields and approval; conflicts block export\n  ---\n  duration_ms: 0.4927\n  type: 'test'\n  ...\n# Subtest: catalog rejects partial-line source matches and approval coercion\nok 53 - catalog rejects partial-line source matches and approval coercion\n  ---\n  duration_ms: 0.3404\n  type: 'test'\n  ...\n# Subtest: comparison retains errors and requires shared complete trial sets\nok 54 - comparison retains errors and requires shared complete trial sets\n  ---\n  duration_ms: 0.3833\n  type: 'test'\n  ...\n# Subtest: recommendation has deterministic ties, missing labels and no-match behavior\nok 55 - recommendation has deterministic ties, missing labels and no-match behavior\n  ---\n  duration_ms: 0.3679\n  type: 'test'\n  ...\n# Subtest: actual learning lowers loss, passes numerical gradient check, and excludes held-out updates\nok 56 - actual learning lowers loss, passes numerical gradient check, and excludes held-out updates\n  ---\n  duration_ms: 0.8466\n  type: 'test'\n  ...\n# Subtest: recorded repair evidence matches the current exact source files\nok 57 - recorded repair evidence matches the current exact source files\n  ---\n  duration_ms: 0.8647\n  type: 'test'\n  ...\n# Subtest: guided catalog correction clears approval and produces a reviewed catalog\nok 58 - guided catalog correction clears approval and produces a reviewed catalog\n  ---\n  duration_ms: 26.0129\n  type: 'test'\n  ...\n# Subtest: restoring an export validates inputs and ignores supplied result claims\nok 59 - restoring an export validates inputs and ignores supplied result claims\n  ---\n  duration_ms: 18.6516\n  type: 'test'\n  ...\n# Subtest: claim scenarios isolate approval, tenant and changed-claim outcomes without mutating fixtures\nok 60 - claim scenarios isolate approval, tenant and changed-claim outcomes without mutating fixtures\n  ---\n  duration_ms: 1.1873\n  type: 'test'\n  ...\n# Subtest: action scenarios distinguish a confirmed non-write from an uncertain committed write\nok 61 - action scenarios distinguish a confirmed non-write from an uncertain committed write\n  ---\n  duration_ms: 0.6936\n  type: 'test'\n  ...\n# Subtest: scenario changes invalidate visible results and exports; input edits reset scenario label\nok 62 - scenario changes invalidate visible results and exports; input edits reset scenario label\n  ---\n  duration_ms: 70.3432\n  type: 'test'\n  ...\n# Subtest: claims require approved same-tenant exact excerpts and do not accept paraphrases as proven\nok 63 - claims require approved same-tenant exact excerpts and do not accept paraphrases as proven\n  ---\n  duration_ms: 0.9886\n  type: 'test'\n  ...\n# Subtest: unknown sources and fabricated quotes require review\nok 64 - unknown sources and fabricated quotes require review\n  ---\n  duration_ms: 0.2252\n  type: 'test'\n  ...\n# Subtest: uncertain writes are held, not repeated\nok 65 - uncertain writes are held, not repeated\n  ---\n  duration_ms: 0.1999\n  type: 'test'\n  ...\n# Subtest: completed duplicates and conflicting payloads do not write again\nok 66 - completed duplicates and conflicting payloads do not write again\n  ---\n  duration_ms: 0.095\n  type: 'test'\n  ...\n# Subtest: confirmed pre-write failures can retry; disallowed tools remain blocked\nok 67 - confirmed pre-write failures can retry; disallowed tools remain blocked\n  ---\n  duration_ms: 0.0828\n  type: 'test'\n  ...\n# Subtest: equal aggregate accuracy still exposes a regression and a fix\nok 68 - equal aggregate accuracy still exposes a regression and a fix\n  ---\n  duration_ms: 0.2762\n  type: 'test'\n  ...\n# Subtest: all passing fast candidate clears fixture gate\nok 69 - all passing fast candidate clears fixture gate\n  ---\n  duration_ms: 0.1557\n  type: 'test'\n  ...\n# Subtest: invalid collections, duplicate IDs and boolean coercion fail closed\nok 70 - invalid collections, duplicate IDs and boolean coercion fail closed\n  ---\n  duration_ms: 0.2395\n  type: 'test'\n  ...\n# Subtest: all three interfaces run, clear stale evidence on edits and recover from invalid JSON\nok 71 - all three interfaces run, clear stale evidence on edits and recover from invalid JSON\n  ---\n  duration_ms: 121.4085\n  type: 'test'\n  ...\n# Subtest: workflow diagrams preserve routing channels, branches and source positions\nok 72 - workflow diagrams preserve routing channels, branches and source positions\n  ---\n  duration_ms: 1.6329\n  type: 'test'\n  ...\n1..72\n# tests 72\n# suites 0\n# pass 72\n# fail 0\n# cancelled 0\n# skipped 0\n# todo 0\n# duration_ms 2775.9402\n"
+    },
+    {
+      "name": "API benchmark",
+      "passed": true,
+      "durationMs": 843,
+      "testCount": null,
+      "error": null,
+      "output": "{\n  \"measuredAt\": \"2026-09-13T15:46:22.571Z\",\n  \"scope\": \"Loopback HTTP plus in-memory SQLite contact upsert; excludes n8n, hosted GHL and disk durability\",\n  \"node\": \"v24.14.0\",\n  \"cpu\": \"AMD Ryzen 9 9950X3D 16-Core Processor          \",\n  \"warmup\": 100,\n  \"phases\": [\n    {\n      \"concurrency\": 1,\n      \"requests\": 1000,\n      \"errors\": 0,\n      \"p50Ms\": 0.25,\n      \"p95Ms\": 0.45750000000001023,\n      \"p99Ms\": 1.174900000000008,\n      \"durationMs\": 302.4869,\n      \"requestsPerSecond\": 3305.928289787095\n    },\n    {\n      \"concurrency\": 8,\n      \"requests\": 1000,\n      \"errors\": 0,\n      \"p50Ms\": 1.3958000000000652,\n      \"p95Ms\": 2.2197000000001026,\n      \"p99Ms\": 6.163200000000074,\n      \"durationMs\": 202.9361,\n      \"requestsPerSecond\": 4927.6594947867825\n    },\n    {\n      \"concurrency\": 32,\n      \"requests\": 1000,\n      \"errors\": 0,\n      \"p50Ms\": 4.6603999999999814,\n      \"p95Ms\": 9.93470000000002,\n      \"p99Ms\": 11.711599999999976,\n      \"durationMs\": 169.36109999999996,\n      \"requestsPerSecond\": 5904.543605349754\n    }\n  ],\n  \"uniqueContacts\": 100,\n  \"passed\": true\n}\n(node:41120) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n(Use `node --trace-warnings ...` to show where the warning was created)\n"
+    }
+  ],
+  "sourceHashes": {
+    "acceptance.mjs": "b656307c20cdb86cdd2ea83ac7a921c0aa1ee5cbbf97c411e77711f1b14aa062",
+    "audit-originals.mjs": "c031e57c76bb07703bc0e16217b69c90462ccdecaf27d1c1d5f085b424948e4d",
+    "benchmark.mjs": "d7f5b6533a071acd34823100b2091becada317dfdd4de95f5357c3ad9cb7a9d4",
+    "business-expansion.mjs": "f5d51b660e7c25004e09102131f45bc9dbc7a788b7941063ef388ed2422b191a",
+    "business-expansion.test.mjs": "943d60da3e68c162872df4e40ec07297d42865eafb241457955539cf2ad3faa7",
+    "catalog.mjs": "21246f421b50dfcaa123ae4074bd876604afb96fa9651155bf63e8186a564429",
+    "dashboard.test.mjs": "79da67d3b378c7dbf77e006d9fdd679de602a91a02494015b9c090ed63f9156b",
+    "document-expansion.mjs": "7a8c4c3174a17de7bffc9d725beadac1bfd93317068e14b5490b3a647f7920b1",
+    "document-human.mjs": "054d0d0cbcfe5698c3e60ad188bb8a36e04de0e71065bece53474970bd0c786e",
+    "engineering-evals.mjs": "c4e3e68f70bd584bc38f7f76a3d2d30645be519a540a39ab6dee9a72b13edd78",
+    "engineering-evals.test.mjs": "845001d8ef953114f16769bc8aa1d1dd07a714eb4e80b5386cd218f3a3edaadc",
+    "extra-scenarios.mjs": "073ee4e384aa1415f0ac331416f9515e542e95576d000ccbdb55d8cfb460d3ef",
+    "generate.mjs": "95d6b5f1a5a54c0640c8d07e740a0ad94f021546b5edc9c212ce445b6de9b0fc",
+    "governance-state.mjs": "9cd7a824682e42c6b3f5b6dd79f4c9599d608d852603fa269e60166421e13c0e",
+    "governance-worker.mjs": "844764e5c4ca3af811d497fef5c11f13f83b9954fd70034d72a844bd719ed01b",
+    "governance.mjs": "7635c3dd0e0875083e7ba39e9be312d8f0767110e6c4e4f8e748ca3aa470e3a2",
+    "governor-core.mjs": "98254a3335c1cd486cb660a7892a2f9595bc72e5449e15bf4e1eaa318daeaf0a",
+    "governor.test.mjs": "3402f3927656acf36554d093388c5bd254a633dce2e9e7bcfd7ec8fce997bd0e",
+    "human-projects.mjs": "3bd5c1ec6553ec907cec12f7b1c1d8dafe29ec85ad68d0b6dc7c94cda4209f52",
+    "human-projects.test.mjs": "33ee996aacc2bb0fd3813e987ab422825f0a67838964fac308fcab8bed6b02dd",
+    "human-studio.mjs": "4d3308f33997f709159834f5be9b6637d6ddf98d42c6a0efbd14e5084e049647",
+    "index.html": "f5b9b9e5e94efbb19d5465f2a23fcb1d690e980c5cb715cd384600c78b52b619",
+    "industry-depth.mjs": "c62df1ee1cb44b97b139f2d6b78248d9b290010cfab454c47429262de853ea9b",
+    "industry-depth.test.mjs": "956f316c5aea034101f7f49d363b0e8635af3a57f40291a8e360ba4c3ddc575f",
+    "n8n.mjs": "57714ce7d3a521e4101f7bbc28bc0fb3708c5d1357993fdd9adbc01ba5fa1a33",
+    "regression-cases.mjs": "145fd3c1f938edf3f2ff93afcd081c20752adf7a04dd29da8393ac38be761a9a",
+    "repair-evidence.mjs": "ee8ec67cebce62efda46fb9d902255573165932963c709a5e9b5c3b47cccd4b5",
+    "review-portfolio.mjs": "434705096d158d3db5f032013b50612e004c9dbc272502dd411eac3451ecc8ae",
+    "review-summary.mjs": "f730f05d3efcf72fa2f0aa013649e7784c1a5654bb56e02412e8f43f67e8da88",
+    "roadmap-scenarios.mjs": "5fa75a9c4cb1e759d14f4d121a8a9210c4dfe1a26094e3a965de30f5c1a18fe0",
+    "run-history.test.mjs": "de147d39cbc99abbcd7c6f66d71769c6d9ab70a25fc608259d4dbae364cce483",
+    "server.mjs": "89ed5dd37450d05a5dd3f351df0d9c54a52cc3eb265205e5304d4cabbe713538",
+    "showcase.mjs": "779b4aa926efa8eb9bacf421327b7e731a277431f4fc2200a1ccb3ec985b2882",
+    "studio.css": "bae9df2db382b6a53d6c3cf362d43ee4923998aa594e195152c19b0d4979812a",
+    "test.mjs": "e5e34e8de44574952bb00aac38cafaf6a77c38fb6160932dcd733fb9c5ac458e",
+    "verify-ai-engineering.mjs": "0509eed7d41386203b236601dce2a86dd31ddb683861aa27260d3a668f70793e",
+    "verify-expansion.mjs": "f7624f11730bcb0f64ce91d8d0b994993ebab016a1c156ee9729b0beff120d44",
+    "verify-repair.mjs": "19139c5807933c7ca1e9906c1dd9ec68468ef5e3b7fa2f48ba0f48961ddf80aa",
+    "verify.mjs": "fc337bbf787fce280915f94f849394f83a1d8b164be7a7288a78f4615f93f15b",
+    "workbench-core.mjs": "e0829bd2f51f9a4a9dcd343a528b4ff4c3e32a057fed90bf8d55cc6397fa8388",
+    "workbench-extended.mjs": "cf760be075de1018b51ef5721fe2c2d03beabd4fc366bcf96a11aea0fa456118",
+    "workbench-extended.test.mjs": "2c5715bff6b09ad95ec5b0d280839a8876a66fc2482ce64c437fcd90a03a0647",
+    "workbench-story.mjs": "7aaca4b131846271e3197382a04ec997b895e6f4d857cc180ee9f522c48cff72",
+    "workbench-story.test.mjs": "644db3306195e52a62c6624302c978a352e8c1504d0c853ae893769978bee351",
+    "workbench-ui.mjs": "efb447c71c36b03cbc3ff6b2f65ff72178dec7b19a57926abf2422549974b447",
+    "workbench.css": "db3f923d8aeddb5a49d758db22dced5583c07e317f1c39e0a69d849153e5e405",
+    "workbench.html": "5ccd52f84c094a51428741dab266a76d61d4615aad033e16f03f1182cfac514d",
+    "workbench.test.mjs": "6596852d61ab61609925f27cd33fca9c72508a753f35945feb17ee01cb434dd8",
+    "workflow-graph.test.mjs": "e80ef52299fd546f6f79411bf2e9d9e59cbbb22181c54e227825e7429db29f26"
+  },
+  "n8n": {
+    "recordedAt": "2026-09-11T17:37:36.096Z",
+    "passed": true,
+    "projects": 27,
+    "replayPassed": true,
+    "slowest": [
+      {
+        "id": "SAAS-03",
+        "engineDurationMs": 63888
+      },
+      {
+        "id": "CS-01",
+        "engineDurationMs": 761
+      },
+      {
+        "id": "INV-01",
+        "engineDurationMs": 748
+      }
+    ],
+    "scope": "Actual n8n execution of local showcase wrappers, original demo entry points and simulator HTTP calls; not the original full business workflows or hosted GHL."
+  },
+  "benchmark": {
+    "recordedAt": "2026-09-13T15:46:22.571Z",
+    "passed": true,
+    "scope": "Loopback HTTP plus in-memory SQLite contact upsert; excludes n8n, hosted GHL and disk durability",
+    "phases": [
+      {
+        "concurrency": 1,
+        "requests": 1000,
+        "errors": 0,
+        "p50Ms": 0.25,
+        "p95Ms": 0.45750000000001023,
+        "p99Ms": 1.174900000000008,
+        "durationMs": 302.4869,
+        "requestsPerSecond": 3305.928289787095
+      },
+      {
+        "concurrency": 8,
+        "requests": 1000,
+        "errors": 0,
+        "p50Ms": 1.3958000000000652,
+        "p95Ms": 2.2197000000001026,
+        "p99Ms": 6.163200000000074,
+        "durationMs": 202.9361,
+        "requestsPerSecond": 4927.6594947867825
+      },
+      {
+        "concurrency": 32,
+        "requests": 1000,
+        "errors": 0,
+        "p50Ms": 4.6603999999999814,
+        "p95Ms": 9.93470000000002,
+        "p99Ms": 11.711599999999976,
+        "durationMs": 169.36109999999996,
+        "requestsPerSecond": 5904.543605349754
+      }
+    ]
+  },
+  "scope": "Recorded local checks, not a production certification. n8n results are from the separately dated execution report; this command does not rerun n8n. Regenerate after edits."
+}

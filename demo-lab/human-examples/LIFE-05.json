@@ -1,0 +1,26 @@
+{
+  "project": "LIFE-05",
+  "title": "Book Nest",
+  "dataOrigin": "Invented example",
+  "input": {
+    "pages": 240,
+    "daily": 15
+  },
+  "output": {
+    "summary": "At this chosen pace, plan for 16 reading days. No streak required.",
+    "rows": [
+      {
+        "label": "Remaining",
+        "value": 240
+      },
+      {
+        "label": "Per reading day",
+        "value": 15
+      }
+    ],
+    "unit": "pages",
+    "details": {
+      "days": 16
+    }
+  }
+}

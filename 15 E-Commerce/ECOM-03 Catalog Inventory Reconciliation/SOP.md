@@ -46,3 +46,8 @@ Automatic creation of unknown SKUs was excluded. Mapping a new product identity 
 2. A fresh warehouse/ERP pair safely corrects stale Shopify stock.
 3. Missing mappings or stale authoritative data produce quarantine records.
 4. Replaying a reconciliation window cannot duplicate a correction.
+
+
+## Engineering amendment — 8 September 2026
+
+Revision 2026-09-08: Python artifacts were linted/formatted and local demos rerun. UTC defaults and usage timestamp normalization were repaired where applicable. Original n8n/API/database execution remains a separate acceptance gate; prior narrative production claims are not verified by local checks. See the root portfolio audit and the project showcase package for current evidence.

@@ -1,0 +1,55 @@
+{
+  "compile": {
+    "tenant": "harbor-demo",
+    "sources": [
+      {
+        "id": "supplier-record",
+        "version": "v1",
+        "title": "Synthetic supplier shipment",
+        "approved": true,
+        "pages": [{
+          "id": "shipment",
+          "title": "Sample shipment terms",
+          "text": "Sample shipment uses Incoterm DAP. Restricted goods must follow customs-checks before release.",
+          "claims": [{"key": "incoterm", "value": "DAP"}],
+          "references": [{"to": "customs-checks", "relation": "requires", "quote": "Restricted goods must follow customs-checks before release."}]
+        }]
+      },
+      {
+        "id": "customs-policy",
+        "version": "v1",
+        "title": "Synthetic customs guidance",
+        "approved": true,
+        "pages": [{
+          "id": "customs-checks",
+          "title": "Restricted goods release check",
+          "text": "Restricted goods require a signed permit before release. The approval-threshold policy names the required approver.",
+          "claims": [{"key": "customsRule", "value": "signed permit before release"}],
+          "references": [{"to": "approval-threshold", "relation": "requires", "quote": "The approval-threshold policy names the required approver."}]
+        }]
+      },
+      {
+        "id": "approval-policy",
+        "version": "v1",
+        "title": "Synthetic internal approval policy",
+        "approved": true,
+        "pages": [{
+          "id": "approval-threshold",
+          "title": "Restricted shipment approval",
+          "text": "For this synthetic shipment, release requires operations director approval after permit verification.",
+          "claims": [{"key": "approval", "value": "operations director approval"}],
+          "references": []
+        }]
+      }
+    ]
+  },
+  "answer": {
+    "tenant": "harbor-demo",
+    "question": "Which terms, customs rule and approval apply to the sample shipment?",
+    "startId": "shipment",
+    "requiredClaims": ["incoterm", "customsRule", "approval"],
+    "maxHops": 2,
+    "evidenceBudgetBytes": 12000,
+    "requestId": "harbor-demo-answer-1"
+  }
+}

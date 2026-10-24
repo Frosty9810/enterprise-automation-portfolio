@@ -1,0 +1,21 @@
+{
+  "kind": "manual-configuration-blueprint-not-ghl-snapshot",
+  "projectId": "SAAS-02",
+  "relationshipRole": "Billing contact",
+  "pipelineName": "Portfolio / SAAS-02",
+  "stages": [
+    "Payment issue",
+    "Owner review",
+    "Resolved"
+  ],
+  "messagingEnabled": false,
+  "duplicateMatch": "email",
+  "contactFields": [
+    "firstName",
+    "lastName",
+    "email",
+    "source"
+  ],
+  "liveAcceptance": "pending",
+  "systemOfRecord": "original project system"
+}

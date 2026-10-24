@@ -1,0 +1,41 @@
+{
+  "project": "DATA-02",
+  "title": "Energy Diary",
+  "dataOrigin": "Invented example",
+  "input": {
+    "daily": [
+      3,
+      4,
+      2,
+      5
+    ],
+    "rate": 0.2
+  },
+  "output": {
+    "summary": "The entered usage costs 2.8 cost units before fixed charges.",
+    "rows": [
+      {
+        "label": "Day 1",
+        "value": 3
+      },
+      {
+        "label": "Day 2",
+        "value": 4
+      },
+      {
+        "label": "Day 3",
+        "value": 2
+      },
+      {
+        "label": "Day 4",
+        "value": 5
+      }
+    ],
+    "unit": "kWh",
+    "details": {
+      "usage": 14,
+      "cost": 2.8,
+      "sampleSize": 4
+    }
+  }
+}

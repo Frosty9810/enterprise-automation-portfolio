@@ -38,9 +38,9 @@ import io
 import json
 import os
 import urllib.request
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from statistics import median, stdev
-from typing import Any, Optional
+from typing import Any
 
 MIN_COMPS_FOR_STATISTICS = 5
 OUTLIER_THRESHOLD_STD_DEV = 2.0
@@ -160,7 +160,7 @@ def parse_costar_csv(csv_text: str) -> list[Comp]:
     for row in reader:
         address = row["Property Address"].strip()
         transaction_date = _normalize_date(row["Sale Date"].strip())
-        comp_id = f"cmp_{abs(hash((address, transaction_date))) % (10 ** 8):08d}"
+        comp_id = f"cmp_{abs(hash((address, transaction_date))) % (10**8):08d}"
 
         sale_price = _clean_currency(row["Sale Price"])
         building_sf = float(row["Building SF"].strip() or 0)
@@ -246,7 +246,7 @@ def flag_outlier_comps(comps: list[Comp]) -> dict[str, list[Comp]]:
 def calculate_valuation_range(
     subject_noi_annual_usd: float,
     accepted_comps: list[Comp],
-    flagged_comps: Optional[list[Comp]] = None,
+    flagged_comps: list[Comp] | None = None,
 ) -> ValuationRange:
     """Derive a valuation range for the subject property from accepted comps.
 

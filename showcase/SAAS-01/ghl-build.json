@@ -1,0 +1,22 @@
+{
+  "kind": "manual-configuration-blueprint-not-ghl-snapshot",
+  "projectId": "SAAS-01",
+  "relationshipRole": "Trial account owner",
+  "pipelineName": "Portfolio / SAAS-01",
+  "stages": [
+    "Trial",
+    "Activated",
+    "Sales review",
+    "Converted"
+  ],
+  "messagingEnabled": false,
+  "duplicateMatch": "email",
+  "contactFields": [
+    "firstName",
+    "lastName",
+    "email",
+    "source"
+  ],
+  "liveAcceptance": "pending",
+  "systemOfRecord": "original project system"
+}

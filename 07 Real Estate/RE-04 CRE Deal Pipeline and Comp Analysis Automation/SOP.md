@@ -248,6 +248,7 @@ OUTLIER_THRESHOLD_STD_DEV = 2.0
 @dataclass
 class Comp:
     """Canonical comp record used for outlier detection."""
+
     comp_id: str
     address: str
     cap_rate: float  # decimal, e.g., 0.062 for 6.2%
@@ -277,9 +278,7 @@ def flag_outlier_comps(comps: list[Comp]) -> dict[str, list[Comp]]:
     cap_rates = sorted(c.cap_rate for c in comps)
     mid = len(cap_rates) // 2
     median_cap_rate = (
-        cap_rates[mid]
-        if len(cap_rates) % 2 == 1
-        else (cap_rates[mid - 1] + cap_rates[mid]) / 2
+        cap_rates[mid] if len(cap_rates) % 2 == 1 else (cap_rates[mid - 1] + cap_rates[mid]) / 2
     )
     cap_rate_stdev = stdev(cap_rates)
 
@@ -793,3 +792,8 @@ The null-and-flag extraction behavior (Section 38) was not the initial design â€
 
 ---
 *Part of the Enterprise Automation Portfolio. See [`07 Real Estate`](../README.md) README for navigation.*
+
+
+## Engineering amendment â€” 8 September 2026
+
+Revision 2026-09-08: Python artifacts were linted/formatted and local demos rerun. UTC defaults and usage timestamp normalization were repaired where applicable. Original n8n/API/database execution remains a separate acceptance gate; prior narrative production claims are not verified by local checks. See the root portfolio audit and the project showcase package for current evidence.

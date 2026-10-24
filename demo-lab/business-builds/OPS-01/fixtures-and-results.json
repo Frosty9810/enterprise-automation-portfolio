@@ -1,0 +1,71 @@
+{
+  "projectId": "OPS-01",
+  "evaluation": {
+    "passed": 5,
+    "total": 5,
+    "cases": [
+      {
+        "name": "Respect retry delay",
+        "passed": true,
+        "expected": {
+          "queue": "retry_plan",
+          "delaySeconds": 30
+        },
+        "output": {
+          "queue": "retry_plan",
+          "retryAllowed": true,
+          "delaySeconds": 30
+        }
+      },
+      {
+        "name": "Uncertain write",
+        "passed": true,
+        "expected": {
+          "queue": "reconcile_first"
+        },
+        "output": {
+          "queue": "reconcile_first",
+          "retryAllowed": false,
+          "delaySeconds": 0
+        }
+      },
+      {
+        "name": "Completed replay",
+        "passed": true,
+        "expected": {
+          "queue": "already_completed"
+        },
+        "output": {
+          "queue": "already_completed",
+          "retryAllowed": false,
+          "delaySeconds": 0
+        }
+      },
+      {
+        "name": "Attempt limit",
+        "passed": true,
+        "expected": {
+          "queue": "operator_review"
+        },
+        "output": {
+          "queue": "operator_review",
+          "retryAllowed": false,
+          "delaySeconds": 0
+        }
+      },
+      {
+        "name": "Non-retryable error",
+        "passed": true,
+        "expected": {
+          "retryAllowed": false
+        },
+        "output": {
+          "queue": "operator_review",
+          "retryAllowed": false,
+          "delaySeconds": 0
+        }
+      }
+    ]
+  },
+  "scope": "Local deterministic business rules; external tools and product integrations are not executed."
+}

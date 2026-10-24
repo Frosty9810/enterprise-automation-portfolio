@@ -45,3 +45,8 @@ Public auto-replies to one- and two-star reviews were cut. The time saved does n
 2. “Battery became hot” creates an urgent safety escalation.
 3. Repeated defect themes for one SKU aggregate into an Operations signal.
 4. A duplicate webhook never creates a second public response.
+
+
+## Engineering amendment — 8 September 2026
+
+Revision 2026-09-08: Python artifacts were linted/formatted and local demos rerun. UTC defaults and usage timestamp normalization were repaired where applicable. Original n8n/API/database execution remains a separate acceptance gate; prior narrative production claims are not verified by local checks. See the root portfolio audit and the project showcase package for current evidence.

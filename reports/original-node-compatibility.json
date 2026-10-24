@@ -1,0 +1,3895 @@
+{
+  "measuredAt": "2026-10-05T14:06:47.499Z",
+  "n8nVersion": "2.38.1",
+  "scope": "Installed original node classes and version/credential registry; not execution or remote API validation.",
+  "projects": [
+    {
+      "projectId": "RE-01",
+      "nodes": [
+        {
+          "name": "Webhook - Portal Lead Intake",
+          "type": "n8n-nodes-base.webhook",
+          "requestedVersion": 1,
+          "supportedVersions": [
+            1,
+            1.1,
+            2,
+            2.1
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Normalize Payload to Canonical Schema",
+          "type": "n8n-nodes-base.code",
+          "requestedVersion": 2,
+          "supportedVersions": [
+            1,
+            2
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "If - Has Valid Identifier",
+          "type": "n8n-nodes-base.if",
+          "requestedVersion": 2,
+          "supportedVersions": [
+            1,
+            2,
+            2.1,
+            2.2,
+            2.3
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Postgres - Fuzzy Dedup Lookup",
+          "type": "n8n-nodes-base.postgres",
+          "requestedVersion": 2,
+          "supportedVersions": [
+            1,
+            2,
+            2.1,
+            2.2,
+            2.3,
+            2.4,
+            2.5,
+            2.6,
+            2.7
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Postgres - Insert Lead Exception",
+          "type": "n8n-nodes-base.postgres",
+          "requestedVersion": 2,
+          "supportedVersions": [
+            1,
+            2,
+            2.1,
+            2.2,
+            2.3,
+            2.4,
+            2.5,
+            2.6,
+            2.7
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Postgres - Create or Merge Lead",
+          "type": "n8n-nodes-base.postgres",
+          "requestedVersion": 2,
+          "supportedVersions": [
+            1,
+            2,
+            2.1,
+            2.2,
+            2.3,
+            2.4,
+            2.5,
+            2.6,
+            2.7
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Twilio - Send Instant SMS",
+          "type": "n8n-nodes-base.httpRequest",
+          "requestedVersion": 4.2,
+          "supportedVersions": [
+            1,
+            2,
+            3,
+            4,
+            4.1,
+            4.2,
+            4.3,
+            4.4,
+            4.5
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "GHL - Create Contact & Trigger Email",
+          "type": "n8n-nodes-base.httpRequest",
+          "requestedVersion": 4.2,
+          "supportedVersions": [
+            1,
+            2,
+            3,
+            4,
+            4.1,
+            4.2,
+            4.3,
+            4.4,
+            4.5
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Code - Compute Lead Score",
+          "type": "n8n-nodes-base.code",
+          "requestedVersion": 2,
+          "supportedVersions": [
+            1,
+            2
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Switch - Route Drip Tier",
+          "type": "n8n-nodes-base.switch",
+          "requestedVersion": 3,
+          "supportedVersions": [
+            1,
+            2,
+            3,
+            3.1,
+            3.2,
+            3.3,
+            3.4
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "GHL - Enroll in Tiered Drip Campaign",
+          "type": "n8n-nodes-base.httpRequest",
+          "requestedVersion": 4.2,
+          "supportedVersions": [
+            1,
+            2,
+            3,
+            4,
+            4.1,
+            4.2,
+            4.3,
+            4.4,
+            4.5
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "If - Escalate to Hot Queue",
+          "type": "n8n-nodes-base.if",
+          "requestedVersion": 2,
+          "supportedVersions": [
+            1,
+            2,
+            2.1,
+            2.2,
+            2.3
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Close CRM - Create Hot Lead Task",
+          "type": "n8n-nodes-base.httpRequest",
+          "requestedVersion": 4.2,
+          "supportedVersions": [
+            1,
+            2,
+            3,
+            4,
+            4.1,
+            4.2,
+            4.3,
+            4.4,
+            4.5
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Postgres - Write Audit Record",
+          "type": "n8n-nodes-base.postgres",
+          "requestedVersion": 2,
+          "supportedVersions": [
+            1,
+            2,
+            2.1,
+            2.2,
+            2.3,
+            2.4,
+            2.5,
+            2.6,
+            2.7
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        }
+      ],
+      "compatible": true
+    },
+    {
+      "projectId": "RE-02",
+      "nodes": [
+        {
+          "name": "Webhook: Close Opportunity Status Changed",
+          "type": "n8n-nodes-base.webhook",
+          "requestedVersion": 1,
+          "supportedVersions": [
+            1,
+            1.1,
+            2,
+            2.1
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "If: Stage Is Under Contract",
+          "type": "n8n-nodes-base.if",
+          "requestedVersion": 2,
+          "supportedVersions": [
+            1,
+            2,
+            2.1,
+            2.2,
+            2.3
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Code: Validate Type & Select Template",
+          "type": "n8n-nodes-base.code",
+          "requestedVersion": 2,
+          "supportedVersions": [
+            1,
+            2
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "If: Route To TC Exception Queue",
+          "type": "n8n-nodes-base.if",
+          "requestedVersion": 2,
+          "supportedVersions": [
+            1,
+            2,
+            2.1,
+            2.2,
+            2.3
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "HTTP: Create Dotloop Transaction",
+          "type": "n8n-nodes-base.httpRequest",
+          "requestedVersion": 4,
+          "supportedVersions": [
+            1,
+            2,
+            3,
+            4,
+            4.1,
+            4.2,
+            4.3,
+            4.4,
+            4.5
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "HTTP: Provision Google Drive Folder",
+          "type": "n8n-nodes-base.httpRequest",
+          "requestedVersion": 4,
+          "supportedVersions": [
+            1,
+            2,
+            3,
+            4,
+            4.1,
+            4.2,
+            4.3,
+            4.4,
+            4.5
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "HTTP: Share Folder With Agents/TC",
+          "type": "n8n-nodes-base.httpRequest",
+          "requestedVersion": 4,
+          "supportedVersions": [
+            1,
+            2,
+            3,
+            4,
+            4.1,
+            4.2,
+            4.3,
+            4.4,
+            4.5
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Postgres: Insert Transaction Ledger Row",
+          "type": "n8n-nodes-base.postgres",
+          "requestedVersion": 2,
+          "supportedVersions": [
+            1,
+            2,
+            2.1,
+            2.2,
+            2.3,
+            2.4,
+            2.5,
+            2.6,
+            2.7
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Code: Build Exception Record",
+          "type": "n8n-nodes-base.code",
+          "requestedVersion": 2,
+          "supportedVersions": [
+            1,
+            2
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Postgres: Insert Exception Row",
+          "type": "n8n-nodes-base.postgres",
+          "requestedVersion": 2,
+          "supportedVersions": [
+            1,
+            2,
+            2.1,
+            2.2,
+            2.3,
+            2.4,
+            2.5,
+            2.6,
+            2.7
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Email: Notify TC Exception Queue",
+          "type": "n8n-nodes-base.emailSend",
+          "requestedVersion": 2,
+          "supportedVersions": [
+            1,
+            2,
+            2.1
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Schedule: Nightly Document Status Poll (02:00)",
+          "type": "n8n-nodes-base.scheduleTrigger",
+          "requestedVersion": 1,
+          "supportedVersions": [
+            1,
+            1.1,
+            1.2,
+            1.3,
+            1.4
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Postgres: Select Open Loops",
+          "type": "n8n-nodes-base.postgres",
+          "requestedVersion": 2,
+          "supportedVersions": [
+            1,
+            2,
+            2.1,
+            2.2,
+            2.3,
+            2.4,
+            2.5,
+            2.6,
+            2.7
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "HTTP: Poll Dotloop Document Status",
+          "type": "n8n-nodes-base.httpRequest",
+          "requestedVersion": 4,
+          "supportedVersions": [
+            1,
+            2,
+            3,
+            4,
+            4.1,
+            4.2,
+            4.3,
+            4.4,
+            4.5
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Postgres: Update Document Status",
+          "type": "n8n-nodes-base.postgres",
+          "requestedVersion": 2,
+          "supportedVersions": [
+            1,
+            2,
+            2.1,
+            2.2,
+            2.3,
+            2.4,
+            2.5,
+            2.6,
+            2.7
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Schedule: Nightly Deadline Evaluator (06:00)",
+          "type": "n8n-nodes-base.scheduleTrigger",
+          "requestedVersion": 1,
+          "supportedVersions": [
+            1,
+            1.1,
+            1.2,
+            1.3,
+            1.4
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Postgres: Select Deadlines In Window",
+          "type": "n8n-nodes-base.postgres",
+          "requestedVersion": 2,
+          "supportedVersions": [
+            1,
+            2,
+            2.1,
+            2.2,
+            2.3,
+            2.4,
+            2.5,
+            2.6,
+            2.7
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Code: Compute Notification Tier",
+          "type": "n8n-nodes-base.code",
+          "requestedVersion": 2,
+          "supportedVersions": [
+            1,
+            2
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "If: Tier Is T-0",
+          "type": "n8n-nodes-base.if",
+          "requestedVersion": 2,
+          "supportedVersions": [
+            1,
+            2,
+            2.1,
+            2.2,
+            2.3
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "HTTP: Send Twilio SMS (T-0)",
+          "type": "n8n-nodes-base.httpRequest",
+          "requestedVersion": 4,
+          "supportedVersions": [
+            1,
+            2,
+            3,
+            4,
+            4.1,
+            4.2,
+            4.3,
+            4.4,
+            4.5
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Email: Send Deadline Notice (T-0)",
+          "type": "n8n-nodes-base.emailSend",
+          "requestedVersion": 2,
+          "supportedVersions": [
+            1,
+            2,
+            2.1
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "If: T-0 Missed (Escalate To Broker)",
+          "type": "n8n-nodes-base.if",
+          "requestedVersion": 2,
+          "supportedVersions": [
+            1,
+            2,
+            2.1,
+            2.2,
+            2.3
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Postgres: Insert Escalation Row",
+          "type": "n8n-nodes-base.postgres",
+          "requestedVersion": 2,
+          "supportedVersions": [
+            1,
+            2,
+            2.1,
+            2.2,
+            2.3,
+            2.4,
+            2.5,
+            2.6,
+            2.7
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "HTTP: Send Twilio SMS Escalation To Broker",
+          "type": "n8n-nodes-base.httpRequest",
+          "requestedVersion": 4,
+          "supportedVersions": [
+            1,
+            2,
+            3,
+            4,
+            4.1,
+            4.2,
+            4.3,
+            4.4,
+            4.5
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Email: Escalate To Managing Broker",
+          "type": "n8n-nodes-base.emailSend",
+          "requestedVersion": 2,
+          "supportedVersions": [
+            1,
+            2,
+            2.1
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        }
+      ],
+      "compatible": true
+    },
+    {
+      "projectId": "RE-03",
+      "nodes": [
+        {
+          "name": "Webhook - GHL Conversation Updated",
+          "type": "n8n-nodes-base.webhook",
+          "requestedVersion": 2,
+          "supportedVersions": [
+            1,
+            1.1,
+            2,
+            2.1
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "IF - Qualifying Event Type",
+          "type": "n8n-nodes-base.if",
+          "requestedVersion": 2,
+          "supportedVersions": [
+            1,
+            2,
+            2.1,
+            2.2,
+            2.3
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Code - Extract Trigger Fields",
+          "type": "n8n-nodes-base.code",
+          "requestedVersion": 2,
+          "supportedVersions": [
+            1,
+            2
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "HTTP - Fetch GHL Conversation Context",
+          "type": "n8n-nodes-base.httpRequest",
+          "requestedVersion": 4.2,
+          "supportedVersions": [
+            1,
+            2,
+            3,
+            4,
+            4.1,
+            4.2,
+            4.3,
+            4.4,
+            4.5
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "HTTP - Fetch GHL Contact Record",
+          "type": "n8n-nodes-base.httpRequest",
+          "requestedVersion": 4.2,
+          "supportedVersions": [
+            1,
+            2,
+            3,
+            4,
+            4.1,
+            4.2,
+            4.3,
+            4.4,
+            4.5
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Code - Build Claude Request",
+          "type": "n8n-nodes-base.code",
+          "requestedVersion": 2,
+          "supportedVersions": [
+            1,
+            2
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "HTTP - Call Claude Messages API",
+          "type": "n8n-nodes-base.httpRequest",
+          "requestedVersion": 4.2,
+          "supportedVersions": [
+            1,
+            2,
+            3,
+            4,
+            4.1,
+            4.2,
+            4.3,
+            4.4,
+            4.5
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Code - Validate and Score",
+          "type": "n8n-nodes-base.code",
+          "requestedVersion": 2,
+          "supportedVersions": [
+            1,
+            2
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Postgres - Write Audit Record",
+          "type": "n8n-nodes-base.postgres",
+          "requestedVersion": 2.5,
+          "supportedVersions": [
+            1,
+            2,
+            2.1,
+            2.2,
+            2.3,
+            2.4,
+            2.5,
+            2.6,
+            2.7
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Switch - Score Bucket",
+          "type": "n8n-nodes-base.switch",
+          "requestedVersion": 3.2,
+          "supportedVersions": [
+            1,
+            2,
+            3,
+            3.1,
+            3.2,
+            3.3,
+            3.4
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "HTTP - Create Close CRM Lead",
+          "type": "n8n-nodes-base.httpRequest",
+          "requestedVersion": 4.2,
+          "supportedVersions": [
+            1,
+            2,
+            3,
+            4,
+            4.1,
+            4.2,
+            4.3,
+            4.4,
+            4.5
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Slack - Notify Assigned Agent",
+          "type": "n8n-nodes-base.slack",
+          "requestedVersion": 2.2,
+          "supportedVersions": [
+            1,
+            2,
+            2.1,
+            2.2,
+            2.3,
+            2.4,
+            2.5,
+            2.6,
+            2.7
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "HTTP - Tag GHL Nurture + Inject Entities",
+          "type": "n8n-nodes-base.httpRequest",
+          "requestedVersion": 4.2,
+          "supportedVersions": [
+            1,
+            2,
+            3,
+            4,
+            4.1,
+            4.2,
+            4.3,
+            4.4,
+            4.5
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "HTTP - Merge Entities to GHL Custom Fields",
+          "type": "n8n-nodes-base.httpRequest",
+          "requestedVersion": 4.2,
+          "supportedVersions": [
+            1,
+            2,
+            3,
+            4,
+            4.1,
+            4.2,
+            4.3,
+            4.4,
+            4.5
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Code - Assign Reason Code",
+          "type": "n8n-nodes-base.code",
+          "requestedVersion": 2,
+          "supportedVersions": [
+            1,
+            2
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "HTTP - Tag GHL Disqualified",
+          "type": "n8n-nodes-base.httpRequest",
+          "requestedVersion": 4.2,
+          "supportedVersions": [
+            1,
+            2,
+            3,
+            4,
+            4.1,
+            4.2,
+            4.3,
+            4.4,
+            4.5
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Postgres - Schedule Re-engagement",
+          "type": "n8n-nodes-base.postgres",
+          "requestedVersion": 2.5,
+          "supportedVersions": [
+            1,
+            2,
+            2.1,
+            2.2,
+            2.3,
+            2.4,
+            2.5,
+            2.6,
+            2.7
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        }
+      ],
+      "compatible": true
+    },
+    {
+      "projectId": "RE-04",
+      "nodes": [
+        {
+          "name": "Webhook - Comp File Upload",
+          "type": "n8n-nodes-base.webhook",
+          "requestedVersion": 2,
+          "supportedVersions": [
+            1,
+            1.1,
+            2,
+            2.1
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "If CSV Or PDF",
+          "type": "n8n-nodes-base.if",
+          "requestedVersion": 2,
+          "supportedVersions": [
+            1,
+            2,
+            2.1,
+            2.2,
+            2.3
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Code - Parse CoStar CSV",
+          "type": "n8n-nodes-base.code",
+          "requestedVersion": 2,
+          "supportedVersions": [
+            1,
+            2
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Code - Extract PDF Text",
+          "type": "n8n-nodes-base.code",
+          "requestedVersion": 2,
+          "supportedVersions": [
+            1,
+            2
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "HTTP - Claude Structured Extraction",
+          "type": "n8n-nodes-base.httpRequest",
+          "requestedVersion": 4.2,
+          "supportedVersions": [
+            1,
+            2,
+            3,
+            4,
+            4.1,
+            4.2,
+            4.3,
+            4.4,
+            4.5
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Code - Normalize To Canonical Schema",
+          "type": "n8n-nodes-base.code",
+          "requestedVersion": 2,
+          "supportedVersions": [
+            1,
+            2
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Code - Outlier Statistics",
+          "type": "n8n-nodes-base.code",
+          "requestedVersion": 2,
+          "supportedVersions": [
+            1,
+            2
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "HTTP - Claude Narrative Generation",
+          "type": "n8n-nodes-base.httpRequest",
+          "requestedVersion": 4.2,
+          "supportedVersions": [
+            1,
+            2,
+            3,
+            4,
+            4.1,
+            4.2,
+            4.3,
+            4.4,
+            4.5
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Postgres - Upsert Comps",
+          "type": "n8n-nodes-base.postgres",
+          "requestedVersion": 2.5,
+          "supportedVersions": [
+            1,
+            2,
+            2.1,
+            2.2,
+            2.3,
+            2.4,
+            2.5,
+            2.6,
+            2.7
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Postgres - Upsert Financial Model",
+          "type": "n8n-nodes-base.postgres",
+          "requestedVersion": 2.5,
+          "supportedVersions": [
+            1,
+            2,
+            2.1,
+            2.2,
+            2.3,
+            2.4,
+            2.5,
+            2.6,
+            2.7
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "HTTP - Salesforce Update Opportunity",
+          "type": "n8n-nodes-base.httpRequest",
+          "requestedVersion": 4.2,
+          "supportedVersions": [
+            1,
+            2,
+            3,
+            4,
+            4.1,
+            4.2,
+            4.3,
+            4.4,
+            4.5
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "HTTP - S3 Upload OM",
+          "type": "n8n-nodes-base.httpRequest",
+          "requestedVersion": 4.2,
+          "supportedVersions": [
+            1,
+            2,
+            3,
+            4,
+            4.1,
+            4.2,
+            4.3,
+            4.4,
+            4.5
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Salesforce - Create Broker Review Task",
+          "type": "n8n-nodes-base.salesforce",
+          "requestedVersion": 1,
+          "supportedVersions": [
+            1,
+            1.1
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Respond To Webhook",
+          "type": "n8n-nodes-base.respondToWebhook",
+          "requestedVersion": 1.1,
+          "supportedVersions": [
+            1,
+            1.1,
+            1.2,
+            1.3,
+            1.4,
+            1.5
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        }
+      ],
+      "compatible": true
+    },
+    {
+      "projectId": "REC-01",
+      "nodes": [
+        {
+          "name": "ATS Application Webhook",
+          "type": "n8n-nodes-base.webhook",
+          "requestedVersion": 2,
+          "supportedVersions": [
+            1,
+            1.1,
+            2,
+            2.1
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Validate Consent Scope",
+          "type": "n8n-nodes-base.postgres",
+          "requestedVersion": 2.5,
+          "supportedVersions": [
+            1,
+            2,
+            2.1,
+            2.2,
+            2.3,
+            2.4,
+            2.5,
+            2.6,
+            2.7
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Match Redacted Skills",
+          "type": "n8n-nodes-base.httpRequest",
+          "requestedVersion": 4.2,
+          "supportedVersions": [
+            1,
+            2,
+            3,
+            4,
+            4.1,
+            4.2,
+            4.3,
+            4.4,
+            4.5
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Persist Match Evidence",
+          "type": "n8n-nodes-base.postgres",
+          "requestedVersion": 2.5,
+          "supportedVersions": [
+            1,
+            2,
+            2.1,
+            2.2,
+            2.3,
+            2.4,
+            2.5,
+            2.6,
+            2.7
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Create Recruiter Review",
+          "type": "n8n-nodes-base.httpRequest",
+          "requestedVersion": 4.2,
+          "supportedVersions": [
+            1,
+            2,
+            3,
+            4,
+            4.1,
+            4.2,
+            4.3,
+            4.4,
+            4.5
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        }
+      ],
+      "compatible": true
+    },
+    {
+      "projectId": "MKT-01",
+      "nodes": [
+        {
+          "name": "Daily Ad Snapshot Schedule",
+          "type": "n8n-nodes-base.scheduleTrigger",
+          "requestedVersion": 1.2,
+          "supportedVersions": [
+            1,
+            1.1,
+            1.2,
+            1.3,
+            1.4
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Fetch Normalized Platform Snapshots",
+          "type": "n8n-nodes-base.httpRequest",
+          "requestedVersion": 4.2,
+          "supportedVersions": [
+            1,
+            2,
+            3,
+            4,
+            4.1,
+            4.2,
+            4.3,
+            4.4,
+            4.5
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Analyze Pacing and ROAS",
+          "type": "n8n-nodes-base.httpRequest",
+          "requestedVersion": 4.2,
+          "supportedVersions": [
+            1,
+            2,
+            3,
+            4,
+            4.1,
+            4.2,
+            4.3,
+            4.4,
+            4.5
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Persist Recommendation",
+          "type": "n8n-nodes-base.postgres",
+          "requestedVersion": 2.5,
+          "supportedVersions": [
+            1,
+            2,
+            2.1,
+            2.2,
+            2.3,
+            2.4,
+            2.5,
+            2.6,
+            2.7
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Create Approval Task",
+          "type": "n8n-nodes-base.httpRequest",
+          "requestedVersion": 4.2,
+          "supportedVersions": [
+            1,
+            2,
+            3,
+            4,
+            4.1,
+            4.2,
+            4.3,
+            4.4,
+            4.5
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        }
+      ],
+      "compatible": true
+    },
+    {
+      "projectId": "SAAS-01",
+      "nodes": [
+        {
+          "name": "Webhook - Usage Event Stream",
+          "type": "n8n-nodes-base.webhook",
+          "requestedVersion": 2,
+          "supportedVersions": [
+            1,
+            1.1,
+            2,
+            2.1
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Validate & Normalize Event",
+          "type": "n8n-nodes-base.code",
+          "requestedVersion": 2,
+          "supportedVersions": [
+            1,
+            2
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "If - Event Valid",
+          "type": "n8n-nodes-base.if",
+          "requestedVersion": 2,
+          "supportedVersions": [
+            1,
+            2,
+            2.1,
+            2.2,
+            2.3
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Postgres - Insert Usage Event",
+          "type": "n8n-nodes-base.postgres",
+          "requestedVersion": 2.5,
+          "supportedVersions": [
+            1,
+            2,
+            2.1,
+            2.2,
+            2.3,
+            2.4,
+            2.5,
+            2.6,
+            2.7
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Postgres - Log Rejected Event",
+          "type": "n8n-nodes-base.postgres",
+          "requestedVersion": 2.5,
+          "supportedVersions": [
+            1,
+            2,
+            2.1,
+            2.2,
+            2.3,
+            2.4,
+            2.5,
+            2.6,
+            2.7
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Respond 200 - Accepted",
+          "type": "n8n-nodes-base.respondToWebhook",
+          "requestedVersion": 1.1,
+          "supportedVersions": [
+            1,
+            1.1,
+            1.2,
+            1.3,
+            1.4,
+            1.5
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Respond 401 - Rejected",
+          "type": "n8n-nodes-base.respondToWebhook",
+          "requestedVersion": 1.1,
+          "supportedVersions": [
+            1,
+            1.1,
+            1.2,
+            1.3,
+            1.4,
+            1.5
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Schedule - Incremental Rollup (15 min)",
+          "type": "n8n-nodes-base.scheduleTrigger",
+          "requestedVersion": 1.2,
+          "supportedVersions": [
+            1,
+            1.1,
+            1.2,
+            1.3,
+            1.4
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Postgres - Read Active Trial Usage",
+          "type": "n8n-nodes-base.postgres",
+          "requestedVersion": 2.5,
+          "supportedVersions": [
+            1,
+            2,
+            2.1,
+            2.2,
+            2.3,
+            2.4,
+            2.5,
+            2.6,
+            2.7
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Code - Aggregate Daily Score",
+          "type": "n8n-nodes-base.code",
+          "requestedVersion": 2,
+          "supportedVersions": [
+            1,
+            2
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Postgres - Upsert Account Score",
+          "type": "n8n-nodes-base.postgres",
+          "requestedVersion": 2.5,
+          "supportedVersions": [
+            1,
+            2,
+            2.1,
+            2.2,
+            2.3,
+            2.4,
+            2.5,
+            2.6,
+            2.7
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Schedule - Hourly Checkpoint Sweep",
+          "type": "n8n-nodes-base.scheduleTrigger",
+          "requestedVersion": 1.2,
+          "supportedVersions": [
+            1,
+            1.1,
+            1.2,
+            1.3,
+            1.4
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Postgres - Read Checkpoint Candidates",
+          "type": "n8n-nodes-base.postgres",
+          "requestedVersion": 2.5,
+          "supportedVersions": [
+            1,
+            2,
+            2.1,
+            2.2,
+            2.3,
+            2.4,
+            2.5,
+            2.6,
+            2.7
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Code - Determine Checkpoint",
+          "type": "n8n-nodes-base.code",
+          "requestedVersion": 2,
+          "supportedVersions": [
+            1,
+            2
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "If - Checkpoint Due",
+          "type": "n8n-nodes-base.if",
+          "requestedVersion": 2,
+          "supportedVersions": [
+            1,
+            2,
+            2.1,
+            2.2,
+            2.3
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "HubSpot - Send Checkpoint Email",
+          "type": "n8n-nodes-base.httpRequest",
+          "requestedVersion": 4.2,
+          "supportedVersions": [
+            1,
+            2,
+            3,
+            4,
+            4.1,
+            4.2,
+            4.3,
+            4.4,
+            4.5
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Postgres - Mark Checkpoint Sent",
+          "type": "n8n-nodes-base.postgres",
+          "requestedVersion": 2.5,
+          "supportedVersions": [
+            1,
+            2,
+            2.1,
+            2.2,
+            2.3,
+            2.4,
+            2.5,
+            2.6,
+            2.7
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "If - High Intent Threshold Crossed",
+          "type": "n8n-nodes-base.if",
+          "requestedVersion": 2,
+          "supportedVersions": [
+            1,
+            2,
+            2.1,
+            2.2,
+            2.3
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Postgres - Read Account Ownership",
+          "type": "n8n-nodes-base.postgres",
+          "requestedVersion": 2.5,
+          "supportedVersions": [
+            1,
+            2,
+            2.1,
+            2.2,
+            2.3,
+            2.4,
+            2.5,
+            2.6,
+            2.7
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Close CRM - Create Opportunity",
+          "type": "n8n-nodes-base.httpRequest",
+          "requestedVersion": 4.2,
+          "supportedVersions": [
+            1,
+            2,
+            3,
+            4,
+            4.1,
+            4.2,
+            4.3,
+            4.4,
+            4.5
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Slack - Alert AE",
+          "type": "n8n-nodes-base.httpRequest",
+          "requestedVersion": 4.2,
+          "supportedVersions": [
+            1,
+            2,
+            3,
+            4,
+            4.1,
+            4.2,
+            4.3,
+            4.4,
+            4.5
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Postgres - Set Idempotency Flag",
+          "type": "n8n-nodes-base.postgres",
+          "requestedVersion": 2.5,
+          "supportedVersions": [
+            1,
+            2,
+            2.1,
+            2.2,
+            2.3,
+            2.4,
+            2.5,
+            2.6,
+            2.7
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Webhook - Stripe Trial End Event",
+          "type": "n8n-nodes-base.webhook",
+          "requestedVersion": 2,
+          "supportedVersions": [
+            1,
+            1.1,
+            2,
+            2.1
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Code - Normalize Stripe Event",
+          "type": "n8n-nodes-base.code",
+          "requestedVersion": 2,
+          "supportedVersions": [
+            1,
+            2
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Stripe - Get Customer Card Status",
+          "type": "n8n-nodes-base.httpRequest",
+          "requestedVersion": 4.2,
+          "supportedVersions": [
+            1,
+            2,
+            3,
+            4,
+            4.1,
+            4.2,
+            4.3,
+            4.4,
+            4.5
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Code - Merge Card Status",
+          "type": "n8n-nodes-base.code",
+          "requestedVersion": 2,
+          "supportedVersions": [
+            1,
+            2
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "If - Card On File",
+          "type": "n8n-nodes-base.if",
+          "requestedVersion": 2,
+          "supportedVersions": [
+            1,
+            2,
+            2.1,
+            2.2,
+            2.3
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Stripe - Convert Subscription to Active",
+          "type": "n8n-nodes-base.httpRequest",
+          "requestedVersion": 4.2,
+          "supportedVersions": [
+            1,
+            2,
+            3,
+            4,
+            4.1,
+            4.2,
+            4.3,
+            4.4,
+            4.5
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Postgres - Mark Converted",
+          "type": "n8n-nodes-base.postgres",
+          "requestedVersion": 2.5,
+          "supportedVersions": [
+            1,
+            2,
+            2.1,
+            2.2,
+            2.3,
+            2.4,
+            2.5,
+            2.6,
+            2.7
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Postgres - Read Intent Tier",
+          "type": "n8n-nodes-base.postgres",
+          "requestedVersion": 2.5,
+          "supportedVersions": [
+            1,
+            2,
+            2.1,
+            2.2,
+            2.3,
+            2.4,
+            2.5,
+            2.6,
+            2.7
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "If - Intent Tier High",
+          "type": "n8n-nodes-base.if",
+          "requestedVersion": 2,
+          "supportedVersions": [
+            1,
+            2,
+            2.1,
+            2.2,
+            2.3
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Set - Show Sales CTA (High Intent, No Card)",
+          "type": "n8n-nodes-base.set",
+          "requestedVersion": 3.4,
+          "supportedVersions": [
+            1,
+            2,
+            3,
+            3.1,
+            3.2,
+            3.3,
+            3.4,
+            3.5
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Set - Standard Paywall",
+          "type": "n8n-nodes-base.set",
+          "requestedVersion": 3.4,
+          "supportedVersions": [
+            1,
+            2,
+            3,
+            3.1,
+            3.2,
+            3.3,
+            3.4,
+            3.5
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Postgres - Persist Access State",
+          "type": "n8n-nodes-base.postgres",
+          "requestedVersion": 2.5,
+          "supportedVersions": [
+            1,
+            2,
+            2.1,
+            2.2,
+            2.3,
+            2.4,
+            2.5,
+            2.6,
+            2.7
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Respond 200 - Stripe Event Processed",
+          "type": "n8n-nodes-base.respondToWebhook",
+          "requestedVersion": 1.1,
+          "supportedVersions": [
+            1,
+            1.1,
+            1.2,
+            1.3,
+            1.4,
+            1.5
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        }
+      ],
+      "compatible": true
+    },
+    {
+      "projectId": "SAAS-02",
+      "nodes": [
+        {
+          "name": "Stripe Webhook - invoice.payment_failed",
+          "type": "n8n-nodes-base.webhook",
+          "requestedVersion": 2,
+          "supportedVersions": [
+            1,
+            1.1,
+            2,
+            2.1
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Extract Tier and Failure Reason",
+          "type": "n8n-nodes-base.code",
+          "requestedVersion": 2,
+          "supportedVersions": [
+            1,
+            2
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Postgres - Create Dunning Case",
+          "type": "n8n-nodes-base.postgres",
+          "requestedVersion": 2.5,
+          "supportedVersions": [
+            1,
+            2,
+            2.1,
+            2.2,
+            2.3,
+            2.4,
+            2.5,
+            2.6,
+            2.7
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Switch - Plan Tier",
+          "type": "n8n-nodes-base.switch",
+          "requestedVersion": 3,
+          "supportedVersions": [
+            1,
+            2,
+            3,
+            3.1,
+            3.2,
+            3.3,
+            3.4
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Wait Until Day 3 (SMB)",
+          "type": "n8n-nodes-base.wait",
+          "requestedVersion": 1.1,
+          "supportedVersions": [
+            1,
+            1.1
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Wait Until Day 3 (Mid-Market)",
+          "type": "n8n-nodes-base.wait",
+          "requestedVersion": 1.1,
+          "supportedVersions": [
+            1,
+            1.1
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Postgres - Check Before Send (Day 3)",
+          "type": "n8n-nodes-base.postgres",
+          "requestedVersion": 2.5,
+          "supportedVersions": [
+            1,
+            2,
+            2.1,
+            2.2,
+            2.3,
+            2.4,
+            2.5,
+            2.6,
+            2.7
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "IF Not Yet Recovered (Day 3)",
+          "type": "n8n-nodes-base.if",
+          "requestedVersion": 2.2,
+          "supportedVersions": [
+            1,
+            2,
+            2.1,
+            2.2,
+            2.3
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "HubSpot - Send Day 3 Email",
+          "type": "n8n-nodes-base.httpRequest",
+          "requestedVersion": 4.2,
+          "supportedVersions": [
+            1,
+            2,
+            3,
+            4,
+            4.1,
+            4.2,
+            4.3,
+            4.4,
+            4.5
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Wait Until Day 7",
+          "type": "n8n-nodes-base.wait",
+          "requestedVersion": 1.1,
+          "supportedVersions": [
+            1,
+            1.1
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Postgres - Check Before Send (Day 7)",
+          "type": "n8n-nodes-base.postgres",
+          "requestedVersion": 2.5,
+          "supportedVersions": [
+            1,
+            2,
+            2.1,
+            2.2,
+            2.3,
+            2.4,
+            2.5,
+            2.6,
+            2.7
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "IF Not Yet Recovered (Day 7)",
+          "type": "n8n-nodes-base.if",
+          "requestedVersion": 2.2,
+          "supportedVersions": [
+            1,
+            2,
+            2.1,
+            2.2,
+            2.3
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "HubSpot - Send Day 7 Email",
+          "type": "n8n-nodes-base.httpRequest",
+          "requestedVersion": 4.2,
+          "supportedVersions": [
+            1,
+            2,
+            3,
+            4,
+            4.1,
+            4.2,
+            4.3,
+            4.4,
+            4.5
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "IF High Value Account",
+          "type": "n8n-nodes-base.if",
+          "requestedVersion": 2.2,
+          "supportedVersions": [
+            1,
+            2,
+            2.1,
+            2.2,
+            2.3
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Twilio - Send SMS Escalation",
+          "type": "n8n-nodes-base.twilio",
+          "requestedVersion": 1,
+          "supportedVersions": [
+            1
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Wait Until Day 14",
+          "type": "n8n-nodes-base.wait",
+          "requestedVersion": 1.1,
+          "supportedVersions": [
+            1,
+            1.1
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Postgres - Check Before Suspend (Day 14)",
+          "type": "n8n-nodes-base.postgres",
+          "requestedVersion": 2.5,
+          "supportedVersions": [
+            1,
+            2,
+            2.1,
+            2.2,
+            2.3,
+            2.4,
+            2.5,
+            2.6,
+            2.7
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "IF Not Yet Recovered (Day 14)",
+          "type": "n8n-nodes-base.if",
+          "requestedVersion": 2.2,
+          "supportedVersions": [
+            1,
+            2,
+            2.1,
+            2.2,
+            2.3
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "HTTP - Suspend or Downgrade Subscription",
+          "type": "n8n-nodes-base.httpRequest",
+          "requestedVersion": 4.2,
+          "supportedVersions": [
+            1,
+            2,
+            3,
+            4,
+            4.1,
+            4.2,
+            4.3,
+            4.4,
+            4.5
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Wait Until Day 3 (Enterprise, parallel)",
+          "type": "n8n-nodes-base.wait",
+          "requestedVersion": 1.1,
+          "supportedVersions": [
+            1,
+            1.1
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Close CRM - Create CSM Task",
+          "type": "n8n-nodes-base.httpRequest",
+          "requestedVersion": 4.2,
+          "supportedVersions": [
+            1,
+            2,
+            3,
+            4,
+            4.1,
+            4.2,
+            4.3,
+            4.4,
+            4.5
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Postgres - Log CSM Task Created",
+          "type": "n8n-nodes-base.postgres",
+          "requestedVersion": 2.5,
+          "supportedVersions": [
+            1,
+            2,
+            2.1,
+            2.2,
+            2.3,
+            2.4,
+            2.5,
+            2.6,
+            2.7
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Stripe Webhook - invoice.payment_succeeded",
+          "type": "n8n-nodes-base.webhook",
+          "requestedVersion": 2,
+          "supportedVersions": [
+            1,
+            1.1,
+            2,
+            2.1
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Extract Recovery Payload",
+          "type": "n8n-nodes-base.code",
+          "requestedVersion": 2,
+          "supportedVersions": [
+            1,
+            2
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Postgres - Mark Case Recovered",
+          "type": "n8n-nodes-base.postgres",
+          "requestedVersion": 2.5,
+          "supportedVersions": [
+            1,
+            2,
+            2.1,
+            2.2,
+            2.3,
+            2.4,
+            2.5,
+            2.6,
+            2.7
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Postgres - Log Recovery Transition",
+          "type": "n8n-nodes-base.postgres",
+          "requestedVersion": 2.5,
+          "supportedVersions": [
+            1,
+            2,
+            2.1,
+            2.2,
+            2.3,
+            2.4,
+            2.5,
+            2.6,
+            2.7
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "QuickBooks - Reconcile Journal Entry",
+          "type": "n8n-nodes-base.httpRequest",
+          "requestedVersion": 4.2,
+          "supportedVersions": [
+            1,
+            2,
+            3,
+            4,
+            4.1,
+            4.2,
+            4.3,
+            4.4,
+            4.5
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Postgres - Log QBO Reconciliation",
+          "type": "n8n-nodes-base.postgres",
+          "requestedVersion": 2.5,
+          "supportedVersions": [
+            1,
+            2,
+            2.1,
+            2.2,
+            2.3,
+            2.4,
+            2.5,
+            2.6,
+            2.7
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Respond 200 (Failed Webhook)",
+          "type": "n8n-nodes-base.respondToWebhook",
+          "requestedVersion": 1.4,
+          "supportedVersions": [
+            1,
+            1.1,
+            1.2,
+            1.3,
+            1.4,
+            1.5
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Respond 200 (Succeeded Webhook)",
+          "type": "n8n-nodes-base.respondToWebhook",
+          "requestedVersion": 1.4,
+          "supportedVersions": [
+            1,
+            1.1,
+            1.2,
+            1.3,
+            1.4,
+            1.5
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        }
+      ],
+      "compatible": true
+    },
+    {
+      "projectId": "SAAS-03",
+      "nodes": [
+        {
+          "name": "Nightly Schedule Trigger",
+          "type": "n8n-nodes-base.scheduleTrigger",
+          "requestedVersion": 1.2,
+          "supportedVersions": [
+            1,
+            1.1,
+            1.2,
+            1.3,
+            1.4
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Pull Active Account Roster",
+          "type": "n8n-nodes-base.postgres",
+          "requestedVersion": 2.5,
+          "supportedVersions": [
+            1,
+            2,
+            2.1,
+            2.2,
+            2.3,
+            2.4,
+            2.5,
+            2.6,
+            2.7
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Pull Engagement Feature Snapshot",
+          "type": "n8n-nodes-base.postgres",
+          "requestedVersion": 2.5,
+          "supportedVersions": [
+            1,
+            2,
+            2.1,
+            2.2,
+            2.3,
+            2.4,
+            2.5,
+            2.6,
+            2.7
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Batch Accounts (200 per call)",
+          "type": "n8n-nodes-base.splitInBatches",
+          "requestedVersion": 3,
+          "supportedVersions": [
+            1,
+            2,
+            3
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Call scikit-learn Scoring Service",
+          "type": "n8n-nodes-base.httpRequest",
+          "requestedVersion": 4.2,
+          "supportedVersions": [
+            1,
+            2,
+            3,
+            4,
+            4.1,
+            4.2,
+            4.3,
+            4.4,
+            4.5
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Flatten Scored Accounts",
+          "type": "n8n-nodes-base.code",
+          "requestedVersion": 2,
+          "supportedVersions": [
+            1,
+            2
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Above Churn Probability Threshold?",
+          "type": "n8n-nodes-base.if",
+          "requestedVersion": 2.2,
+          "supportedVersions": [
+            1,
+            2,
+            2.1,
+            2.2,
+            2.3
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Log Score (Below Threshold, No Action)",
+          "type": "n8n-nodes-base.postgres",
+          "requestedVersion": 2.5,
+          "supportedVersions": [
+            1,
+            2,
+            2.1,
+            2.2,
+            2.3,
+            2.4,
+            2.5,
+            2.6,
+            2.7
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Above ARR Human-Touch Threshold?",
+          "type": "n8n-nodes-base.if",
+          "requestedVersion": 2.2,
+          "supportedVersions": [
+            1,
+            2,
+            2.1,
+            2.2,
+            2.3
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Claude API - Generate Intervention Playbook",
+          "type": "n8n-nodes-base.httpRequest",
+          "requestedVersion": 4.2,
+          "supportedVersions": [
+            1,
+            2,
+            3,
+            4,
+            4.1,
+            4.2,
+            4.3,
+            4.4,
+            4.5
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Close CRM - Create Task (HTTP)",
+          "type": "n8n-nodes-base.httpRequest",
+          "requestedVersion": 4.2,
+          "supportedVersions": [
+            1,
+            2,
+            3,
+            4,
+            4.1,
+            4.2,
+            4.3,
+            4.4,
+            4.5
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "HubSpot - Enroll Automated Sequence",
+          "type": "n8n-nodes-base.httpRequest",
+          "requestedVersion": 4.2,
+          "supportedVersions": [
+            1,
+            2,
+            3,
+            4,
+            4.1,
+            4.2,
+            4.3,
+            4.4,
+            4.5
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Log Score + Action to Postgres",
+          "type": "n8n-nodes-base.postgres",
+          "requestedVersion": 2.5,
+          "supportedVersions": [
+            1,
+            2,
+            2.1,
+            2.2,
+            2.3,
+            2.4,
+            2.5,
+            2.6,
+            2.7
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Log Intervention Record",
+          "type": "n8n-nodes-base.postgres",
+          "requestedVersion": 2.5,
+          "supportedVersions": [
+            1,
+            2,
+            2.1,
+            2.2,
+            2.3,
+            2.4,
+            2.5,
+            2.6,
+            2.7
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Slack - Log Notification",
+          "type": "n8n-nodes-base.slack",
+          "requestedVersion": 2.2,
+          "supportedVersions": [
+            1,
+            2,
+            2.1,
+            2.2,
+            2.3,
+            2.4,
+            2.5,
+            2.6,
+            2.7
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        }
+      ],
+      "compatible": true
+    },
+    {
+      "projectId": "SAAS-04",
+      "nodes": [
+        {
+          "name": "Nightly Schedule Trigger (02:00 ET)",
+          "type": "n8n-nodes-base.scheduleTrigger",
+          "requestedVersion": 1.2,
+          "supportedVersions": [
+            1,
+            1.1,
+            1.2,
+            1.3,
+            1.4
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Postgres: Pull Internal Usage",
+          "type": "n8n-nodes-base.postgres",
+          "requestedVersion": 2.5,
+          "supportedVersions": [
+            1,
+            2,
+            2.1,
+            2.2,
+            2.3,
+            2.4,
+            2.5,
+            2.6,
+            2.7
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Stripe: Pull Invoice Line Items",
+          "type": "n8n-nodes-base.httpRequest",
+          "requestedVersion": 4.2,
+          "supportedVersions": [
+            1,
+            2,
+            3,
+            4,
+            4.1,
+            4.2,
+            4.3,
+            4.4,
+            4.5
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Code: Compute Variance",
+          "type": "n8n-nodes-base.code",
+          "requestedVersion": 2,
+          "supportedVersions": [
+            1,
+            2
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "If: Variance >= 3%",
+          "type": "n8n-nodes-base.if",
+          "requestedVersion": 2.2,
+          "supportedVersions": [
+            1,
+            2,
+            2.1,
+            2.2,
+            2.3
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Postgres: Log Pending Review",
+          "type": "n8n-nodes-base.postgres",
+          "requestedVersion": 2.5,
+          "supportedVersions": [
+            1,
+            2,
+            2.1,
+            2.2,
+            2.3,
+            2.4,
+            2.5,
+            2.6,
+            2.7
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Postgres: Log Auto-Resolved",
+          "type": "n8n-nodes-base.postgres",
+          "requestedVersion": 2.5,
+          "supportedVersions": [
+            1,
+            2,
+            2.1,
+            2.2,
+            2.3,
+            2.4,
+            2.5,
+            2.6,
+            2.7
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Slack: Post Variance Alert",
+          "type": "n8n-nodes-base.httpRequest",
+          "requestedVersion": 4.2,
+          "supportedVersions": [
+            1,
+            2,
+            3,
+            4,
+            4.1,
+            4.2,
+            4.3,
+            4.4,
+            4.5
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Monthly Schedule Trigger (1st, 04:00 ET)",
+          "type": "n8n-nodes-base.scheduleTrigger",
+          "requestedVersion": 1.2,
+          "supportedVersions": [
+            1,
+            1.1,
+            1.2,
+            1.3,
+            1.4
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Postgres: Pull Active Subscriptions",
+          "type": "n8n-nodes-base.postgres",
+          "requestedVersion": 2.5,
+          "supportedVersions": [
+            1,
+            2,
+            2.1,
+            2.2,
+            2.3,
+            2.4,
+            2.5,
+            2.6,
+            2.7
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Code: Generate RevRec Schedule",
+          "type": "n8n-nodes-base.code",
+          "requestedVersion": 2,
+          "supportedVersions": [
+            1,
+            2
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Postgres: Persist RevRec Schedule",
+          "type": "n8n-nodes-base.postgres",
+          "requestedVersion": 2.5,
+          "supportedVersions": [
+            1,
+            2,
+            2.1,
+            2.2,
+            2.3,
+            2.4,
+            2.5,
+            2.6,
+            2.7
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Code: Build JE Payload + Idempotency Key",
+          "type": "n8n-nodes-base.code",
+          "requestedVersion": 2,
+          "supportedVersions": [
+            1,
+            2
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Postgres: Idempotency Fast-Path Check",
+          "type": "n8n-nodes-base.postgres",
+          "requestedVersion": 2.5,
+          "supportedVersions": [
+            1,
+            2,
+            2.1,
+            2.2,
+            2.3,
+            2.4,
+            2.5,
+            2.6,
+            2.7
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "If: Already Posted (Duplicate Guard)",
+          "type": "n8n-nodes-base.if",
+          "requestedVersion": 2.2,
+          "supportedVersions": [
+            1,
+            2,
+            2.1,
+            2.2,
+            2.3
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "QuickBooks: POST Journal Entry (Idempotency-Key header)",
+          "type": "n8n-nodes-base.httpRequest",
+          "requestedVersion": 4.2,
+          "supportedVersions": [
+            1,
+            2,
+            3,
+            4,
+            4.1,
+            4.2,
+            4.3,
+            4.4,
+            4.5
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Postgres: Log Posted Entry",
+          "type": "n8n-nodes-base.postgres",
+          "requestedVersion": 2.5,
+          "supportedVersions": [
+            1,
+            2,
+            2.1,
+            2.2,
+            2.3,
+            2.4,
+            2.5,
+            2.6,
+            2.7
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Postgres: Log Duplicate Prevented",
+          "type": "n8n-nodes-base.postgres",
+          "requestedVersion": 2.5,
+          "supportedVersions": [
+            1,
+            2,
+            2.1,
+            2.2,
+            2.3,
+            2.4,
+            2.5,
+            2.6,
+            2.7
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        }
+      ],
+      "compatible": true
+    },
+    {
+      "projectId": "ECOM-01",
+      "nodes": [
+        {
+          "name": "Shopify Product Webhook",
+          "type": "n8n-nodes-base.webhook",
+          "requestedVersion": 2,
+          "supportedVersions": [
+            1,
+            1.1,
+            2,
+            2.1
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Normalize and Hash Source",
+          "type": "n8n-nodes-base.code",
+          "requestedVersion": 2,
+          "supportedVersions": [
+            1,
+            2
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Create Idempotent Locale Job",
+          "type": "n8n-nodes-base.postgres",
+          "requestedVersion": 2.5,
+          "supportedVersions": [
+            1,
+            2,
+            2.1,
+            2.2,
+            2.3,
+            2.4,
+            2.5,
+            2.6,
+            2.7
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Generate Structured Candidate",
+          "type": "n8n-nodes-base.httpRequest",
+          "requestedVersion": 4.2,
+          "supportedVersions": [
+            1,
+            2,
+            3,
+            4,
+            4.1,
+            4.2,
+            4.3,
+            4.4,
+            4.5
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Validate Protected Facts",
+          "type": "n8n-nodes-base.code",
+          "requestedVersion": 2,
+          "supportedVersions": [
+            1,
+            2
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Eligible for Automatic Publish",
+          "type": "n8n-nodes-base.if",
+          "requestedVersion": 2.2,
+          "supportedVersions": [
+            1,
+            2,
+            2.1,
+            2.2,
+            2.3
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Publish Shopify Translation",
+          "type": "n8n-nodes-base.httpRequest",
+          "requestedVersion": 4.2,
+          "supportedVersions": [
+            1,
+            2,
+            3,
+            4,
+            4.1,
+            4.2,
+            4.3,
+            4.4,
+            4.5
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Queue Content Approval",
+          "type": "n8n-nodes-base.postgres",
+          "requestedVersion": 2.5,
+          "supportedVersions": [
+            1,
+            2,
+            2.1,
+            2.2,
+            2.3,
+            2.4,
+            2.5,
+            2.6,
+            2.7
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        }
+      ],
+      "compatible": true
+    },
+    {
+      "projectId": "ECOM-02",
+      "nodes": [
+        {
+          "name": "Review Webhook",
+          "type": "n8n-nodes-base.webhook",
+          "requestedVersion": 2,
+          "supportedVersions": [
+            1,
+            1.1,
+            2,
+            2.1
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Rules-First Review Router",
+          "type": "n8n-nodes-base.code",
+          "requestedVersion": 2,
+          "supportedVersions": [
+            1,
+            2
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Persist Triage Decision",
+          "type": "n8n-nodes-base.postgres",
+          "requestedVersion": 2.5,
+          "supportedVersions": [
+            1,
+            2,
+            2.1,
+            2.2,
+            2.3,
+            2.4,
+            2.5,
+            2.6,
+            2.7
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Automatic Response Allowed",
+          "type": "n8n-nodes-base.if",
+          "requestedVersion": 2.2,
+          "supportedVersions": [
+            1,
+            2,
+            2.1,
+            2.2,
+            2.3
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Publish Bounded Thank You",
+          "type": "n8n-nodes-base.httpRequest",
+          "requestedVersion": 4.2,
+          "supportedVersions": [
+            1,
+            2,
+            3,
+            4,
+            4.1,
+            4.2,
+            4.3,
+            4.4,
+            4.5
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Create Human Review Task",
+          "type": "n8n-nodes-base.httpRequest",
+          "requestedVersion": 4.2,
+          "supportedVersions": [
+            1,
+            2,
+            3,
+            4,
+            4.1,
+            4.2,
+            4.3,
+            4.4,
+            4.5
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        }
+      ],
+      "compatible": true
+    },
+    {
+      "projectId": "ECOM-03",
+      "nodes": [
+        {
+          "name": "Reconciliation Schedule",
+          "type": "n8n-nodes-base.scheduleTrigger",
+          "requestedVersion": 1.2,
+          "supportedVersions": [
+            1,
+            1.1,
+            1.2,
+            1.3,
+            1.4
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Load Fresh Three-Way Snapshot",
+          "type": "n8n-nodes-base.postgres",
+          "requestedVersion": 2.5,
+          "supportedVersions": [
+            1,
+            2,
+            2.1,
+            2.2,
+            2.3,
+            2.4,
+            2.5,
+            2.6,
+            2.7
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Apply Authority and Safety Policy",
+          "type": "n8n-nodes-base.code",
+          "requestedVersion": 2,
+          "supportedVersions": [
+            1,
+            2
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Safe Correction",
+          "type": "n8n-nodes-base.if",
+          "requestedVersion": 2.2,
+          "supportedVersions": [
+            1,
+            2,
+            2.1,
+            2.2,
+            2.3
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Set Shopify Inventory",
+          "type": "n8n-nodes-base.httpRequest",
+          "requestedVersion": 4.2,
+          "supportedVersions": [
+            1,
+            2,
+            3,
+            4,
+            4.1,
+            4.2,
+            4.3,
+            4.4,
+            4.5
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Verify and Record Correction",
+          "type": "n8n-nodes-base.postgres",
+          "requestedVersion": 2.5,
+          "supportedVersions": [
+            1,
+            2,
+            2.1,
+            2.2,
+            2.3,
+            2.4,
+            2.5,
+            2.6,
+            2.7
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Record No-Write Decision",
+          "type": "n8n-nodes-base.postgres",
+          "requestedVersion": 2.5,
+          "supportedVersions": [
+            1,
+            2,
+            2.1,
+            2.2,
+            2.3,
+            2.4,
+            2.5,
+            2.6,
+            2.7
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        }
+      ],
+      "compatible": true
+    },
+    {
+      "projectId": "ECOM-04",
+      "nodes": [
+        {
+          "name": "Helpdesk Ticket Webhook",
+          "type": "n8n-nodes-base.webhook",
+          "requestedVersion": 2,
+          "supportedVersions": [
+            1,
+            1.1,
+            2,
+            2.1
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Redact PII and Apply Policy",
+          "type": "n8n-nodes-base.code",
+          "requestedVersion": 2,
+          "supportedVersions": [
+            1,
+            2
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Persist Route and SLA",
+          "type": "n8n-nodes-base.postgres",
+          "requestedVersion": 2.5,
+          "supportedVersions": [
+            1,
+            2,
+            2.1,
+            2.2,
+            2.3,
+            2.4,
+            2.5,
+            2.6,
+            2.7
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Urgent Policy Route",
+          "type": "n8n-nodes-base.if",
+          "requestedVersion": 2.2,
+          "supportedVersions": [
+            1,
+            2,
+            2.1,
+            2.2,
+            2.3
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Page Risk or Privacy Owner",
+          "type": "n8n-nodes-base.httpRequest",
+          "requestedVersion": 4.2,
+          "supportedVersions": [
+            1,
+            2,
+            3,
+            4,
+            4.1,
+            4.2,
+            4.3,
+            4.4,
+            4.5
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Assign Helpdesk Queue",
+          "type": "n8n-nodes-base.httpRequest",
+          "requestedVersion": 4.2,
+          "supportedVersions": [
+            1,
+            2,
+            3,
+            4,
+            4.1,
+            4.2,
+            4.3,
+            4.4,
+            4.5
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        }
+      ],
+      "compatible": true
+    },
+    {
+      "projectId": "ACC-01",
+      "nodes": [
+        {
+          "name": "Extracted Invoice Webhook",
+          "type": "n8n-nodes-base.webhook",
+          "requestedVersion": 2,
+          "supportedVersions": [
+            1,
+            1.1,
+            2,
+            2.1
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Load PO and Receipt Evidence",
+          "type": "n8n-nodes-base.postgres",
+          "requestedVersion": 2.5,
+          "supportedVersions": [
+            1,
+            2,
+            2.1,
+            2.2,
+            2.3,
+            2.4,
+            2.5,
+            2.6,
+            2.7
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Apply Three-Way Match Policy",
+          "type": "n8n-nodes-base.httpRequest",
+          "requestedVersion": 4.2,
+          "supportedVersions": [
+            1,
+            2,
+            3,
+            4,
+            4.1,
+            4.2,
+            4.3,
+            4.4,
+            4.5
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Persist Financial Decision",
+          "type": "n8n-nodes-base.postgres",
+          "requestedVersion": 2.5,
+          "supportedVersions": [
+            1,
+            2,
+            2.1,
+            2.2,
+            2.3,
+            2.4,
+            2.5,
+            2.6,
+            2.7
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Create Draft or Exception",
+          "type": "n8n-nodes-base.httpRequest",
+          "requestedVersion": 4.2,
+          "supportedVersions": [
+            1,
+            2,
+            3,
+            4,
+            4.1,
+            4.2,
+            4.3,
+            4.4,
+            4.5
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        }
+      ],
+      "compatible": true
+    },
+    {
+      "projectId": "CS-01",
+      "nodes": [
+        {
+          "name": "Daily QA Sample Schedule",
+          "type": "n8n-nodes-base.scheduleTrigger",
+          "requestedVersion": 1.2,
+          "supportedVersions": [
+            1,
+            1.1,
+            1.2,
+            1.3,
+            1.4
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Fetch Stratified Redacted Sample",
+          "type": "n8n-nodes-base.httpRequest",
+          "requestedVersion": 4.2,
+          "supportedVersions": [
+            1,
+            2,
+            3,
+            4,
+            4.1,
+            4.2,
+            4.3,
+            4.4,
+            4.5
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Evaluate Approved Knowledge Grounding",
+          "type": "n8n-nodes-base.httpRequest",
+          "requestedVersion": 4.2,
+          "supportedVersions": [
+            1,
+            2,
+            3,
+            4,
+            4.1,
+            4.2,
+            4.3,
+            4.4,
+            4.5
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Persist Immutable Evaluation",
+          "type": "n8n-nodes-base.postgres",
+          "requestedVersion": 2.5,
+          "supportedVersions": [
+            1,
+            2,
+            2.1,
+            2.2,
+            2.3,
+            2.4,
+            2.5,
+            2.6,
+            2.7
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        },
+        {
+          "name": "Create QA or Knowledge Task",
+          "type": "n8n-nodes-base.httpRequest",
+          "requestedVersion": 4.2,
+          "supportedVersions": [
+            1,
+            2,
+            3,
+            4,
+            4.1,
+            4.2,
+            4.3,
+            4.4,
+            4.5
+          ],
+          "registered": true,
+          "versionSupported": true,
+          "loadError": null,
+          "unknownCredentials": []
+        }
+      ],
+      "compatible": true
+    }
+  ]
+}

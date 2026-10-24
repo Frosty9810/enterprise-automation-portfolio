@@ -1,0 +1,69 @@
+{
+  "projectId": "CRM-01",
+  "evaluation": {
+    "passed": 5,
+    "total": 5,
+    "cases": [
+      {
+        "name": "Canonical email",
+        "passed": true,
+        "expected": {
+          "canonical": {
+            "accountId": "agency-demo",
+            "email": "demo@example.com",
+            "owner": "operations",
+            "version": 2
+          }
+        },
+        "output": {
+          "queue": "sync_review",
+          "writeAllowed": false,
+          "canonical": {
+            "accountId": "agency-demo",
+            "email": "demo@example.com",
+            "owner": "operations",
+            "version": 2
+          },
+          "discardedFields": [
+            "notes",
+            "marketingPermission"
+          ],
+          "externalActions": 0
+        }
+      },
+      {
+        "name": "Stale event",
+        "passed": true,
+        "expected": {
+          "queue": "ignore_stale"
+        },
+        "output": {
+          "queue": "ignore_stale",
+          "writeAllowed": false
+        }
+      },
+      {
+        "name": "No consent",
+        "passed": true,
+        "expected": {
+          "queue": "consent_review"
+        },
+        "output": {
+          "queue": "consent_review",
+          "writeAllowed": false
+        }
+      },
+      {
+        "name": "Malformed email",
+        "passed": true,
+        "expectedRejection": "Invalid email"
+      },
+      {
+        "name": "Missing owner",
+        "passed": true,
+        "expectedRejection": "Identity required"
+      }
+    ]
+  },
+  "scope": "Local deterministic business rules; external tools and product integrations are not executed."
+}

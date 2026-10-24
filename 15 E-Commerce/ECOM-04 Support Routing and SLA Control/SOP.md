@@ -45,3 +45,8 @@ Fully autonomous refunds were excluded. Refund eligibility can be suggested, but
 2. PII redaction occurs before classification.
 3. An ambiguous request falls back safely when the classifier is unavailable.
 4. SLA timers remain active even if downstream enrichment fails.
+
+
+## Engineering amendment — 8 September 2026
+
+Revision 2026-09-08: Python artifacts were linted/formatted and local demos rerun. UTC defaults and usage timestamp normalization were repaired where applicable. Original n8n/API/database execution remains a separate acceptance gate; prior narrative production claims are not verified by local checks. See the root portfolio audit and the project showcase package for current evidence.

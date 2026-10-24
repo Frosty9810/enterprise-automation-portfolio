@@ -1,0 +1,10 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+const file=process.env.REPAIR_VARIANT;
+if(!['baseline','candidate'].includes(file))throw Error('Unknown fixture variant');
+const {receive}=await import('./'+file+'.mjs');
+test('duplicate event deducts stock once',()=>assert.equal(receive([{id:'a',quantity:3},{id:'a',quantity:3}]),17));
+test('distinct events both deduct stock',()=>assert.equal(receive([{id:'a',quantity:3},{id:'b',quantity:2}]),15));
+test('same ID with changed payload is rejected',()=>assert.throws(()=>receive([{id:'a',quantity:3},{id:'a',quantity:2}]),/Conflicting/));
+test('invalid and excessive quantities are rejected',()=>{for(const quantity of [-1,0,1.5,21])assert.throws(()=>receive([{id:'a',quantity}]));});
+test('empty event list preserves stock',()=>assert.equal(receive([]),20));

@@ -5,20 +5,31 @@ from __future__ import annotations
 
 import ast
 import json
+import os
 import subprocess
 from pathlib import Path
 
-
 ROOT = Path(__file__).resolve().parents[1]
-IGNORED_PARTS = {".git", "__pycache__", ".venv", "venv"}
+IGNORED_PARTS = {
+    ".git",
+    "__pycache__",
+    ".venv",
+    "venv",
+    "node_modules",
+    "dist",
+    ".next",
+    ".runtime",
+    ".n8n",
+}
 
 
 def repository_files(pattern: str) -> list[Path]:
-    return [
-        path
-        for path in ROOT.rglob(pattern)
-        if not any(part in IGNORED_PARTS for part in path.parts)
-    ]
+    # Prune dependency/build directories before traversal, not after reading them.
+    files = []
+    for directory, children, names in os.walk(ROOT):
+        children[:] = sorted(name for name in children if name not in IGNORED_PARTS)
+        files.extend(Path(directory) / name for name in sorted(names) if Path(name).match(pattern))
+    return files
 
 
 def validate_python(errors: list[str]) -> int:
@@ -50,13 +61,30 @@ def validate_n8n_workflows(errors: list[str]) -> int:
             errors.append(f"Workflow connections must be an object: {path.relative_to(ROOT)}")
             continue
 
-        names = [node.get("name") for node in workflow["nodes"] if isinstance(node, dict)]
+        if any(not isinstance(node, dict) for node in workflow["nodes"]):
+            errors.append(f"Workflow contains a non-object node: {path.relative_to(ROOT)}")
+            continue
+        names = [node.get("name") for node in workflow["nodes"]]
         if any(not isinstance(name, str) or not name for name in names):
             errors.append(f"Workflow contains an unnamed node: {path.relative_to(ROOT)}")
             continue
         if len(names) != len(set(names)):
             errors.append(f"Workflow contains duplicate node names: {path.relative_to(ROOT)}")
             continue
+        ids = [node.get("id") for node in workflow["nodes"]]
+        if any(not isinstance(value, str) or not value for value in ids) or len(ids) != len(
+            set(ids)
+        ):
+            errors.append(f"Invalid or duplicate node IDs: {path.relative_to(ROOT)}")
+        if workflow.get("active") is True:
+            errors.append(f"Shareable workflow must be inactive: {path.relative_to(ROOT)}")
+        for node in workflow["nodes"]:
+            if not isinstance(node.get("parameters"), dict) or not isinstance(
+                node.get("type"), str
+            ):
+                errors.append(
+                    f"Invalid node configuration: {path.relative_to(ROOT)}: {node.get('name')}"
+                )
 
         known = set(names)
         adjacency: dict[str, set[str]] = {name: set() for name in names}
@@ -72,9 +100,11 @@ def validate_n8n_workflows(errors: list[str]) -> int:
                 continue
             for outputs in channels.values():
                 if not isinstance(outputs, list):
+                    errors.append(f"Invalid outputs in {path.relative_to(ROOT)}: {source}")
                     continue
                 for branch in outputs:
                     if not isinstance(branch, list):
+                        errors.append(f"Invalid branch in {path.relative_to(ROOT)}: {source}")
                         continue
                     for connection in branch:
                         target = connection.get("node") if isinstance(connection, dict) else None
@@ -87,7 +117,17 @@ def validate_n8n_workflows(errors: list[str]) -> int:
                             adjacency[source].add(target)
                             incoming[target] += 1
 
-        roots = [name for name, count in incoming.items() if count == 0]
+        roots = [
+            node["name"]
+            for node in workflow["nodes"]
+            if isinstance(node.get("type"), str)
+            and (
+                node["type"].endswith("Trigger")
+                or node["type"] in {"n8n-nodes-base.webhook", "n8n-nodes-base.start"}
+            )
+        ]
+        if not roots:
+            errors.append(f"Workflow has no recognized trigger: {path.relative_to(ROOT)}")
         reachable: set[str] = set()
         pending = list(roots)
         while pending:
@@ -128,14 +168,17 @@ def validate_project_completeness(errors: list[str]) -> int:
         for name in required:
             if not (build / name).is_file():
                 errors.append(f"Missing {name} for {sop.parent.relative_to(ROOT)}")
-        if not list(build.glob("*.py")):
-            errors.append(f"Missing Python implementation for {sop.parent.relative_to(ROOT)}")
+        implementations = [
+            path for suffix in ("*.py", "*.js", "*.mjs", "*.ts") for path in build.glob(suffix)
+        ]
+        if not implementations:
+            errors.append(f"Missing executable implementation for {sop.parent.relative_to(ROOT)}")
     return len(sops)
 
 
 def validate_generated_files(errors: list[str]) -> None:
     tracked = subprocess.run(
-        ["git", "ls-files"],
+        ["git", "-c", f"safe.directory={ROOT.as_posix()}", "ls-files"],
         cwd=ROOT,
         check=True,
         capture_output=True,

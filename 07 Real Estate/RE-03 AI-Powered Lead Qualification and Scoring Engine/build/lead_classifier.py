@@ -29,8 +29,8 @@ import json
 import os
 import sys
 import time
-from dataclasses import dataclass, asdict
-from typing import Any, Optional
+from dataclasses import asdict, dataclass
+from typing import Any
 
 try:
     import anthropic
@@ -116,8 +116,7 @@ CLASSIFY_AND_EXTRACT_TOOL_SCHEMA: list[dict[str, Any]] = [
                         "bedroom_count": {
                             "type": ["integer", "null"],
                             "description": (
-                                "Desired or current bedroom count. Null if not "
-                                "mentioned."
+                                "Desired or current bedroom count. Null if not mentioned."
                             ),
                         },
                         "timeline": {
@@ -141,9 +140,7 @@ CLASSIFY_AND_EXTRACT_TOOL_SCHEMA: list[dict[str, Any]] = [
                                 "cash_buyer",
                                 "unknown",
                             ],
-                            "description": (
-                                "Lead's stated financing/pre-approval status."
-                            ),
+                            "description": ("Lead's stated financing/pre-approval status."),
                         },
                         "property_address_if_seller": {
                             "type": ["string", "null"],
@@ -263,9 +260,7 @@ def compute_score_breakdown(
 
     recency_component = max(0, 100 - (hours_since_last_engagement * 2)) * 0.10
 
-    total = round(
-        intent_component + entity_component + source_component + recency_component
-    )
+    total = round(intent_component + entity_component + source_component + recency_component)
     total = max(0, min(100, total))
 
     rationale = (
@@ -297,6 +292,7 @@ def routing_bucket(score: int) -> str:
 # ---------------------------------------------------------------------------
 # 4. Request construction
 # ---------------------------------------------------------------------------
+
 
 def build_claude_request(transcript: str, lead_source: str) -> dict[str, Any]:
     """Construct the Claude Messages API request for lead classification.
@@ -358,7 +354,7 @@ class LeadClassificationError(Exception):
     """Raised when the Claude response cannot be parsed into a usable classification."""
 
 
-def parse_and_validate_tool_response(message: "anthropic.types.Message") -> dict[str, Any]:
+def parse_and_validate_tool_response(message: anthropic.types.Message) -> dict[str, Any]:
     """Extract and validate the tool_use payload from a Claude API response.
 
     This is a lightweight structural check standing in for the full Ajv/
@@ -409,8 +405,7 @@ def parse_and_validate_tool_response(message: "anthropic.types.Message") -> dict
 
     if errors:
         raise LeadClassificationError(
-            "Schema validation failed for classify_and_extract_lead response: "
-            + "; ".join(errors)
+            "Schema validation failed for classify_and_extract_lead response: " + "; ".join(errors)
         )
 
     return parsed_input
@@ -420,9 +415,10 @@ def parse_and_validate_tool_response(message: "anthropic.types.Message") -> dict
 # 6. Live API call with retry/backoff (SOP Section 17 Scenario 1, Section 18)
 # ---------------------------------------------------------------------------
 
+
 def classify_lead(
     transcript: str,
-    api_key: Optional[str] = None,
+    api_key: str | None = None,
     lead_source: str = "unknown",
     max_retries: int = 3,
 ) -> dict[str, Any]:
@@ -451,9 +447,7 @@ def classify_lead(
             occurs (e.g. authentication failure).
     """
     if anthropic is None:
-        raise RuntimeError(
-            "The 'anthropic' package is not installed. Run: pip install anthropic"
-        )
+        raise RuntimeError("The 'anthropic' package is not installed. Run: pip install anthropic")
 
     resolved_key = api_key or os.environ.get("ANTHROPIC_API_KEY")
     if not resolved_key:
@@ -465,7 +459,7 @@ def classify_lead(
     client = anthropic.Anthropic(api_key=resolved_key)
     request_body = build_claude_request(transcript, lead_source)
 
-    last_error: Optional[Exception] = None
+    last_error: Exception | None = None
     for attempt in range(1, max_retries + 1):
         try:
             message = client.messages.create(
@@ -481,7 +475,7 @@ def classify_lead(
 
         except anthropic.RateLimitError as exc:  # HTTP 429
             last_error = exc
-            backoff_seconds = (2 ** attempt) + (0.2 * attempt)
+            backoff_seconds = (2**attempt) + (0.2 * attempt)
             print(
                 f"[retry] rate limited (attempt {attempt}/{max_retries}); "
                 f"backing off {backoff_seconds:.1f}s",
@@ -491,7 +485,7 @@ def classify_lead(
 
         except anthropic.InternalServerError as exc:  # HTTP 5xx
             last_error = exc
-            backoff_seconds = (2 ** attempt) + (0.2 * attempt)
+            backoff_seconds = (2**attempt) + (0.2 * attempt)
             print(
                 f"[retry] server error (attempt {attempt}/{max_retries}); "
                 f"backing off {backoff_seconds:.1f}s",
@@ -609,8 +603,9 @@ def _print_dry_run() -> None:
         lead_source="referral",
         hours_since_last_engagement=0.4,
     )
-    score = compute_composite_score(illustrative_classification, lead_source="referral",
-                                     hours_since_last_engagement=0.4)
+    score = compute_composite_score(
+        illustrative_classification, lead_source="referral", hours_since_last_engagement=0.4
+    )
 
     print("\n--- Illustrative scoring pass (hardcoded classification, no API call) ---")
     print(json.dumps(illustrative_classification, indent=2))
@@ -622,8 +617,10 @@ def _print_dry_run() -> None:
 def _run_live_demo() -> None:
     """Call the real Claude API against the hardcoded sample transcripts."""
     print("=" * 78)
-    print("LIVE RUN — ANTHROPIC_API_KEY detected. Calling the real Claude API for "
-          f"{len(SAMPLE_TRANSCRIPTS)} sample transcripts.")
+    print(
+        "LIVE RUN — ANTHROPIC_API_KEY detected. Calling the real Claude API for "
+        f"{len(SAMPLE_TRANSCRIPTS)} sample transcripts."
+    )
     print("=" * 78)
 
     for sample in SAMPLE_TRANSCRIPTS:

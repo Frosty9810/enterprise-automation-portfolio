@@ -1,0 +1,31 @@
+{
+  "project": "CARE-02",
+  "title": "Neighbour Hours",
+  "dataOrigin": "Invented example",
+  "input": {
+    "offered": [
+      2,
+      1,
+      3
+    ],
+    "need": 8
+  },
+  "output": {
+    "summary": "There is a time gap; ask before adding work.",
+    "rows": [
+      {
+        "label": "Offered",
+        "value": 6
+      },
+      {
+        "label": "Needed",
+        "value": 8
+      }
+    ],
+    "unit": "hours",
+    "details": {
+      "gap": 2,
+      "scheduled": false
+    }
+  }
+}

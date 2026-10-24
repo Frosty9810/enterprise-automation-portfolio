@@ -1,0 +1,452 @@
+{
+  "recordedAt": "2026-09-10T18:30:29.607Z",
+  "scope": "Changed local n8n wrappers and local GHL simulator; no hosted LLM or provider benchmark",
+  "results": [
+    {
+      "projectId": "PM-01",
+      "passed": true,
+      "runId": "d8c39019-0bf5-49ae-bd3a-e7faecb5a0b8",
+      "status": "passed",
+      "engine": "n8n",
+      "ghlMode": "local simulator",
+      "contactId": "11622469-d268-4e09-a74c-87bd02df4e37",
+      "created": false,
+      "businessEvidence": {
+        "projectId": "PM-01",
+        "status": "passed",
+        "fixture": "bundled synthetic demonstration",
+        "source": "demo-lab/extra-scenarios.mjs",
+        "sourceHash": "073ee4e384aa1415f0ac331416f9515e542e95576d000ccbdb55d8cfb460d3ef",
+        "componentHashes": {
+          "industryDepth": "c62df1ee1cb44b97b139f2d6b78248d9b290010cfab454c47429262de853ea9b"
+        },
+        "outputHash": "58ae281db69284526544a05ba5679fe94ca32cd0f77e1ecd84010c52d0aad93f",
+        "output": "{\n  \"projectId\": \"PM-01\",\n  \"priority\": \"emergency\",\n  \"queue\": \"human_emergency_operator\",\n  \"slaMinutes\": 5,\n  \"dispatchAllowed\": false,\n  \"reasons\": [\n    \"deterministic_emergency_rule\",\n    \"access_not_confirmed\"\n  ],\n  \"proposal\": \"Escalate immediately to the emergency operator.\",\n  \"industryDepth\": {\n    \"projectId\": \"PM-01\",\n    \"evaluation\": {\n      \"passed\": 6,\n      \"total\": 6,\n      \"cases\": [\n        {\n          \"name\": \"skill and consent windows overlap\",\n          \"passed\": true\n        },\n        {\n          \"name\": \"SLA breach is visible\",\n          \"passed\": true\n        },\n        {\n          \"name\": \"dispatch always requires a human\",\n          \"passed\": true\n        },\n        {\n          \"name\": \"emergency bypasses scheduling\",\n          \"passed\": true\n        },\n        {\n          \"name\": \"unapproved access blocks appointment\",\n          \"passed\": true\n        },\n        {\n          \"name\": \"insufficient duration goes to review\",\n          \"passed\": true\n        }\n      ]\n    },\n    \"result\": {\n      \"projectId\": \"PM-01\",\n      \"priority\": \"routine\",\n      \"ageMinutes\": 1500,\n      \"slaBreached\": true,\n      \"dispatchAllowed\": false,\n      \"externalActions\": 0,\n      \"queue\": \"dispatcher_review\",\n      \"reason\": \"approved_skill_and_access_overlap\",\n      \"appointment\": {\n        \"vendorId\": \"demo-plumber\",\n        \"start\": \"2026-09-10T12:00:00.000Z\",\n        \"end\": \"2026-09-10T13:00:00.000Z\"\n      }\n    },\n    \"externalActions\": 0\n  }\n}",
+        "measuredAt": "2026-09-10T18:30:03.258Z"
+      },
+      "communicationSent": false,
+      "nodeEvidence": [
+        {
+          "name": "Run local showcase",
+          "attempts": 1,
+          "durationMs": 1,
+          "startedAt": "2026-09-10T18:30:03.247Z",
+          "status": "passed"
+        },
+        {
+          "name": "Run original business logic",
+          "attempts": 1,
+          "durationMs": 25,
+          "startedAt": "2026-09-10T18:30:03.248Z",
+          "status": "passed"
+        },
+        {
+          "name": "Validate contact handoff",
+          "attempts": 1,
+          "durationMs": 246,
+          "startedAt": "2026-09-10T18:30:03.273Z",
+          "status": "passed"
+        },
+        {
+          "name": "GHL simulator - Upsert contact",
+          "attempts": 1,
+          "durationMs": 18,
+          "startedAt": "2026-09-10T18:30:03.519Z",
+          "status": "passed"
+        },
+        {
+          "name": "Verify result and preserve evidence",
+          "attempts": 1,
+          "durationMs": 4,
+          "startedAt": "2026-09-10T18:30:03.537Z",
+          "status": "passed"
+        }
+      ],
+      "executionId": null,
+      "executionMode": "n8n CLI execute",
+      "startedAt": "2026-09-10T18:30:03.244Z",
+      "stoppedAt": "2026-09-10T18:30:03.541Z",
+      "engineDurationMs": 297,
+      "workflowHash": "f04ac8359037d88509cfbba6c84758a6bf8a756dfb3f894e75b7c9df0cc4558c",
+      "timeline": [
+        {
+          "stage": "importing",
+          "message": "Importing the project workflow into the local n8n engine.",
+          "at": "2026-09-10T18:29:47.152Z"
+        },
+        {
+          "stage": "executing",
+          "message": "n8n is running the business demo, validating the handoff and calling the local CRM simulator.",
+          "at": "2026-09-10T18:29:58.635Z"
+        },
+        {
+          "stage": "verified",
+          "message": "The final n8n node confirmed the contact email, location and identifier.",
+          "at": "2026-09-10T18:30:03.680Z"
+        },
+        {
+          "stage": "saving",
+          "message": "Writing execution evidence to the local run history.",
+          "at": "2026-09-10T18:30:03.681Z"
+        }
+      ],
+      "wallDurationMs": 16531
+    },
+    {
+      "projectId": "EA-01",
+      "passed": true,
+      "runId": "2faa3735-c6bb-4864-8cf8-398ae159424f",
+      "status": "passed",
+      "engine": "n8n",
+      "ghlMode": "local simulator",
+      "contactId": "2beee7ee-4e6e-4056-8f74-465b963ac69f",
+      "created": false,
+      "businessEvidence": {
+        "projectId": "EA-01",
+        "status": "passed",
+        "fixture": "bundled synthetic demonstration",
+        "source": "demo-lab/extra-scenarios.mjs",
+        "sourceHash": "073ee4e384aa1415f0ac331416f9515e542e95576d000ccbdb55d8cfb460d3ef",
+        "componentHashes": {
+          "industryDepth": "c62df1ee1cb44b97b139f2d6b78248d9b290010cfab454c47429262de853ea9b"
+        },
+        "outputHash": "46362dadb33aae5a5941cdf207946ee08c5c4aa55afcee71b2352fdb043defe3",
+        "output": "{\n  \"projectId\": \"EA-01\",\n  \"items\": [\n    {\n      \"id\": \"c1\",\n      \"owner\": \"Demo owner\",\n      \"text\": \"Review the supplier proposal\",\n      \"status\": \"needs_owner_review\",\n      \"messageSent\": false\n    }\n  ],\n  \"inputCount\": 3,\n  \"retainedCount\": 1,\n  \"externalActions\": 0,\n  \"industryDepth\": {\n    \"projectId\": \"EA-01\",\n    \"evaluation\": {\n      \"passed\": 6,\n      \"total\": 6,\n      \"cases\": [\n        {\n          \"name\": \"authorized source is retained\",\n          \"passed\": true\n        },\n        {\n          \"name\": \"identical replay deduplicates\",\n          \"passed\": true\n        },\n        {\n          \"name\": \"conflicting identity waits for review\",\n          \"passed\": true\n        },\n        {\n          \"name\": \"conflict does not replace owner\",\n          \"passed\": true\n        },\n        {\n          \"name\": \"denied source is not ingested\",\n          \"passed\": true\n        },\n        {\n          \"name\": \"owner confirmation remains pending\",\n          \"passed\": true\n        }\n      ]\n    },\n    \"result\": {\n      \"queue\": \"owner_review\",\n      \"retained\": 1,\n      \"duplicates\": 0,\n      \"conflicts\": 0,\n      \"externalActions\": 0,\n      \"entries\": [\n        {\n          \"sourceId\": \"demo-meeting-1\",\n          \"id\": \"commitment-1\",\n          \"kind\": \"commitment\",\n          \"owner\": \"Demo owner\",\n          \"text\": \"Review the supplier proposal\",\n          \"status\": \"needs_owner_review\"\n        }\n      ],\n      \"events\": [\n        {\n          \"sourceId\": \"demo-meeting-1\",\n          \"id\": \"commitment-1\",\n          \"event\": \"captured\"\n        },\n        {\n          \"sourceId\": \"demo-meeting-1\",\n          \"id\": \"commitment-1\",\n          \"event\": \"identity_conflict_requires_review\"\n        }\n      ]\n    },\n    \"externalActions\": 0,\n    \"durableRegister\": {\n      \"ingestion\": {\n        \"queue\": \"owner_review\",\n        \"retained\": 0,\n        \"duplicates\": 1,\n        \"conflicts\": 0,\n        \"externalActions\": 0\n      },\n      \"entries\": [\n        {\n          \"sourceId\": \"demo-meeting-1\",\n          \"id\": \"commitment-1\",\n          \"kind\": \"commitment\",\n          \"owner\": \"Demo owner\",\n          \"text\": \"Review the supplier proposal\",\n          \"status\": \"needs_owner_review\"\n        }\n      ],\n      \"events\": [\n        {\n          \"sourceId\": \"demo-meeting-1\",\n          \"id\": \"commitment-1\",\n          \"event\": \"captured\"\n        }\n      ]\n    }\n  }\n}",
+        "measuredAt": "2026-09-10T18:30:09.345Z"
+      },
+      "communicationSent": false,
+      "nodeEvidence": [
+        {
+          "name": "Run local showcase",
+          "attempts": 1,
+          "durationMs": 0,
+          "startedAt": "2026-09-10T18:30:09.304Z",
+          "status": "passed"
+        },
+        {
+          "name": "Run original business logic",
+          "attempts": 1,
+          "durationMs": 49,
+          "startedAt": "2026-09-10T18:30:09.304Z",
+          "status": "passed"
+        },
+        {
+          "name": "Validate contact handoff",
+          "attempts": 1,
+          "durationMs": 665,
+          "startedAt": "2026-09-10T18:30:09.353Z",
+          "status": "passed"
+        },
+        {
+          "name": "GHL simulator - Upsert contact",
+          "attempts": 1,
+          "durationMs": 19,
+          "startedAt": "2026-09-10T18:30:10.018Z",
+          "status": "passed"
+        },
+        {
+          "name": "Verify result and preserve evidence",
+          "attempts": 1,
+          "durationMs": 4,
+          "startedAt": "2026-09-10T18:30:10.037Z",
+          "status": "passed"
+        }
+      ],
+      "executionId": null,
+      "executionMode": "n8n CLI execute",
+      "startedAt": "2026-09-10T18:30:09.301Z",
+      "stoppedAt": "2026-09-10T18:30:10.041Z",
+      "engineDurationMs": 740,
+      "workflowHash": "de7627dd68ab50e095c3cfd2d05d39ff5e90e26310ba32ec8bb308e35410bb1e",
+      "timeline": [
+        {
+          "stage": "importing",
+          "message": "Importing the project workflow into the local n8n engine.",
+          "at": "2026-09-10T18:30:03.689Z"
+        },
+        {
+          "stage": "executing",
+          "message": "n8n is running the business demo, validating the handoff and calling the local CRM simulator.",
+          "at": "2026-09-10T18:30:06.397Z"
+        },
+        {
+          "stage": "verified",
+          "message": "The final n8n node confirmed the contact email, location and identifier.",
+          "at": "2026-09-10T18:30:10.210Z"
+        },
+        {
+          "stage": "saving",
+          "message": "Writing execution evidence to the local run history.",
+          "at": "2026-09-10T18:30:10.211Z"
+        }
+      ],
+      "wallDurationMs": 6522
+    },
+    {
+      "projectId": "AGT-01",
+      "passed": true,
+      "runId": "bf113141-9810-41ab-a623-324f4d86745d",
+      "status": "passed",
+      "engine": "n8n",
+      "ghlMode": "local simulator",
+      "contactId": "a6412f4f-c926-44ee-81b0-752dbaf015b7",
+      "created": false,
+      "businessEvidence": {
+        "projectId": "AGT-01",
+        "status": "passed",
+        "fixture": "bundled synthetic demonstration",
+        "source": "demo-lab/business-expansion.mjs",
+        "sourceHash": "f5d51b660e7c25004e09102131f45bc9dbc7a788b7941063ef388ed2422b191a",
+        "componentHashes": {
+          "engineeringEvaluation": "c4e3e68f70bd584bc38f7f76a3d2d30645be519a540a39ab6dee9a72b13edd78"
+        },
+        "outputHash": "9a582ca41cd3a08218ac208ef37d7cb34d0761f7587c05d1854f600374962e92",
+        "output": "{\n  \"projectId\": \"AGT-01\",\n  \"evaluation\": {\n    \"passed\": 5,\n    \"total\": 5,\n    \"cases\": [\n      {\n        \"name\": \"Grounded draft\",\n        \"passed\": true,\n        \"expected\": {\n          \"queue\": \"draft_review\",\n          \"toolExecuted\": false\n        },\n        \"output\": {\n          \"queue\": \"draft_review\",\n          \"reasons\": [],\n          \"toolExecuted\": false,\n          \"replySent\": false\n        }\n      },\n      {\n        \"name\": \"Unauthorized tool\",\n        \"passed\": true,\n        \"expected\": {\n          \"queue\": \"human_review\",\n          \"reasons\": [\n            \"tool_not_allowed\"\n          ]\n        },\n        \"output\": {\n          \"queue\": \"human_review\",\n          \"reasons\": [\n            \"tool_not_allowed\"\n          ],\n          \"toolExecuted\": false,\n          \"replySent\": false\n        }\n      },\n      {\n        \"name\": \"Over budget\",\n        \"passed\": true,\n        \"expected\": {\n          \"reasons\": [\n            \"budget_exceeded\"\n          ]\n        },\n        \"output\": {\n          \"queue\": \"human_review\",\n          \"reasons\": [\n            \"budget_exceeded\"\n          ],\n          \"toolExecuted\": false,\n          \"replySent\": false\n        }\n      },\n      {\n        \"name\": \"Ungrounded response\",\n        \"passed\": true,\n        \"expected\": {\n          \"reasons\": [\n            \"grounding_review\"\n          ]\n        },\n        \"output\": {\n          \"queue\": \"human_review\",\n          \"reasons\": [\n            \"grounding_review\"\n          ],\n          \"toolExecuted\": false,\n          \"replySent\": false\n        }\n      },\n      {\n        \"name\": \"Invalid budget\",\n        \"passed\": true,\n        \"expectedRejection\": \"non-negative\"\n      }\n    ]\n  },\n  \"scope\": \"Local deterministic business rules; external tools and product integrations are not executed.\",\n  \"engineeringEvaluation\": {\n    \"evaluation\": {\n      \"passed\": 7,\n      \"total\": 7,\n      \"cases\": [\n        {\n          \"name\": \"return\",\n          \"passed\": true,\n          \"expected\": \"returns-v1\",\n          \"output\": {\n            \"status\": \"evidence_found\",\n            \"answer\": \"Unopened products may be returned within 30 days.\",\n            \"citations\": [\n              \"returns-v1\"\n            ],\n            \"action\": \"review\"\n          }\n        },\n        {\n          \"name\": \"shipping\",\n          \"passed\": true,\n          \"expected\": \"shipping-v1\",\n          \"output\": {\n            \"status\": \"evidence_found\",\n            \"answer\": \"Standard shipping takes three to five business days.\",\n            \"citations\": [\n              \"shipping-v1\"\n            ],\n            \"action\": \"review\"\n          }\n        },\n        {\n          \"name\": \"ambiguous\",\n          \"passed\": true,\n          \"expected\": null,\n          \"output\": {\n            \"status\": \"abstain\",\n            \"answer\": \"No approved evidence found.\",\n            \"citations\": [],\n            \"action\": \"review\"\n          }\n        },\n        {\n          \"name\": \"unknown\",\n          \"passed\": true,\n          \"expected\": null,\n          \"output\": {\n            \"status\": \"abstain\",\n            \"answer\": \"No approved evidence found.\",\n            \"citations\": [],\n            \"action\": \"review\"\n          }\n        },\n        {\n          \"name\": \"tenant-isolation\",\n          \"passed\": true,\n          \"expected\": null,\n          \"output\": {\n            \"status\": \"abstain\",\n            \"answer\": \"No approved evidence found.\",\n            \"citations\": [],\n            \"action\": \"review\"\n          }\n        },\n        {\n          \"name\": \"unapproved\",\n          \"passed\": true,\n          \"expected\": null,\n          \"output\": {\n            \"status\": \"abstain\",\n            \"answer\": \"No approved evidence found.\",\n            \"citations\": [],\n            \"action\": \"review\"\n          }\n        },\n        {\n          \"name\": \"instruction-text\",\n          \"passed\": true,\n          \"expected\": null,\n          \"output\": {\n            \"status\": \"abstain\",\n            \"answer\": \"No approved evidence found.\",\n            \"citations\": [],\n            \"action\": \"review\"\n          }\n        }\n      ]\n    },\n    \"datasetVersion\": \"deskpilot-retrieval-1\",\n    \"datasetHash\": \"c54094544f4da768f73a4a4864b22237af73e4856c7557f67f3614bde2fa8571\",\n    \"corpusHash\": \"db9e3e56550ce667a93f307f23d866f2f3d94ff6d23f0022e257aee003265bbd\",\n    \"promptVersion\": null,\n    \"model\": null,\n    \"observations\": [\n      {\n        \"traceId\": \"f90ef476-ae38-4a4c-97e4-3609a757f325\",\n        \"caseId\": \"return\",\n        \"operation\": \"local_retrieval\",\n        \"durationMs\": 0.14310000000114087,\n        \"status\": \"passed\"\n      },\n      {\n        \"traceId\": \"f90ef476-ae38-4a4c-97e4-3609a757f325\",\n        \"caseId\": \"shipping\",\n        \"operation\": \"local_retrieval\",\n        \"durationMs\": 0.010900000001129229,\n        \"status\": \"passed\"\n      },\n      {\n        \"traceId\": \"f90ef476-ae38-4a4c-97e4-3609a757f325\",\n        \"caseId\": \"ambiguous\",\n        \"operation\": \"local_retrieval\",\n        \"durationMs\": 5.042600000000675,\n        \"status\": \"passed\"\n      },\n      {\n        \"traceId\": \"f90ef476-ae38-4a4c-97e4-3609a757f325\",\n        \"caseId\": \"unknown\",\n        \"operation\": \"local_retrieval\",\n        \"durationMs\": 0.014699999999720603,\n        \"status\": \"passed\"\n      },\n      {\n        \"traceId\": \"f90ef476-ae38-4a4c-97e4-3609a757f325\",\n        \"caseId\": \"tenant-isolation\",\n        \"operation\": \"local_retrieval\",\n        \"durationMs\": 0.008999999998195563,\n        \"status\": \"passed\"\n      },\n      {\n        \"traceId\": \"f90ef476-ae38-4a4c-97e4-3609a757f325\",\n        \"caseId\": \"unapproved\",\n        \"operation\": \"local_retrieval\",\n        \"durationMs\": 0.004700000004959293,\n        \"status\": \"passed\"\n      },\n      {\n        \"traceId\": \"f90ef476-ae38-4a4c-97e4-3609a757f325\",\n        \"caseId\": \"instruction-text\",\n        \"operation\": \"local_retrieval\",\n        \"durationMs\": 0.004600000000209548,\n        \"status\": \"passed\"\n      }\n    ],\n    \"scope\": \"Authored offline lexical retrieval and extractive response fixtures. No LLM, embeddings, prompt-injection defense benchmark or hosted observability backend was executed.\"\n  }\n}",
+        "measuredAt": "2026-09-10T18:30:15.797Z"
+      },
+      "communicationSent": false,
+      "nodeEvidence": [
+        {
+          "name": "Run local showcase",
+          "attempts": 1,
+          "durationMs": 0,
+          "startedAt": "2026-09-10T18:30:15.780Z",
+          "status": "passed"
+        },
+        {
+          "name": "Run original business logic",
+          "attempts": 1,
+          "durationMs": 23,
+          "startedAt": "2026-09-10T18:30:15.781Z",
+          "status": "passed"
+        },
+        {
+          "name": "Validate contact handoff",
+          "attempts": 1,
+          "durationMs": 661,
+          "startedAt": "2026-09-10T18:30:15.804Z",
+          "status": "passed"
+        },
+        {
+          "name": "GHL simulator - Upsert contact",
+          "attempts": 1,
+          "durationMs": 17,
+          "startedAt": "2026-09-10T18:30:16.465Z",
+          "status": "passed"
+        },
+        {
+          "name": "Verify result and preserve evidence",
+          "attempts": 1,
+          "durationMs": 4,
+          "startedAt": "2026-09-10T18:30:16.482Z",
+          "status": "passed"
+        }
+      ],
+      "executionId": null,
+      "executionMode": "n8n CLI execute",
+      "startedAt": "2026-09-10T18:30:15.777Z",
+      "stoppedAt": "2026-09-10T18:30:16.486Z",
+      "engineDurationMs": 709,
+      "workflowHash": "6980e7db03422830734e3f3b2eb6dae609b5b1f601008a802b2c25568dd2f694",
+      "timeline": [
+        {
+          "stage": "importing",
+          "message": "Importing the project workflow into the local n8n engine.",
+          "at": "2026-09-10T18:30:10.215Z"
+        },
+        {
+          "stage": "executing",
+          "message": "n8n is running the business demo, validating the handoff and calling the local CRM simulator.",
+          "at": "2026-09-10T18:30:12.908Z"
+        },
+        {
+          "stage": "verified",
+          "message": "The final n8n node confirmed the contact email, location and identifier.",
+          "at": "2026-09-10T18:30:16.630Z"
+        },
+        {
+          "stage": "saving",
+          "message": "Writing execution evidence to the local run history.",
+          "at": "2026-09-10T18:30:16.630Z"
+        }
+      ],
+      "wallDurationMs": 6415
+    },
+    {
+      "projectId": "INV-01",
+      "passed": true,
+      "runId": "cc6672d8-e369-44eb-9d59-8a91472df99c",
+      "status": "passed",
+      "engine": "n8n",
+      "ghlMode": "local simulator",
+      "contactId": "390c4f92-89a6-4dc1-9bae-b07db2043a92",
+      "created": false,
+      "businessEvidence": {
+        "projectId": "INV-01",
+        "status": "passed",
+        "fixture": "bundled synthetic demonstration",
+        "source": "demo-lab/business-expansion.mjs",
+        "sourceHash": "f5d51b660e7c25004e09102131f45bc9dbc7a788b7941063ef388ed2422b191a",
+        "componentHashes": {},
+        "outputHash": "683625c96988f0b7934c130295f426931344415b83eabb678943c61fb3176595",
+        "output": "{\n  \"projectId\": \"INV-01\",\n  \"evaluation\": {\n    \"passed\": 5,\n    \"total\": 5,\n    \"cases\": [\n      {\n        \"name\": \"Pack rounding\",\n        \"passed\": true,\n        \"expected\": {\n          \"proposedUnits\": 48,\n          \"queue\": \"buyer_review\"\n        },\n        \"output\": {\n          \"sku\": \"BOLT-10\",\n          \"available\": 10,\n          \"proposedUnits\": 48,\n          \"queue\": \"buyer_review\",\n          \"purchaseSent\": false\n        }\n      },\n      {\n        \"name\": \"Stale stock\",\n        \"passed\": true,\n        \"expected\": {\n          \"queue\": \"refresh_stock\"\n        },\n        \"output\": {\n          \"sku\": \"BOLT-10\",\n          \"available\": 10,\n          \"proposedUnits\": 48,\n          \"queue\": \"refresh_stock\",\n          \"purchaseSent\": false\n        }\n      },\n      {\n        \"name\": \"Enough stock\",\n        \"passed\": true,\n        \"expected\": {\n          \"proposedUnits\": 0,\n          \"queue\": \"no_order\"\n        },\n        \"output\": {\n          \"sku\": \"BOLT-10\",\n          \"available\": 92,\n          \"proposedUnits\": 0,\n          \"queue\": \"no_order\",\n          \"purchaseSent\": false\n        }\n      },\n      {\n        \"name\": \"Reservations exceed stock\",\n        \"passed\": true,\n        \"expectedRejection\": \"Invalid stock\"\n      },\n      {\n        \"name\": \"Invalid pack\",\n        \"passed\": true,\n        \"expectedRejection\": \"Invalid stock\"\n      }\n    ]\n  },\n  \"scope\": \"Local deterministic business rules; external tools and product integrations are not executed.\"\n}",
+        "measuredAt": "2026-09-10T18:30:22.289Z"
+      },
+      "communicationSent": false,
+      "nodeEvidence": [
+        {
+          "name": "Run local showcase",
+          "attempts": 1,
+          "durationMs": 0,
+          "startedAt": "2026-09-10T18:30:22.280Z",
+          "status": "passed"
+        },
+        {
+          "name": "Run original business logic",
+          "attempts": 1,
+          "durationMs": 17,
+          "startedAt": "2026-09-10T18:30:22.280Z",
+          "status": "passed"
+        },
+        {
+          "name": "Validate contact handoff",
+          "attempts": 1,
+          "durationMs": 619,
+          "startedAt": "2026-09-10T18:30:22.297Z",
+          "status": "passed"
+        },
+        {
+          "name": "GHL simulator - Upsert contact",
+          "attempts": 1,
+          "durationMs": 18,
+          "startedAt": "2026-09-10T18:30:22.916Z",
+          "status": "passed"
+        },
+        {
+          "name": "Verify result and preserve evidence",
+          "attempts": 1,
+          "durationMs": 4,
+          "startedAt": "2026-09-10T18:30:22.934Z",
+          "status": "passed"
+        }
+      ],
+      "executionId": null,
+      "executionMode": "n8n CLI execute",
+      "startedAt": "2026-09-10T18:30:22.277Z",
+      "stoppedAt": "2026-09-10T18:30:22.938Z",
+      "engineDurationMs": 661,
+      "workflowHash": "61a56a334e61f1ce43c43989c4ebfdef0e25cb7b1c24e78d84fb222c0500fbc4",
+      "timeline": [
+        {
+          "stage": "importing",
+          "message": "Importing the project workflow into the local n8n engine.",
+          "at": "2026-09-10T18:30:16.634Z"
+        },
+        {
+          "stage": "executing",
+          "message": "n8n is running the business demo, validating the handoff and calling the local CRM simulator.",
+          "at": "2026-09-10T18:30:19.341Z"
+        },
+        {
+          "stage": "verified",
+          "message": "The final n8n node confirmed the contact email, location and identifier.",
+          "at": "2026-09-10T18:30:23.082Z"
+        },
+        {
+          "stage": "saving",
+          "message": "Writing execution evidence to the local run history.",
+          "at": "2026-09-10T18:30:23.082Z"
+        }
+      ],
+      "wallDurationMs": 6448
+    },
+    {
+      "projectId": "OPS-01",
+      "passed": true,
+      "runId": "61ed26ba-0913-4591-af99-1fd00b7e44ca",
+      "status": "passed",
+      "engine": "n8n",
+      "ghlMode": "local simulator",
+      "contactId": "1bf84802-3f1b-4fb0-9d54-3b59834d3b64",
+      "created": false,
+      "businessEvidence": {
+        "projectId": "OPS-01",
+        "status": "passed",
+        "fixture": "bundled synthetic demonstration",
+        "source": "demo-lab/business-expansion.mjs",
+        "sourceHash": "f5d51b660e7c25004e09102131f45bc9dbc7a788b7941063ef388ed2422b191a",
+        "componentHashes": {},
+        "outputHash": "8133f754fbb465a136d543816354ccacac5a5bd8b4429f0791e91545afd7b963",
+        "output": "{\n  \"projectId\": \"OPS-01\",\n  \"evaluation\": {\n    \"passed\": 5,\n    \"total\": 5,\n    \"cases\": [\n      {\n        \"name\": \"Respect retry delay\",\n        \"passed\": true,\n        \"expected\": {\n          \"queue\": \"retry_plan\",\n          \"delaySeconds\": 30\n        },\n        \"output\": {\n          \"queue\": \"retry_plan\",\n          \"retryAllowed\": true,\n          \"delaySeconds\": 30\n        }\n      },\n      {\n        \"name\": \"Uncertain write\",\n        \"passed\": true,\n        \"expected\": {\n          \"queue\": \"reconcile_first\"\n        },\n        \"output\": {\n          \"queue\": \"reconcile_first\",\n          \"retryAllowed\": false,\n          \"delaySeconds\": 0\n        }\n      },\n      {\n        \"name\": \"Completed replay\",\n        \"passed\": true,\n        \"expected\": {\n          \"queue\": \"already_completed\"\n        },\n        \"output\": {\n          \"queue\": \"already_completed\",\n          \"retryAllowed\": false,\n          \"delaySeconds\": 0\n        }\n      },\n      {\n        \"name\": \"Attempt limit\",\n        \"passed\": true,\n        \"expected\": {\n          \"queue\": \"operator_review\"\n        },\n        \"output\": {\n          \"queue\": \"operator_review\",\n          \"retryAllowed\": false,\n          \"delaySeconds\": 0\n        }\n      },\n      {\n        \"name\": \"Non-retryable error\",\n        \"passed\": true,\n        \"expected\": {\n          \"retryAllowed\": false\n        },\n        \"output\": {\n          \"queue\": \"operator_review\",\n          \"retryAllowed\": false,\n          \"delaySeconds\": 0\n        }\n      }\n    ]\n  },\n  \"scope\": \"Local deterministic business rules; external tools and product integrations are not executed.\"\n}",
+        "measuredAt": "2026-09-10T18:30:28.713Z"
+      },
+      "communicationSent": false,
+      "nodeEvidence": [
+        {
+          "name": "Run local showcase",
+          "attempts": 1,
+          "durationMs": 0,
+          "startedAt": "2026-09-10T18:30:28.703Z",
+          "status": "passed"
+        },
+        {
+          "name": "Run original business logic",
+          "attempts": 1,
+          "durationMs": 16,
+          "startedAt": "2026-09-10T18:30:28.704Z",
+          "status": "passed"
+        },
+        {
+          "name": "Validate contact handoff",
+          "attempts": 1,
+          "durationMs": 703,
+          "startedAt": "2026-09-10T18:30:28.720Z",
+          "status": "passed"
+        },
+        {
+          "name": "GHL simulator - Upsert contact",
+          "attempts": 1,
+          "durationMs": 17,
+          "startedAt": "2026-09-10T18:30:29.423Z",
+          "status": "passed"
+        },
+        {
+          "name": "Verify result and preserve evidence",
+          "attempts": 1,
+          "durationMs": 4,
+          "startedAt": "2026-09-10T18:30:29.440Z",
+          "status": "passed"
+        }
+      ],
+      "executionId": null,
+      "executionMode": "n8n CLI execute",
+      "startedAt": "2026-09-10T18:30:28.700Z",
+      "stoppedAt": "2026-09-10T18:30:29.444Z",
+      "engineDurationMs": 744,
+      "workflowHash": "5a5606b330978211fc245ff70e1f400aba1c427ac4090c03c7eac7161d9e8b7f",
+      "timeline": [
+        {
+          "stage": "importing",
+          "message": "Importing the project workflow into the local n8n engine.",
+          "at": "2026-09-10T18:30:23.086Z"
+        },
+        {
+          "stage": "executing",
+          "message": "n8n is running the business demo, validating the handoff and calling the local CRM simulator.",
+          "at": "2026-09-10T18:30:25.830Z"
+        },
+        {
+          "stage": "verified",
+          "message": "The final n8n node confirmed the contact email, location and identifier.",
+          "at": "2026-09-10T18:30:29.605Z"
+        },
+        {
+          "stage": "saving",
+          "message": "Writing execution evidence to the local run history.",
+          "at": "2026-09-10T18:30:29.606Z"
+        }
+      ],
+      "wallDurationMs": 6520
+    }
+  ]
+}

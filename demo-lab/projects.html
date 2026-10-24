@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>All projects · Gabriel Acosta</title>
+  <link rel="stylesheet" href="/projects.css">
+  <script type="module" src="/projects-ui.mjs"></script>
+</head>
+<body id="inventory-page">
+  <a class="skip-link" href="#inventory-results">Skip to project results</a>
+  <header>
+    <a class="brand" href="/">GABRIEL ACOSTA <span>/ SYSTEMS ENGINEERING</span></a>
+    <nav aria-label="Portfolio"><a href="/projects" aria-current="page">All projects</a><a href="/engineering">Engineering</a><a href="/flagships">Business systems</a></nav>
+  </header>
+  <main>
+    <section class="intro" aria-labelledby="page-title">
+      <p class="eyebrow">THE COMPLETE LOCAL COLLECTION</p>
+      <h1 id="page-title">One place.<br><em>Every project.</em></h1>
+      <p class="lede">Find an automation, a useful everyday tool, an engineering experiment or a research build. See what works locally and what still needs building.</p>
+      <p class="boundary">Catalog entries can share engines and business views. These are local demonstrations, prototypes and design tracks; the count does not represent independent production deployments.</p>
+    </section>
+    <section class="overview" aria-label="Collection overview">
+      <p id="inventory-overview">Loading the current source catalogs…</p>
+    </section>
+    <form class="filters" id="inventory-filters" role="search" aria-label="Find portfolio projects">
+      <div class="search-field"><label for="project-search">Search all projects</label><input id="project-search" type="search" maxlength="300" placeholder="Try billing, evidence, PM-01…" autocomplete="off" aria-controls="inventory-results"></div>
+      <div><label for="project-collection">Collection</label><select id="project-collection"><option value="all">All collections</option><option value="automation">Automation</option><option value="life-data">Life and data</option><option value="engineering">AI engineering</option><option value="business-systems">Business systems</option><option value="research">Research builds</option></select></div>
+      <div><label for="project-status">Build status</label><select id="project-status"><option value="all">All statuses</option><option value="local-demo">Local demo</option><option value="local-prototype">Local prototype</option><option value="partial-local">Partial build</option><option value="blueprint-only">Blueprint only</option></select></div>
+      <button id="clear-filters" type="button">Clear filters</button>
+    </form>
+    <div class="results-heading"><h2>Explore the collection</h2><p id="project-count" role="status" aria-live="polite" aria-atomic="true">Loading projects…</p></div>
+    <p id="inventory-error" role="alert" hidden></p><button id="inventory-retry" type="button" hidden>Retry loading projects</button>
+    <section id="inventory-results" class="project-grid" aria-label="Project results" aria-busy="true" tabindex="-1"></section>
+    <div id="inventory-empty" class="empty" hidden><h3>No matching projects</h3><p>Try a broader search or clear the collection and status filters.</p><button id="empty-clear" type="button">Show all projects</button></div>
+    <noscript><p>This searchable inventory needs JavaScript. Read the complete public <a href="https://github.com/Frosty9810/enterprise-automation-portfolio/blob/codex/automation-showcase-depth/PROJECT-INVENTORY.md">project inventory document</a> for source links and known gaps.</p></noscript>
+    <section class="status-guide" aria-labelledby="status-title">
+      <h2 id="status-title">Read the status before the count.</h2>
+      <dl><div><dt>Local demo</dt><dd>An executable local scenario or recorded experiment. Synthetic inputs and integration limits remain visible at the destination.</dd></div><div><dt>Local prototype</dt><dd>A browser-local tool using entered or invented data. It does not connect to live datasets or save an account.</dd></div><div><dt>Partial build</dt><dd>A working, bounded foundation. The complete industry or research blueprint still needs implementation and acceptance.</dd></div><div><dt>Blueprint only</dt><dd>A documented design. There is no implemented product behind the name yet.</dd></div></dl>
+    </section>
+    <footer>Built by Gabriel Acosta. Local evidence is not production acceptance. No external actions, paid model calls or deployment happen from this inventory.</footer>
+  </main>
+</body>
+</html>

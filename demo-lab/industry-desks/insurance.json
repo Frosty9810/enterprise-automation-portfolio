@@ -1,0 +1,18 @@
+{
+  "projectId": "INS-01",
+  "summary": "Synthetic loss packets with independent duplicate reconciliation, consent-bound routing and a durable local adjuster queue.",
+  "scope": "Partial local administrative slice only. Closed synthetic events, supplied policy/evidence fixtures, independent fingerprint review and SQLite queue. No actual insurer, coverage/fraud/payment decisions, authentication or real consent verification.",
+  "operations": {
+    "intake": "intake",
+    "set-packet": "setPacket",
+    "set-consent": "setConsent",
+    "resolve-duplicate": "resolveDuplicate",
+    "review": "review",
+    "enqueue": "enqueue",
+    "assign": "assign",
+    "receipt": "receipt",
+    "state": "state",
+    "audit": "audit",
+    "verify-audit": "verifyAudit"
+  }
+}

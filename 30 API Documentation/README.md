@@ -214,3 +214,10 @@ Error envelopes generally contain `error`; n8n failures also include `timeline`.
 
 ---
 *Part of the [Enterprise Automation Portfolio](../README.md).*
+
+
+## AtlasGraph synthetic evaluation
+
+Open `/research-evaluation?project=AtlasGraph`; see the [method and limits](../demo-lab/ATLASGRAPH-EVALUATION.md). GET `/api/research-evaluation/catalog` returns the closed suite identity, current source/data/label/policy hashes and whether the loaded implementation is stale. POST `/api/research-evaluation/run` accepts exactly `{"suiteId":"atlasgraph-independent-v1"}` and recomputes the whole supplied synthetic comparison in isolated in-memory SQLite databases. It does not alter the normal AtlasGraph workbench store. All ordinary loopback Host/Origin and POST intent/body limits apply. Unknown suites or extra fields fail; arbitrary files, uploads, private corpora, model providers and external actions are unavailable.
+
+The response includes the two policies, per-case expected labels and observed outcomes, exact-value/decision counts, citation-set denominators, byte usage and report/source identities. A case can fail its label without making the experiment itself invalid; failures are reported rather than rewritten into passing expectations. A source change requires process restart and a new run before evidence can be exported as current. This is a deterministic synthetic diagnostic, not a production/model benchmark or authentication boundary.

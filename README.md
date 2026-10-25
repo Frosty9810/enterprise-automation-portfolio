@@ -4,7 +4,7 @@
 
 **[PM-01 maintenance operations](demo-lab/MAINTENANCE.md)** — open `http://127.0.0.1:5680/maintenance?project=PM-01` for synthetic tenant intake, deterministic emergency holds, access windows, independently reviewed vendor proposals and recoverable local receiver delivery. The clock is a fixed scenario; labels are not authentication and operator-reported completion is not a verified property visit. The full industry flagship remains unfinished.
 
-**[AtlasGraph local build](demo-lab/ATLASGRAPH.md)** — open `http://127.0.0.1:5680/research?project=AtlasGraph` to compile versioned synthetic pages, follow a two-hop evidence path, inspect exact citations and retain failed paths for correction. SQLite restart/replay and stale evidence are tested; semantic retrieval, real source adapters and research baseline comparisons remain pending.
+**[AtlasGraph local build](demo-lab/ATLASGRAPH.md)** — open `http://127.0.0.1:5680/research?project=AtlasGraph` to compile versioned synthetic pages, follow a two-hop evidence path, inspect exact citations and retain failed paths for correction. SQLite restart/replay and stale evidence are tested. A [separately authored synthetic comparison](demo-lab/ATLASGRAPH-EVALUATION.md) inspects graph and flat lexical retrieval with visible failures and byte budgets; semantic retrieval, real source adapters and external/model benchmarks remain pending.
 
 **[TrustGate local tool gateway](demo-lab/TRUSTGATE.md)** — open `http://127.0.0.1:5680/trustgate` to resolve tool arguments from registered synthetic sources, inspect policy holds, review proposed writes and execute three narrow SQLite tools. Outbound providers and authenticated agent integration remain outside this partial research build.
 

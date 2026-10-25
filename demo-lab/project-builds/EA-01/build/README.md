@@ -1,30 +1,37 @@
-# EA-01 build runbook
+# EA-01 build and validation runbook
 
-Status: **Populated — local script and copied workflow available; PostgreSQL execution pending.**
+Status: **partial synthetic local desk with SQLite; hosted integration and PostgreSQL execution pending**.
 
-## Files
+## Current desk
 
-- `demo.js`: imports the existing business implementation and executes assertions against synthetic fixtures.
-- `n8n-workflow.json`: exact copy of the local five-node orchestration export; calls the local API and simulated GHL contact service.
-- `schema.sql`: proposed two-table PostgreSQL persistence model, with identity, foreign key, event deduplication and source-hash constraints. It is not wired to the current SQLite runtime.
+From the repository root, with Node.js 24+ and the lab's existing dependencies:
 
-## Run from the repository root
+```powershell
+node demo-lab/run-executive.mjs
+node --test demo-lab/executive-core.test.mjs demo-lab/executive-ui.test.mjs demo-lab/executive-http.test.mjs
+node demo-lab/server.mjs
+```
 
-`node demo-lab/project-builds/EA-01/build/demo.js`
+Open http://127.0.0.1:5680/industry/executive?project=EA-01. Follow the [source/review/revoke/regrant walkthrough and HTTP contract](../../../EXECUTIVE.md). The CLI uses memory only, verifies one task through generation 2, two decisions, denied actor exclusion and seven valid events, and closes its handle. The server uses its shared local SQLite path. Do not delete an existing lab store to reset the scenario; use a separate disposable store or in-memory test instead.
 
-For the full local demonstration, run `npm ci --prefix demo-lab`, then `node demo-lab/server.mjs`. Open http://127.0.0.1:5680, select EA-01 and run the demo. The dashboard imports and executes the local workflow with its bundled n8n version and records actual results. Importing this workflow elsewhere requires the API to remain reachable at the exported loopback address; a remote n8n server cannot reach your workstation through its own localhost.
+The targeted tests exercise the actual core in core/DOM/loopback layers. The standard repository quality and governor commands remain the coordinator's final gates. A DOM test is not a browser screenshot, provider acceptance or a real user's approval.
 
-## PostgreSQL deployment
+## Older artifacts retained
 
-In a fresh disposable PostgreSQL database, run `psql -X -v ON_ERROR_STOP=1 -d portfolio_demo -f demo-lab/project-builds/EA-01/build/schema.sql`. Connection settings are standard PGHOST, PGPORT, PGUSER, PGPASSWORD and PGDATABASE, supplied privately by the operator. This DDL is one-time setup, not a repeatable migration. SQL has a structural check only until a PostgreSQL engine execution is recorded.
+- [demo.js](demo.js): existing business-fixture/decision-register assertions. This is a separate older demonstration.
+- [n8n-workflow.json](n8n-workflow.json): local five-node orchestration export calling the existing run API and local GHL contact simulator. It does not call the new desk's permission/task lifecycle and is not a hosted provider writer.
+- [schema.sql](schema.sql): proposed PostgreSQL model, not the SQLite desk's runtime schema or an executed migration.
 
-## Hosted integration boundary
+Run the older assertions with `node demo-lab/project-builds/EA-01/build/demo.js`. Use the main lab's EA-01 wrapper view for n8n evidence. A remote n8n instance cannot reach this workstation through its own localhost.
 
-No external credentials are needed for this local run. A hosted deployment needs authenticated source intake, a dedicated GHL location and its actual provider credentials, persistence adapters, role enforcement and verified recovery. There is no hosted GHL writer in these files. The local demonstration token is not a provider credential.
+## Persistence and recovery boundary
 
-## Expected evidence
+The desk's SQLite mutation transaction includes case/task/decision effects, immutable command intent, audit event and durable head/count. Exact command replay recovers current accessible state without another effect. A changed payload under the same command is rejected. Source family identity, expected case revision, source/config fingerprints and independently reviewed exact hash prevent stale task authority. SQL failure/restart/writer-race tests are local evidence, not production scale or HA acceptance.
 
-Show duplicate collapse, unauthorized exclusion and conflicting identity rejection. Keep actual failure output when an assertion fails. Do not replace it with a success claim. See [SOP](../SOP.md) and [recording script](../walkthrough-script.md).
+A lost response clears UI authority: refresh accessible records and recover. Retry an unchanged intake only with its original cached command intent. A revoked actor cannot recover source contents; the current custodian retains recovery access. Regrant does not revive approval. A coherent privileged rewrite is outside the unkeyed audit guarantee.
 
----
-*Part of the Enterprise Automation Portfolio. See [project overview](../README.md).*
+## Full flagship gates still open
+
+Real authenticated intake, sender/attendee authorization, source retention/encryption, cross-channel commitment extraction/identity, timezone/DST and provider calendar reconciliation, safe delegated follow-up adapters, human security/privacy review, hosted acceptance, measured results and a recorded video remain unverified. Actor labels are role simulation, not credentials.
+
+The proposed PostgreSQL artifact still needs execution in a disposable engine and an actual writer/migration/adapter before any PostgreSQL claim. No actual provider credentials or paid services are used by the current desk. See the [SOP](../SOP.md) and [project overview](../README.md).

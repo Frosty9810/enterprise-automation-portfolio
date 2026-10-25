@@ -6,6 +6,14 @@ Version: 1.0 · Owner: portfolio maintainer
 **Video Walkthrough:** _Pending recording — see script in this SOP's project folder._
 **Real Build Artifacts:** [Runbook and build files →](build/README.md)
 
+## Implemented local packet and queue procedure
+
+The [insurance desk runbook](../../INSURANCE.md) is the current executable procedure for the new durable synthetic packet slice. Register a closed source event, select current report/policy evidence, record a matching synthetic consent label, obtain independent exact-fingerprint review, then enqueue and assign the local row. Packet or consent mutation clears review and holds the row with no assignee. Regrant never revives prior approval.
+
+Exact repeated source events link only to their registered primary case and cannot alter consent. Recover the primary with its current revision; linking does not merge evidence or consent. Ambiguous identity needs explicit distinct-loss reconciliation by an independent reviewer, then a different final reviewer. Supplied policy-date exceptions remain visible and use the exception adjuster route, never a coverage/fraud result. Follow-up remains available for held packets.
+
+Use only synthetic fixtures. The fixed October 25 scenario clock is not live monitoring, actor labels are not authentication, and identifiers are not a privacy detector. No insurer or claimant is contacted. Export reads fresh authority and rejects concurrent revision/fingerprint/audit changes. Broader flagship acceptance remains pending.
+
 ## 1. Purpose
 
 Loss-date, missing-evidence and duplicate signals route to adjuster review without approving or denying coverage.

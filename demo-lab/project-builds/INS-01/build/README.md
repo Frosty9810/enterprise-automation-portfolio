@@ -2,6 +2,12 @@
 
 Status: **Populated — local script and copied workflow available; PostgreSQL execution pending.**
 
+## Durable desk evidence
+
+The [new desk runbook](../../../INSURANCE.md) documents the independently executable SQLite packet and adjuster queue at `/industry/insurance?project=INS-01`. Run `node demo-lab/run-insurance.mjs` for the actual one-row revocation/regrant acceptance flow, or `node --test demo-lab/insurance-core.test.mjs demo-lab/insurance-ui.test.mjs demo-lab/insurance-http.test.mjs` for adverse behavior. The existing `demo.js`, copied orchestration and PostgreSQL proposal below remain separate artifacts; the new desk does not silently claim to wire them to an insurer.
+
+The queue has durable command deduplication, case compare-and-swap, source/config fingerprints, independent reviews and audit/head/materialization checks. Exact duplicate consent must be managed on the primary case, ambiguous identities require human fixture reconciliation, and fictional date exceptions route to an adjuster without a coverage decision. Full source integrations, authenticated access, real consent evidence, PostgreSQL execution, production monitoring and recorded video remain pending.
+
 ## Files
 
 - `demo.js`: imports the existing business implementation and executes assertions against synthetic fixtures.

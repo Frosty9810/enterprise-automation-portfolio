@@ -1,0 +1,1103 @@
+{
+  "schemaVersion": 1,
+  "suiteId": "atlasgraph-independent-v1",
+  "scope": "Independently authored AI synthetic diagnostic challenge, frozen before evaluator results. Sixteen fictional source snapshots test supplied exact-claim retrieval under a fixed lexical seed, hop/read and JSON-citation byte policy. Not human reviewed, externally held out, factual truth, model research reproduction, production accuracy or a provider benchmark.",
+  "cases": [
+    {
+      "id": "arrival-route",
+      "title": "Arrival discrepancy routed through a supplied terms sheet",
+      "category": "multi-hop-context",
+      "compile": {
+        "tenant": "eval-arrival-route",
+        "sources": [
+          {
+            "id": "arrival-case",
+            "version": "fixture-v1",
+            "title": "Synthetic evidence set arrival-case",
+            "approved": true,
+            "pages": [
+              {
+                "id": "arrival-index",
+                "title": "Arrival case index",
+                "text": "CASE-ALPHA arrival discrepancy. The supplied case points to transit-terms.",
+                "references": [
+                  {
+                    "to": "transit-terms",
+                    "relation": "uses",
+                    "quote": "The supplied case points to transit-terms."
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "arrival-terms",
+            "version": "fixture-v1",
+            "title": "Synthetic evidence set arrival-terms",
+            "approved": true,
+            "pages": [
+              {
+                "id": "transit-terms",
+                "title": "Transit terms sheet",
+                "text": "The applicable routing sheet is release-policy.",
+                "references": [
+                  {
+                    "to": "release-policy",
+                    "relation": "governed-by",
+                    "quote": "The applicable routing sheet is release-policy."
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "arrival-policy",
+            "version": "fixture-v1",
+            "title": "Synthetic evidence set arrival-policy",
+            "approved": true,
+            "pages": [
+              {
+                "id": "release-policy",
+                "title": "Release review routing",
+                "text": "The fictional route owner is Otter Operations.",
+                "claims": [
+                  {
+                    "key": "routeOwner",
+                    "value": "Otter Operations"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "arrival-search-noise",
+            "version": "fixture-v1",
+            "title": "Synthetic evidence set arrival-search-noise",
+            "approved": true,
+            "pages": [
+              {
+                "id": "arrival-glossary",
+                "title": "Arrival discrepancy glossary",
+                "text": "Arrival discrepancy is a descriptive catalog tag; it does not appoint an owner."
+              },
+              {
+                "id": "arrival-statistics",
+                "title": "Arrival discrepancy counts",
+                "text": "Arrival discrepancy historical counts do not establish a current route."
+              },
+              {
+                "id": "arrival-help",
+                "title": "Arrival help",
+                "text": "Arrival instructions are unrelated to an owner assignment."
+              }
+            ]
+          }
+        ]
+      },
+      "query": "CASE-ALPHA arrival discrepancy",
+      "requiredClaims": [
+        "routeOwner"
+      ],
+      "policy": {
+        "maxHops": 2,
+        "flatLimit": 3,
+        "evidenceBudgetBytes": 12000
+      }
+    },
+    {
+      "id": "purchase-controls",
+      "title": "A batch exception needs two supplied control facts",
+      "category": "multi-hop-two-claims",
+      "compile": {
+        "tenant": "eval-purchase-controls",
+        "sources": [
+          {
+            "id": "purchase-case",
+            "version": "fixture-v1",
+            "title": "Synthetic evidence set purchase-case",
+            "approved": true,
+            "pages": [
+              {
+                "id": "batch-index",
+                "title": "Batch purchase exception",
+                "text": "AURORA purchase exception batch. Read supplier-terms for this supplied case.",
+                "references": [
+                  {
+                    "to": "supplier-terms",
+                    "relation": "uses",
+                    "quote": "Read supplier-terms for this supplied case."
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "purchase-terms",
+            "version": "fixture-v1",
+            "title": "Synthetic evidence set purchase-terms",
+            "approved": true,
+            "pages": [
+              {
+                "id": "supplier-terms",
+                "title": "Supplier terms",
+                "text": "The control record is approval-controls.",
+                "references": [
+                  {
+                    "to": "approval-controls",
+                    "relation": "controlled-by",
+                    "quote": "The control record is approval-controls."
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "purchase-policy",
+            "version": "fixture-v1",
+            "title": "Synthetic evidence set purchase-policy",
+            "approved": true,
+            "pages": [
+              {
+                "id": "approval-controls",
+                "title": "Approval controls",
+                "text": "The fictional review queue is Marigold Review. The ledger code is DEMO-L8.",
+                "claims": [
+                  {
+                    "key": "approvalQueue",
+                    "value": "Marigold Review"
+                  },
+                  {
+                    "key": "ledgerCode",
+                    "value": "DEMO-L8"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "purchase-decoys",
+            "version": "fixture-v1",
+            "title": "Synthetic evidence set purchase-decoys",
+            "approved": true,
+            "pages": [
+              {
+                "id": "purchase-history",
+                "title": "Purchase exception history",
+                "text": "Purchase exception counts are archived, with no authority to approve a batch."
+              },
+              {
+                "id": "purchase-help",
+                "title": "Purchase exception help",
+                "text": "Purchase exception is a search category, not an approval queue."
+              }
+            ]
+          }
+        ]
+      },
+      "query": "AURORA purchase exception",
+      "requiredClaims": [
+        "approvalQueue",
+        "ledgerCode"
+      ],
+      "policy": {
+        "maxHops": 2,
+        "flatLimit": 3,
+        "evidenceBudgetBytes": 12000
+      }
+    },
+    {
+      "id": "disconnected-renewal",
+      "title": "A useful approved renewal page has no explicit graph reference",
+      "category": "disconnected-evidence",
+      "compile": {
+        "tenant": "eval-disconnected-renewal",
+        "sources": [
+          {
+            "id": "renewal-index",
+            "version": "fixture-v1",
+            "title": "Synthetic evidence set renewal-index",
+            "approved": true,
+            "pages": [
+              {
+                "id": "renewal-overview",
+                "title": "Lantern service renewal overview",
+                "text": "Lantern service renewal overview. The directory contains no explicit page references and appoints no reviewer."
+              }
+            ]
+          },
+          {
+            "id": "renewal-record",
+            "version": "fixture-v1",
+            "title": "Synthetic evidence set renewal-record",
+            "approved": true,
+            "pages": [
+              {
+                "id": "renewal-authority",
+                "title": "Lantern renewal authority",
+                "text": "Lantern renewal: the fictional reviewer is Juniper Desk.",
+                "claims": [
+                  {
+                    "key": "renewalReviewer",
+                    "value": "Juniper Desk"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "renewal-help",
+            "version": "fixture-v1",
+            "title": "Synthetic evidence set renewal-help",
+            "approved": true,
+            "pages": [
+              {
+                "id": "renewal-faq",
+                "title": "Renewal FAQ",
+                "text": "Renewal terminology is descriptive only."
+              }
+            ]
+          }
+        ]
+      },
+      "query": "Lantern service renewal",
+      "requiredClaims": [
+        "renewalReviewer"
+      ],
+      "policy": {
+        "maxHops": 2,
+        "flatLimit": 3,
+        "evidenceBudgetBytes": 12000
+      }
+    },
+    {
+      "id": "auxiliary-chain",
+      "title": "A direct answer is accompanied by a longer auxiliary audit chain",
+      "category": "overconnected-context",
+      "compile": {
+        "tenant": "eval-auxiliary-chain",
+        "sources": [
+          {
+            "id": "direct-release",
+            "version": "fixture-v1",
+            "title": "Synthetic evidence set direct-release",
+            "approved": true,
+            "pages": [
+              {
+                "id": "release-direct",
+                "title": "FOG-44 inspection release",
+                "text": "FOG-44 inspection release. The supplied queue is Quartz Queue. Auxiliary audit pointer: audit-one.",
+                "claims": [
+                  {
+                    "key": "releaseQueue",
+                    "value": "Quartz Queue"
+                  }
+                ],
+                "references": [
+                  {
+                    "to": "audit-one",
+                    "relation": "audit-context",
+                    "quote": "Auxiliary audit pointer: audit-one."
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "aux-audit",
+            "version": "fixture-v1",
+            "title": "Synthetic evidence set aux-audit",
+            "approved": true,
+            "pages": [
+              {
+                "id": "audit-one",
+                "title": "Auxiliary audit one",
+                "text": "The next auxiliary note is audit-two.",
+                "references": [
+                  {
+                    "to": "audit-two",
+                    "relation": "next-note",
+                    "quote": "The next auxiliary note is audit-two."
+                  }
+                ]
+              },
+              {
+                "id": "audit-two",
+                "title": "Auxiliary audit two",
+                "text": "The final auxiliary note is audit-three.",
+                "references": [
+                  {
+                    "to": "audit-three",
+                    "relation": "next-note",
+                    "quote": "The final auxiliary note is audit-three."
+                  }
+                ]
+              },
+              {
+                "id": "audit-three",
+                "title": "Auxiliary audit three",
+                "text": "This auxiliary note has no release-queue assignment."
+              }
+            ]
+          }
+        ]
+      },
+      "query": "FOG-44 inspection release",
+      "requiredClaims": [
+        "releaseQueue"
+      ],
+      "policy": {
+        "maxHops": 2,
+        "flatLimit": 3,
+        "evidenceBudgetBytes": 12000
+      }
+    },
+    {
+      "id": "contextual-decoy",
+      "title": "An approved training page uses the same claim key for another context",
+      "category": "context-decoy",
+      "compile": {
+        "tenant": "eval-contextual-decoy",
+        "sources": [
+          {
+            "id": "pine-case",
+            "version": "fixture-v1",
+            "title": "Synthetic evidence set pine-case",
+            "approved": true,
+            "pages": [
+              {
+                "id": "pine-case",
+                "title": "CASE-PINE damaged pallet queue",
+                "text": "CASE-PINE damaged pallet queue. Its supplied routing record is pine-routing.",
+                "references": [
+                  {
+                    "to": "pine-routing",
+                    "relation": "routed-by",
+                    "quote": "Its supplied routing record is pine-routing."
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "pine-routing-source",
+            "version": "fixture-v1",
+            "title": "Synthetic evidence set pine-routing-source",
+            "approved": true,
+            "pages": [
+              {
+                "id": "pine-routing",
+                "title": "Pallet routing record",
+                "text": "For CASE-PINE, the fictional assigned queue is Willow Desk.",
+                "claims": [
+                  {
+                    "key": "assignedQueue",
+                    "value": "Willow Desk"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "pine-training",
+            "version": "fixture-v1",
+            "title": "Synthetic evidence set pine-training",
+            "approved": true,
+            "pages": [
+              {
+                "id": "pine-training",
+                "title": "Damaged pallet queue training",
+                "text": "Damaged pallet queue training for CASE-DECOY assigns Training Sandbox, never the live fixture case CASE-PINE.",
+                "claims": [
+                  {
+                    "key": "assignedQueue",
+                    "value": "Training Sandbox"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "query": "CASE-PINE damaged pallet queue",
+      "requiredClaims": [
+        "assignedQueue"
+      ],
+      "policy": {
+        "maxHops": 2,
+        "flatLimit": 3,
+        "evidenceBudgetBytes": 12000
+      }
+    },
+    {
+      "id": "glossary-seed",
+      "title": "A lexical glossary can outrank the useful approved record",
+      "category": "lexical-decoy",
+      "compile": {
+        "tenant": "eval-glossary-seed",
+        "sources": [
+          {
+            "id": "tamarind-glossary",
+            "version": "fixture-v1",
+            "title": "Synthetic evidence set tamarind-glossary",
+            "approved": true,
+            "pages": [
+              {
+                "id": "tamarind-glossary",
+                "title": "Tamarind permit renewal glossary",
+                "text": "Tamarind permit renewal is this glossary heading. It defines vocabulary only and supplies no review-window assertion."
+              }
+            ]
+          },
+          {
+            "id": "tamarind-record",
+            "version": "fixture-v1",
+            "title": "Synthetic evidence set tamarind-record",
+            "approved": true,
+            "pages": [
+              {
+                "id": "tamarind-window",
+                "title": "Tamarind renewal record",
+                "text": "Tamarind renewal has a supplied review window of 48 synthetic hours.",
+                "claims": [
+                  {
+                    "key": "reviewWindow",
+                    "value": "48 synthetic hours"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "tamarind-search",
+            "version": "fixture-v1",
+            "title": "Synthetic evidence set tamarind-search",
+            "approved": true,
+            "pages": [
+              {
+                "id": "tamarind-history",
+                "title": "Renewal history",
+                "text": "Renewal history does not set a current review window."
+              }
+            ]
+          }
+        ]
+      },
+      "query": "Tamarind permit renewal",
+      "requiredClaims": [
+        "reviewWindow"
+      ],
+      "policy": {
+        "maxHops": 2,
+        "flatLimit": 3,
+        "evidenceBudgetBytes": 12000
+      }
+    },
+    {
+      "id": "incoming-cycle",
+      "title": "Incoming support and a harmless cycle share a source neighborhood",
+      "category": "incoming-cycle",
+      "compile": {
+        "tenant": "eval-incoming-cycle",
+        "sources": [
+          {
+            "id": "meridian-index-source",
+            "version": "fixture-v1",
+            "title": "Synthetic evidence set meridian-index-source",
+            "approved": true,
+            "pages": [
+              {
+                "id": "meridian-index",
+                "title": "MERIDIAN dispatch packet",
+                "text": "MERIDIAN dispatch packet index; a supplied record may refer back to this index."
+              }
+            ]
+          },
+          {
+            "id": "meridian-control-source",
+            "version": "fixture-v1",
+            "title": "Synthetic evidence set meridian-control-source",
+            "approved": true,
+            "pages": [
+              {
+                "id": "control-register",
+                "title": "Control register",
+                "text": "The fictional route owner is Winter Desk. This assignment supports meridian-index. A cycle note is cycle-note.",
+                "claims": [
+                  {
+                    "key": "routeOwner",
+                    "value": "Winter Desk"
+                  }
+                ],
+                "references": [
+                  {
+                    "to": "meridian-index",
+                    "relation": "supports",
+                    "quote": "This assignment supports meridian-index."
+                  },
+                  {
+                    "to": "cycle-note",
+                    "relation": "audit-context",
+                    "quote": "A cycle note is cycle-note."
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "meridian-cycle-source",
+            "version": "fixture-v1",
+            "title": "Synthetic evidence set meridian-cycle-source",
+            "approved": true,
+            "pages": [
+              {
+                "id": "cycle-note",
+                "title": "Cycle note",
+                "text": "This audit cycle closes at meridian-index, without supplying an owner.",
+                "references": [
+                  {
+                    "to": "meridian-index",
+                    "relation": "audit-context",
+                    "quote": "This audit cycle closes at meridian-index, without supplying an owner."
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "query": "MERIDIAN dispatch packet",
+      "requiredClaims": [
+        "routeOwner"
+      ],
+      "policy": {
+        "maxHops": 2,
+        "flatLimit": 3,
+        "evidenceBudgetBytes": 12000
+      }
+    },
+    {
+      "id": "conflicting-current",
+      "title": "Two approved current-looking records disagree on the same scoped key",
+      "category": "conflicting-claims",
+      "compile": {
+        "tenant": "eval-conflicting-current",
+        "sources": [
+          {
+            "id": "cinder-index-source",
+            "version": "fixture-v1",
+            "title": "Synthetic evidence set cinder-index-source",
+            "approved": true,
+            "pages": [
+              {
+                "id": "cinder-index",
+                "title": "CASE-CINDER escalation",
+                "text": "CASE-CINDER escalation index. Conflicting supplied records: cinder-a and cinder-b.",
+                "references": [
+                  {
+                    "to": "cinder-a",
+                    "relation": "candidate-authority",
+                    "quote": "Conflicting supplied records: cinder-a and cinder-b."
+                  },
+                  {
+                    "to": "cinder-b",
+                    "relation": "candidate-authority",
+                    "quote": "Conflicting supplied records: cinder-a and cinder-b."
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "cinder-a-source",
+            "version": "fixture-v1",
+            "title": "Synthetic evidence set cinder-a-source",
+            "approved": true,
+            "pages": [
+              {
+                "id": "cinder-a",
+                "title": "Supplied route A",
+                "text": "Current supplied CASE-CINDER queue: Ember Desk.",
+                "claims": [
+                  {
+                    "key": "escalationQueue",
+                    "value": "Ember Desk"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "cinder-b-source",
+            "version": "fixture-v1",
+            "title": "Synthetic evidence set cinder-b-source",
+            "approved": true,
+            "pages": [
+              {
+                "id": "cinder-b",
+                "title": "Supplied route B",
+                "text": "Current supplied CASE-CINDER queue: Slate Desk.",
+                "claims": [
+                  {
+                    "key": "escalationQueue",
+                    "value": "Slate Desk"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "query": "CASE-CINDER escalation",
+      "requiredClaims": [
+        "escalationQueue"
+      ],
+      "policy": {
+        "maxHops": 2,
+        "flatLimit": 3,
+        "evidenceBudgetBytes": 12000
+      }
+    },
+    {
+      "id": "unapproved-only",
+      "title": "The requested owner exists only in a caller-marked unapproved source",
+      "category": "unapproved-only",
+      "compile": {
+        "tenant": "eval-unapproved-only",
+        "sources": [
+          {
+            "id": "tide-index-source",
+            "version": "fixture-v1",
+            "title": "Synthetic evidence set tide-index-source",
+            "approved": true,
+            "pages": [
+              {
+                "id": "tide-index",
+                "title": "TIDE-55 inspection owner",
+                "text": "TIDE-55 inspection owner is pending in this approved index; no owner is assigned here."
+              }
+            ]
+          },
+          {
+            "id": "tide-unreviewed",
+            "version": "fixture-v1",
+            "title": "Synthetic evidence set tide-unreviewed",
+            "approved": false,
+            "pages": [
+              {
+                "id": "tide-draft",
+                "title": "TIDE-55 inspection owner draft",
+                "text": "TIDE-55 inspection owner draft names Bracken Desk.",
+                "claims": [
+                  {
+                    "key": "inspectionOwner",
+                    "value": "Bracken Desk"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "query": "TIDE-55 inspection owner",
+      "requiredClaims": [
+        "inspectionOwner"
+      ],
+      "policy": {
+        "maxHops": 2,
+        "flatLimit": 3,
+        "evidenceBudgetBytes": 12000
+      }
+    },
+    {
+      "id": "missing-owner",
+      "title": "Approved context never supplies the required claim",
+      "category": "missing-claim",
+      "compile": {
+        "tenant": "eval-missing-owner",
+        "sources": [
+          {
+            "id": "maple-index-source",
+            "version": "fixture-v1",
+            "title": "Synthetic evidence set maple-index-source",
+            "approved": true,
+            "pages": [
+              {
+                "id": "maple-index",
+                "title": "MAPLE-08 handoff",
+                "text": "MAPLE-08 handoff remains undecided. The context note is maple-context.",
+                "references": [
+                  {
+                    "to": "maple-context",
+                    "relation": "context",
+                    "quote": "The context note is maple-context."
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "maple-context-source",
+            "version": "fixture-v1",
+            "title": "Synthetic evidence set maple-context-source",
+            "approved": true,
+            "pages": [
+              {
+                "id": "maple-context",
+                "title": "Handoff context note",
+                "text": "The fictional record states that assignment is pending; it names no handoff owner."
+              }
+            ]
+          }
+        ]
+      },
+      "query": "MAPLE-08 handoff",
+      "requiredClaims": [
+        "handoffOwner"
+      ],
+      "policy": {
+        "maxHops": 2,
+        "flatLimit": 3,
+        "evidenceBudgetBytes": 12000
+      }
+    },
+    {
+      "id": "no-lexical-seed",
+      "title": "A valid fact has no match to the supplied lexical query",
+      "category": "no-lexical-match",
+      "compile": {
+        "tenant": "eval-no-lexical-seed",
+        "sources": [
+          {
+            "id": "amber-record-source",
+            "version": "fixture-v1",
+            "title": "Synthetic evidence set amber-record-source",
+            "approved": true,
+            "pages": [
+              {
+                "id": "amber-record",
+                "title": "Amber allocation record",
+                "text": "The supplied owner is Hazel Desk.",
+                "claims": [
+                  {
+                    "key": "allocationOwner",
+                    "value": "Hazel Desk"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "amber-context-source",
+            "version": "fixture-v1",
+            "title": "Synthetic evidence set amber-context-source",
+            "approved": true,
+            "pages": [
+              {
+                "id": "amber-context",
+                "title": "Allocation context",
+                "text": "This context has no additional named assignee."
+              }
+            ]
+          }
+        ]
+      },
+      "query": "zephyr918 quasar772",
+      "requiredClaims": [
+        "allocationOwner"
+      ],
+      "policy": {
+        "maxHops": 2,
+        "flatLimit": 3,
+        "evidenceBudgetBytes": 12000
+      }
+    },
+    {
+      "id": "zero-hop-hold",
+      "title": "A zero-hop one-read policy cannot reach the applicable supplied record",
+      "category": "hop-boundary",
+      "compile": {
+        "tenant": "eval-zero-hop-hold",
+        "sources": [
+          {
+            "id": "harbor-index-source",
+            "version": "fixture-v1",
+            "title": "Synthetic evidence set harbor-index-source",
+            "approved": true,
+            "pages": [
+              {
+                "id": "harbor-index",
+                "title": "HARBOR-61 exception route",
+                "text": "HARBOR-61 exception route. The applicable record is delegated-record.",
+                "references": [
+                  {
+                    "to": "delegated-record",
+                    "relation": "delegated-to",
+                    "quote": "The applicable record is delegated-record."
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "harbor-record-source",
+            "version": "fixture-v1",
+            "title": "Synthetic evidence set harbor-record-source",
+            "approved": true,
+            "pages": [
+              {
+                "id": "delegated-record",
+                "title": "Delegated record",
+                "text": "The supplied reviewer is Silver Desk.",
+                "claims": [
+                  {
+                    "key": "exceptionReviewer",
+                    "value": "Silver Desk"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "query": "HARBOR-61 exception route",
+      "requiredClaims": [
+        "exceptionReviewer"
+      ],
+      "policy": {
+        "maxHops": 0,
+        "flatLimit": 1,
+        "evidenceBudgetBytes": 12000
+      }
+    },
+    {
+      "id": "citation-budget-hold",
+      "title": "A complete source citation cannot fit the declared byte budget",
+      "category": "byte-budget-boundary",
+      "compile": {
+        "tenant": "eval-citation-budget-hold",
+        "sources": [
+          {
+            "id": "budget-record-source",
+            "version": "fixture-v1",
+            "title": "Synthetic evidence set budget-record-source",
+            "approved": true,
+            "pages": [
+              {
+                "id": "budget-record",
+                "title": "BUDGET-73 review owner",
+                "text": "BUDGET-73 review owner is Cedar Desk. Synthetic context segment 01 retains supplied inspection provenance and does not add another owner. Synthetic context segment 02 retains supplied inspection provenance and does not add another owner. Synthetic context segment 03 retains supplied inspection provenance and does not add another owner. Synthetic context segment 04 retains supplied inspection provenance and does not add another owner. Synthetic context segment 05 retains supplied inspection provenance and does not add another owner. Synthetic context segment 06 retains supplied inspection provenance and does not add another owner. Synthetic context segment 07 retains supplied inspection provenance and does not add another owner. Synthetic context segment 08 retains supplied inspection provenance and does not add another owner. Synthetic context segment 09 retains supplied inspection provenance and does not add another owner. Synthetic context segment 10 retains supplied inspection provenance and does not add another owner. Synthetic context segment 11 retains supplied inspection provenance and does not add another owner. Synthetic context segment 12 retains supplied inspection provenance and does not add another owner. Synthetic context segment 13 retains supplied inspection provenance and does not add another owner. Synthetic context segment 14 retains supplied inspection provenance and does not add another owner. Synthetic context segment 15 retains supplied inspection provenance and does not add another owner. Synthetic context segment 16 retains supplied inspection provenance and does not add another owner. Synthetic context segment 17 retains supplied inspection provenance and does not add another owner. Synthetic context segment 18 retains supplied inspection provenance and does not add another owner. Synthetic context segment 19 retains supplied inspection provenance and does not add another owner. Synthetic context segment 20 retains supplied inspection provenance and does not add another owner. Synthetic context segment 21 retains supplied inspection provenance and does not add another owner. Synthetic context segment 22 retains supplied inspection provenance and does not add another owner. Synthetic context segment 23 retains supplied inspection provenance and does not add another owner. Synthetic context segment 24 retains supplied inspection provenance and does not add another owner. Synthetic context segment 25 retains supplied inspection provenance and does not add another owner.",
+                "claims": [
+                  {
+                    "key": "reviewOwner",
+                    "value": "Cedar Desk"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "query": "BUDGET-73 review owner",
+      "requiredClaims": [
+        "reviewOwner"
+      ],
+      "policy": {
+        "maxHops": 2,
+        "flatLimit": 3,
+        "evidenceBudgetBytes": 256
+      }
+    },
+    {
+      "id": "agreeing-records",
+      "title": "Two approved linked records agree exactly",
+      "category": "redundant-agreement",
+      "compile": {
+        "tenant": "eval-agreeing-records",
+        "sources": [
+          {
+            "id": "orchid-index-source",
+            "version": "fixture-v1",
+            "title": "Synthetic evidence set orchid-index-source",
+            "approved": true,
+            "pages": [
+              {
+                "id": "orchid-index",
+                "title": "ORCHID-12 allocation owner",
+                "text": "ORCHID-12 allocation owner: Violet Desk. The corroborating note is orchid-note.",
+                "claims": [
+                  {
+                    "key": "allocationOwner",
+                    "value": "Violet Desk"
+                  }
+                ],
+                "references": [
+                  {
+                    "to": "orchid-note",
+                    "relation": "corroborates",
+                    "quote": "The corroborating note is orchid-note."
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "orchid-note-source",
+            "version": "fixture-v1",
+            "title": "Synthetic evidence set orchid-note-source",
+            "approved": true,
+            "pages": [
+              {
+                "id": "orchid-note",
+                "title": "ORCHID-12 owner note",
+                "text": "ORCHID-12 supplied allocation owner is Violet Desk.",
+                "claims": [
+                  {
+                    "key": "allocationOwner",
+                    "value": "Violet Desk"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "query": "ORCHID-12 allocation owner",
+      "requiredClaims": [
+        "allocationOwner"
+      ],
+      "policy": {
+        "maxHops": 2,
+        "flatLimit": 3,
+        "evidenceBudgetBytes": 12000
+      }
+    },
+    {
+      "id": "split-disconnected",
+      "title": "Two required facts live on separate approved lexical records",
+      "category": "disconnected-two-claims",
+      "compile": {
+        "tenant": "eval-split-disconnected",
+        "sources": [
+          {
+            "id": "cedar-routing-source",
+            "version": "fixture-v1",
+            "title": "Synthetic evidence set cedar-routing-source",
+            "approved": true,
+            "pages": [
+              {
+                "id": "cedar-routing",
+                "title": "CEDAR-22 dispatch review",
+                "text": "CEDAR-22 dispatch review uses the supplied queue Fern Desk.",
+                "claims": [
+                  {
+                    "key": "dispatchQueue",
+                    "value": "Fern Desk"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "cedar-window-source",
+            "version": "fixture-v1",
+            "title": "Synthetic evidence set cedar-window-source",
+            "approved": true,
+            "pages": [
+              {
+                "id": "cedar-window",
+                "title": "CEDAR-22 dispatch window",
+                "text": "CEDAR-22 dispatch has a supplied window code SLOT-RED.",
+                "claims": [
+                  {
+                    "key": "windowCode",
+                    "value": "SLOT-RED"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "cedar-vocabulary-source",
+            "version": "fixture-v1",
+            "title": "Synthetic evidence set cedar-vocabulary-source",
+            "approved": true,
+            "pages": [
+              {
+                "id": "cedar-vocabulary",
+                "title": "Dispatch vocabulary",
+                "text": "Dispatch vocabulary is descriptive and supplies neither a queue nor a window code."
+              }
+            ]
+          }
+        ]
+      },
+      "query": "CEDAR-22 dispatch review",
+      "requiredClaims": [
+        "dispatchQueue",
+        "windowCode"
+      ],
+      "policy": {
+        "maxHops": 2,
+        "flatLimit": 3,
+        "evidenceBudgetBytes": 12000
+      }
+    },
+    {
+      "id": "unapproved-conflict",
+      "title": "An unapproved disagreement must not poison approved direct evidence",
+      "category": "approval-boundary",
+      "compile": {
+        "tenant": "eval-unapproved-conflict",
+        "sources": [
+          {
+            "id": "birch-approved-source",
+            "version": "fixture-v1",
+            "title": "Synthetic evidence set birch-approved-source",
+            "approved": true,
+            "pages": [
+              {
+                "id": "birch-current",
+                "title": "BIRCH-31 review queue",
+                "text": "BIRCH-31 review queue is Saffron Desk.",
+                "claims": [
+                  {
+                    "key": "reviewQueue",
+                    "value": "Saffron Desk"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "birch-unapproved-source",
+            "version": "fixture-v1",
+            "title": "Synthetic evidence set birch-unapproved-source",
+            "approved": false,
+            "pages": [
+              {
+                "id": "birch-draft",
+                "title": "BIRCH-31 review queue draft",
+                "text": "BIRCH-31 review queue draft suggests Moss Desk.",
+                "claims": [
+                  {
+                    "key": "reviewQueue",
+                    "value": "Moss Desk"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "query": "BIRCH-31 review queue",
+      "requiredClaims": [
+        "reviewQueue"
+      ],
+      "policy": {
+        "maxHops": 2,
+        "flatLimit": 3,
+        "evidenceBudgetBytes": 12000
+      }
+    }
+  ]
+}

@@ -1,0 +1,209 @@
+{
+  "schemaVersion": 1,
+  "suiteId": "atlasgraph-independent-v1",
+  "authorship": {
+    "kind": "independent-ai-fixture-author",
+    "humanReviewed": false,
+    "note": "Authored by a separate AI specialist from the existing compiler schema and documented retrieval contract on 2026-10-25, before reading or running the new evaluator. Labels are intended synthetic query/policy outcomes, not generated from method outputs; method failures must remain visible. No independent human or external held-out benchmark acceptance is claimed."
+  },
+  "cases": [
+    {
+      "id": "arrival-route",
+      "expectedStatus": "supported",
+      "expectedClaims": [
+        {
+          "key": "routeOwner",
+          "value": "Otter Operations"
+        }
+      ],
+      "goldEvidencePageIds": [
+        "arrival-index",
+        "transit-terms",
+        "release-policy"
+      ],
+      "rationale": "The approved supplied case identifies transit terms, which identify the routing sheet. These three pages jointly establish which route-owner assertion applies. Glossary/statistics/help pages have no owner assignment. A lexical-only selection may miss the generic policy page; no observed method result is assumed."
+    },
+    {
+      "id": "purchase-controls",
+      "expectedStatus": "supported",
+      "expectedClaims": [
+        {
+          "key": "approvalQueue",
+          "value": "Marigold Review"
+        },
+        {
+          "key": "ledgerCode",
+          "value": "DEMO-L8"
+        }
+      ],
+      "goldEvidencePageIds": [
+        "batch-index",
+        "supplier-terms",
+        "approval-controls"
+      ],
+      "rationale": "Both requested facts occur verbatim in the approved control record. The two supplied references bind it to the batch. The generic historical/help records do not answer either requested key."
+    },
+    {
+      "id": "disconnected-renewal",
+      "expectedStatus": "supported",
+      "expectedClaims": [
+        {
+          "key": "renewalReviewer",
+          "value": "Juniper Desk"
+        }
+      ],
+      "goldEvidencePageIds": [
+        "renewal-authority"
+      ],
+      "rationale": "The approved renewal-authority page explicitly supplies the reviewer for Lantern renewal. Its absence of an explicit reference from the higher-level overview is a corpus limitation, not evidence that the reviewer is unknown. A graph-only method may honestly fail this supported case."
+    },
+    {
+      "id": "auxiliary-chain",
+      "expectedStatus": "supported",
+      "expectedClaims": [
+        {
+          "key": "releaseQueue",
+          "value": "Quartz Queue"
+        }
+      ],
+      "goldEvidencePageIds": [
+        "release-direct"
+      ],
+      "rationale": "The direct approved page explicitly supports the requested release queue; the auxiliary audit chain contains no competing assignment and is not required to justify that fact. The supported label deliberately remains even if a conservative complete-neighborhood traversal abstains at its hop boundary. This is an intended graph-failure opportunity, not a tuned success case."
+    },
+    {
+      "id": "contextual-decoy",
+      "expectedStatus": "supported",
+      "expectedClaims": [
+        {
+          "key": "assignedQueue",
+          "value": "Willow Desk"
+        }
+      ],
+      "goldEvidencePageIds": [
+        "pine-case",
+        "pine-routing"
+      ],
+      "rationale": "CASE-PINE and its explicit routing record establish Willow Desk. The training page explicitly scopes Training Sandbox to a different fictional case; approval does not make that value applicable to CASE-PINE. This tests context sensitivity that exact-key aggregation may lack; labels are not changed if either method fails."
+    },
+    {
+      "id": "glossary-seed",
+      "expectedStatus": "supported",
+      "expectedClaims": [
+        {
+          "key": "reviewWindow",
+          "value": "48 synthetic hours"
+        }
+      ],
+      "goldEvidencePageIds": [
+        "tamarind-window"
+      ],
+      "rationale": "The approved record explicitly supplies the requested fictional review window. The vocabulary glossary is a strong lexical match but has no assignment and no reference to the record. The label permits an honest graph-seed failure and a successful flat retrieval if its selected evidence reaches the record."
+    },
+    {
+      "id": "incoming-cycle",
+      "expectedStatus": "supported",
+      "expectedClaims": [
+        {
+          "key": "routeOwner",
+          "value": "Winter Desk"
+        }
+      ],
+      "goldEvidencePageIds": [
+        "meridian-index",
+        "control-register"
+      ],
+      "rationale": "The control register explicitly points to the selected dispatch index, so its relationship is incoming from the index perspective. Its exact owner claim is applicable. The cycle note adds no required fact and is not gold support; cycles must not manufacture duplicate factual support."
+    },
+    {
+      "id": "conflicting-current",
+      "expectedStatus": "abstained",
+      "expectedClaims": [],
+      "goldEvidencePageIds": [],
+      "rationale": "The approved records assert different current values for the same CASE-CINDER key with no supplied supersession or preference rule. Picking either would invent resolution authority; the intended outcome is abstention, not majority or lexical tie-breaking."
+    },
+    {
+      "id": "unapproved-only",
+      "expectedStatus": "abstained",
+      "expectedClaims": [],
+      "goldEvidencePageIds": [],
+      "rationale": "The sole exact owner claim is in an unapproved source. The approved index explicitly leaves the owner pending. The exercise requires approved evidence; unapproved source text cannot justify a supported answer."
+    },
+    {
+      "id": "missing-owner",
+      "expectedStatus": "abstained",
+      "expectedClaims": [],
+      "goldEvidencePageIds": [],
+      "rationale": "Neither approved page supplies the requested handoffOwner key or a definite owner value. Context does not license invention of an assignment. The intended result is abstention."
+    },
+    {
+      "id": "no-lexical-seed",
+      "expectedStatus": "abstained",
+      "expectedClaims": [],
+      "goldEvidencePageIds": [],
+      "rationale": "The approved fact exists, but none of the supplied query terms occurs in any approved page ID, title or text. Under the fixed lexical seed/search protocol, neither method has permitted retrieved evidence. Abstention is the intended retrieval-policy outcome, not a claim that the underlying corpus fact is false."
+    },
+    {
+      "id": "zero-hop-hold",
+      "expectedStatus": "abstained",
+      "expectedClaims": [],
+      "goldEvidencePageIds": [],
+      "rationale": "The only query-matching approved page is an index without the required claim. Its supplied reference requires one hop, but maxHops is zero and flatLimit is one. The query/policy intent is a hold; the target fact must not be guessed or reported without reading it."
+    },
+    {
+      "id": "citation-budget-hold",
+      "expectedStatus": "abstained",
+      "expectedClaims": [],
+      "goldEvidencePageIds": [],
+      "rationale": "The single applicable approved page is deliberately longer than 256 UTF-8 bytes even before citation metadata. The protocol budgets complete JSON-encoded citations, not a shortened excerpt. Reporting the claim while omitting its required full source citation would violate this explicit budget hold."
+    },
+    {
+      "id": "agreeing-records",
+      "expectedStatus": "supported",
+      "expectedClaims": [
+        {
+          "key": "allocationOwner",
+          "value": "Violet Desk"
+        }
+      ],
+      "goldEvidencePageIds": [
+        "orchid-index",
+        "orchid-note"
+      ],
+      "rationale": "Both approved pages support the same scoped exact value. Corroborating duplicate values are not a contradiction and do not create a second claim. Both pages are semantically relevant evidence, although one alone can already justify the value."
+    },
+    {
+      "id": "split-disconnected",
+      "expectedStatus": "supported",
+      "expectedClaims": [
+        {
+          "key": "dispatchQueue",
+          "value": "Fern Desk"
+        },
+        {
+          "key": "windowCode",
+          "value": "SLOT-RED"
+        }
+      ],
+      "goldEvidencePageIds": [
+        "cedar-routing",
+        "cedar-window"
+      ],
+      "rationale": "The two approved CEDAR-22 records jointly support the requested exact queue and window facts. They intentionally have no graph edge. A method reading only the first connected component may fail; that retrieval failure does not change the supported gold label."
+    },
+    {
+      "id": "unapproved-conflict",
+      "expectedStatus": "supported",
+      "expectedClaims": [
+        {
+          "key": "reviewQueue",
+          "value": "Saffron Desk"
+        }
+      ],
+      "goldEvidencePageIds": [
+        "birch-current"
+      ],
+      "rationale": "The approved direct record supports Saffron Desk. The conflicting draft is unapproved and therefore not admissible evidence in this exercise. It must neither replace the approved value nor create an approved-evidence contradiction."
+    }
+  ]
+}

@@ -51,3 +51,10 @@ Limits are 12 sources, 32 pages per snapshot, 8,000 characters per page, 12 clai
 The local test suite executes the supplied two-hop scenario and verifies exact citations/budget measurement, bidirectional traversal, cycles, hop limits, missing evidence, contradictory claims, quote/target validation, unapproved-page exclusion, tenant query separation, source-version conflicts with transactional rollback, exact replay, stale receipts after revision, malformed/oversized input and real file-backed SQLite restart of sources, receipts and manual correction review.
 
 The next blueprint work is authenticated source review, real source adapters, semantic retrieval/tool planning and an independently labeled multi-hop evaluation against explicit baselines. No production comparison, F1 improvement, token saving, live customs acceptance or autonomous source correction is claimed here.
+
+
+## Separately authored local evaluation
+
+Open `/research-evaluation?project=AtlasGraph` or follow the [evaluation runbook](ATLASGRAPH-EVALUATION.md). A separately authored synthetic challenge set and labels now compare this existing graph engine with an explicit flat lexical baseline. Both start from the same approved corpus and lexical query; no expected answer or gold start page is passed to retrieval. The experiment still supplies required claim keys, source approval and authored links. It does not implement semantic question parsing or establish source truth.
+
+Per-case decisions, exact values, selected pages, traversal, byte budgets and disagreements stay visible. Failed cases remain part of the report. A separate AI fixture author froze the labels before reading evaluator output; that is not external human labeling, a blind benchmark or training evidence. Read the method and denominators before comparing aggregate results. The full research blueprint and independent external/model/provider acceptance remain unfinished.

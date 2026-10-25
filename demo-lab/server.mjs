@@ -19,6 +19,7 @@ import { maintenance, commitments } from './extra-scenarios.mjs';
 import { artifacts, toolProfile } from './showcase.mjs';
 import { evaluateIndustryDepth, openDecisionRegister, depthFixtures } from './industry-depth.mjs';
 import { evaluateEngineering } from './engineering-evals.mjs';
+import {getAtlasGraphEvaluationCatalog,evaluateAtlasGraphSuite} from './atlasgraph-evaluation.mjs';
 import {currentGovernance} from './governance-state.mjs';
 import {evaluateProduct, productDesk, productExample, policyHash} from './product-governance.mjs';
 import { evaluateExpansion, expansionSuites } from './business-expansion.mjs';
@@ -305,6 +306,17 @@ export function createLabServer(db = openStore(), executeWorkflow = runN8n) {
         return response.end(readFileSync(file.path));
       }
       if (url.pathname === '/api/activity') return send(response, 200, { busy, activity });
+      if(url.pathname==='/api/research-evaluation/catalog'){
+        try{return send(response,200,getAtlasGraphEvaluationCatalog());}catch(error){return send(response,400,{error:error.message});}
+      }
+      if(url.pathname==='/research-evaluation'){
+        response.writeHead(200,{'Content-Type':'text/html; charset=utf-8','Cache-Control':'no-store','X-Content-Type-Options':'nosniff','Content-Security-Policy':"default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; object-src 'none'"});
+        return response.end(readFileSync(join(directory,'atlasgraph-evaluation.html')));
+      }
+      if(['/atlasgraph-evaluation.css','/atlasgraph-evaluation-ui.mjs'].includes(url.pathname)){
+        response.writeHead(200,{'Content-Type':url.pathname.endsWith('.css')?'text/css; charset=utf-8':'text/javascript; charset=utf-8','Cache-Control':'no-store','X-Content-Type-Options':'nosniff'});
+        return response.end(readFileSync(join(directory,url.pathname.slice(1))));
+      }
       if (url.pathname === '/api/contacts') return send(response, 200, { contacts: db.prepare('SELECT payload FROM contacts ORDER BY email').all().map(row => JSON.parse(row.payload)) });
       if (url.pathname === '/api/runs') {
         const decode=row=>({...row,evidence:JSON.parse(row.evidence)});
@@ -417,6 +429,10 @@ export function createLabServer(db = openStore(), executeWorkflow = runN8n) {
         const action = researchActions.get(url.pathname.slice('/api/research/'.length));
         if(!action)return send(response,404,{error:'Unknown research operation'});
         return send(response,200,action(body));
+      }
+      if(url.pathname.startsWith('/api/research-evaluation/')){
+        if(url.pathname!=='/api/research-evaluation/run')return send(response,404,{error:'Unknown evaluation operation'});
+        return send(response,200,await evaluateAtlasGraphSuite(body));
       }
       if (url.pathname === '/api/flagships/evaluate' || url.pathname === '/api/flagships/run-all') {
         if(domains>=2)return send(response,429,{error:'Local evaluator busy'});domains++;

@@ -1,3 +1,4 @@
+import { decorateIndustryInventory } from './industry-desks.mjs';
 import { projects } from './catalog.mjs';
 import { humanProjects } from './human-projects.mjs';
 import { workbenchProjects } from './workbench-core.mjs';
@@ -17,7 +18,7 @@ const research = [
  * Entries may reuse an engine. Presence is not provider acceptance or production delivery.
  * Return fresh plain records so callers cannot mutate the source catalogs.
  */
-export function portfolioInventory() {
+function basePortfolioInventory() {
   return [
     ...projects.map(project => ({
       collection: 'automation', id: project.id, title: project.title,
@@ -57,3 +58,5 @@ export function portfolioInventory() {
     scope: 'Partial synthetic administrative build with closed fixture selections and a fixed clock. No clinical decisions, real payer policy, insurance authorization, authenticated users or live provider acceptance.',
   } : record);
 }
+
+export function portfolioInventory(){return decorateIndustryInventory(basePortfolioInventory());}

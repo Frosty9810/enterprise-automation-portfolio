@@ -1,0 +1,10 @@
+export const legalScope='LEGAL-01 partial synthetic administrative desk. Fixture labels are not authenticated identities, a professional conflicts clearance, legal advice or permission to represent a client. Supplied dates are fictional source data, not calculated statutory deadlines. Do not enter private client data; protocol identifiers are plaintext, not a privacy detector.';
+export const legalAsOf='2026-10-25T12:00:00.000Z';
+export const legalRegistry=Object.fromEntries(['acme','beta'].map(tenant=>[tenant,{
+ actors:{operators:[`${tenant}-intake`,`${tenant}-dual-role`],reviewers:[`${tenant}-reviewer`,`${tenant}-dual-role`]},
+ graphVersion:'synthetic-alias-v1',
+ entities:[{id:`${tenant}-copper-logistics`,name:'Copper Logistics Limited',aliases:['Copper Logistics','COPPER-LOGISTICS','\uff23\uff4f\uff50\uff50\uff45\uff52 Logistics'],relationship:'Synthetic existing adverse-party register'}],
+ parties:[{id:`${tenant}-willow`,label:'Willow Marine Services',source:'Supplied fictional party selector'},{id:`${tenant}-copper-exact`,label:'\uff23\uff4f\uff50\uff50\uff45\uff52 Logistics',source:'Supplied fictional full-width alias'},{id:`${tenant}-copper-ambiguous`,label:'Copper Service Ventures',source:'Supplied fictional shared-token identity'}],
+ sources:[{id:`${tenant}-clear-intake`,title:'Fictional marine-services intake',partyIds:[`${tenant}-willow`],eventId:`event-${tenant}-clear`},{id:`${tenant}-matched-intake`,title:'Fictional alias-match intake',partyIds:[`${tenant}-copper-exact`],eventId:`event-${tenant}-matched`}],
+ deadlines:[{id:`${tenant}-supplied-future`,title:'Supplied fictional briefing date',dueAt:'2026-10-28T16:00:00.000Z',sourceReference:'SYNTHETIC source notice D-01; no jurisdiction rule is applied',version:1,isCurrent:true},{id:`${tenant}-supplied-expired`,title:'Supplied past-date hold',dueAt:'2026-10-24T16:00:00.000Z',sourceReference:'SYNTHETIC historical source notice; administrative follow-up required',version:1,isCurrent:true},{id:`${tenant}-supplied-superseded`,title:'Superseded supplied date',dueAt:'2026-11-01T16:00:00.000Z',sourceReference:'SYNTHETIC superseded date notice',version:1,isCurrent:false}]
+}]));

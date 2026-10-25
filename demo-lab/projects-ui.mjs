@@ -1,3 +1,4 @@
+import {industryDeskRoute} from './industry-desk-routes.mjs';
 export const collectionLabels = Object.freeze({
   automation: 'Automation', 'life-data': 'Life and data', engineering: 'AI engineering',
   'business-systems': 'Business systems', research: 'Research builds',
@@ -13,6 +14,8 @@ const routeFor = (collection, id) => ({
   research: `${id==='TrustGate'?'/trustgate':id==='ChronosRank'?'/chronosrank':id==='DocksideSLM'?'/dockside':id==='VeilRAG'?'/veilrag':'/research'}?project=${encodeURIComponent(id)}`,
 })[collection];
 
+const legacyRouteFor = routeFor;
+
 /** Validate the response as a whole. A broken catalog must not silently hide projects. */
 export function validateInventory(value) {
   if (!Array.isArray(value) || !value.length || value.length > 1000) throw Error('Invalid project inventory.');
@@ -20,6 +23,7 @@ export function validateInventory(value) {
   return value.map(row => {
     if (!row || typeof row !== 'object' || Array.isArray(row)) throw Error('Invalid project record.');
     const record = {};
+    const routeFor=(collection,id)=>record.href===industryDeskRoute(collection,id)?record.href:legacyRouteFor(collection,id);
     for (const key of ['collection', 'id', 'title', 'summary', 'scope', 'status', 'href']) {
       if (typeof row[key] !== 'string' || !row[key].trim() || row[key].length > (key === 'id' ? 100 : 4000)) throw Error(`Invalid project ${key}.`);
       record[key] = row[key];

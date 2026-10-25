@@ -29,6 +29,7 @@ import { trustGate } from './trustgate-core.mjs';
 import { chronosRank } from './chronosrank-core.mjs';
 import { dockside } from './dockside-core.mjs';
 import { veilRag } from './veilrag-core.mjs';
+import { createIndustryDeskHost } from './industry-desks.mjs';
 
 const exec = promisify(execFile);
 const directory = fileURLToPath(new URL('.', import.meta.url));
@@ -152,6 +153,7 @@ export function createLabServer(db = openStore(), executeWorkflow = runN8n) {
   const memory = chronosRank(db);
   const dock = dockside(db);
   const privacy = veilRag(db);
+  const industryHost = createIndustryDeskHost(db);
   let busy = false;
   let activity = null;
   let domains = 0;
@@ -310,6 +312,17 @@ export function createLabServer(db = openStore(), executeWorkflow = runN8n) {
         const latest=db.prepare('SELECT id,project,status,evidence,created FROM (SELECT *, ROW_NUMBER() OVER (PARTITION BY project ORDER BY created DESC,rowid DESC) AS position FROM runs) WHERE position=1').all();
         return send(response,200,{runs:recent.map(decode),latestRuns:latest.map(decode),historyLimit:100});
       }
+      if(url.pathname.startsWith('/api/industry/')){
+        const match=/^\/api\/industry\/([a-z-]+)\/catalog$/.exec(url.pathname);
+        if(!match||!industryHost.has(match[1]))return send(response,404,{error:'Unknown industry desk'});
+        try{return send(response,200,await industryHost.catalog(match[1]));}catch(error){return send(response,400,{error:error.message});}
+      }
+      const industryAsset=industryHost.asset(url.pathname);
+      if(industryAsset){
+        const headers={'Content-Type':industryAsset.type,'X-Content-Type-Options':'nosniff','Cache-Control':'no-store'};
+        if(industryAsset.page)headers['Content-Security-Policy']="default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; object-src 'none'";
+        response.writeHead(200,headers);return response.end(readFileSync(industryAsset.url));
+      }
       if (url.pathname === '/health') return send(response, 200, { status: 'ok', mode: 'local-demo' });
       return send(response, 404, { error: 'Not found' });
     }
@@ -389,6 +402,11 @@ export function createLabServer(db = openStore(), executeWorkflow = runN8n) {
         const action = actions.get(url.pathname.slice('/api/veilrag/'.length));
         if(!action)return send(response,404,{error:'Unknown alias operation'});
         return send(response,200,await action(body));
+      }
+      if(url.pathname.startsWith('/api/industry/')){
+        const match=/^\/api\/industry\/([a-z-]+)\/([a-z-]+)$/.exec(url.pathname);
+        if(!match||!industryHost.hasOperation(match[1],match[2]))return send(response,404,{error:'Unknown industry operation'});
+        return send(response,200,await industryHost.invoke(match[1],match[2],body));
       }
       const researchActions = new Map([
         ['compile',x=>research.compile(x)],['search',x=>research.search(x)],['read',x=>research.read(x)],['follow',x=>research.follow(x)],

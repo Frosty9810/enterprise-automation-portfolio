@@ -1,6 +1,8 @@
 # Gabriel Acosta — automation engineering portfolio
 
-**[Complete project inventory and missing work](PROJECT-INVENTORY.md)** — open the local `/projects` page to search all 73 named entries: 27 automation demos, 20 life/data tools, nine engineering prototypes, twelve-system views and five research tracks. The collections share components; all five research entries have partial local builds. The unified catalog and the first three research builds are on main. New partial builds are reviewed in feature PRs.
+**[Complete project inventory and missing work](PROJECT-INVENTORY.md)** — open the local `/projects` page to search all 73 named entries: 27 automation demos, 20 life/data tools, nine engineering prototypes, twelve-system views and five research tracks. The collections share components; all five research entries have partial local builds. The unified catalog, all five partial research builds and PM-01 maintenance operations are integrated into main; the wider blueprints remain unfinished.
+
+**[CON-01 compliance and change-order ledger](demo-lab/CONSTRUCTION.md)** - open `http://127.0.0.1:5680/construction?project=CON-01` for supplied synthetic document provenance, expiry/readiness holds, independent version-bound change reviews and actual local budget commitments. No PDF parsing, issuer verification, payment or authority to start site work is claimed. The full industry flagship remains partial.
 
 **[PM-01 maintenance operations](demo-lab/MAINTENANCE.md)** — open `http://127.0.0.1:5680/maintenance?project=PM-01` for synthetic tenant intake, deterministic emergency holds, access windows, independently reviewed vendor proposals and recoverable local receiver delivery. The clock is a fixed scenario; labels are not authentication and operator-reported completion is not a verified property visit. The full industry flagship remains unfinished.
 

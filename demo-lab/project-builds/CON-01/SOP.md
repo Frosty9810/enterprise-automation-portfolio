@@ -1,10 +1,18 @@
 # CON-01 Subcontractor Readiness and Change Approval Review
 
 Status: **Populated — bounded local implementation; integration acceptance pending.**
-Version: 1.0 · Owner: portfolio maintainer
+Version: 1.1 · Owner: portfolio maintainer
 
 **Video Walkthrough:** _Pending recording — see script in this SOP's project folder._
 **Real Build Artifacts:** [Runbook and build files →](build/README.md)
+
+## Added procedure: durable compliance and local commitments
+
+Use the [construction runbook](../../CONSTRUCTION.md) for `/construction?project=CON-01`. Inspect supplied synthetic document contents and source metadata; intake does not parse a PDF or verify its issuer. Record independent compliance review against the exact document hash. Missing, unverified, revoked or expired required documents hold readiness. The app evaluates expiry at its labeled fixed scenario clock, not a background monitoring service.
+
+Create a change order with its exact integer-cent amount, scope, schedule impact and source provenance. A revision or changed document set invalidates prior review authority. Separate configured project-manager and finance fixture labels review the current fingerprint; neither may self-approve the request. Before recording a local commitment, inspect the current readiness and budget. The controller rechecks both under one SQLite transaction, preventing competing orders from overspending the configured budget. Recover saved orders and inspect actual cost entries and anchored audit evidence after a restart.
+
+A local cost entry is not a payment, contract signature, regulatory certification or permission to mobilize. Document revocation can hold current readiness without erasing historical committed costs. Real source integrations, authenticated approval ownership and site/provider acceptance remain open. The legacy triage/n8n procedure below preserves its narrower review-only behavior.
 
 ## 1. Purpose
 

@@ -14,6 +14,12 @@ Base URL: `http://127.0.0.1:5680`. The [server implementation](../demo-lab/serve
 
 The service has no user login, tenant authorization layer or public webhook authentication. Other local processes can supply these headers. Do not expose it beyond loopback or submit private evidence. Verify the boundary with [HTTP adverse-case tests](../demo-lab/http-boundary.test.mjs).
 
+## CON-01 compliance and change-order ledger
+
+Open `/construction?project=CON-01` and follow the [construction runbook](../demo-lab/CONSTRUCTION.md). GET `/api/construction/catalog` supplies registered synthetic projects, subcontractors, actor roles, fixed scenario time and examples. POST prefix `/api/construction/` exposes `submit-document`, `review-document`, `document-receipt`, `readiness`, `create-order`, `revise-order`, `review-order`, `record-commitment`, `receipt`, `history`, `state`, `audit` and `verify-audit`. Mutations require immutable `commandId`; strict payload examples and adverse cases are exercised in [HTTP tests](../demo-lab/construction-http.test.mjs).
+
+Supplied document metadata/text becomes an immutable source receipt; independent review binds both the document hash and current revision, and expiry/revocation determine local readiness. Current order/document fingerprints bind project-manager and finance reviews. Recording a commitment rechecks readiness, reviews and remaining budget before one atomic local cost entry. Cost entries do not pay a contractor or authorize site work. The fixed synthetic clock is not live monitoring, actor labels are not authentication, and supplied source labels do not prove PDF parsing or issuer verification. Wider industry/provider acceptance remains unfinished.
+
 ## PM-01 maintenance operations
 
 Open `/maintenance?project=PM-01` and follow the [maintenance runbook](../demo-lab/MAINTENANCE.md). POST prefix `/api/maintenance/` exposes `intake`, `grant-access`, `revoke-access`, `propose`, `review`, `dispatch`, `reconcile`, `cancel`, `complete`, `receipt`, `history`, `state`, `audit` and `verify-audit`. All mutations require immutable `commandId`; selectors are `tenant` and, for saved cases, `caseId`. Grant requires occupant `actor` and canonical UTC `windows`; review requires independent `reviewer`, exact `expectedHash`, `decision` and `note`. Dispatch uses an operator `actor` and fixed `receiverProfileId` (`online`, `offline`, `lose-response`); cancel/complete require `expectedRevision` and a note. Full strict DTOs are exercised by [HTTP tests](../demo-lab/maintenance-http.test.mjs).
@@ -26,6 +32,7 @@ All routes below use GET. Normal JSON responses use `Cache-Control: no-store`.
 
 | Route | Result |
 |---|---|
+| `/api/construction/catalog` | Synthetic document/order examples, registered project budget/roles and fixed scenario clock |
 | `/api/maintenance/catalog` | Fixed synthetic clock, lease/vendor/actor fixtures, access windows and intake scenarios |
 | `/health` | `{status: "ok", mode: "local-demo"}` |
 | `/api/projects` | Automation catalog, engine label, simulator mode and workflow busy flag |

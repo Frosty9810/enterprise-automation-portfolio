@@ -1,10 +1,10 @@
 # Local showcase review handoff — October 24, 2026
 
-This batch adds the unified 73-entry project inventory and partial local AtlasGraph, TrustGate and ChronosRank research builds alongside the demonstration phase of the [portfolio roadmap](demo-lab/PORTFOLIO-ROADMAP.md): executable synthetic business decisions, adverse cases, readable evidence and reproducible local checks. Review readiness covers that scope. Hosted integrations, authentication, recordings, business impact and the broader [completion roadmap](COMPLETION-ROADMAP.md) remain separate work.
+This batch deepens CON-01 with supplied synthetic document provenance, current-document readiness holds, independent version-bound approvals and a durable local cost commitment ledger. Review readiness covers this bounded behavior and its reproduced failure cases. The unified 73-entry inventory and five partial research builds are existing integrated work. Hosted integrations, authenticated identities, issuer verification, real site operations, recordings and the broader [completion roadmap](COMPLETION-ROADMAP.md) remain separate.
 
-## Current research delivery
+## Current delivery
 
-The previous showcase and all seven child changes are integrated into main at `8d3662c1a34e4fe2cbb59665feb4b13337f240a0`. This branch adds VeilRAG on top of the separately reviewed [DocksideSLM PR #27](https://github.com/Frosty9810/enterprise-automation-portfolio/pull/27). Review Dockside first, then the Veil-only diff against its feature branch; reconcile and retarget if the parent integrates into main. Both slices retain unfinished wider research scope. Review its complete diff and exact-head checks against main. Local checks do not authorize merging, deployment or external-provider access.
+Public main `80f78be633996c8b37870c1bf6326f64cb53e956` includes the unified inventory, all five partial research builds and PM-01 maintenance operations. Dockside #27, Veil promotion #29 and PM-01 #30 are merged. This independent CON-01 branch adds supplied-document compliance holds, version-bound independent change-order reviews and an atomic local commitment/budget ledger. Review the complete diff and exact-head evidence against main. The wider industry/research scopes, authenticated roles, real document/provider acceptance and recordings remain open. Local checks do not authorize merging, deployment or external-provider access.
 
 ## Previous integrated PR stack
 

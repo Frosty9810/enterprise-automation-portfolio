@@ -1,5 +1,6 @@
 import { createServer } from 'node:http';
 import { maintenanceDesk } from './maintenance-core.mjs';
+import { constructionDesk } from './construction-core.mjs';
 import { DatabaseSync } from 'node:sqlite';
 import { mkdirSync, readFileSync, readdirSync, existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
@@ -140,6 +141,7 @@ export async function runN8n(id, progress = () => {}) {
 export function createLabServer(db = openStore(), executeWorkflow = runN8n) {
   const desk = productDesk(db);
   const property = maintenanceDesk(db);
+  const construction = constructionDesk(db);
   const reliability = reliabilityDesk(db);
   const salesforce = salesforceDesk(db);
   const flagships = flagshipSuite(db);
@@ -164,6 +166,15 @@ export function createLabServer(db = openStore(), executeWorkflow = runN8n) {
     const origin = request.headers.origin;
     if ((origin && origin !== localOrigin) || request.headers['sec-fetch-site'] === 'cross-site') return send(response, 403, { error: 'Local origin required' });
     if (request.method === 'GET') {
+      if (url.pathname === '/api/construction/catalog') return send(response,200,construction.catalog());
+      if (url.pathname === '/construction') {
+        response.writeHead(200,{'Content-Type':'text/html; charset=utf-8','Cache-Control':'no-store','X-Content-Type-Options':'nosniff','Content-Security-Policy':"default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; object-src 'none'"});
+        return response.end(readFileSync(join(directory,'construction.html')));
+      }
+      if (['/construction.css','/construction-ui.mjs'].includes(url.pathname)) {
+        response.writeHead(200,{'Content-Type':url.pathname.endsWith('.css')?'text/css; charset=utf-8':'text/javascript; charset=utf-8','X-Content-Type-Options':'nosniff','Cache-Control':'no-store'});
+        return response.end(readFileSync(join(directory,url.pathname.slice(1))));
+      }
       if (url.pathname === '/api/maintenance/catalog') return send(response,200,property.catalog());
       if (url.pathname === '/maintenance') {
         response.writeHead(200,{'Content-Type':'text/html; charset=utf-8','Cache-Control':'no-store','X-Content-Type-Options':'nosniff','Content-Security-Policy':"default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; object-src 'none'"});
@@ -295,6 +306,19 @@ export function createLabServer(db = openStore(), executeWorkflow = runN8n) {
     if (request.headers['x-demo-client'] !== 'local-showcase') return send(response, 403, { error: 'Demo client header required' });
     try {
       const body = await readBody(request);
+      if (url.pathname.startsWith('/api/construction/')) {
+        const actions = new Map([
+          ['submit-document',x=>construction.submitDocument(x)],['review-document',x=>construction.reviewDocument(x)],
+          ['document-receipt',x=>construction.documentReceipt(x)],['readiness',x=>construction.readiness(x)],
+          ['create-order',x=>construction.createOrder(x)],['revise-order',x=>construction.reviseOrder(x)],
+          ['review-order',x=>construction.reviewOrder(x)],['record-commitment',x=>construction.recordCommitment(x)],
+          ['receipt',x=>construction.receipt(x)],['history',x=>construction.history(x)],['state',x=>construction.state(x)],
+          ['audit',x=>construction.audit(x)],['verify-audit',x=>construction.verifyAudit(x)],
+        ]);
+        const action = actions.get(url.pathname.slice('/api/construction/'.length));
+        if(!action)return send(response,404,{error:'Unknown construction operation'});
+        return send(response,200,await action(body));
+      }
       if (url.pathname.startsWith('/api/maintenance/')) {
         const actions = new Map([
           ['intake',x=>property.intake(x)],['grant-access',x=>property.grantAccess(x)],['revoke-access',x=>property.revokeAccess(x)],

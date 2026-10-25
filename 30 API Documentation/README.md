@@ -20,6 +20,12 @@ Open `/maintenance?project=PM-01` and follow the [maintenance runbook](../demo-l
 
 Known emergency flags/text hold routine dispatch. Routine work needs occupant consent and a reviewed vendor/window proposal; dispatch rechecks saved authority and booking conflicts. Offline work remains queued; an uncertain acknowledgement requires actual local receiver reconciliation. State exposes bookings, outbox and receiver records; audit verification checks a local anchored chain, not an external signature. Actor/tenant labels are fixtures, not authentication. The clock is a fixed synthetic snapshot, not live SLA monitoring. There is no tenant/vendor contact, real emergency response or proof of a physical repair; the full industry flagship remains partial.
 
+## MED-01 synthetic administrative referral desk
+
+GET `/api/referral/catalog` supplies only registered fictional cases, document versions, consent-proof labels, staff roles and payer checklists. Open `/referral?project=MED-01` and follow the [referral runbook](../demo-lab/REFERRAL.md). POST prefix `/api/referral/` exposes `intake`, `set-packet`, `set-consent`, `review`, `enqueue`, `assign`, `receipt`, `state`, `audit` and `verify-audit`. All mutations use immutable `commandId`; after intake they also require the current `expectedRevision`. Packet review/enqueue bind `expectedHash`. Intake source event and all patient/document/proof selections must match closed synthetic fixtures.
+
+`state({tenant})` returns a consistent SQLite workspace snapshot: current case versions, readiness, consent, review hashes, queue effective status and audit anchor. Consent withdrawal or packet changes atomically hold the local queue and invalidate review. Staff assignment is administrative only. Fictional checklists do not decide care eligibility, coverage or insurance authorization. There are no name/clinical-text/upload fields, real consent verification, authenticated users or provider calls. Technical metadata remains plaintext and is not a general PHI detector. Full DTO examples and adverse requests are exercised by [HTTP tests](../demo-lab/referral-http.test.mjs).
+
 ## Read routes
 
 All routes below use GET. Normal JSON responses use `Cache-Control: no-store`.
@@ -40,6 +46,7 @@ All routes below use GET. Normal JSON responses use `Cache-Control: no-store`.
 | `/api/showcase/:id` | Project presentation/profile; unknown ID gives 404 |
 | `/api/artifacts/:id/:key` | Allowlisted attachment download; unknown artifact gives 404 |
 | `/api/activity` | Current workflow activity and busy state |
+| `/api/referral/catalog` | Closed synthetic referral/document/proof fixtures, fictional checklists and fixed scenario clock |
 | `/api/contacts` | Stored local simulator contacts |
 | `/api/runs` | Most recent 100 runs, latest run per project and history limit |
 | `/api/workshop/projects` | Automation passports and current source snapshots |

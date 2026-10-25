@@ -1,4 +1,5 @@
 import { createServer } from 'node:http';
+import { referralDesk } from './referral-core.mjs';
 import { maintenanceDesk } from './maintenance-core.mjs';
 import { DatabaseSync } from 'node:sqlite';
 import { mkdirSync, readFileSync, readdirSync, existsSync } from 'node:fs';
@@ -139,6 +140,7 @@ export async function runN8n(id, progress = () => {}) {
 
 export function createLabServer(db = openStore(), executeWorkflow = runN8n) {
   const desk = productDesk(db);
+  const referrals = referralDesk(db);
   const property = maintenanceDesk(db);
   const reliability = reliabilityDesk(db);
   const salesforce = salesforceDesk(db);
@@ -170,6 +172,15 @@ export function createLabServer(db = openStore(), executeWorkflow = runN8n) {
         return response.end(readFileSync(join(directory,'maintenance.html')));
       }
       if (['/maintenance.css','/maintenance-ui.mjs'].includes(url.pathname)) {
+        response.writeHead(200,{'Content-Type':url.pathname.endsWith('.css')?'text/css; charset=utf-8':'text/javascript; charset=utf-8','X-Content-Type-Options':'nosniff','Cache-Control':'no-store'});
+        return response.end(readFileSync(join(directory,url.pathname.slice(1))));
+      }
+      if (url.pathname === '/api/referral/catalog') return send(response,200,referrals.catalog());
+      if (url.pathname === '/referral') {
+        response.writeHead(200,{'Content-Type':'text/html; charset=utf-8','Cache-Control':'no-store','X-Content-Type-Options':'nosniff','Content-Security-Policy':"default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; object-src 'none'"});
+        return response.end(readFileSync(join(directory,'referral.html')));
+      }
+      if (['/referral.css','/referral-ui.mjs'].includes(url.pathname)) {
         response.writeHead(200,{'Content-Type':url.pathname.endsWith('.css')?'text/css; charset=utf-8':'text/javascript; charset=utf-8','X-Content-Type-Options':'nosniff','Cache-Control':'no-store'});
         return response.end(readFileSync(join(directory,url.pathname.slice(1))));
       }
@@ -305,6 +316,16 @@ export function createLabServer(db = openStore(), executeWorkflow = runN8n) {
         ]);
         const action = actions.get(url.pathname.slice('/api/maintenance/'.length));
         if(!action)return send(response,404,{error:'Unknown maintenance operation'});
+        return send(response,200,await action(body));
+      }
+      if (url.pathname.startsWith('/api/referral/')) {
+        const actions = new Map([
+          ['intake',x=>referrals.intake(x)],['set-packet',x=>referrals.setPacket(x)],['set-consent',x=>referrals.setConsent(x)],
+          ['review',x=>referrals.review(x)],['enqueue',x=>referrals.enqueue(x)],['assign',x=>referrals.assign(x)],
+          ['receipt',x=>referrals.receipt(x)],['state',x=>referrals.state(x)],['audit',x=>referrals.audit(x)],['verify-audit',x=>referrals.verifyAudit(x)],
+        ]);
+        const action=actions.get(url.pathname.slice('/api/referral/'.length));
+        if(!action)return send(response,404,{error:'Unknown referral operation'});
         return send(response,200,await action(body));
       }
       if (url.pathname.startsWith('/api/trustgate/')) {

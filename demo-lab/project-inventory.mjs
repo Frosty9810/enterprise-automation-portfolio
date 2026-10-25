@@ -49,5 +49,9 @@ export function portfolioInventory() {
       collection: 'research', id, title: id, summary, status, scope,
       href: `${id==='TrustGate'?'/trustgate':id==='ChronosRank'?'/chronosrank':id==='DocksideSLM'?'/dockside':id==='VeilRAG'?'/veilrag':'/research'}?project=${encodeURIComponent(id)}`,
     })),
-  ];
+  ].map(record => record.collection === 'automation' && record.id === 'MED-01' ? {
+    ...record, href: '/referral?project=MED-01',
+    summary: 'Inspect fictional referral checklists, consent holds, independent packet review and a durable local administrative queue.',
+    scope: 'Partial synthetic administrative build with closed fixture selections and a fixed clock. No clinical decisions, real payer policy, insurance authorization, authenticated users or live provider acceptance.',
+  } : record);
 }

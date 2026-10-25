@@ -6,6 +6,8 @@
 
 **[AtlasGraph local build](demo-lab/ATLASGRAPH.md)** — open `http://127.0.0.1:5680/research?project=AtlasGraph` to compile versioned synthetic pages, follow a two-hop evidence path, inspect exact citations and retain failed paths for correction. SQLite restart/replay and stale evidence are tested; semantic retrieval, real source adapters and research baseline comparisons remain pending.
 
+**[MED-01 synthetic referral desk](demo-lab/REFERRAL.md)** - open `http://127.0.0.1:5680/referral?project=MED-01` to inspect fictional document checklists, consent holds, independent packet review and a durable local staff queue. Inputs select supplied synthetic fixtures; the fixed clock is not live monitoring. This administrative example makes no clinical, coverage or insurance-authorization decision. The full industry milestone remains partial.
+
 **[TrustGate local tool gateway](demo-lab/TRUSTGATE.md)** — open `http://127.0.0.1:5680/trustgate` to resolve tool arguments from registered synthetic sources, inspect policy holds, review proposed writes and execute three narrow SQLite tools. Outbound providers and authenticated agent integration remain outside this partial research build.
 
 **[ChronosRank local memory workbench](demo-lab/CHRONOSRANK.md)** — open `http://127.0.0.1:5680/chronosrank` to append synthetic memory events, retrieve as of a chosen time, inspect excluded facts and preserve source receipts with feedback. Token-overlap scores are deterministic; no trained reranker or calibrated probability is claimed.

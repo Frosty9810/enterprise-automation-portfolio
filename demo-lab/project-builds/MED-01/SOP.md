@@ -1,10 +1,18 @@
 # MED-01 Referral Completeness and Authorization Staff Queue
 
 Status: **Populated — bounded local implementation; integration acceptance pending.**
-Version: 1.0 · Owner: portfolio maintainer
+Version: 1.1 · Owner: portfolio maintainer
 
 **Video Walkthrough:** _Pending recording — see script in this SOP's project folder._
 **Real Build Artifacts:** [Runbook and build files →](build/README.md)
+
+## Added procedure: synthetic administrative referral queue
+
+Use the [referral runbook](../../REFERRAL.md) for `/referral?project=MED-01`. Select a registered synthetic case and inspect its supplied document fixtures. Fictional payer A requires a form and order; fictional payer B also requires a supporting document. Missing, expired, superseded or unknown-payer evidence holds administrative readiness. These are invented demonstration rules, not actual payer policy or care criteria.
+
+Record a matching synthetic consent-proof selection at the current case revision. Resolve packet holds, then have an independent staff-review fixture inspect the exact packet fingerprint. Local enqueue and assignment recheck current consent, evidence, review and revision under a SQLite transaction. Withdrawing consent or changing the packet holds the existing local queue row and invalidates review. Regranting consent requires fresh independent review before another handoff. Preserve history and recover the current case after a lost response; do not infer a real provider submission from a local row.
+
+The fixed synthetic clock supports reproducible expiry tests; no background monitor is installed. Do not enter real patient data in selectors or technical metadata. No clinical recommendation, coverage decision, insurance authorization, authenticated identity, actual consent verification or real healthcare integration is provided. The full industry milestone and any real-world acceptance remain open. The legacy checklist/n8n procedure below is separate from this new local administrative controller.
 
 ## 1. Purpose
 

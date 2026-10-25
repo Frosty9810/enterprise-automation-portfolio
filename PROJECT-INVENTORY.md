@@ -55,6 +55,8 @@ The source path and local wrapper JSON were checked for every row. Open the root
 | AGT-01 | DeskPilot Support Agent Permission Gate | [Inspect](demo-lab/business-expansion.mjs) |
 | OPS-01 | ClearSlot Booking Handoff Recovery Desk | [Inspect](demo-lab/business-expansion.mjs) |
 
+MED-01 also has a [synthetic administrative desk](demo-lab/REFERRAL.md) at `/referral?project=MED-01`: closed fixtures, fictional checklists, consent holds, independent packet review and a durable local staff queue. The legacy automation row above remains a separate checklist example.
+
 ## Life and data: all 20 entries
 
 | ID | Project | Collection | Bundled example |
@@ -137,6 +139,8 @@ Each ID below has a bounded local demo/build artifact set. The broader end-to-en
 | [LEGAL-01](demo-lab/project-builds/LEGAL-01/README.md) | Legal | Complete matter intake/conflict/deadline workflow and reviewed jurisdiction rules |
 | [INS-01](demo-lab/project-builds/INS-01/README.md) | Insurance | Complete loss-evidence pipeline and adjuster/coverage-system integration without automated coverage decisions |
 | [EA-01](demo-lab/project-builds/EA-01/README.md) | Executive Assistants | Permission-aware ingestion, durable decision-register workflow and authorized follow-up integration |
+
+MED-01 depth update: [closed synthetic referral fixtures and the local administrative queue](demo-lab/REFERRAL.md) now cover consent/checklist holds and independent packet review. Real controlled intake, authenticated roles, payer/provider acceptance and recordings remain open. This does not make a clinical or insurance-authorization decision.
 
 ## All 50 numbered sections
 

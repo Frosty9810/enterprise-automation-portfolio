@@ -1,0 +1,18 @@
+{
+  "projectId": "LEGAL-01",
+  "summary": "Review pinned synthetic parties and conflict relationships, record one local matter, and independently check supplied fictional dates.",
+  "scope": "Partial local SQLite administrative desk with fixed synthetic fixtures, immutable source parties, conflict holds, revision-bound independent review and supplied-date calendar rows. No statutory/jurisdiction rules, legal advice, professional clearance, authenticated users, real representation, client data or live integrations.",
+  "operations": {
+    "intake": "intake",
+    "set-parties": "setParties",
+    "review-conflict": "reviewConflict",
+    "create-matter": "createMatter",
+    "propose-deadline": "proposeDeadline",
+    "review-deadline": "reviewDeadline",
+    "record-deadline": "recordDeadline",
+    "receipt": "receipt",
+    "state": "state",
+    "audit": "audit",
+    "verify-audit": "verifyAudit"
+  }
+}

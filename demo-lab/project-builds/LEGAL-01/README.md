@@ -1,22 +1,16 @@
-# LEGAL-01 Matter Conflict and Entity Review Gate
+# LEGAL-01 Matter Intake, Conflict Check and Supplied-Date Desk
 
-Status: **Populated — bounded local build; hosted integration and PostgreSQL execution pending.**
+Status: **Partial local implementation; the full legal-industry blueprint remains unfinished.**
 
-Exact and ambiguous entity matches stop automatic matter creation; every route ends with professional review.
+The executable SQLite desk pins supplied fictional parties, exposes normalized exact/ambiguous relationships, preserves conflict holds and requires independent exact-fingerprint review before recording a local matter. A second reviewed step records a supplied fictional future date as a local calendar row. Neither action is professional conflicts clearance, permission to represent a real client, or legal advice. Supplied dates are source fixtures, not calculated jurisdiction/statutory deadlines.
 
-**Video Walkthrough:** _Pending recording — see script in this SOP's project folder._
-**Real Build Artifacts:** [Runbook and build files →](build/README.md)
+From the repository root, run `node demo-lab/run-legal.mjs` or start `node demo-lab/server.mjs` and open `http://127.0.0.1:5680/industry/legal?project=LEGAL-01`. The unified portfolio inventory links this existing project to the desk. The fixed clock is `2026-10-25T12:00:00.000Z`; no live deadline monitor runs.
 
-## Business flow
+- [Executable desk, API contract, tests and limitations](../../LEGAL.md)
+- [44-section operating procedure](SOP.md)
+- [Build runbook and legacy compatibility artifacts](build/README.md)
+- [Existing recording script](walkthrough-script.md): video recording remains pending; the older script does not prove execution of the new desk.
 
-Party names → normalized exact/ambiguous matching → attorney clearance.
+There are no actual client files, credentials, professional approvals, external notifications or provider integrations in this delivery. Authenticated intake/review, complete entity resolution, qualified jurisdiction rules, live matter/calendar adapters, acceptance evidence and a recorded walkthrough remain open. The older bounded rules/n8n example is retained separately and does not establish the new desk's integration acceptance.
 
-## Review materials
-
-- [44-section SOP](SOP.md)
-- [Recording script](walkthrough-script.md)
-- [Build runbook](build/README.md)
-
-
----
-*Part of the Enterprise Automation Portfolio. See [project build index](../README.md).*
+*Part of the Enterprise Automation Portfolio. See the [project build index](../README.md).*

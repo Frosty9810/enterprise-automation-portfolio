@@ -37,6 +37,8 @@ CON-01 now has a [bounded compliance and change-order ledger](demo-lab/CONSTRUCT
 
 Real Estate, SaaS, and E-Commerce already meet the flagship-suite standard. The import-company operating system remains the cross-department enterprise flagship.
 
+MED-01 now has a [bounded synthetic administrative queue](demo-lab/REFERRAL.md): closed fixture intake, fictional payer checklists, consent holds, independent exact-packet review and durable local staff handoff. This is not a clinical or insurance-authorization system. Controlled real intake, authenticated roles, actual payer/provider acceptance and recorded evidence remain open; the full milestone stays partial.
+
 ## Platform evidence backlog
 
 Sections 19–31 will be completed by extracting tested patterns from flagships:

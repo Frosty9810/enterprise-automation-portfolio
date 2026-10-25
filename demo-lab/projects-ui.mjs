@@ -26,7 +26,8 @@ export function validateInventory(value) {
     }
     if (!Object.hasOwn(collectionLabels, record.collection) || !Object.hasOwn(statusLabels, record.status)) throw Error('Unknown project collection or status.');
     if (!/^[A-Za-z0-9-]+$/.test(record.id)) throw Error('Invalid project identifier.');
-    if (record.href !== routeFor(record.collection, record.id)) throw Error('Invalid project destination.');
+    const expectedRoute = record.collection === 'automation' && record.id === 'MED-01' ? '/referral?project=MED-01' : routeFor(record.collection, record.id);
+    if (record.href !== expectedRoute) throw Error('Invalid project destination.');
     const key = `${record.collection}:${record.id}`;
     if (seen.has(key)) throw Error('Duplicate project identifier within a collection.');
     seen.add(key);

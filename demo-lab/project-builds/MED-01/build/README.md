@@ -2,6 +2,10 @@
 
 Status: **Populated — local script and copied workflow available; PostgreSQL execution pending.**
 
+## Durable synthetic referral queue
+
+Use the [separate administrative desk](../../../REFERRAL.md) at `/referral?project=MED-01`, or run `node demo-lab/run-referral.mjs`. The SQLite controller persists revision-bound packet/consent review and one current local queue row per case, with audit history. Its closed fixture selection boundary does not ingest real records, parse documents, authenticate staff or contact a payer. The PostgreSQL schema below is a separate proposal and is not this controller's runtime schema. The legacy n8n example remains a bounded fictional checklist.
+
 ## Files
 
 - `demo.js`: imports the existing business implementation and executes assertions against synthetic fixtures.

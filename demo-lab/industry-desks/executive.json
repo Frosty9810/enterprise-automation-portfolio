@@ -1,0 +1,6 @@
+{
+  "projectId": "EA-01",
+  "summary": "Synthetic source-version and permission-bound review with durable local follow-up tasks, access revocation and owner-window holds.",
+  "scope": "Partial local implementation using closed synthetic sources, actor labels and a fixed scenario clock. No actual authentication, confidentiality guarantee, executive authority, private correspondence, provider task, calendar or message integration.",
+  "operations": {"ingest":"ingest","revise":"revise","set-access":"setAccess","review":"review","record-task":"recordTask","receipt":"receipt","state":"state","audit":"audit","verify-audit":"verifyAudit"}
+}

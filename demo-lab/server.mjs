@@ -26,6 +26,7 @@ import { evaluateExpansion, expansionSuites } from './business-expansion.mjs';
 import { evaluateRoadmap, suites } from './roadmap-scenarios.mjs';
 import { portfolioInventory } from './project-inventory.mjs';
 import { atlasGraph } from './atlasgraph-core.mjs';
+import { atlasMarkdown } from './atlasgraph-markdown.mjs';
 import { trustGate } from './trustgate-core.mjs';
 import { getTrustGateChallengeCatalog, runTrustGateChallenge } from './trustgate-challenge.mjs';
 import { chronosRank } from './chronosrank-core.mjs';
@@ -152,6 +153,7 @@ export function createLabServer(db = openStore(), executeWorkflow = runN8n) {
   const salesforce = salesforceDesk(db);
   const flagships = flagshipSuite(db);
   const research = atlasGraph(db);
+  const markdown = atlasMarkdown(db);
   const gateway = trustGate(db);
   const memory = chronosRank(db);
   const dock = dockside(db);
@@ -205,6 +207,17 @@ export function createLabServer(db = openStore(), executeWorkflow = runN8n) {
       if (url.pathname === '/api/chronosrank/catalog') return send(response,200,memory.catalog());
       if (url.pathname === '/api/dockside/catalog') return send(response,200,dock.catalog());
       if (url.pathname === '/api/veilrag/catalog') return send(response,200,privacy.catalog());
+      if (url.pathname === '/api/research-markdown/catalog') {
+        try { return send(response,200,markdown.catalog()); } catch(error) { return send(response,400,{error:error.message}); }
+      }
+      if (url.pathname === '/research-markdown') {
+        response.writeHead(200,{'Content-Type':'text/html; charset=utf-8','Cache-Control':'no-store','X-Content-Type-Options':'nosniff','Content-Security-Policy':"default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; object-src 'none'"});
+        return response.end(readFileSync(join(directory,'atlasgraph-markdown.html')));
+      }
+      if (['/atlasgraph-markdown.css','/atlasgraph-markdown-ui.mjs'].includes(url.pathname)) {
+        response.writeHead(200,{'Content-Type':url.pathname.endsWith('.css')?'text/css; charset=utf-8':'text/javascript; charset=utf-8','Cache-Control':'no-store','X-Content-Type-Options':'nosniff'});
+        return response.end(readFileSync(join(directory,url.pathname.slice(1))));
+      }
       if (url.pathname === '/api/research/catalog') return send(response,200,{projects:portfolioInventory().filter(p=>p.collection==='research')});
       if (url.pathname === '/api/research/example') return send(response,200,JSON.parse(readFileSync(join(directory,'atlasgraph-example.json'),'utf8')));
       if (url.pathname === '/api/research/blueprint') {
@@ -442,6 +455,11 @@ export function createLabServer(db = openStore(), executeWorkflow = runN8n) {
         const action = actions.get(url.pathname.slice('/api/veilrag/'.length));
         if(!action)return send(response,404,{error:'Unknown alias operation'});
         return send(response,200,await action(body));
+      }
+      if (url.pathname.startsWith('/api/research-markdown/')) {
+        const operation=url.pathname.slice('/api/research-markdown/'.length);
+        if (!['preview','compile'].includes(operation)) return send(response,404,{error:'Unknown Markdown import operation'});
+        return send(response,200,markdown[operation](body));
       }
       if(url.pathname.startsWith('/api/industry/')){
         const match=/^\/api\/industry\/([a-z-]+)\/([a-z-]+)$/.exec(url.pathname);

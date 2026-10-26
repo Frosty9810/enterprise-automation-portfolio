@@ -33,6 +33,8 @@ These are improvements to existing research entries, not three additional projec
 
 These are **73 listed entries: 68 established catalog views plus five research tracks**. The five research tracks add partial runnable local builds; their wider blueprints remain unfinished. They are not 73 independent production products. The 17 original showcase packages are a subset of the 27 automation entries. Salesforce/product/recovery dedicated pages and IMP-01 registry entries are not counted as additional projects.
 
+AtlasGraph source ingestion: the [bounded Markdown adapter](demo-lab/ATLASGRAPH-MARKDOWN.md) previews explicit-heading pages with exact raw-source hashes and UTF-16/UTF-8 ranges, then conditionally imports a reviewed whole-tenant snapshot. Claims and references remain supplied annotations. PDF/email extraction, arbitrary Markdown, semantic models, authenticated source review and external acceptance remain open; this adds depth to the existing AtlasGraph entry rather than another project.
+
 ## Automation: all 27 entries
 
 The source path and local wrapper JSON were checked for every row. Open the root lab, select All projects, then choose the ID. Existing wrapper CI evidence is separate from this presence audit.

@@ -1,5 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { createHash } from 'node:crypto';
 import { mkdtempSync, readFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
@@ -174,4 +175,24 @@ test('AtlasGraph rejects malformed, oversized and prototype-related structured i
     rejects(() => graph.compile({ tenant: 'harbor-demo', sources: [], extra: Number.NaN }));
     assert.equal({}.polluted, undefined);
   });
+});
+
+function originExample() {
+  const raw = '# Exact page {#raw-page}\r\nCafé 😀 retains CRLF.\r\n';
+  return { tenant: 'origin-demo', sources: [{ id: 'raw-source', version: 'raw-v1', title: 'Raw source', approved: true, pages: [{ id: 'raw-page', title: 'Exact page', text: raw, claims: [], references: [] }], origin: { format: 'markdown-atx-v1', raw, sha256: createHash('sha256').update(raw, 'utf8').digest('hex'), ranges: [{ pageId: 'raw-page', startUtf16: 0, endUtf16: raw.length, startByte: 0, endByte: Buffer.byteLength(raw, 'utf8') }] } }] };
+}
+test('AtlasGraph old JSON normalization, source shapes and snapshot identity remain unchanged without origin', () => using((graph, data) => {
+  assert.equal(graph.compile(data.compile).snapshotHash, '5e6a0f8590b02ebb2b649ede56da0c3c6a44fcd8d03f7b70a3ede9daaf818321');
+  assert.equal(Object.hasOwn(graph.read({ tenant: data.compile.tenant, id: data.answer.startId }).page, 'origin'), false);
+  for (const citation of graph.answer(data.answer).citations) assert.equal(Object.hasOwn(citation, 'origin'), false);
+}));
+test('AtlasGraph persists exact origin atomically and exposes only its hash/range passport in reads and citations', () => {
+  const db = new DatabaseSync(':memory:'); try { const graph = atlasGraph(db), payload = originExample(); graph.compile(payload); const source = JSON.parse(db.prepare('SELECT body FROM atlas_source_versions').get().body); assert.deepEqual(source.origin, payload.sources[0].origin); const page = graph.read({tenant:payload.tenant,id:'raw-page'}).page; assert.equal(page.text, payload.sources[0].origin.raw); assert.deepEqual(page.origin, {format:'markdown-atx-v1',sha256:source.origin.sha256,range:source.origin.ranges[0]}); assert.equal(Object.hasOwn(page.origin,'raw'),false); const answer=graph.answer({tenant:payload.tenant,question:'Check exact source',startId:'raw-page',requiredClaims:['missing'],requestId:'origin-check'}); assert.equal(answer.status,'abstained'); assert.equal(answer.citations.length,0); payload.sources[0].pages[0].claims=[{key:'check',value:'Café'}];payload.sources[0].version='raw-v2';graph.compile(payload);const supported=graph.answer({tenant:payload.tenant,question:'Check exact source',startId:'raw-page',requiredClaims:['check'],requestId:'origin-supported'});assert.deepEqual(supported.citations[0].origin,page.origin);assert.equal(Object.hasOwn(supported.citations[0].origin,'raw'),false); } finally { db.close(); }
+});
+test('AtlasGraph rejects forged source hashes, unaligned spans and incomplete raw coverage before any graph writes', () => {
+  const changes = [x=>x.origin.sha256='f'.repeat(64),x=>x.origin.raw+='changed',x=>x.origin.ranges[0].startUtf16=1,x=>x.origin.ranges[0].endUtf16--,x=>x.origin.ranges[0].endByte--,x=>x.origin.ranges[0].pageId='missing',x=>x.origin.ranges.push({...x.origin.ranges[0]}),x=>x.origin.format='unreviewed-parser',x=>x.origin.extra=true,x=>x.pages[0].text='different text'];
+  for(const change of changes){const db=new DatabaseSync(':memory:');try{const graph=atlasGraph(db),payload=originExample();change(payload.sources[0]);rejects(()=>graph.compile(payload));assert.equal(db.prepare('SELECT count(*) n FROM atlas_source_versions').get().n,0);assert.equal(db.prepare('SELECT count(*) n FROM atlas_current').get().n,0);}finally{db.close();}}
+});
+test('AtlasGraph expected snapshot precondition is checked inside the write transaction and permits only exact target replay', () => {
+ const db=new DatabaseSync(':memory:');try{const graph=atlasGraph(db),original=example().compile,first=graph.compile(original),next=structuredClone(original),interloper=structuredClone(original);next.sources[0].version='next';next.sources[0].title='Reviewed next';interloper.sources[0].version='other';interloper.sources[0].title='Intervening current';graph.compile(interloper);const count=db.prepare('SELECT count(*) n FROM atlas_source_versions').get().n;rejects(()=>graph.compile(next,{expectedSnapshotHash:first.snapshotHash}),'snapshot_conflict');assert.equal(db.prepare('SELECT count(*) n FROM atlas_source_versions').get().n,count);const result=graph.compile(next);assert.deepEqual(graph.compile(next,{expectedSnapshotHash:first.snapshotHash}),{...result,reused:true});for(const options of [{expectedSnapshotHash:'bad'}, {expectedSnapshotHash:42},{expectedSnapshotHash:null,force:true}])rejects(()=>graph.compile(next,options));}finally{db.close();}
 });

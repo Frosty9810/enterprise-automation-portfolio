@@ -1,0 +1,622 @@
+{
+  "schemaVersion": 1,
+  "suiteId": "atlasgraph-markdown-parser-v1",
+  "authorship": {
+    "kind": "independent-ai-fixture-author",
+    "humanReviewed": false,
+    "note": "A separate AI fixture author derived source text, explicit claims/references and functional page/span expectations from the original public AtlasGraph example and the agreed narrow Markdown contract before running or reading new parser output. These are synthetic functional acceptance labels, not model quality judgments or verified business truth."
+  },
+  "scope": "Public synthetic Markdown parser/annotation acceptance cases. Heading boundaries and raw section spans are independently authored; claims and reference quotes remain explicit inputs. No Markdown renderer, arbitrary code execution, URL/file ingestion, source authentication, semantic extraction or external customs/provider acceptance.",
+  "cases": [
+    {
+      "id": "three-source-two-hop",
+      "title": "Three synthetic Markdown sources retain the existing two-hop business evidence",
+      "input": {
+        "tenant": "harbor-demo",
+        "sources": [
+          {
+            "id": "supplier-record",
+            "version": "markdown-v1",
+            "title": "Synthetic supplier shipment",
+            "approved": true,
+            "markdown": "\r\n# Sample shipment terms {#shipment}\r\nSample shipment uses Incoterm DAP. Restricted goods must follow customs-checks before release.\r\nFictional source note: Caf\u00e9 Harbor \ud83d\udce6; preserve this supplied spelling.\r\n```text\r\n# Code-only example {#not-a-page}\r\nThis fenced text is not a compiled heading.\r\n```\r\n",
+            "annotations": [
+              {
+                "pageId": "shipment",
+                "claims": [
+                  {
+                    "key": "incoterm",
+                    "value": "DAP"
+                  }
+                ],
+                "references": [
+                  {
+                    "to": "customs-checks",
+                    "relation": "requires",
+                    "quote": "Restricted goods must follow customs-checks before release."
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "customs-policy",
+            "version": "markdown-v1",
+            "title": "Synthetic customs guidance",
+            "approved": true,
+            "markdown": "## Restricted goods release check {#customs-checks}\nRestricted goods require a signed permit before release. The approval-threshold policy names the required approver.\n",
+            "annotations": [
+              {
+                "pageId": "customs-checks",
+                "claims": [
+                  {
+                    "key": "customsRule",
+                    "value": "signed permit before release"
+                  }
+                ],
+                "references": [
+                  {
+                    "to": "approval-threshold",
+                    "relation": "requires",
+                    "quote": "The approval-threshold policy names the required approver."
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "id": "approval-policy",
+            "version": "markdown-v1",
+            "title": "Synthetic internal approval policy",
+            "approved": true,
+            "markdown": "### Restricted shipment approval {#approval-threshold}\nFor this synthetic shipment, release requires operations director approval after permit verification.\n",
+            "annotations": [
+              {
+                "pageId": "approval-threshold",
+                "claims": [
+                  {
+                    "key": "approval",
+                    "value": "operations director approval"
+                  }
+                ],
+                "references": []
+              }
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "status": "parsed",
+        "pageIdsBySource": {
+          "supplier-record": [
+            "shipment"
+          ],
+          "customs-policy": [
+            "customs-checks"
+          ],
+          "approval-policy": [
+            "approval-threshold"
+          ]
+        },
+        "sections": [
+          {
+            "sourceId": "supplier-record",
+            "pageId": "shipment",
+            "text": "\r\n# Sample shipment terms {#shipment}\r\nSample shipment uses Incoterm DAP. Restricted goods must follow customs-checks before release.\r\nFictional source note: Caf\u00e9 Harbor \ud83d\udce6; preserve this supplied spelling.\r\n```text\r\n# Code-only example {#not-a-page}\r\nThis fenced text is not a compiled heading.\r\n```\r\n",
+            "startUtf16": 0,
+            "endUtf16": 302,
+            "startUtf8": 0,
+            "endUtf8": 305
+          },
+          {
+            "sourceId": "customs-policy",
+            "pageId": "customs-checks",
+            "text": "## Restricted goods release check {#customs-checks}\nRestricted goods require a signed permit before release. The approval-threshold policy names the required approver.\n",
+            "startUtf16": 0,
+            "endUtf16": 168,
+            "startUtf8": 0,
+            "endUtf8": 168
+          },
+          {
+            "sourceId": "approval-policy",
+            "pageId": "approval-threshold",
+            "text": "### Restricted shipment approval {#approval-threshold}\nFor this synthetic shipment, release requires operations director approval after permit verification.\n",
+            "startUtf16": 0,
+            "endUtf16": 157,
+            "startUtf8": 0,
+            "endUtf8": 157
+          }
+        ]
+      },
+      "rationale": "One page per source, explicit authored claims/references, CRLF and Unicode preserved. A heading inside a closed fence is not a page."
+    },
+    {
+      "id": "two-sections-fenced-fake",
+      "title": "Two raw sections retain leading blank lines and ignore fenced headings",
+      "input": {
+        "tenant": "harbor-demo",
+        "sources": [
+          {
+            "id": "packing-source",
+            "version": "v1",
+            "title": "Public synthetic source",
+            "approved": true,
+            "markdown": "\n# Packing record {#packing}\nR\u00e9sum\u00e9 \ud83d\udce6: Packing review points to release.\n```txt\n## Fake heading {#ghost}\n```\n## Release note {#release}\nRelease state: cleared.\n",
+            "annotations": [
+              {
+                "pageId": "packing",
+                "claims": [],
+                "references": [
+                  {
+                    "to": "release",
+                    "relation": "requires",
+                    "quote": "Packing review points to release."
+                  }
+                ]
+              },
+              {
+                "pageId": "release",
+                "claims": [
+                  {
+                    "key": "state",
+                    "value": "cleared"
+                  }
+                ],
+                "references": []
+              }
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "status": "parsed",
+        "pageIdsBySource": {
+          "packing-source": [
+            "packing",
+            "release"
+          ]
+        },
+        "sections": [
+          {
+            "sourceId": "packing-source",
+            "pageId": "packing",
+            "text": "\n# Packing record {#packing}\nR\u00e9sum\u00e9 \ud83d\udce6: Packing review points to release.\n```txt\n## Fake heading {#ghost}\n```\n",
+            "startUtf16": 0,
+            "endUtf16": 110,
+            "startUtf8": 0,
+            "endUtf8": 114
+          },
+          {
+            "sourceId": "packing-source",
+            "pageId": "release",
+            "text": "## Release note {#release}\nRelease state: cleared.\n",
+            "startUtf16": 110,
+            "endUtf16": 161,
+            "startUtf8": 114,
+            "endUtf8": 165
+          }
+        ]
+      },
+      "rationale": "The first raw section includes leading blank lines and the entire closed fence. The second begins exactly at its explicit column-zero heading. UTF-16 and UTF-8 positions differ around the supplied emoji."
+    },
+    {
+      "id": "tilde-fence-crlf",
+      "title": "Exact triple-tilde fence and CRLF bytes remain intact",
+      "input": {
+        "tenant": "harbor-demo",
+        "sources": [
+          {
+            "id": "tilde-source",
+            "version": "v1",
+            "title": "Public synthetic source",
+            "approved": true,
+            "markdown": "# Tilde sample {#tilde-page}\r\nApproved fixture note.\r\n~~~md\r\n### Fenced title {#not-parsed}\r\n~~~\r\n",
+            "annotations": [
+              {
+                "pageId": "tilde-page",
+                "claims": [],
+                "references": []
+              }
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "status": "parsed",
+        "pageIdsBySource": {
+          "tilde-source": [
+            "tilde-page"
+          ]
+        },
+        "sections": [
+          {
+            "sourceId": "tilde-source",
+            "pageId": "tilde-page",
+            "text": "# Tilde sample {#tilde-page}\r\nApproved fixture note.\r\n~~~md\r\n### Fenced title {#not-parsed}\r\n~~~\r\n",
+            "startUtf16": 0,
+            "endUtf16": 98,
+            "startUtf8": 0,
+            "endUtf8": 98
+          }
+        ]
+      },
+      "rationale": "A supported tilde fence is opaque source content; the ID-like heading inside it is not inferred as a page."
+    },
+    {
+      "id": "missing-explicit-id",
+      "title": "ATX title without stable ID is rejected",
+      "input": {
+        "tenant": "harbor-demo",
+        "sources": [
+          {
+            "id": "single-source",
+            "version": "v1",
+            "title": "Public synthetic source",
+            "approved": true,
+            "markdown": "# Missing stable ID\nPublic body.\n",
+            "annotations": [
+              {
+                "pageId": "sample",
+                "claims": [],
+                "references": []
+              }
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "status": "rejected",
+        "pageIdsBySource": {},
+        "sections": []
+      },
+      "rationale": "Every recognized heading requires an explicit stable page identifier; annotation cannot repair an absent source ID."
+    },
+    {
+      "id": "duplicate-page-id",
+      "title": "Duplicate explicit page IDs are rejected",
+      "input": {
+        "tenant": "harbor-demo",
+        "sources": [
+          {
+            "id": "single-source",
+            "version": "v1",
+            "title": "Public synthetic source",
+            "approved": true,
+            "markdown": "# First {#sample}\nPublic body.\n## Second {#sample}\nAnother body.\n",
+            "annotations": [
+              {
+                "pageId": "sample",
+                "claims": [],
+                "references": []
+              }
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "status": "rejected",
+        "pageIdsBySource": {},
+        "sections": []
+      },
+      "rationale": "Two source headings must not collapse into a single page or share one annotation."
+    },
+    {
+      "id": "missing-annotation",
+      "title": "A parsed page without an annotation is rejected",
+      "input": {
+        "tenant": "harbor-demo",
+        "sources": [
+          {
+            "id": "single-source",
+            "version": "v1",
+            "title": "Public synthetic source",
+            "approved": true,
+            "markdown": "# Sample {#sample}\nPublic body.\n",
+            "annotations": []
+          }
+        ]
+      },
+      "expected": {
+        "status": "rejected",
+        "pageIdsBySource": {},
+        "sections": []
+      },
+      "rationale": "The adapter must not invent empty claims/references for an unannotated page; every page requires an explicit annotation."
+    },
+    {
+      "id": "foreign-annotation",
+      "title": "An annotation for a nonexistent heading is rejected",
+      "input": {
+        "tenant": "harbor-demo",
+        "sources": [
+          {
+            "id": "single-source",
+            "version": "v1",
+            "title": "Public synthetic source",
+            "approved": true,
+            "markdown": "# Sample {#sample}\nPublic body.\n",
+            "annotations": [
+              {
+                "pageId": "absent",
+                "claims": [],
+                "references": []
+              }
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "status": "rejected",
+        "pageIdsBySource": {},
+        "sections": []
+      },
+      "rationale": "Annotations are exact page identities, not suggestions or a source of inferred headings."
+    },
+    {
+      "id": "duplicate-annotation",
+      "title": "Two annotations for one page are rejected",
+      "input": {
+        "tenant": "harbor-demo",
+        "sources": [
+          {
+            "id": "single-source",
+            "version": "v1",
+            "title": "Public synthetic source",
+            "approved": true,
+            "markdown": "# Sample {#sample}\nPublic body.\n",
+            "annotations": [
+              {
+                "pageId": "sample",
+                "claims": [],
+                "references": []
+              },
+              {
+                "pageId": "sample",
+                "claims": [],
+                "references": []
+              }
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "status": "rejected",
+        "pageIdsBySource": {},
+        "sections": []
+      },
+      "rationale": "Repeated annotations must not be silently merged or overridden."
+    },
+    {
+      "id": "unclosed-fence",
+      "title": "Unclosed exact fence is rejected",
+      "input": {
+        "tenant": "harbor-demo",
+        "sources": [
+          {
+            "id": "single-source",
+            "version": "v1",
+            "title": "Public synthetic source",
+            "approved": true,
+            "markdown": "# Sample {#sample}\n```text\nPublic code sample.\n",
+            "annotations": [
+              {
+                "pageId": "sample",
+                "claims": [],
+                "references": []
+              }
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "status": "rejected",
+        "pageIdsBySource": {},
+        "sections": []
+      },
+      "rationale": "An unterminated fence cannot silently swallow later source pages or produce uncertain source spans."
+    },
+    {
+      "id": "setext-layout",
+      "title": "Setext heading layout is rejected",
+      "input": {
+        "tenant": "harbor-demo",
+        "sources": [
+          {
+            "id": "single-source",
+            "version": "v1",
+            "title": "Public synthetic source",
+            "approved": true,
+            "markdown": "Sample\n======\nPublic body.\n",
+            "annotations": [
+              {
+                "pageId": "sample",
+                "claims": [],
+                "references": []
+              }
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "status": "rejected",
+        "pageIdsBySource": {},
+        "sections": []
+      },
+      "rationale": "The narrow parser does not infer pages from Setext headings or treat this as accepted front matter."
+    },
+    {
+      "id": "indented-heading",
+      "title": "Indented heading layout is rejected",
+      "input": {
+        "tenant": "harbor-demo",
+        "sources": [
+          {
+            "id": "single-source",
+            "version": "v1",
+            "title": "Public synthetic source",
+            "approved": true,
+            "markdown": " # Sample {#sample}\nPublic body.\n",
+            "annotations": [
+              {
+                "pageId": "sample",
+                "claims": [],
+                "references": []
+              }
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "status": "rejected",
+        "pageIdsBySource": {},
+        "sections": []
+      },
+      "rationale": "Page headings must begin in column zero; indented heading syntax is outside the explicit supported contract."
+    },
+    {
+      "id": "raw-html-block",
+      "title": "Raw HTML block body is rejected",
+      "input": {
+        "tenant": "harbor-demo",
+        "sources": [
+          {
+            "id": "single-source",
+            "version": "v1",
+            "title": "Public synthetic source",
+            "approved": true,
+            "markdown": "# Sample {#sample}\n<section>Public fixture body.</section>\n",
+            "annotations": [
+              {
+                "pageId": "sample",
+                "claims": [],
+                "references": []
+              }
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "status": "rejected",
+        "pageIdsBySource": {},
+        "sections": []
+      },
+      "rationale": "A raw HTML block is an unsupported layout, not executable markup or an extra parser mode."
+    },
+    {
+      "id": "blockquote-heading",
+      "title": "Blockquote heading is rejected",
+      "input": {
+        "tenant": "harbor-demo",
+        "sources": [
+          {
+            "id": "single-source",
+            "version": "v1",
+            "title": "Public synthetic source",
+            "approved": true,
+            "markdown": "# Sample {#sample}\n> ## Quoted section {#quoted}\n",
+            "annotations": [
+              {
+                "pageId": "sample",
+                "claims": [],
+                "references": []
+              }
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "status": "rejected",
+        "pageIdsBySource": {},
+        "sections": []
+      },
+      "rationale": "Quoted headings must not become real pages or silently change the adapter grammar."
+    },
+    {
+      "id": "long-fence",
+      "title": "Four-character fence is rejected",
+      "input": {
+        "tenant": "harbor-demo",
+        "sources": [
+          {
+            "id": "single-source",
+            "version": "v1",
+            "title": "Public synthetic source",
+            "approved": true,
+            "markdown": "# Sample {#sample}\n````text\nPublic body.\n````\n",
+            "annotations": [
+              {
+                "pageId": "sample",
+                "claims": [],
+                "references": []
+              }
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "status": "rejected",
+        "pageIdsBySource": {},
+        "sections": []
+      },
+      "rationale": "Only exact three-character backtick/tilde fences are supported; a longer fence cannot be treated as a close or ignored."
+    },
+    {
+      "id": "lone-carriage-return",
+      "title": "Lone carriage return is rejected",
+      "input": {
+        "tenant": "harbor-demo",
+        "sources": [
+          {
+            "id": "single-source",
+            "version": "v1",
+            "title": "Public synthetic source",
+            "approved": true,
+            "markdown": "# Sample {#sample}\rPublic body.\r",
+            "annotations": [
+              {
+                "pageId": "sample",
+                "claims": [],
+                "references": []
+              }
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "status": "rejected",
+        "pageIdsBySource": {},
+        "sections": []
+      },
+      "rationale": "Only LF and CRLF line endings are supported; lone CR would make line/byte provenance ambiguous."
+    },
+    {
+      "id": "unpaired-surrogate",
+      "title": "Unpaired Unicode surrogate is rejected",
+      "input": {
+        "tenant": "harbor-demo",
+        "sources": [
+          {
+            "id": "single-source",
+            "version": "v1",
+            "title": "Public synthetic source",
+            "approved": true,
+            "markdown": "# Sample {#sample}\nPublic \ud800 body.\n",
+            "annotations": [
+              {
+                "pageId": "sample",
+                "claims": [],
+                "references": []
+              }
+            ]
+          }
+        ]
+      },
+      "expected": {
+        "status": "rejected",
+        "pageIdsBySource": {},
+        "sections": []
+      },
+      "rationale": "A lone surrogate cannot round-trip as unchanged valid UTF-8 source; replacement-character encoding must not silently alter the source identity."
+    }
+  ]
+}

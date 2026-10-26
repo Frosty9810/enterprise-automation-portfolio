@@ -1,0 +1,773 @@
+{
+  "schemaVersion": 1,
+  "suiteId": "veilrag-declared-variant-v1",
+  "authorship": {
+    "kind": "independent-ai-fixture-author",
+    "humanReviewed": false,
+    "note": "A separate AI fixture author read the existing public VeilRAG exact-alias contract and the proposed NFKC-plus-lowercase rejection contract, then froze these complete protect DTOs and expected outcomes before running or reading any new variant-guard output. These synthetic acceptance judgments are not human-reviewed truth or a privacy/detector benchmark."
+  },
+  "scope": "Public synthetic fixtures for bounded declared-literal variant rejection. Exact alias replacement/restoration remains unchanged; unsupported encodings, inserted zero-width characters, cross-script confusables and non-full-casefold equivalences deliberately remain visible. No automatic entity detection, provider transmission, authenticated identity or general privacy guarantee.",
+  "cases": [
+    {
+      "id": "exact-across-all-surfaces",
+      "title": "Exact declared text across query, context, history and nested arguments",
+      "category": "exact-utility",
+      "input": {
+        "tenant": "acme",
+        "commandId": "variant-01",
+        "profile": "echo",
+        "entities": [
+          {
+            "id": "person",
+            "value": "Ada Example"
+          }
+        ],
+        "frames": {
+          "query": "Summarize Ada Example.",
+          "context": [
+            "Ada Example has a fictional Friday delivery."
+          ],
+          "history": [
+            {
+              "role": "user",
+              "text": "Keep Ada Example in this synthetic example."
+            }
+          ],
+          "tools": [
+            {
+              "name": "lookup_delivery",
+              "args": {
+                "contact": "Ada Example",
+                "items": [
+                  {
+                    "note": "Ada Example"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      },
+      "expected": {
+        "status": "protected",
+        "errorCode": null,
+        "exposedVariants": []
+      },
+      "rationale": "All occurrences are exact declared literals and must become the same session alias; no variant remains. Explicit restoration should retain the exact original spelling."
+    },
+    {
+      "id": "exact-longest-overlap",
+      "title": "Longest exact occurrence and shorter declared literal remain usable",
+      "category": "exact-utility",
+      "input": {
+        "tenant": "acme",
+        "commandId": "variant-02",
+        "profile": "echo",
+        "entities": [
+          {
+            "id": "person",
+            "value": "Ann Example"
+          },
+          {
+            "id": "short-person",
+            "value": "Ann"
+          }
+        ],
+        "frames": {
+          "query": "Ann Example and Ann are synthetic names.",
+          "context": [
+            "Public synthetic context."
+          ],
+          "history": [
+            {
+              "role": "user",
+              "text": "Use only the supplied fixture."
+            }
+          ],
+          "tools": [
+            {
+              "name": "lookup_delivery",
+              "args": {
+                "contact": "Ann Example",
+                "items": [
+                  {
+                    "note": "Public synthetic fixture."
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      },
+      "expected": {
+        "status": "protected",
+        "errorCode": null,
+        "exposedVariants": []
+      },
+      "rationale": "Exact replacement retains longest-first overlap behavior. These name spellings cannot occur incidentally in the hexadecimal alias ID, keeping this utility case separate from documented conservative short-literal false positives."
+    },
+    {
+      "id": "case-query-mixed",
+      "title": "Exact query spelling does not cover a lowercase variant",
+      "category": "supported-variant",
+      "input": {
+        "tenant": "acme",
+        "commandId": "variant-03",
+        "profile": "echo",
+        "entities": [
+          {
+            "id": "person",
+            "value": "Ada Example"
+          }
+        ],
+        "frames": {
+          "query": "Ada Example and ada example are supplied spellings.",
+          "context": [
+            "Public synthetic context."
+          ],
+          "history": [
+            {
+              "role": "user",
+              "text": "Use only the supplied fixture."
+            }
+          ],
+          "tools": [
+            {
+              "name": "lookup_delivery",
+              "args": {
+                "contact": "Ada Example",
+                "items": [
+                  {
+                    "note": "Public synthetic fixture."
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      },
+      "expected": {
+        "status": "rejected",
+        "errorCode": "declared_literal_variant_leak",
+        "exposedVariants": []
+      },
+      "rationale": "After the exact spelling is aliased, the lowercase spelling is NFKC-lowercase equivalent to the declared literal and must reject the entire proposal before persistence."
+    },
+    {
+      "id": "case-context",
+      "title": "Uppercase context variant is refused",
+      "category": "supported-variant",
+      "input": {
+        "tenant": "acme",
+        "commandId": "variant-04",
+        "profile": "echo",
+        "entities": [
+          {
+            "id": "person",
+            "value": "Ada Example"
+          }
+        ],
+        "frames": {
+          "query": "Summarize Ada Example.",
+          "context": [
+            "ADA EXAMPLE has a fictional Friday delivery."
+          ],
+          "history": [
+            {
+              "role": "user",
+              "text": "Use only the supplied fixture."
+            }
+          ],
+          "tools": [
+            {
+              "name": "lookup_delivery",
+              "args": {
+                "contact": "Ada Example",
+                "items": [
+                  {
+                    "note": "Public synthetic fixture."
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      },
+      "expected": {
+        "status": "rejected",
+        "errorCode": "declared_literal_variant_leak",
+        "exposedVariants": []
+      },
+      "rationale": "An uppercase declared-literal variant in retrieved context survives exact replacement and must reject transport even when the query and tool argument were aliased."
+    },
+    {
+      "id": "canonical-history",
+      "title": "Decomposed history spelling of a composed declaration is refused",
+      "category": "supported-variant",
+      "input": {
+        "tenant": "acme",
+        "commandId": "variant-05",
+        "profile": "echo",
+        "entities": [
+          {
+            "id": "person",
+            "value": "José Example"
+          }
+        ],
+        "frames": {
+          "query": "Summarize José Example.",
+          "context": [
+            "Public synthetic context."
+          ],
+          "history": [
+            {
+              "role": "assistant",
+              "text": "José Example is the fictional contact."
+            }
+          ],
+          "tools": [
+            {
+              "name": "lookup_delivery",
+              "args": {
+                "contact": "José Example",
+                "items": [
+                  {
+                    "note": "Public synthetic fixture."
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      },
+      "expected": {
+        "status": "rejected",
+        "errorCode": "declared_literal_variant_leak",
+        "exposedVariants": []
+      },
+      "rationale": "NFKC composes the history accent so it compares equal after lowercasing. Guarding does not rewrite or silently alias the alternate spelling."
+    },
+    {
+      "id": "compatibility-nested-argument",
+      "title": "Fullwidth variant in a deeply nested tool value is refused",
+      "category": "supported-variant",
+      "input": {
+        "tenant": "acme",
+        "commandId": "variant-06",
+        "profile": "echo",
+        "entities": [
+          {
+            "id": "person",
+            "value": "Northstar Example"
+          }
+        ],
+        "frames": {
+          "query": "Summarize Northstar Example.",
+          "context": [
+            "Public synthetic context."
+          ],
+          "history": [
+            {
+              "role": "user",
+              "text": "Use only the supplied fixture."
+            }
+          ],
+          "tools": [
+            {
+              "name": "lookup_delivery",
+              "args": {
+                "contact": "Northstar Example",
+                "items": [
+                  {
+                    "note": "Ｎｏｒｔｈｓｔａｒ Ｅｘａｍｐｌｅ"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      },
+      "expected": {
+        "status": "rejected",
+        "errorCode": "declared_literal_variant_leak",
+        "exposedVariants": []
+      },
+      "rationale": "NFKC maps fullwidth letters to ordinary letters; the remaining equivalent protected name in a nested argument must reject before any session or event is persisted."
+    },
+    {
+      "id": "compatibility-ligature",
+      "title": "Compatibility ligature in query is refused",
+      "category": "supported-variant",
+      "input": {
+        "tenant": "acme",
+        "commandId": "variant-07",
+        "profile": "echo",
+        "entities": [
+          {
+            "id": "person",
+            "value": "Office Example"
+          }
+        ],
+        "frames": {
+          "query": "Oﬃce Example has a fictional delivery.",
+          "context": [
+            "Public synthetic context."
+          ],
+          "history": [
+            {
+              "role": "user",
+              "text": "Use only the supplied fixture."
+            }
+          ],
+          "tools": [
+            {
+              "name": "lookup_delivery",
+              "args": {
+                "contact": "Office Example",
+                "items": [
+                  {
+                    "note": "Public synthetic fixture."
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      },
+      "expected": {
+        "status": "rejected",
+        "errorCode": "declared_literal_variant_leak",
+        "exposedVariants": []
+      },
+      "rationale": "The ffi ligature normalizes to the same declared Office Example spelling under NFKC; unchanged exact replacement cannot cover it."
+    },
+    {
+      "id": "decomposed-declaration-composed-context",
+      "title": "Normalized declaration is compared as well as normalized transport",
+      "category": "supported-variant",
+      "input": {
+        "tenant": "acme",
+        "commandId": "variant-08",
+        "profile": "echo",
+        "entities": [
+          {
+            "id": "person",
+            "value": "Café Example"
+          }
+        ],
+        "frames": {
+          "query": "Summarize Café Example.",
+          "context": [
+            "Café Example is the fictional contact."
+          ],
+          "history": [
+            {
+              "role": "user",
+              "text": "Use only the supplied fixture."
+            }
+          ],
+          "tools": [
+            {
+              "name": "lookup_delivery",
+              "args": {
+                "contact": "Café Example",
+                "items": [
+                  {
+                    "note": "Public synthetic fixture."
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      },
+      "expected": {
+        "status": "rejected",
+        "errorCode": "declared_literal_variant_leak",
+        "exposedVariants": []
+      },
+      "rationale": "The declaration itself uses a decomposed accent while context uses composed NFC. Both sides of the check must use NFKC and lowercase."
+    },
+    {
+      "id": "case-argument-key",
+      "title": "Case variant in an unrewritable argument key is refused",
+      "category": "structural-variant",
+      "input": {
+        "tenant": "acme",
+        "commandId": "variant-09",
+        "profile": "echo",
+        "entities": [
+          {
+            "id": "person",
+            "value": "Contact"
+          }
+        ],
+        "frames": {
+          "query": "Summarize Contact.",
+          "context": [
+            "Public synthetic context."
+          ],
+          "history": [
+            {
+              "role": "user",
+              "text": "Use only the supplied fixture."
+            }
+          ],
+          "tools": [
+            {
+              "name": "lookup_delivery",
+              "args": {
+                "contact": "Public fixture"
+              }
+            }
+          ]
+        }
+      },
+      "expected": {
+        "status": "rejected",
+        "errorCode": "declared_literal_variant_leak",
+        "exposedVariants": []
+      },
+      "rationale": "The ASCII identifier contact is a valid key but is lowercase-equivalent to the declared Contact. It cannot be rewritten without changing tool protocol meaning."
+    },
+    {
+      "id": "case-frame-label",
+      "title": "Declared uppercase spelling collides with a frame label",
+      "category": "structural-variant",
+      "input": {
+        "tenant": "acme",
+        "commandId": "variant-10",
+        "profile": "echo",
+        "entities": [
+          {
+            "id": "person",
+            "value": "CONTEXT"
+          }
+        ],
+        "frames": {
+          "query": "Summarize CONTEXT.",
+          "context": [
+            "Public synthetic context."
+          ],
+          "history": [
+            {
+              "role": "user",
+              "text": "Use only the supplied fixture."
+            }
+          ],
+          "tools": [
+            {
+              "name": "lookup_delivery",
+              "args": {
+                "contact": "CONTEXT",
+                "items": [
+                  {
+                    "note": "Public synthetic fixture."
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      },
+      "expected": {
+        "status": "rejected",
+        "errorCode": "declared_literal_variant_leak",
+        "exposedVariants": []
+      },
+      "rationale": "The fixed context frame label remains in the child DTO. A declaration CONTEXT compares equal after NFKC/lowercase and must reject rather than claiming complete alias transport."
+    },
+    {
+      "id": "case-tool-name",
+      "title": "Case variant in a tool name is refused",
+      "category": "structural-variant",
+      "input": {
+        "tenant": "acme",
+        "commandId": "variant-11",
+        "profile": "echo",
+        "entities": [
+          {
+            "id": "person",
+            "value": "Lookup_Delivery"
+          }
+        ],
+        "frames": {
+          "query": "Summarize Lookup_Delivery.",
+          "context": [
+            "Public synthetic context."
+          ],
+          "history": [
+            {
+              "role": "user",
+              "text": "Use only the supplied fixture."
+            }
+          ],
+          "tools": [
+            {
+              "name": "lookup_delivery",
+              "args": {
+                "contact": "Lookup_Delivery",
+                "items": [
+                  {
+                    "note": "Public synthetic fixture."
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      },
+      "expected": {
+        "status": "rejected",
+        "errorCode": "declared_literal_variant_leak",
+        "exposedVariants": []
+      },
+      "rationale": "The valid identifier lookup_delivery is not content that can be aliased without changing the tool name. Its declared case variant must reject."
+    },
+    {
+      "id": "unsupported-percent-encoding",
+      "title": "Percent encoding remains outside this guard",
+      "category": "unsupported-visible",
+      "input": {
+        "tenant": "acme",
+        "commandId": "variant-12",
+        "profile": "echo",
+        "entities": [
+          {
+            "id": "person",
+            "value": "Ada Example"
+          }
+        ],
+        "frames": {
+          "query": "Ada%20Example has a fictional delivery.",
+          "context": [
+            "Public synthetic context."
+          ],
+          "history": [
+            {
+              "role": "user",
+              "text": "Use only the supplied fixture."
+            }
+          ],
+          "tools": [
+            {
+              "name": "lookup_delivery",
+              "args": {
+                "contact": "Ada Example",
+                "items": [
+                  {
+                    "note": "Public synthetic fixture."
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      },
+      "expected": {
+        "status": "protected",
+        "errorCode": null,
+        "exposedVariants": [
+          "Ada%20Example"
+        ]
+      },
+      "rationale": "NFKC/lowercase does not percent-decode. The encoded spelling is expected to remain visibly unprotected, demonstrating a limitation rather than a privacy success."
+    },
+    {
+      "id": "unsupported-zero-width",
+      "title": "Inserted zero-width space remains outside this guard",
+      "category": "unsupported-visible",
+      "input": {
+        "tenant": "acme",
+        "commandId": "variant-13",
+        "profile": "echo",
+        "entities": [
+          {
+            "id": "person",
+            "value": "Ada Example"
+          }
+        ],
+        "frames": {
+          "query": "Summarize Ada Example.",
+          "context": [
+            "Public synthetic context."
+          ],
+          "history": [
+            {
+              "role": "user",
+              "text": "Ada​ Example has a fictional delivery."
+            }
+          ],
+          "tools": [
+            {
+              "name": "lookup_delivery",
+              "args": {
+                "contact": "Ada Example",
+                "items": [
+                  {
+                    "note": "Public synthetic fixture."
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      },
+      "expected": {
+        "status": "protected",
+        "errorCode": null,
+        "exposedVariants": [
+          "Ada​ Example"
+        ]
+      },
+      "rationale": "NFKC/lowercase does not remove this inserted zero-width space. The spelling can remain in sanitized history; this guard is not an obfuscation detector."
+    },
+    {
+      "id": "unsupported-confusable",
+      "title": "Cyrillic confusable remains outside this guard",
+      "category": "unsupported-visible",
+      "input": {
+        "tenant": "acme",
+        "commandId": "variant-14",
+        "profile": "echo",
+        "entities": [
+          {
+            "id": "person",
+            "value": "Ada Example"
+          }
+        ],
+        "frames": {
+          "query": "Summarize Ada Example.",
+          "context": [
+            "Аda Example has a fictional delivery."
+          ],
+          "history": [
+            {
+              "role": "user",
+              "text": "Use only the supplied fixture."
+            }
+          ],
+          "tools": [
+            {
+              "name": "lookup_delivery",
+              "args": {
+                "contact": "Ada Example",
+                "items": [
+                  {
+                    "note": "Public synthetic fixture."
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      },
+      "expected": {
+        "status": "protected",
+        "errorCode": null,
+        "exposedVariants": [
+          "Аda Example"
+        ]
+      },
+      "rationale": "The first letter is Cyrillic capital A, not Latin A. NFKC/lowercase does not equate these scripts; the visually similar string remains visible."
+    },
+    {
+      "id": "unsupported-full-casefold",
+      "title": "Sharp S and SS are not full Unicode casefold equivalents here",
+      "category": "unsupported-visible",
+      "input": {
+        "tenant": "acme",
+        "commandId": "variant-15",
+        "profile": "echo",
+        "entities": [
+          {
+            "id": "person",
+            "value": "Straße Example"
+          }
+        ],
+        "frames": {
+          "query": "STRASSE EXAMPLE has a fictional delivery.",
+          "context": [
+            "Public synthetic context."
+          ],
+          "history": [
+            {
+              "role": "user",
+              "text": "Use only the supplied fixture."
+            }
+          ],
+          "tools": [
+            {
+              "name": "lookup_delivery",
+              "args": {
+                "contact": "Straße Example",
+                "items": [
+                  {
+                    "note": "Public synthetic fixture."
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      },
+      "expected": {
+        "status": "protected",
+        "errorCode": null,
+        "exposedVariants": [
+          "STRASSE EXAMPLE"
+        ]
+      },
+      "rationale": "This contract uses JavaScript lowercase after NFKC, not full Unicode casefold. The SS spelling is not equivalent to lowercase sharp S and remains visibly unprotected."
+    },
+    {
+      "id": "unsupported-base64",
+      "title": "Base64 content remains outside this guard",
+      "category": "unsupported-visible",
+      "input": {
+        "tenant": "acme",
+        "commandId": "variant-16",
+        "profile": "echo",
+        "entities": [
+          {
+            "id": "person",
+            "value": "Ada Example"
+          }
+        ],
+        "frames": {
+          "query": "Summarize Ada Example.",
+          "context": [
+            "Public synthetic context."
+          ],
+          "history": [
+            {
+              "role": "user",
+              "text": "Use only the supplied fixture."
+            }
+          ],
+          "tools": [
+            {
+              "name": "lookup_delivery",
+              "args": {
+                "contact": "Ada Example",
+                "items": [
+                  {
+                    "note": "QWRhIEV4YW1wbGU="
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      },
+      "expected": {
+        "status": "protected",
+        "errorCode": null,
+        "exposedVariants": [
+          "QWRhIEV4YW1wbGU="
+        ]
+      },
+      "rationale": "NFKC/lowercase does not decode base64. The encoded literal can remain in a nested argument and must be documented as a limitation."
+    }
+  ]
+}

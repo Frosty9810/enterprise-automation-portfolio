@@ -206,6 +206,12 @@ Invoke-RestMethod "$labBase/api/flagships/export" -Method Post -Headers $labHead
 
 Expected export authority: `reviewed_local_analysis_only`, with zero external actions. Export before review or after a listed source change fails. Restart after changing loaded source, then reevaluate current evidence rather than reusing an old receipt. [HTTP receipt tests](../demo-lab/flagship-http.test.mjs) reproduce source links and review/export boundaries.
 
+## Fixed TrustGate tool-policy challenge
+
+GET `/api/tool-challenge/catalog` reads fixed suite metadata. POST `/api/tool-challenge/run` accepts exactly `{"suiteId":"trustgate-adversarial-v1"}` under the existing numeric-loopback Host, Origin, explicit intent and body-size guards. The page `/tool-challenge?project=TrustGate` links from the existing workbench. Each run uses isolated in-memory case databases; saved workbench receipts and effects stay separate. No arbitrary SQL, proposals, fixture uploads, file paths or provider configuration are accepted.
+
+See the [challenge runbook](../demo-lab/TRUSTGATE-CHALLENGE.md) for real operation evidence, per-run report identities and incomplete security scope.
+
 ## Contact simulator and errors
 
 Only `POST /contacts/upsert` additionally requires `Authorization: Bearer LOCAL_DEMO_ONLY` and `Version: v3`. That literal is a public local-demo sentinel, not a real provider credential. Body: `locationId: DEMO_LOCATION`, syntactically valid email, optional firstName/lastName/source; all other fields are rejected. The simulator normalizes email and preserves the same ID for the location/email pair. See [simulator tests](../demo-lab/test.mjs).
@@ -235,9 +241,3 @@ Error envelopes generally contain `error`; n8n failures also include `timeline`.
 Open `/research-evaluation?project=AtlasGraph`; see the [method and limits](../demo-lab/ATLASGRAPH-EVALUATION.md). GET `/api/research-evaluation/catalog` returns the closed suite identity, current source/data/label/policy hashes and whether the loaded implementation is stale. POST `/api/research-evaluation/run` accepts exactly `{"suiteId":"atlasgraph-independent-v1"}` and recomputes the whole supplied synthetic comparison in isolated in-memory SQLite databases. It does not alter the normal AtlasGraph workbench store. All ordinary loopback Host/Origin and POST intent/body limits apply. Unknown suites or extra fields fail; arbitrary files, uploads, private corpora, model providers and external actions are unavailable.
 
 The response includes the two policies, per-case expected labels and observed outcomes, exact-value/decision counts, citation-set denominators, byte usage and report/source identities. A case can fail its label without making the experiment itself invalid; failures are reported rather than rewritten into passing expectations. A source change requires process restart and a new run before evidence can be exported as current. This is a deterministic synthetic diagnostic, not a production/model benchmark or authentication boundary.
-
-## Fixed TrustGate tool-policy challenge
-
-GET `/api/tool-challenge/catalog` reads fixed suite metadata. POST `/api/tool-challenge/run` accepts exactly `{"suiteId":"trustgate-adversarial-v1"}` under the existing numeric-loopback Host, Origin, explicit intent and body-size guards. The page `/tool-challenge?project=TrustGate` links from the existing workbench. Each run uses isolated in-memory case databases; saved workbench receipts and effects stay separate. No arbitrary SQL, proposals, fixture uploads, file paths or provider configuration are accepted.
-
-See the [challenge runbook](../demo-lab/TRUSTGATE-CHALLENGE.md) for real operation evidence, per-run report identities and incomplete security scope.

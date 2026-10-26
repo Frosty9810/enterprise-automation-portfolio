@@ -123,9 +123,11 @@ The five source documents exist under [Research-to-Production](47%20Automation%2
 |---|---|---|
 | AtlasGraph — partial local build | [Design](47%20Automation%20Blueprints/2026%20Research-to-Production/01-atlasgraph.md) | A separately AI-authored synthetic graph-versus-flat-lexical diagnostic comparison is available ([runbook](demo-lab/ATLASGRAPH-EVALUATION.md)); source adapters, semantic/vector retrieval, model-selected tools, authentication and independently measured external multi-hop benchmarks remain open |
 | ChronosRank — partial local build | [Design](47%20Automation%20Blueprints/2026%20Research-to-Production/02-chronosrank.md) | Distillation/reranker training, vector candidate retrieval, calibrated abstention and measured retrieval comparisons |
-| TrustGate — partial local build | [Design](47%20Automation%20Blueprints/2026%20Research-to-Production/03-trustgate.md) | A separately AI-authored synthetic tool-policy acceptance challenge is available ([runbook](demo-lab/TRUSTGATE-CHALLENGE.md)); authenticated agent/tool integration, complete runtime provenance, signed remote receipts, LM/saliency screeners and external human-reviewed adversarial acceptance remain open |
+| TrustGate — partial local build | [Design](47%20Automation%20Blueprints/2026%20Research-to-Production/03-trustgate.md) | Authenticated agent/tool integration, complete runtime provenance, signed remote receipts, LM/saliency screeners and independent adversarial acceptance |
 | DocksideSLM — partial local build | [Design](47%20Automation%20Blueprints/2026%20Research-to-Production/04-docksideslm.md) | OCR/SLM extraction, actual edge-model compression, hardware execution, measured quality/latency and real ERP acceptance |
 | VeilRAG — partial local build | [Design](47%20Automation%20Blueprints/2026%20Research-to-Production/05-veilrag.md) | Automatic entity detection, authenticated retrieval/provider integration, production key management and independently measured privacy/utility evaluation |
+
+TrustGate depth update: the [separately AI-authored synthetic tool-policy challenge](demo-lab/TRUSTGATE-CHALLENGE.md) now measures actual policy/review/replay effects against fixed expectations. External human-reviewed adversarial acceptance and the broader integration/security requirements above remain open.
 
 ## Six industry flagships still partial
 

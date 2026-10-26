@@ -93,3 +93,7 @@ The targeted suite covers the legitimate lifecycle, field provenance, tool scope
 ## Still pending in the full blueprint
 
 Authenticated users and reviewers, tamper-resistant remote audit storage, production tenancy and operational limits, trusted ingestion of real source labels, end-to-end agent taint tracking, an instruction detector or model screener, adversarial benchmark evaluation, external tool connectors, provider acceptance and production deployment remain unimplemented. No model calls, benchmark scores, provider outcomes or production security results are claimed by this slice.
+
+## Fixed synthetic challenge
+
+The [separately AI-authored acceptance challenge](TRUSTGATE-CHALLENGE.md) runs actual benign/adversarial command sequences in disposable SQLite databases and exposes each expected versus observed result. Open `/tool-challenge?project=TrustGate` or run `node demo-lab/run-trustgate-challenge.mjs`. This tests fixed declared policies; it does not complete general injection detection or external security acceptance.

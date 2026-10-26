@@ -127,6 +127,8 @@ The five source documents exist under [Research-to-Production](47%20Automation%2
 | DocksideSLM — partial local build | [Design](47%20Automation%20Blueprints/2026%20Research-to-Production/04-docksideslm.md) | OCR/SLM extraction, actual edge-model compression, hardware execution, measured quality/latency and real ERP acceptance |
 | VeilRAG — partial local build | [Design](47%20Automation%20Blueprints/2026%20Research-to-Production/05-veilrag.md) | Automatic entity detection, authenticated retrieval/provider integration, production key management and independently measured privacy/utility evaluation |
 
+TrustGate depth update: the [separately AI-authored synthetic tool-policy challenge](demo-lab/TRUSTGATE-CHALLENGE.md) now measures actual policy/review/replay effects against fixed expectations. External human-reviewed adversarial acceptance and the broader integration/security requirements above remain open.
+
 ## Six industry flagships still partial
 
 Each ID below has a bounded local demo/build artifact set. The broader end-to-end flagship requirements in [COMPLETION-ROADMAP.md](COMPLETION-ROADMAP.md) remain open.

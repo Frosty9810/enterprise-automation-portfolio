@@ -1,0 +1,2 @@
+import {runTrustGateChallenge} from './trustgate-challenge.mjs';
+const report=runTrustGateChallenge({suiteId:'trustgate-adversarial-v1'});console.log(JSON.stringify(report,null,2));if(report.metrics.failed)process.exitCode=1;

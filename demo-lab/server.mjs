@@ -27,6 +27,7 @@ import { evaluateRoadmap, suites } from './roadmap-scenarios.mjs';
 import { portfolioInventory } from './project-inventory.mjs';
 import { atlasGraph } from './atlasgraph-core.mjs';
 import { trustGate } from './trustgate-core.mjs';
+import { getTrustGateChallengeCatalog, runTrustGateChallenge } from './trustgate-challenge.mjs';
 import { chronosRank } from './chronosrank-core.mjs';
 import {getChronosRankEvaluationCatalog,evaluateChronosRankSuite} from './chronosrank-evaluation.mjs';
 import { dockside } from './dockside-core.mjs';
@@ -306,6 +307,17 @@ export function createLabServer(db = openStore(), executeWorkflow = runN8n) {
           'Content-Disposition': `attachment; filename="${segments[3]}-${file.key}.${file.path.split('.').pop()}"`, 'Cache-Control': 'no-store' });
         return response.end(readFileSync(file.path));
       }
+      if(url.pathname==='/api/tool-challenge/catalog'){
+        try{return send(response,200,getTrustGateChallengeCatalog());}catch(error){return send(response,400,{error:error.message});}
+      }
+      if(url.pathname==='/tool-challenge'){
+        response.writeHead(200,{'Content-Type':'text/html; charset=utf-8','Cache-Control':'no-store','X-Content-Type-Options':'nosniff','Content-Security-Policy':"default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; object-src 'none'"});
+        return response.end(readFileSync(join(directory,'trustgate-challenge.html')));
+      }
+      if(['/trustgate-challenge.css','/trustgate-challenge-ui.mjs'].includes(url.pathname)){
+        response.writeHead(200,{'Content-Type':url.pathname.endsWith('.css')?'text/css; charset=utf-8':'text/javascript; charset=utf-8','Cache-Control':'no-store','X-Content-Type-Options':'nosniff'});
+        return response.end(readFileSync(join(directory,url.pathname.slice(1))));
+      }
       if (url.pathname === '/api/activity') return send(response, 200, { busy, activity });
       if(url.pathname==='/api/research-evaluation/catalog'){
         try{return send(response,200,getAtlasGraphEvaluationCatalog());}catch(error){return send(response,400,{error:error.message});}
@@ -388,6 +400,10 @@ export function createLabServer(db = openStore(), executeWorkflow = runN8n) {
         const action=actions.get(url.pathname.slice('/api/referral/'.length));
         if(!action)return send(response,404,{error:'Unknown referral operation'});
         return send(response,200,await action(body));
+      }
+      if(url.pathname.startsWith('/api/tool-challenge/')){
+        if(url.pathname!=='/api/tool-challenge/run')return send(response,404,{error:'Unknown tool challenge operation'});
+        return send(response,200,await runTrustGateChallenge(body));
       }
       if (url.pathname.startsWith('/api/trustgate/')) {
         const actions = new Map([

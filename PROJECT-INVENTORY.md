@@ -1,12 +1,12 @@
 # Complete portfolio inventory and missing work
 
-Updated October 24, 2026. **The portfolio is not complete.** This inventory separates existing catalog entries, missing flagship depth, blueprint-only work and unmerged visibility. Catalog presence is not provider acceptance, deployment, a recorded video or a production result.
+Updated October 26, 2026 against public main `39483e707e2fd3a38af0d4b5c25aafe93fadc2c3`. **The portfolio is not complete.** This inventory separates available local implementations, remaining flagship/research scope and open pull requests. Catalog presence is not provider acceptance, deployment, a recorded video or a production result.
 
 ## Why projects appear missing
 
-1. Public main was checked at `80f78be633996c8b37870c1bf6326f64cb53e956`. The unified catalog, all five partial research builds and PM-01 maintenance operations are integrated following PRs #12, #27, #29 and #30. This branch deepens CON-01. Use `/projects` for the full discovery surface; catalog presence is not completion.
+1. Public main includes the unified catalog, all five partial research builds, all six bounded industry desks below and the AtlasGraph synthetic comparison. PRs #31–#36 are merged into the checked main commit. Use `/projects` for the full discovery surface; the six industry desks are existing implementations, not missing projects or new catalog entries.
 2. Build Studio starts with selected automation cases. Its **All projects** filter covers the 27 automation demos, not the other collections. Life and data, AI engineering and Twelve systems have their own navigation.
-3. All five research tracks now have named partial local implementations; none completes its full research blueprint. Six industry entries have bounded demos, not their full roadmap flagship.
+3. All five research tracks have partial local implementations; none completes its full research blueprint. The six industry entries also have durable local workflows. Their remaining gaps concern wider business scope, authentication, real integrations and acceptance, not absence of those local desks.
 4. Open the local `/projects` page for a searchable inventory with direct project selection across all collections. It lists 73 entries: the original 68 catalog views plus five research tracks. All five research entries are partial local builds; counts are not completion claims.
 
 ## Coverage by collection
@@ -45,17 +45,17 @@ The source path and local wrapper JSON were checked for every row. Open the root
 | CS-01 | Support Quality and Knowledge Feedback Loop | [Inspect](17%20Customer%20Support/CS-01%20Support%20Quality%20and%20Knowledge%20Feedback%20Loop/build/README.md) |
 | IMP-01 | Import Company Agent Operating System | [Inspect](48%20Enterprise%20Workflows/IMP-01%20Import%20Company%20Agent%20Operating%20System/README.md) |
 | PM-01 | Maintenance operations with access and reviewed local dispatch | [Runbook](demo-lab/MAINTENANCE.md) |
-| EA-01 | Commitments and owner review | [Inspect](demo-lab/extra-scenarios.mjs) |
+| EA-01 | Source-bound executive follow-up with reviewed local tasks | [Runbook](demo-lab/EXECUTIVE.md) |
 | CON-01 | Compliance and reviewed local change-order commitments | [Runbook](demo-lab/CONSTRUCTION.md) |
-| MED-01 | Referral Completeness and Authorization Staff Queue | [Inspect](demo-lab/roadmap-scenarios.mjs) |
-| LEGAL-01 | Matter Conflict and Entity Review Gate | [Inspect](demo-lab/roadmap-scenarios.mjs) |
-| INS-01 | Loss Intake and Evidence Review Queue | [Inspect](demo-lab/roadmap-scenarios.mjs) |
+| MED-01 | Synthetic referral completeness, consent and reviewed staff queue | [Runbook](demo-lab/REFERRAL.md) |
+| LEGAL-01 | Synthetic matter/conflict and supplied-date administrative desk | [Runbook](demo-lab/LEGAL.md) |
+| INS-01 | Synthetic loss packet and reviewed local adjuster queue | [Runbook](demo-lab/INSURANCE.md) |
 | INV-01 | Bolt Supply Wholesale Reorder Desk | [Inspect](demo-lab/business-expansion.mjs) |
 | CRM-01 | Studio North Agency Account Handoff | [Inspect](demo-lab/business-expansion.mjs) |
 | AGT-01 | DeskPilot Support Agent Permission Gate | [Inspect](demo-lab/business-expansion.mjs) |
 | OPS-01 | ClearSlot Booking Handoff Recovery Desk | [Inspect](demo-lab/business-expansion.mjs) |
 
-MED-01 also has a [synthetic administrative desk](demo-lab/REFERRAL.md) at `/referral?project=MED-01`: closed fixtures, fictional checklists, consent holds, independent packet review and a durable local staff queue. The legacy automation row above remains a separate checklist example.
+The six industry rows link their existing durable desks. Older checklist/rules fixtures and copied contact-handoff workflows remain separate compatibility examples; they do not execute the new desks’ full local business lifecycles. Route and remaining-scope details are listed below.
 
 ## Life and data: all 20 entries
 
@@ -127,20 +127,32 @@ The five source documents exist under [Research-to-Production](47%20Automation%2
 | DocksideSLM — partial local build | [Design](47%20Automation%20Blueprints/2026%20Research-to-Production/04-docksideslm.md) | OCR/SLM extraction, actual edge-model compression, hardware execution, measured quality/latency and real ERP acceptance |
 | VeilRAG — partial local build | [Design](47%20Automation%20Blueprints/2026%20Research-to-Production/05-veilrag.md) | Automatic entity detection, authenticated retrieval/provider integration, production key management and independently measured privacy/utility evaluation |
 
+## Open improvements, not yet on checked main
+
+At this October 26 snapshot, the following PRs are **open and unmerged**. All three required CI jobs are green on each listed head. These changes can be reviewed on their branches; their behavior is not included in the main-based implementation claims above or below. CI does not establish external/provider or production acceptance.
+
+| Pull request | Checked head | Proposed bounded improvement | Scope still open |
+|---|---|---|---|
+| [#37 — ChronosRank comparison](https://github.com/Frosty9810/enterprise-automation-portfolio/pull/37) | `dddd5ac` | Separately AI-authored synthetic temporal-versus-blind lexical diagnostic | Human-reviewed external labels, vector retrieval, trained reranker and calibrated abstention |
+| [#38 — TrustGate challenge](https://github.com/Frosty9810/enterprise-automation-portfolio/pull/38) | `dc75a4c` | Authored local policy/review/replay/tamper acceptance cases | Authenticated agent/tool integration, instruction detection, signed remote receipts and external adversarial acceptance |
+| [#39 — VeilRAG variant guard](https://github.com/Frosty9810/enterprise-automation-portfolio/pull/39) | `e8134d1` | Conservative rejection of remaining NFKC/lowercase-equivalent declared-literal variants | Automatic entity detection, full Unicode case folding, decoding, authenticated providers and general privacy guarantees |
+
+These are improvements to existing research entries, not three additional projects. Reconcile this table after merges; do not treat the initial gap list or this open-PR snapshot as permanent.
+
 ## Six industry flagships still partial
 
-Each ID below has a bounded local demo/build artifact set. The broader end-to-end flagship requirements in [COMPLETION-ROADMAP.md](COMPLETION-ROADMAP.md) remain open.
+All six desks below are available on the checked main commit. Each uses actual local SQLite effects with synthetic fixtures, while the broader end-to-end requirements in [COMPLETION-ROADMAP.md](COMPLETION-ROADMAP.md) remain open. Actor/reviewer labels are demonstration selectors, not authenticated people or professional approval.
 
-| ID | Industry | Remaining flagship scope |
+| ID | Available bounded local depth and route | Remaining flagship scope |
 |---|---|---|
-| [PM-01](demo-lab/project-builds/PM-01/README.md) | Property Management | Local maintenance intake, access consent, reviewed appointment and receiver recovery now implemented ([runbook](demo-lab/MAINTENANCE.md)); full lease lifecycle, authenticated occupants/vendors, live clock/escalation delivery, real property/provider acceptance and recordings remain open |
-| [CON-01](demo-lab/project-builds/CON-01/README.md) | Construction | Local supplied-document provenance, compliance holds, versioned reviews and budget commitment ledger now implemented ([runbook](demo-lab/CONSTRUCTION.md)); full legacy document ingestion/issuer verification, authenticated roles, real site/provider acceptance and recordings remain open |
-| [MED-01](demo-lab/project-builds/MED-01/README.md) | Medical | Complete synthetic referral/prior-authorization work queue and controlled intake integration |
-| [LEGAL-01](demo-lab/project-builds/LEGAL-01/README.md) | Legal | Complete matter intake/conflict/deadline workflow and reviewed jurisdiction rules |
-| [INS-01](demo-lab/project-builds/INS-01/README.md) | Insurance | Complete loss-evidence pipeline and adjuster/coverage-system integration without automated coverage decisions |
-| [EA-01](demo-lab/project-builds/EA-01/README.md) | Executive Assistants | Permission-aware ingestion, durable decision-register workflow and authorized follow-up integration |
+| [PM-01 — Property Management](demo-lab/project-builds/PM-01/README.md) | [Maintenance runbook](demo-lab/MAINTENANCE.md), `/maintenance?project=PM-01`: registered intake, deterministic emergency holds, occupant access grants, independent exact-hash review, appointments and local receiver recovery | Full lease lifecycle, authenticated occupants/vendors, live monitoring/escalation, real property/provider acceptance and recordings |
+| [CON-01 — Construction](demo-lab/project-builds/CON-01/README.md) | [Construction runbook](demo-lab/CONSTRUCTION.md), `/construction?project=CON-01`: supplied-document receipts, readiness holds, versioned manager/finance reviews and an atomic budget commitment ledger | Real legacy email/PDF ingestion and issuer checks, authenticated roles, full contract amendments, real site/accounting/schedule integration and recordings |
+| [MED-01 — Medical](demo-lab/project-builds/MED-01/README.md) | [Referral runbook](demo-lab/REFERRAL.md), `/referral?project=MED-01`: closed synthetic intake, fictional payer checklists, consent/revocation holds, independent packet review and one durable staff queue row | Secure real intake, actual document classification, authenticated access and consent governance, EHR/payer/provider integration and recorded acceptance; no clinical or insurance-authorization decision is implemented |
+| [LEGAL-01 — Legal](demo-lab/project-builds/LEGAL-01/README.md) | [Legal runbook](demo-lab/LEGAL.md), `/industry/legal?project=LEGAL-01`: pinned fictional parties, normalized alias/relationship checks, exact/ambiguous holds, independently reviewed local matters and supplied-date calendar rows | Actual source ingestion and a complete conflict graph, qualified professional review, jurisdiction/statutory date rules, authenticated roles, real calendar/platform integration and recordings; fixture review is not legal clearance |
+| [INS-01 — Insurance](demo-lab/project-builds/INS-01/README.md) | [Insurance runbook](demo-lab/INSURANCE.md), `/industry/insurance?project=INS-01`: closed loss/evidence fixtures, duplicate reconciliation, consent-bound independent routing review, assignment and revocation holds in one local adjuster queue | Real multi-channel FNOL, claimant/consent verification, authenticated roles, insurer/adjuster adapters, monitoring and recorded acceptance; no coverage, fraud or payment decision is implemented |
+| [EA-01 — Executive Assistants](demo-lab/project-builds/EA-01/README.md) | [Executive runbook](demo-lab/EXECUTIVE.md), `/industry/executive?project=EA-01`: supplied source versions, an access-control simulation, independent fingerprint review, durable local tasks and revoke/regrant review invalidation | Authenticated inbox/meeting ingestion and sender/attendee policies, cross-channel commitment/follow-up lifecycle, live calendar/timezone reconciliation, production storage/privacy review, provider acceptance and recordings |
 
-MED-01 depth update: [closed synthetic referral fixtures and the local administrative queue](demo-lab/REFERRAL.md) now cover consent/checklist holds and independent packet review. Real controlled intake, authenticated roles, payer/provider acceptance and recordings remain open. This does not make a clinical or insurance-authorization decision.
+The medical, legal and insurance examples retain synthetic-data and human-review boundaries. Their closed fixture catalogs do not establish authentic consent, professional decisions or real-world permissions. Fixed scenario clocks support reproducible examples, not background deadline or SLA monitoring. All six remain partial; no new project or production completion is claimed by this reconciliation.
 
 ## All 50 numbered sections
 
@@ -162,13 +174,11 @@ Other partial sections still need platform-specific adapters, canonical prompt/s
 
 ## Other GitHub projects and privacy
 
-The public owner-repository endpoint currently returns 13 repositories: this portfolio, its profile README and 11 other repositories. Those 11 are not automatically portfolio-ready builds; only public names/URLs were checked, not their source quality or completeness. [Review the public repository list](https://github.com/Frosty9810?tab=repositories) separately before curating imports. PaceAtlas is not in that public list; original source/demo integration remains unverified. Its independent TRIP-01–TRIP-03 prototypes are not represented as PaceAtlas features. PORT / OS links to the existing public IMP-01 example; private code and client files were not inspected or copied.
+The public owner-repository endpoint was checked on October 26, 2026 and returned 13 public repositories: this portfolio, its profile README and 11 other repositories. Those 11 are not automatically portfolio-ready builds; only public names/URLs were checked, not their source quality or completeness. [Review the public repository list](https://github.com/Frosty9810?tab=repositories) separately before curating imports. PaceAtlas is not in that public list; original source/demo integration remains unverified. Its independent TRIP-01–TRIP-03 prototypes are not represented as PaceAtlas features. PORT / OS links to the existing public IMP-01 example; private code and client files were not inspected or copied.
 
-## Verified in this audit and next work
+## Reconciliation and next work
 
-- Matched all four registries, every automation source/wrapper path and all 20 human fixture files.
-- Executed the 20 human and nine engineering bundled fixtures. This is local fixture evidence, not a new full n8n/provider run or a semantic benchmark.
-- Compared public main with the showcase branch and reconciled all 50 section labels against current linked artifacts.
-- Added the unified in-app inventory/deep links across all five collections and a partial AtlasGraph build. Tests cover destination selection, compiler persistence, adverse evidence, stale exports and local HTTP boundaries. See [AtlasGraph reproduction](demo-lab/ATLASGRAPH.md); exact-head validation belongs in the delivery log and PR evidence.
-- Next: externally review and broaden the separately authored AtlasGraph synthetic comparison, extend TrustGate's independent adversarial cases, evaluate ChronosRank against independently labeled queries, or continue the six industry flagship flows. Provider/authentication, hardware/model measurements and recording acceptance remain separate.
-- The prior showcase and its seven child changes are on main. New research PRs remain subject to review/backlog controls; this delivery does not merge or deploy them.
+- The original presence audit matched the collection registries, automation source/wrapper paths and all 20 human fixture files. This update retains the 73-entry count and maps the six existing industry desks to their actual runbooks and routes.
+- All six standalone industry acceptance CLIs were rerun successfully for this reconciliation: `run-maintenance.mjs`, `run-construction.mjs`, `run-referral.mjs`, `run-legal.mjs`, `run-insurance.mjs` and `run-executive.mjs` under `demo-lab`. They exercise local synthetic effects, not provider acceptance or professional decisions. Exact results belong in the delivery log and PR evidence.
+- The unified inventory and AtlasGraph comparison are already on main. This documentation change adds no runtime feature. Open PRs #37–#39 remain separately identified above; no merge or deployment is performed by this update.
+- Next: resolve feedback on those open improvements before duplicating their work; then select a bounded remaining industry, integration or evaluation dependency from the linked runbooks. Authentication, trusted source ingestion, external/model or hardware measurements, platform-native acceptance and recorded walkthroughs require their own evidence.

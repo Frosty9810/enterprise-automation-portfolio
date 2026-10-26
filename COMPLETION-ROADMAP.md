@@ -2,6 +2,8 @@
 
 This roadmap replaces the old document-count target with an evidence target. A section is complete only when a reviewer can inspect a real decision, run or validate an artifact, and understand how another engineer would operate it six months later.
 
+Reconciled October 26, 2026 against public main `39483e707e2fd3a38af0d4b5c25aafe93fadc2c3`. All six partial industry slices described below are integrated local implementations. The [project inventory](PROJECT-INVENTORY.md) separates these from unmerged research improvements; neither catalog presence nor a passing local run completes the wider flagship.
+
 ## Definition of complete
 
 An industry flagship must include:
@@ -38,6 +40,12 @@ CON-01 now has a [bounded compliance and change-order ledger](demo-lab/CONSTRUCT
 Real Estate, SaaS, and E-Commerce already meet the flagship-suite standard. The import-company operating system remains the cross-department enterprise flagship.
 
 MED-01 now has a [bounded synthetic administrative queue](demo-lab/REFERRAL.md): closed fixture intake, fictional payer checklists, consent holds, independent exact-packet review and durable local staff handoff. This is not a clinical or insurance-authorization system. Controlled real intake, authenticated roles, actual payer/provider acceptance and recorded evidence remain open; the full milestone stays partial.
+
+LEGAL-01 now has a [bounded synthetic administrative desk](demo-lab/LEGAL.md): pinned source parties, normalized alias/relationship checks, non-overridable exact/ambiguous conflict holds, independent exact-fingerprint review before a local matter row, and separate review of supplied fictional dates before a local calendar row. No statute/jurisdiction engine, professional conflicts clearance or actual calendar notification runs. Qualified rules review, authentic source intake, a complete conflict graph, authenticated permissions, real platform integration and recorded acceptance remain open.
+
+INS-01 now has a [bounded synthetic loss-evidence desk](demo-lab/INSURANCE.md): registered source intake, repeat-loss reconciliation, supplied policy/evidence packets, consent/revocation holds, independent fingerprint review and one durable local adjuster queue with assignment. Regrant requires fresh review; a fixture route cannot approve or deny coverage or make a fraud/payment decision. Real multi-channel FNOL, verified claimant/consent sources, authenticated roles, insurer/adjuster integration, monitoring and recorded acceptance remain open.
+
+EA-01 now has a [bounded source-bound executive follow-up desk](demo-lab/EXECUTIVE.md): closed synthetic source versions, an access-control simulation, independent fingerprint review, local task/window checks and revoke/regrant invalidation of previous approval. Its durable decision register and task rows are actual SQLite effects; they do not ingest private correspondence or send follow-up. Authenticated sender/attendee policies, inbox/meeting connectors, cross-channel commitments, live calendar/timezone reconciliation, production privacy/storage review, provider acceptance and recordings remain open.
 
 ## Platform evidence backlog
 

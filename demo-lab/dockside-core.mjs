@@ -189,4 +189,13 @@ export function dockside(db, options = {}) {
   return api;
 }
 
-export function openDockside(path = ':memory:', options = {}) { const db = new DatabaseSync(path); db.exec('PRAGMA busy_timeout=5000; PRAGMA journal_mode=WAL;'); try { return { ...dockside(db, options), close: () => db.close() }; } catch (error) { db.close(); throw error; } }
+export function openDockside(path = ':memory:', options = {}) {
+  const db = new DatabaseSync(path);
+  try {
+    db.exec('PRAGMA busy_timeout=5000; PRAGMA journal_mode=WAL;');
+    return { ...dockside(db, options), close: () => db.close() };
+  } catch (error) {
+    try { db.close(); } catch { /* Preserve the original startup failure. */ }
+    throw error;
+  }
+}

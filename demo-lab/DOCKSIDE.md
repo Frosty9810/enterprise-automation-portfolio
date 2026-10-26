@@ -37,6 +37,12 @@ The source/configuration identity is rechecked before review, delivery and recon
 
 SQLite `BEGIN IMMEDIATE` serializes mutations. Receiver writes, the delivery outcome and the audit append commit together; a forced audit insertion failure rolls back the receiver write. Exact submission command replay and already-delivered sync replay do not add receiver effects. Read transactions keep receipt/state/verification snapshots consistent with concurrent writers.
 
+## Startup connection ownership
+
+`openDockside(path, options)` owns the connection it creates. Configuration and schema initialization errors close that owned connection before the original error is rethrown, including an error while setting SQLite pragmas. It does not delete or repair a malformed database or claim that all prior initialization statements were rolled back.
+
+`dockside(existingDatabaseSync, options)` retains its caller-owned contract: a failed setup does not close the supplied connection. The caller must handle its lifecycle. Run `node --test demo-lab/sqlite-startup.test.mjs` for actual native-handle, preserved-file and successful-open regression evidence.
+
 ## Validation boundary
 
 The envelope accepts exactly `commandId`, `tenant`, `actor`, `document`, and `extraction`. `document` contains exactly `id`, integer `version` and nonempty `text`. IDs are bounded ASCII identifiers; source text is limited to 10,000 characters, the entire request to 24,000 JSON bytes, and nested JSON to ten levels. Prototype-related keys and nonfinite numbers are rejected. Malformed envelopes throw without accepting a job. A valid envelope with invalid extraction becomes a retained `rejected` receipt with reasons.

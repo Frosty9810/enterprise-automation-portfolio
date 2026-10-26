@@ -205,9 +205,15 @@ export function atlasGraph(db) {
 }
 
 export function openAtlasGraph(path = ':memory:') {
-  const db = new DatabaseSync(path); db.exec('PRAGMA busy_timeout=5000');
-  if (path !== ':memory:') db.exec('PRAGMA journal_mode=WAL');
-  return { ...atlasGraph(db), close: () => db.close() };
+  const db = new DatabaseSync(path);
+  try {
+    db.exec('PRAGMA busy_timeout=5000');
+    if (path !== ':memory:') db.exec('PRAGMA journal_mode=WAL');
+    return { ...atlasGraph(db), close: () => db.close() };
+  } catch (error) {
+    try { db.close(); } catch { /* Preserve the original startup failure. */ }
+    throw error;
+  }
 }
 
 export const atlasGraphLimits = LIMITS;

@@ -63,3 +63,10 @@ Memory commands, receipt creation and feedback commit inside SQLite `BEGIN IMMED
 The hash chain detects accidental edits, malformed rows and tail truncation when the head is intact. It is not an external signature, encrypted vault or defense against an administrator who can rewrite the whole database and its head. Local filesystem access still controls the SQLite file. Receipt hashes identify the source bytes used when a receipt was created; they do not certify a human review or source truth. This version accepts its defined lexical algorithm version when reopening receipts and recomputes their deterministic behavior; a changed algorithm needs an explicit migration/version policy.
 
 The tests cover strict schemas and timestamps, expiry and replacement boundaries, no revival, tenant/entity separation, threshold equality, immutable replay and stale snapshots, backdating rejection, SQL failure rollback, corrupt source/receipt/head rejection, close/reopen, a separate-process restart and two independent connections. They do not establish concurrent production throughput, general retrieval quality, authenticated tenancy or p95 latency.
+
+
+## Separately authored temporal diagnostic
+
+The [temporal comparison desk](CHRONOSRANK-EVALUATION.md) at `/memory-evaluation?project=ChronosRank` now compares the existing ledger with an explicit recorded-visible but temporally blind lexical baseline. The challenge and query-intent labels are authored by a separate AI specialist before evaluator output is inspected. They are synthetic judgments, not external human ground truth, a trained-reranker benchmark or a calibration study.
+
+The report retains applicable-only context recall, irrelevant recall, labeled forbidden temporal selections, false abstentions, source provenance and every disagreement. It distinguishes retrieval from answer generation: a nonempty selected subset consisting entirely of authored useful memories can match the case intent without recovering every relevant memory. The full model/vector/training/external evaluation and production requirements stay open.

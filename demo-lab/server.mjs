@@ -28,6 +28,7 @@ import { portfolioInventory } from './project-inventory.mjs';
 import { atlasGraph } from './atlasgraph-core.mjs';
 import { trustGate } from './trustgate-core.mjs';
 import { chronosRank } from './chronosrank-core.mjs';
+import {getChronosRankEvaluationCatalog,evaluateChronosRankSuite} from './chronosrank-evaluation.mjs';
 import { dockside } from './dockside-core.mjs';
 import { veilRag } from './veilrag-core.mjs';
 import { createIndustryDeskHost } from './industry-desks.mjs';
@@ -317,6 +318,17 @@ export function createLabServer(db = openStore(), executeWorkflow = runN8n) {
         response.writeHead(200,{'Content-Type':url.pathname.endsWith('.css')?'text/css; charset=utf-8':'text/javascript; charset=utf-8','Cache-Control':'no-store','X-Content-Type-Options':'nosniff'});
         return response.end(readFileSync(join(directory,url.pathname.slice(1))));
       }
+      if(url.pathname==='/api/memory-evaluation/catalog'){
+        try{return send(response,200,getChronosRankEvaluationCatalog());}catch(error){return send(response,400,{error:error.message});}
+      }
+      if(url.pathname==='/memory-evaluation'){
+        response.writeHead(200,{'Content-Type':'text/html; charset=utf-8','Cache-Control':'no-store','X-Content-Type-Options':'nosniff','Content-Security-Policy':"default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; object-src 'none'"});
+        return response.end(readFileSync(join(directory,'chronosrank-evaluation.html')));
+      }
+      if(['/chronosrank-evaluation.css','/chronosrank-evaluation-ui.mjs'].includes(url.pathname)){
+        response.writeHead(200,{'Content-Type':url.pathname.endsWith('.css')?'text/css; charset=utf-8':'text/javascript; charset=utf-8','Cache-Control':'no-store','X-Content-Type-Options':'nosniff'});
+        return response.end(readFileSync(join(directory,url.pathname.slice(1))));
+      }
       if (url.pathname === '/api/contacts') return send(response, 200, { contacts: db.prepare('SELECT payload FROM contacts ORDER BY email').all().map(row => JSON.parse(row.payload)) });
       if (url.pathname === '/api/runs') {
         const decode=row=>({...row,evidence:JSON.parse(row.evidence)});
@@ -433,6 +445,10 @@ export function createLabServer(db = openStore(), executeWorkflow = runN8n) {
       if(url.pathname.startsWith('/api/research-evaluation/')){
         if(url.pathname!=='/api/research-evaluation/run')return send(response,404,{error:'Unknown evaluation operation'});
         return send(response,200,await evaluateAtlasGraphSuite(body));
+      }
+      if(url.pathname.startsWith('/api/memory-evaluation/')){
+        if(url.pathname!=='/api/memory-evaluation/run')return send(response,404,{error:'Unknown memory evaluation operation'});
+        return send(response,200,await evaluateChronosRankSuite(body));
       }
       if (url.pathname === '/api/flagships/evaluate' || url.pathname === '/api/flagships/run-all') {
         if(domains>=2)return send(response,429,{error:'Local evaluator busy'});domains++;

@@ -1,0 +1,687 @@
+{
+  "schemaVersion": 1,
+  "suiteId": "chronosrank-independent-v1",
+  "scope": "Sixteen independently AI-authored synthetic temporal-memory diagnostic cases. Tenant/entity/time labels and exact supplied text are fictional; this is not a human-reviewed external dataset, trained-reranker benchmark or production acceptance.",
+  "cases": [
+    {
+      "id": "scheduled-before-boundary",
+      "title": "Known replacement is not effective yet",
+      "category": "scheduled-replacement",
+      "events": [
+        {
+          "commandId": "cmd-schedule-old",
+          "tenant": "acme",
+          "kind": "remember",
+          "memoryId": "schedule-old",
+          "entity": "route-register",
+          "text": "Pallet arrival route owner is Amber Team.",
+          "provenance": {
+            "sourceId": "source-schedule-old",
+            "quote": "SYNTHETIC supplied record. Pallet arrival route owner is Amber Team. No real operation or external source is represented."
+          },
+          "recordedAt": "2026-10-25T09:00:00.000Z",
+          "validFrom": "2026-10-25T09:00:00.000Z",
+          "expiresAt": null
+        },
+        {
+          "commandId": "cmd-schedule-new",
+          "tenant": "acme",
+          "kind": "supersede",
+          "memoryId": "schedule-new",
+          "entity": "route-register",
+          "text": "Route owner is Birch Team.",
+          "provenance": {
+            "sourceId": "source-schedule-new",
+            "quote": "SYNTHETIC supplied record. Route owner is Birch Team. No real operation or external source is represented."
+          },
+          "recordedAt": "2026-10-25T10:00:00.000Z",
+          "validFrom": "2026-10-25T13:00:00.000Z",
+          "expiresAt": null,
+          "supersedes": "schedule-old"
+        }
+      ],
+      "query": {
+        "tenant": "acme",
+        "entity": "route-register",
+        "query": "pallet arrival route owner",
+        "asOf": "2026-10-25T12:59:59.999Z",
+        "threshold": 50,
+        "limit": 1
+      }
+    },
+    {
+      "id": "scheduled-at-boundary",
+      "title": "Replacement takes effect at equality",
+      "category": "scheduled-replacement",
+      "events": [
+        {
+          "commandId": "cmd-schedule-old",
+          "tenant": "acme",
+          "kind": "remember",
+          "memoryId": "schedule-old",
+          "entity": "route-register",
+          "text": "Pallet arrival route owner is Amber Team.",
+          "provenance": {
+            "sourceId": "source-schedule-old",
+            "quote": "SYNTHETIC supplied record. Pallet arrival route owner is Amber Team. No real operation or external source is represented."
+          },
+          "recordedAt": "2026-10-25T09:00:00.000Z",
+          "validFrom": "2026-10-25T09:00:00.000Z",
+          "expiresAt": null
+        },
+        {
+          "commandId": "cmd-schedule-new",
+          "tenant": "acme",
+          "kind": "supersede",
+          "memoryId": "schedule-new",
+          "entity": "route-register",
+          "text": "Route owner is Birch Team.",
+          "provenance": {
+            "sourceId": "source-schedule-new",
+            "quote": "SYNTHETIC supplied record. Route owner is Birch Team. No real operation or external source is represented."
+          },
+          "recordedAt": "2026-10-25T10:00:00.000Z",
+          "validFrom": "2026-10-25T13:00:00.000Z",
+          "expiresAt": null,
+          "supersedes": "schedule-old"
+        }
+      ],
+      "query": {
+        "tenant": "acme",
+        "entity": "route-register",
+        "query": "pallet arrival route owner",
+        "asOf": "2026-10-25T13:00:00.000Z",
+        "threshold": 50,
+        "limit": 1
+      }
+    },
+    {
+      "id": "successor-expired-no-revival",
+      "title": "Expired successor cannot revive predecessor",
+      "category": "no-revival",
+      "events": [
+        {
+          "commandId": "cmd-revival-old",
+          "tenant": "acme",
+          "kind": "remember",
+          "memoryId": "revival-old",
+          "entity": "route-register",
+          "text": "Harbor pickup slot owner is Amber Team.",
+          "provenance": {
+            "sourceId": "source-revival-old",
+            "quote": "SYNTHETIC supplied record. Harbor pickup slot owner is Amber Team. No real operation or external source is represented."
+          },
+          "recordedAt": "2026-10-25T09:00:00.000Z",
+          "validFrom": "2026-10-25T09:00:00.000Z",
+          "expiresAt": null
+        },
+        {
+          "commandId": "cmd-revival-new",
+          "tenant": "acme",
+          "kind": "supersede",
+          "memoryId": "revival-new",
+          "entity": "route-register",
+          "text": "Owner is Birch Team.",
+          "provenance": {
+            "sourceId": "source-revival-new",
+            "quote": "SYNTHETIC supplied record. Owner is Birch Team. No real operation or external source is represented."
+          },
+          "recordedAt": "2026-10-25T10:00:00.000Z",
+          "validFrom": "2026-10-25T11:00:00.000Z",
+          "expiresAt": "2026-10-25T12:00:00.000Z",
+          "supersedes": "revival-old"
+        }
+      ],
+      "query": {
+        "tenant": "acme",
+        "entity": "route-register",
+        "query": "harbor pickup slot owner",
+        "asOf": "2026-10-25T13:00:00.000Z",
+        "threshold": 75,
+        "limit": 1
+      }
+    },
+    {
+      "id": "explicit-expiry-equality",
+      "title": "Explicit expiry excludes at its recorded instant",
+      "category": "explicit-expiry",
+      "events": [
+        {
+          "commandId": "cmd-explicit-owner",
+          "tenant": "acme",
+          "kind": "remember",
+          "memoryId": "explicit-owner",
+          "entity": "route-register",
+          "text": "Beacon dispatch owner is Cobalt Team.",
+          "provenance": {
+            "sourceId": "source-explicit-owner",
+            "quote": "SYNTHETIC supplied record. Beacon dispatch owner is Cobalt Team. No real operation or external source is represented."
+          },
+          "recordedAt": "2026-10-25T09:00:00.000Z",
+          "validFrom": "2026-10-25T09:00:00.000Z",
+          "expiresAt": null
+        },
+        {
+          "commandId": "expire-explicit-owner",
+          "tenant": "acme",
+          "kind": "expire",
+          "memoryId": "explicit-owner",
+          "recordedAt": "2026-10-25T12:00:00.000Z"
+        }
+      ],
+      "query": {
+        "tenant": "acme",
+        "entity": "route-register",
+        "query": "beacon dispatch owner",
+        "asOf": "2026-10-25T12:00:00.000Z",
+        "threshold": 100,
+        "limit": 1
+      }
+    },
+    {
+      "id": "configured-before-expiry",
+      "title": "Configured record remains valid immediately before expiry",
+      "category": "configured-expiry",
+      "events": [
+        {
+          "commandId": "cmd-configured-owner",
+          "tenant": "acme",
+          "kind": "remember",
+          "memoryId": "configured-owner",
+          "entity": "route-register",
+          "text": "Crane loading window owner is Cobalt Team.",
+          "provenance": {
+            "sourceId": "source-configured-owner",
+            "quote": "SYNTHETIC supplied record. Crane loading window owner is Cobalt Team. No real operation or external source is represented."
+          },
+          "recordedAt": "2026-10-25T09:00:00.000Z",
+          "validFrom": "2026-10-25T09:00:00.000Z",
+          "expiresAt": "2026-10-25T12:00:00.000Z"
+        }
+      ],
+      "query": {
+        "tenant": "acme",
+        "entity": "route-register",
+        "query": "crane loading window owner",
+        "asOf": "2026-10-25T11:59:59.999Z",
+        "threshold": 100,
+        "limit": 1
+      }
+    },
+    {
+      "id": "configured-at-expiry",
+      "title": "Configured expiry is exclusive at equality",
+      "category": "configured-expiry",
+      "events": [
+        {
+          "commandId": "cmd-configured-owner",
+          "tenant": "acme",
+          "kind": "remember",
+          "memoryId": "configured-owner",
+          "entity": "route-register",
+          "text": "Crane loading window owner is Cobalt Team.",
+          "provenance": {
+            "sourceId": "source-configured-owner",
+            "quote": "SYNTHETIC supplied record. Crane loading window owner is Cobalt Team. No real operation or external source is represented."
+          },
+          "recordedAt": "2026-10-25T09:00:00.000Z",
+          "validFrom": "2026-10-25T09:00:00.000Z",
+          "expiresAt": "2026-10-25T12:00:00.000Z"
+        }
+      ],
+      "query": {
+        "tenant": "acme",
+        "entity": "route-register",
+        "query": "crane loading window owner",
+        "asOf": "2026-10-25T12:00:00.000Z",
+        "threshold": 100,
+        "limit": 1
+      }
+    },
+    {
+      "id": "known-future-valid",
+      "title": "Known fact is not active before validFrom",
+      "category": "future-valid",
+      "events": [
+        {
+          "commandId": "cmd-future-active",
+          "tenant": "acme",
+          "kind": "remember",
+          "memoryId": "future-active",
+          "entity": "route-register",
+          "text": "Evening parcel route owner is Delta Team.",
+          "provenance": {
+            "sourceId": "source-future-active",
+            "quote": "SYNTHETIC supplied record. Evening parcel route owner is Delta Team. No real operation or external source is represented."
+          },
+          "recordedAt": "2026-10-25T09:00:00.000Z",
+          "validFrom": "2026-10-25T13:00:00.000Z",
+          "expiresAt": null
+        }
+      ],
+      "query": {
+        "tenant": "acme",
+        "entity": "route-register",
+        "query": "evening parcel route owner",
+        "asOf": "2026-10-25T12:00:00.000Z",
+        "threshold": 100,
+        "limit": 1
+      }
+    },
+    {
+      "id": "future-knowledge-history",
+      "title": "Historical query excludes an unrecorded successor",
+      "category": "future-knowledge",
+      "events": [
+        {
+          "commandId": "cmd-history-old",
+          "tenant": "acme",
+          "kind": "remember",
+          "memoryId": "history-old",
+          "entity": "route-register",
+          "text": "Gate release owner is Elm Team.",
+          "provenance": {
+            "sourceId": "source-history-old",
+            "quote": "SYNTHETIC supplied record. Gate release owner is Elm Team. No real operation or external source is represented."
+          },
+          "recordedAt": "2026-10-25T09:00:00.000Z",
+          "validFrom": "2026-10-25T09:00:00.000Z",
+          "expiresAt": null
+        },
+        {
+          "commandId": "cmd-history-new",
+          "tenant": "acme",
+          "kind": "supersede",
+          "memoryId": "history-new",
+          "entity": "route-register",
+          "text": "Gate release owner is Fir Team.",
+          "provenance": {
+            "sourceId": "source-history-new",
+            "quote": "SYNTHETIC supplied record. Gate release owner is Fir Team. No real operation or external source is represented."
+          },
+          "recordedAt": "2026-10-25T13:00:00.000Z",
+          "validFrom": "2026-10-25T13:00:00.000Z",
+          "expiresAt": null,
+          "supersedes": "history-old"
+        }
+      ],
+      "query": {
+        "tenant": "acme",
+        "entity": "route-register",
+        "query": "gate release owner",
+        "asOf": "2026-10-25T12:00:00.000Z",
+        "threshold": 100,
+        "limit": 1
+      }
+    },
+    {
+      "id": "historical-before-explicit-expiry",
+      "title": "Later expiration does not rewrite an earlier query",
+      "category": "historical-expiry",
+      "events": [
+        {
+          "commandId": "cmd-historical-owner",
+          "tenant": "acme",
+          "kind": "remember",
+          "memoryId": "historical-owner",
+          "entity": "route-register",
+          "text": "Canopy handoff owner is Garnet Team.",
+          "provenance": {
+            "sourceId": "source-historical-owner",
+            "quote": "SYNTHETIC supplied record. Canopy handoff owner is Garnet Team. No real operation or external source is represented."
+          },
+          "recordedAt": "2026-10-25T09:00:00.000Z",
+          "validFrom": "2026-10-25T09:00:00.000Z",
+          "expiresAt": null
+        },
+        {
+          "commandId": "expire-historical-owner",
+          "tenant": "acme",
+          "kind": "expire",
+          "memoryId": "historical-owner",
+          "recordedAt": "2026-10-25T13:00:00.000Z"
+        }
+      ],
+      "query": {
+        "tenant": "acme",
+        "entity": "route-register",
+        "query": "canopy handoff owner",
+        "asOf": "2026-10-25T12:00:00.000Z",
+        "threshold": 100,
+        "limit": 1
+      }
+    },
+    {
+      "id": "tenant-entity-isolation",
+      "title": "Shared vocabulary does not cross tenant or entity",
+      "category": "scope-isolation",
+      "events": [
+        {
+          "commandId": "cmd-scope-right",
+          "tenant": "acme",
+          "kind": "remember",
+          "memoryId": "scope-right",
+          "entity": "route-register",
+          "text": "Harbor parcel dispatch owner is Hazel Team.",
+          "provenance": {
+            "sourceId": "source-scope-right",
+            "quote": "SYNTHETIC supplied record. Harbor parcel dispatch owner is Hazel Team. No real operation or external source is represented."
+          },
+          "recordedAt": "2026-10-25T09:00:00.000Z",
+          "validFrom": "2026-10-25T09:00:00.000Z",
+          "expiresAt": null
+        },
+        {
+          "commandId": "cmd-scope-other-entity",
+          "tenant": "acme",
+          "kind": "remember",
+          "memoryId": "scope-other-entity",
+          "entity": "unrelated-register",
+          "text": "Harbor parcel dispatch owner is Incorrect Other Entity.",
+          "provenance": {
+            "sourceId": "source-scope-other-entity",
+            "quote": "SYNTHETIC supplied record. Harbor parcel dispatch owner is Incorrect Other Entity. No real operation or external source is represented."
+          },
+          "recordedAt": "2026-10-25T09:01:00.000Z",
+          "validFrom": "2026-10-25T09:01:00.000Z",
+          "expiresAt": null
+        },
+        {
+          "commandId": "cmd-scope-other-tenant",
+          "tenant": "beta",
+          "kind": "remember",
+          "memoryId": "scope-other-tenant",
+          "entity": "route-register",
+          "text": "Harbor parcel dispatch owner is Incorrect Other Tenant.",
+          "provenance": {
+            "sourceId": "source-scope-other-tenant",
+            "quote": "SYNTHETIC supplied record. Harbor parcel dispatch owner is Incorrect Other Tenant. No real operation or external source is represented."
+          },
+          "recordedAt": "2026-10-25T09:00:00.000Z",
+          "validFrom": "2026-10-25T09:00:00.000Z",
+          "expiresAt": null
+        }
+      ],
+      "query": {
+        "tenant": "acme",
+        "entity": "route-register",
+        "query": "harbor parcel dispatch owner",
+        "asOf": "2026-10-25T12:00:00.000Z",
+        "threshold": 100,
+        "limit": 1
+      }
+    },
+    {
+      "id": "unicode-equivalent-agreement",
+      "title": "NFKC-equivalent supplied text is agreement, not a tie conflict",
+      "category": "unicode-agreement",
+      "events": [
+        {
+          "commandId": "cmd-unicode-a",
+          "tenant": "acme",
+          "kind": "remember",
+          "memoryId": "unicode-a",
+          "entity": "route-register",
+          "text": "ＲＯＵＴＥ ＯＷＮＥＲ ＩＳ ＩＲＩＳ ＴＥＡＭ.",
+          "provenance": {
+            "sourceId": "source-unicode-a",
+            "quote": "SYNTHETIC supplied record. ＲＯＵＴＥ ＯＷＮＥＲ ＩＳ ＩＲＩＳ ＴＥＡＭ. No real operation or external source is represented."
+          },
+          "recordedAt": "2026-10-25T09:00:00.000Z",
+          "validFrom": "2026-10-25T09:00:00.000Z",
+          "expiresAt": null
+        },
+        {
+          "commandId": "cmd-unicode-b",
+          "tenant": "acme",
+          "kind": "remember",
+          "memoryId": "unicode-b",
+          "entity": "route-register",
+          "text": "route owner is iris team.",
+          "provenance": {
+            "sourceId": "source-unicode-b",
+            "quote": "SYNTHETIC supplied record. route owner is iris team. No real operation or external source is represented."
+          },
+          "recordedAt": "2026-10-25T09:01:00.000Z",
+          "validFrom": "2026-10-25T09:01:00.000Z",
+          "expiresAt": null
+        }
+      ],
+      "query": {
+        "tenant": "acme",
+        "entity": "route-register",
+        "query": "ｒｏｕｔｅ ｏｗｎｅｒ",
+        "asOf": "2026-10-25T12:00:00.000Z",
+        "threshold": 100,
+        "limit": 2
+      }
+    },
+    {
+      "id": "distinct-top-score-tie",
+      "title": "Distinct equal-scoring current assignments require abstention",
+      "category": "lexical-tie",
+      "events": [
+        {
+          "commandId": "cmd-tie-a",
+          "tenant": "acme",
+          "kind": "remember",
+          "memoryId": "tie-a",
+          "entity": "route-register",
+          "text": "Route owner is Jade Team.",
+          "provenance": {
+            "sourceId": "source-tie-a",
+            "quote": "SYNTHETIC supplied record. Route owner is Jade Team. No real operation or external source is represented."
+          },
+          "recordedAt": "2026-10-25T09:00:00.000Z",
+          "validFrom": "2026-10-25T09:00:00.000Z",
+          "expiresAt": null
+        },
+        {
+          "commandId": "cmd-tie-b",
+          "tenant": "acme",
+          "kind": "remember",
+          "memoryId": "tie-b",
+          "entity": "route-register",
+          "text": "Route owner is Kestrel Team.",
+          "provenance": {
+            "sourceId": "source-tie-b",
+            "quote": "SYNTHETIC supplied record. Route owner is Kestrel Team. No real operation or external source is represented."
+          },
+          "recordedAt": "2026-10-25T09:01:00.000Z",
+          "validFrom": "2026-10-25T09:01:00.000Z",
+          "expiresAt": null
+        }
+      ],
+      "query": {
+        "tenant": "acme",
+        "entity": "route-register",
+        "query": "route owner",
+        "asOf": "2026-10-25T12:00:00.000Z",
+        "threshold": 100,
+        "limit": 2
+      }
+    },
+    {
+      "id": "genuine-no-lexical-match",
+      "title": "Current source cannot justify an unrelated request",
+      "category": "missing-evidence",
+      "events": [
+        {
+          "commandId": "cmd-unrelated-current",
+          "tenant": "acme",
+          "kind": "remember",
+          "memoryId": "unrelated-current",
+          "entity": "route-register",
+          "text": "The fictional garden archive opens at dawn.",
+          "provenance": {
+            "sourceId": "source-unrelated-current",
+            "quote": "SYNTHETIC supplied record. The fictional garden archive opens at dawn. No real operation or external source is represented."
+          },
+          "recordedAt": "2026-10-25T09:00:00.000Z",
+          "validFrom": "2026-10-25T09:00:00.000Z",
+          "expiresAt": null
+        }
+      ],
+      "query": {
+        "tenant": "acme",
+        "entity": "route-register",
+        "query": "harbor pallet dispatch owner",
+        "asOf": "2026-10-25T12:00:00.000Z",
+        "threshold": 100,
+        "limit": 1
+      }
+    },
+    {
+      "id": "contextual-lexical-distractor",
+      "title": "A copied exercise can outrank the applicable assignment",
+      "category": "context-distractor",
+      "events": [
+        {
+          "commandId": "cmd-context-applicable",
+          "tenant": "acme",
+          "kind": "remember",
+          "memoryId": "context-applicable",
+          "entity": "route-register",
+          "text": "Approved current assignment for live fixture Q17: Hazel Team owns the dispatch.",
+          "provenance": {
+            "sourceId": "source-context-applicable",
+            "quote": "SYNTHETIC supplied record. Approved current assignment for live fixture Q17: Hazel Team owns the dispatch. No real operation or external source is represented."
+          },
+          "recordedAt": "2026-10-25T09:00:00.000Z",
+          "validFrom": "2026-10-25T09:00:00.000Z",
+          "expiresAt": null
+        },
+        {
+          "commandId": "cmd-context-exercise",
+          "tenant": "acme",
+          "kind": "remember",
+          "memoryId": "context-exercise",
+          "entity": "route-register",
+          "text": "Harbor pallet dispatch owner training exercise Q99 names Juniper Team; this exercise is unrelated to live fixture Q17.",
+          "provenance": {
+            "sourceId": "source-context-exercise",
+            "quote": "SYNTHETIC supplied record. Harbor pallet dispatch owner training exercise Q99 names Juniper Team; this exercise is unrelated to live fixture Q17. No real operation or external source is represented."
+          },
+          "recordedAt": "2026-10-25T09:01:00.000Z",
+          "validFrom": "2026-10-25T09:01:00.000Z",
+          "expiresAt": null
+        }
+      ],
+      "query": {
+        "tenant": "acme",
+        "entity": "route-register",
+        "query": "harbor pallet dispatch owner Q17",
+        "asOf": "2026-10-25T12:00:00.000Z",
+        "threshold": 30,
+        "limit": 1
+      }
+    },
+    {
+      "id": "unequal-score-causal-ambiguity",
+      "title": "Negated and conditional prose is not resolved by token overlap",
+      "category": "causal-ambiguity",
+      "events": [
+        {
+          "commandId": "cmd-causal-ban",
+          "tenant": "acme",
+          "kind": "remember",
+          "memoryId": "causal-ban",
+          "entity": "route-register",
+          "text": "Do not use the harbor pallet dispatch owner Jade Team for fixture R21; this is a warning, not an approved assignment.",
+          "provenance": {
+            "sourceId": "source-causal-ban",
+            "quote": "SYNTHETIC supplied record. Do not use the harbor pallet dispatch owner Jade Team for fixture R21; this is a warning, not an approved assignment. No real operation or external source is represented."
+          },
+          "recordedAt": "2026-10-25T09:00:00.000Z",
+          "validFrom": "2026-10-25T09:00:00.000Z",
+          "expiresAt": null
+        },
+        {
+          "commandId": "cmd-causal-condition",
+          "tenant": "acme",
+          "kind": "remember",
+          "memoryId": "causal-condition",
+          "entity": "route-register",
+          "text": "For fixture R21, Kestrel Team may own dispatch only if the pending human decision becomes approved.",
+          "provenance": {
+            "sourceId": "source-causal-condition",
+            "quote": "SYNTHETIC supplied record. For fixture R21, Kestrel Team may own dispatch only if the pending human decision becomes approved. No real operation or external source is represented."
+          },
+          "recordedAt": "2026-10-25T09:01:00.000Z",
+          "validFrom": "2026-10-25T09:01:00.000Z",
+          "expiresAt": null
+        }
+      ],
+      "query": {
+        "tenant": "acme",
+        "entity": "route-register",
+        "query": "harbor pallet dispatch owner R21",
+        "asOf": "2026-10-25T12:00:00.000Z",
+        "threshold": 30,
+        "limit": 1
+      }
+    },
+    {
+      "id": "chain-no-revival",
+      "title": "Expired third generation leaves every prior generation held",
+      "category": "successor-chain",
+      "events": [
+        {
+          "commandId": "cmd-chain-a",
+          "tenant": "acme",
+          "kind": "remember",
+          "memoryId": "chain-a",
+          "entity": "route-register",
+          "text": "Bridge parcel release gate owner is Amber Team.",
+          "provenance": {
+            "sourceId": "source-chain-a",
+            "quote": "SYNTHETIC supplied record. Bridge parcel release gate owner is Amber Team. No real operation or external source is represented."
+          },
+          "recordedAt": "2026-10-25T09:00:00.000Z",
+          "validFrom": "2026-10-25T09:00:00.000Z",
+          "expiresAt": null
+        },
+        {
+          "commandId": "cmd-chain-b",
+          "tenant": "acme",
+          "kind": "supersede",
+          "memoryId": "chain-b",
+          "entity": "route-register",
+          "text": "Release gate owner is Birch Team.",
+          "provenance": {
+            "sourceId": "source-chain-b",
+            "quote": "SYNTHETIC supplied record. Release gate owner is Birch Team. No real operation or external source is represented."
+          },
+          "recordedAt": "2026-10-25T10:00:00.000Z",
+          "validFrom": "2026-10-25T11:00:00.000Z",
+          "expiresAt": null,
+          "supersedes": "chain-a"
+        },
+        {
+          "commandId": "cmd-chain-c",
+          "tenant": "acme",
+          "kind": "supersede",
+          "memoryId": "chain-c",
+          "entity": "route-register",
+          "text": "Owner is Cobalt Team.",
+          "provenance": {
+            "sourceId": "source-chain-c",
+            "quote": "SYNTHETIC supplied record. Owner is Cobalt Team. No real operation or external source is represented."
+          },
+          "recordedAt": "2026-10-25T12:00:00.000Z",
+          "validFrom": "2026-10-25T13:00:00.000Z",
+          "expiresAt": "2026-10-25T14:00:00.000Z",
+          "supersedes": "chain-b"
+        }
+      ],
+      "query": {
+        "tenant": "acme",
+        "entity": "route-register",
+        "query": "bridge parcel release gate owner",
+        "asOf": "2026-10-25T15:00:00.000Z",
+        "threshold": 75,
+        "limit": 1
+      }
+    }
+  ]
+}

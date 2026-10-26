@@ -1,0 +1,159 @@
+{
+  "schemaVersion": 1,
+  "suiteId": "chronosrank-independent-v1",
+  "authorship": {
+    "kind": "independent-ai-fixture-author",
+    "humanReviewed": false,
+    "note": "A separate AI fixture specialist authored and froze these event timelines, query intents and temporal exclusion labels from the existing ChronosRank append/retrieval contract before running or reading the new evaluator or either method output. Labels are authored synthetic relevance judgments, not independently verified human truth."
+  },
+  "cases": [
+    {
+      "id": "scheduled-before-boundary",
+      "expectedStatus": "retrieved",
+      "goldMemoryIds": [
+        "schedule-old"
+      ],
+      "forbiddenTemporalMemoryIds": [
+        "schedule-new"
+      ],
+      "rationale": "The fictional replacement is recorded but not valid until 13:00. The old assignment remains applicable immediately before that boundary; the known future version must not be selected."
+    },
+    {
+      "id": "scheduled-at-boundary",
+      "expectedStatus": "retrieved",
+      "goldMemoryIds": [
+        "schedule-new"
+      ],
+      "forbiddenTemporalMemoryIds": [
+        "schedule-old"
+      ],
+      "rationale": "At the exact supplied validFrom boundary the new assignment applies, even though the predecessor repeats more query tokens. The old generation is now superseded and must not be recalled."
+    },
+    {
+      "id": "successor-expired-no-revival",
+      "expectedStatus": "abstained",
+      "goldMemoryIds": [],
+      "forbiddenTemporalMemoryIds": [
+        "revival-old",
+        "revival-new"
+      ],
+      "rationale": "The current successor has expired and the older assignment remains superseded. There is no admissible current owner. A stronger lexical match to the old wording cannot restore its temporal authority."
+    },
+    {
+      "id": "explicit-expiry-equality",
+      "expectedStatus": "abstained",
+      "goldMemoryIds": [],
+      "forbiddenTemporalMemoryIds": [
+        "explicit-owner"
+      ],
+      "rationale": "The supplied explicit expiration is effective at equality. The remembered assignment is no longer temporally admissible, despite an exact lexical match."
+    },
+    {
+      "id": "configured-before-expiry",
+      "expectedStatus": "retrieved",
+      "goldMemoryIds": [
+        "configured-owner"
+      ],
+      "forbiddenTemporalMemoryIds": [],
+      "rationale": "The record has been recorded and is valid; its configured exclusive expiry has not yet been reached. The exact supplied owner is admissible immediately before noon."
+    },
+    {
+      "id": "configured-at-expiry",
+      "expectedStatus": "abstained",
+      "goldMemoryIds": [],
+      "forbiddenTemporalMemoryIds": [
+        "configured-owner"
+      ],
+      "rationale": "At the exact expiresAt instant the supplied assignment is expired. The same text being lexically relevant does not justify returning it as current."
+    },
+    {
+      "id": "known-future-valid",
+      "expectedStatus": "abstained",
+      "goldMemoryIds": [],
+      "forbiddenTemporalMemoryIds": [
+        "future-active"
+      ],
+      "rationale": "The source is already known, but its supplied operational validity begins later. There is no current assignment before that validFrom boundary."
+    },
+    {
+      "id": "future-knowledge-history",
+      "expectedStatus": "retrieved",
+      "goldMemoryIds": [
+        "history-old"
+      ],
+      "forbiddenTemporalMemoryIds": [
+        "history-new"
+      ],
+      "rationale": "The second record exists in the complete supplied event list but has not been recorded at the historical query instant. Neither method is allowed to use future knowledge. The earlier supplied assignment is applicable then."
+    },
+    {
+      "id": "historical-before-explicit-expiry",
+      "expectedStatus": "retrieved",
+      "goldMemoryIds": [
+        "historical-owner"
+      ],
+      "forbiddenTemporalMemoryIds": [],
+      "rationale": "The expiration is supplied at 13:00, after this historical query. It must not retroactively invalidate the earlier applicable assignment. The complete event list is not a license to leak future effects."
+    },
+    {
+      "id": "tenant-entity-isolation",
+      "expectedStatus": "retrieved",
+      "goldMemoryIds": [
+        "scope-right"
+      ],
+      "forbiddenTemporalMemoryIds": [],
+      "rationale": "Only the requested tenant and entity are admissible. The other two records intentionally repeat all query words but are scope outsiders, not requested-entity temporal exclusions. The correct in-scope record remains useful."
+    },
+    {
+      "id": "unicode-equivalent-agreement",
+      "expectedStatus": "retrieved",
+      "goldMemoryIds": [
+        "unicode-a",
+        "unicode-b"
+      ],
+      "forbiddenTemporalMemoryIds": [],
+      "rationale": "Both active sources state the same fictional assignment after the declared NFKC/case/whitespace normalization. Either nonempty subset containing only these equivalent gold records is useful. Returning both is not a semantic contradiction."
+    },
+    {
+      "id": "distinct-top-score-tie",
+      "expectedStatus": "abstained",
+      "goldMemoryIds": [],
+      "forbiddenTemporalMemoryIds": [],
+      "rationale": "Both sources are temporally admissible but disagree on the fictional assignment and have identical query-token overlap. No precedence rule is supplied. The intended response is to hold, not to choose by memory ID."
+    },
+    {
+      "id": "genuine-no-lexical-match",
+      "expectedStatus": "abstained",
+      "goldMemoryIds": [],
+      "forbiddenTemporalMemoryIds": [],
+      "rationale": "The only current source contains none of the requested assignment words or facts. Temporal eligibility does not make an unrelated source useful. There is no intended supported answer."
+    },
+    {
+      "id": "contextual-lexical-distractor",
+      "expectedStatus": "retrieved",
+      "goldMemoryIds": [
+        "context-applicable"
+      ],
+      "forbiddenTemporalMemoryIds": [],
+      "rationale": "The requested live fixture is Q17. Its approved assignment is on context-applicable, while context-exercise is explicitly a different fictional exercise that merely mentions Q17 in an exclusion. Both are temporally current. A lexical method can honestly return the stronger distractor or miss the weaker relevant text; such failure must remain visible, not be relabeled as correct."
+    },
+    {
+      "id": "unequal-score-causal-ambiguity",
+      "expectedStatus": "abstained",
+      "goldMemoryIds": [],
+      "forbiddenTemporalMemoryIds": [],
+      "rationale": "The stronger exact-token record explicitly negates an assignment; the other record is conditional on a pending decision. No unconditionally approved current owner is supplied. Temporal filters and unequal lexical scores do not resolve negation or causal permission, so an automatic supported recall would be a genuine diagnostic failure."
+    },
+    {
+      "id": "chain-no-revival",
+      "expectedStatus": "abstained",
+      "goldMemoryIds": [],
+      "forbiddenTemporalMemoryIds": [
+        "chain-a",
+        "chain-b",
+        "chain-c"
+      ],
+      "rationale": "The final supplied generation has expired; each predecessor still has an effective successor and cannot revive. The oldest text deliberately has the strongest lexical overlap. There is no admissible current assignment."
+    }
+  ]
+}

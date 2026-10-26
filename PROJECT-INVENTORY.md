@@ -9,6 +9,18 @@ Updated October 26, 2026 against public main `39483e707e2fd3a38af0d4b5c25aafe93f
 3. All five research tracks have partial local implementations; none completes its full research blueprint. The six industry entries also have durable local workflows. Their remaining gaps concern wider business scope, authentication, real integrations and acceptance, not absence of those local desks.
 4. Open the local `/projects` page for a searchable inventory with direct project selection across all collections. It lists 73 entries: the original 68 catalog views plus five research tracks. All five research entries are partial local builds; counts are not completion claims.
 
+## Open improvements, not yet on checked main
+
+At this October 26 snapshot, the following PRs are **open and unmerged**. All three required CI jobs are green on each listed head. These changes can be reviewed on their branches; their behavior is not included in the main-based implementation claims above or below. CI does not establish external/provider or production acceptance.
+
+| Pull request | Checked head | Proposed bounded improvement | Scope still open |
+|---|---|---|---|
+| [#37 — ChronosRank comparison](https://github.com/Frosty9810/enterprise-automation-portfolio/pull/37) | `dddd5ac` | Separately AI-authored synthetic temporal-versus-blind lexical diagnostic | Human-reviewed external labels, vector retrieval, trained reranker and calibrated abstention |
+| [#38 — TrustGate challenge](https://github.com/Frosty9810/enterprise-automation-portfolio/pull/38) | `dc75a4c` | Authored local policy/review/replay/tamper acceptance cases | Authenticated agent/tool integration, instruction detection, signed remote receipts and external adversarial acceptance |
+| [#39 — VeilRAG variant guard](https://github.com/Frosty9810/enterprise-automation-portfolio/pull/39) | `e8134d1` | Conservative rejection of remaining NFKC/lowercase-equivalent declared-literal variants | Automatic entity detection, full Unicode case folding, decoding, authenticated providers and general privacy guarantees |
+
+These are improvements to existing research entries, not three additional projects. Reconcile this table after merges; do not treat the initial gap list or this open-PR snapshot as permanent.
+
 ## Coverage by collection
 
 | Collection | Entries found | How to open after starting the local lab | Boundary |
@@ -127,18 +139,6 @@ The five source documents exist under [Research-to-Production](47%20Automation%2
 | DocksideSLM — partial local build | [Design](47%20Automation%20Blueprints/2026%20Research-to-Production/04-docksideslm.md) | OCR/SLM extraction, actual edge-model compression, hardware execution, measured quality/latency and real ERP acceptance |
 | VeilRAG — partial local build | [Design](47%20Automation%20Blueprints/2026%20Research-to-Production/05-veilrag.md) | Automatic entity detection, authenticated retrieval/provider integration, production key management and independently measured privacy/utility evaluation |
 
-## Open improvements, not yet on checked main
-
-At this October 26 snapshot, the following PRs are **open and unmerged**. All three required CI jobs are green on each listed head. These changes can be reviewed on their branches; their behavior is not included in the main-based implementation claims above or below. CI does not establish external/provider or production acceptance.
-
-| Pull request | Checked head | Proposed bounded improvement | Scope still open |
-|---|---|---|---|
-| [#37 — ChronosRank comparison](https://github.com/Frosty9810/enterprise-automation-portfolio/pull/37) | `dddd5ac` | Separately AI-authored synthetic temporal-versus-blind lexical diagnostic | Human-reviewed external labels, vector retrieval, trained reranker and calibrated abstention |
-| [#38 — TrustGate challenge](https://github.com/Frosty9810/enterprise-automation-portfolio/pull/38) | `dc75a4c` | Authored local policy/review/replay/tamper acceptance cases | Authenticated agent/tool integration, instruction detection, signed remote receipts and external adversarial acceptance |
-| [#39 — VeilRAG variant guard](https://github.com/Frosty9810/enterprise-automation-portfolio/pull/39) | `e8134d1` | Conservative rejection of remaining NFKC/lowercase-equivalent declared-literal variants | Automatic entity detection, full Unicode case folding, decoding, authenticated providers and general privacy guarantees |
-
-These are improvements to existing research entries, not three additional projects. Reconcile this table after merges; do not treat the initial gap list or this open-PR snapshot as permanent.
-
 ## Six industry flagships still partial
 
 All six desks below are available on the checked main commit. Each uses actual local SQLite effects with synthetic fixtures, while the broader end-to-end requirements in [COMPLETION-ROADMAP.md](COMPLETION-ROADMAP.md) remain open. Actor/reviewer labels are demonstration selectors, not authenticated people or professional approval.
@@ -172,13 +172,24 @@ The nine replaced placeholders now contain the following material:
 
 Other partial sections still need platform-specific adapters, canonical prompt/schema catalogs, operational libraries, authentication, provider acceptance or curated evidence. Per-project SQL does not complete a database-schema catalog; a recording script does not constitute a recorded walkthrough. All 26 indexed SOP videos remain pending recording.
 
-## Other GitHub projects and privacy
-
-The public owner-repository endpoint was checked on October 26, 2026 and returned 13 public repositories: this portfolio, its profile README and 11 other repositories. Those 11 are not automatically portfolio-ready builds; only public names/URLs were checked, not their source quality or completeness. [Review the public repository list](https://github.com/Frosty9810?tab=repositories) separately before curating imports. PaceAtlas is not in that public list; original source/demo integration remains unverified. Its independent TRIP-01–TRIP-03 prototypes are not represented as PaceAtlas features. PORT / OS links to the existing public IMP-01 example; private code and client files were not inspected or copied.
-
 ## Reconciliation and next work
 
 - The original presence audit matched the collection registries, automation source/wrapper paths and all 20 human fixture files. This update retains the 73-entry count and maps the six existing industry desks to their actual runbooks and routes.
 - All six standalone industry acceptance CLIs were rerun successfully for this reconciliation: `run-maintenance.mjs`, `run-construction.mjs`, `run-referral.mjs`, `run-legal.mjs`, `run-insurance.mjs` and `run-executive.mjs` under `demo-lab`. They exercise local synthetic effects, not provider acceptance or professional decisions. Exact results belong in the delivery log and PR evidence.
 - The unified inventory and AtlasGraph comparison are already on main. This documentation change adds no runtime feature. Open PRs #37–#39 remain separately identified above; no merge or deployment is performed by this update.
 - Next: resolve feedback on those open improvements before duplicating their work; then select a bounded remaining industry, integration or evaluation dependency from the linked runbooks. Authentication, trusted source ingestion, external/model or hardware measurements, platform-native acceptance and recorded walkthroughs require their own evidence.
+
+## Other GitHub projects and privacy
+
+The public owner-repository endpoint was checked on October 26, 2026 and returned 13 public repositories: this portfolio, its profile README and 11 other repositories. Those 11 are not automatically portfolio-ready builds; only public names/URLs were checked, not their source quality or completeness. [Review the public repository list](https://github.com/Frosty9810?tab=repositories) separately before curating imports. PaceAtlas is not in that public list; original source/demo integration remains unverified. Its independent TRIP-01–TRIP-03 prototypes are not represented as PaceAtlas features. PORT / OS links to the existing public IMP-01 example; private code and client files were not inspected or copied.
+
+## Earlier implementation audit
+
+These retained notes describe the earlier delivery. The current continuation queue is in Reconciliation and next work above.
+
+- Matched all four registries, every automation source/wrapper path and all 20 human fixture files.
+- Executed the 20 human and nine engineering bundled fixtures. This is local fixture evidence, not a new full n8n/provider run or a semantic benchmark.
+- Compared public main with the showcase branch and reconciled all 50 section labels against current linked artifacts.
+- Added the unified in-app inventory/deep links across all five collections and a partial AtlasGraph build. Tests cover destination selection, compiler persistence, adverse evidence, stale exports and local HTTP boundaries. See [AtlasGraph reproduction](demo-lab/ATLASGRAPH.md); exact-head validation belongs in the delivery log and PR evidence.
+- Next: externally review and broaden the separately authored AtlasGraph synthetic comparison, extend TrustGate's independent adversarial cases, evaluate ChronosRank against independently labeled queries, or continue the six industry flagship flows. Provider/authentication, hardware/model measurements and recording acceptance remain separate.
+- The prior showcase and its seven child changes are on main. New research PRs remain subject to review/backlog controls; this delivery does not merge or deploy them.

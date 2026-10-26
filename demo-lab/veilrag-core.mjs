@@ -11,12 +11,13 @@ const json = (value) => JSON.stringify(canonical(value));
 const digest = (value) => createHash('sha256').update(json(value)).digest('hex');
 const GENESIS = '0'.repeat(64);
 const PREFIX = '[[VR:';
-const PROFILES = ['echo', 'leak', 'foreign-alias'];
+const PROFILES = ['echo', 'leak', 'foreign-alias', 'variant-leak'];
 const RECIPIENTS = [{ id: 'acme-reviewer', tenant: 'acme', description: 'Configured synthetic acme reviewer; selector, not authentication.' }, { id: 'beta-reviewer', tenant: 'beta', description: 'Configured synthetic beta reviewer; selector, not authentication.' }];
 const generatorPath = fileURLToPath(new URL('./veilrag-generator.mjs', import.meta.url));
 const loadedGeneratorSource = readFileSync(generatorPath, 'utf8');
-const implementationHash = digest([readFileSync(new URL(import.meta.url), 'utf8'), loadedGeneratorSource]);
-const currentImplementation = () => digest([readFileSync(new URL(import.meta.url), 'utf8'), readFileSync(generatorPath, 'utf8')]);
+const implementationFiles = ['veilrag-core.mjs', 'veilrag-generator.mjs', 'veilrag-fixtures.mjs'];
+const currentImplementation = () => digest(implementationFiles.map((name) => ({ name, sha256: createHash('sha256').update(readFileSync(new URL('./' + name, import.meta.url))).digest('hex') })));
+const implementationHash = currentImplementation();
 const forbidden = new Set(['__proto__', 'prototype', 'constructor']);
 
 export class VeilRagError extends Error {
@@ -37,6 +38,20 @@ function surface(value, transform, depth = 0) {
   if (!plain(value) || Object.keys(value).length > 24) fail('Tool arguments must contain bounded JSON values.');
   return Object.fromEntries(Object.entries(value).map(([key, item]) => { identifier(key); if (forbidden.has(key)) fail('Prototype-related keys are forbidden.'); transform(key, true); return [key, surface(item, transform, depth + 1)]; }));
 }
+const limitedVariant = (value) => value.normalize('NFKC').toLowerCase();
+/** Reject, never rewrite, remaining declared literals on raw JSON surfaces and wire text.
+ * This limited comparison is not full Unicode case folding or encoded-value detection.
+ * Protocol/alias collisions for short declarations conservatively reject the request.
+ */
+function literalLeak(value, mapping) {
+  const parts = [json(value)];
+  function inspect(item) { if (typeof item === 'string') parts.push(item); else if (Array.isArray(item)) item.forEach(inspect); else if (item && typeof item === 'object') for (const [name, entry] of Object.entries(item)) { parts.push(name); inspect(entry); } }
+  inspect(value);
+  if (mapping.some((item) => parts.some((part) => part.includes(item.value)))) return 'declared_literal_leak';
+  const variants = parts.map(limitedVariant);
+  if (mapping.some((item) => variants.some((part) => part.includes(limitedVariant(item.value))))) return 'declared_literal_variant_leak';
+  return null;
+}
 function validateProtect(value) {
   object(value, ['tenant', 'commandId', 'entities', 'frames', 'profile']); bounded(value, 16000); identifier(value.tenant); identifier(value.commandId);
   if (!['acme', 'beta'].includes(value.tenant) || !PROFILES.includes(value.profile)) fail('Unknown local tenant or fixture profile.');
@@ -52,6 +67,7 @@ function validateProtect(value) {
   // Structural labels cannot be rewritten without changing their protocol meaning.
   const labels = [value.tenant, value.commandId, value.profile, ...Object.keys(value.frames), ...value.frames.history.flatMap((item) => ['role', 'text', item.role]), ...value.frames.tools.flatMap((item) => ['name', 'args', item.name])];
   if (labels.some((label) => protectedValues.some((literal) => label.includes(literal)))) fail('A declared literal occurs in a structural label; use an opaque local label.');
+  if (labels.some((label) => protectedValues.some((literal) => limitedVariant(label).includes(limitedVariant(literal))))) fail('A declared literal variant occurs in a structural label; use an opaque local label.', 'declared_literal_variant_leak');
   return value;
 }
 function transformFrames(frames, transform) {
@@ -120,11 +136,11 @@ export function veilRag(db, options = {}) {
   function sessionFor(value) { const session = db.prepare('SELECT * FROM veilrag_sessions WHERE id=? AND tenant=?').get(value.receiptId, value.tenant); if (!session) fail('Local receipt not found.', 'not_found'); return { ...session, record: JSON.parse(session.record) }; }
   function state(session) { const rows = events().filter((row) => row.receiptId === session.id); const generated = rows.find((row) => row.kind === 'generated'); const blocked = rows.find((row) => row.kind === 'blocked'); const generating = rows.some((row) => row.kind === 'generating'); const expired = now() >= session.record.expiresAtMs || rows.some((row) => ['expired', 'purged'].includes(row.kind)); const stale = session.record.implementationHash !== implementationHash || currentImplementation() !== implementationHash; return { id: session.id, tenant: session.tenant, commandId: session.command_id, createdAt: session.record.createdAt, expiresAt: session.record.expiresAt, status: expired ? 'expired' : stale ? 'stale' : blocked ? 'blocked' : generated ? 'generated' : generating ? 'generating' : 'protected', ...(blocked ? { reason: blocked.payload.reason } : {}), ...(!expired && !stale ? { sanitized: copy(session.record.sanitized), ...(generated ? { sanitizedOutput: generated.payload.output } : {}) } : {}), eventCount: rows.length }; }
   function mappingFor(session) { if (now() >= session.record.expiresAtMs || !session.vault || events().some((row) => row.receiptId === session.id && row.kind === 'expired')) fail('The local alias session expired.', 'expired'); if (session.record.implementationHash !== implementationHash || currentImplementation() !== implementationHash) fail('The fixture implementation changed; create a new session.', 'stale_implementation'); if (session.record.keyId !== keyId) fail('The original in-memory vault key is unavailable.', 'key_unavailable'); const { vaultDigest: _digest, ...authenticatedMetadata } = session.record; return decrypt(key, JSON.parse(session.vault), authenticatedMetadata); }
-  function safeOutput(output, mapping) { if (mapping.some((item) => output.includes(item.value))) return 'declared_literal_leak'; let stripped = output; for (const item of mapping) stripped = stripped.split(item.alias).join(''); if (stripped.includes(PREFIX)) return 'unknown_alias'; return null; }
-  function checkTransport(dto, mapping, code = 'invalid_input') { bounded(dto); if (mapping.some((item) => json(dto).includes(item.value))) fail('A declared literal remains in the full sanitized transport, including structural keys.', code); }
+  function safeOutput(output, mapping) { const leak = literalLeak({ output }, mapping); if (leak) return leak; let stripped = output; for (const item of mapping) stripped = stripped.split(item.alias).join(''); if (stripped.includes(PREFIX)) return 'unknown_alias'; return null; }
+  function checkTransport(dto, mapping, code = 'invalid_input') { bounded(dto); const leak = literalLeak(dto, mapping); if (leak) fail('A declared literal or its limited normalized variant remains in the sanitized transport, including structural keys.', code === 'invalid_input' && leak === 'declared_literal_variant_leak' ? leak : code); }
   function receipt(value) { request(value, ['tenant', 'receiptId']); return transaction(() => state(sessionFor(value))); }
   return {
-    catalog() { return { scope: veilRagScope, limits: { ttlMs, entityLimit: 24, inputByteLimit: 16000, matching: 'exact, case-sensitive Unicode code units; no normalization or encoded-value detection' }, scenarios: veilRagScenarios(), recipients: copy(RECIPIENTS) }; },
+    catalog() { return { scope: veilRagScope, limits: { ttlMs, entityLimit: 24, inputByteLimit: 16000, matching: 'exact case-sensitive alias replacement; remaining raw strings, keys and wire text reject declared literals or NFKC().toLowerCase() variants; no full case folding, entity detection or encoded-value detection' }, scenarios: veilRagScenarios(), recipients: copy(RECIPIENTS) }; },
     protect(value) {
       validateProtect(value);
       if (currentImplementation() !== implementationHash) fail('Loaded source changed. Restart before creating a new session.', 'restart_required');

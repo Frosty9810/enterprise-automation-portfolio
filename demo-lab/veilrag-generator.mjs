@@ -6,6 +6,7 @@ try {
   const value = JSON.parse(input);
   if (!value || Object.keys(value).sort().join(',') !== 'frames,profile') process.exit(2);
   if (value.profile === 'echo') process.stdout.write(JSON.stringify({ output: `Local fixture received sanitized frames:\n${JSON.stringify(value.frames)}` }));
+  else if (value.profile === 'variant-leak') process.stdout.write(JSON.stringify({ output: 'ada example' }));
   else if (value.profile === 'leak') process.stdout.write(JSON.stringify({ output: 'Ada Example' }));
   else if (value.profile === 'foreign-alias') process.stdout.write(JSON.stringify({ output: '[[VR:foreign-session:e01]]' }));
   else process.exit(2);

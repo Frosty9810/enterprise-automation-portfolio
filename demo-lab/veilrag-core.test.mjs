@@ -37,9 +37,10 @@ test('VeilRAG literal selection is longest-first and restoration is one pass', a
   await api.generate(receiptInput(receipt)); assert.ok(api.restore({ ...receiptInput(receipt), recipient: 'acme-reviewer' }).output.includes('Anna knows Ann. Anna.'));
 });
 
-test('VeilRAG exact case and Unicode matching is explicit, with no normalization claim', (t) => {
-  const { api } = harness(t); const input = example(); input.entities = [{ id: 'person', value: 'Élodie Example' }]; input.frames.query = 'Élodie Example / E\u0301lodie Example / élodie example';
-  const receipt = api.protect(input); assert.ok(!receipt.sanitized.frames.query.includes('Élodie Example')); assert.ok(receipt.sanitized.frames.query.includes('E\u0301lodie Example')); assert.ok(receipt.sanitized.frames.query.includes('élodie example'));
+test('VeilRAG retains exact alias replacement and rejects remaining case/Unicode variants before persistence', (t) => {
+  const { api, db } = harness(t); const input = example(); input.entities = [{ id: 'person', value: 'Élodie Example' }]; input.frames.query = 'Élodie Example / E\u0301lodie Example / élodie example';
+  assert.throws(() => api.protect(input), { code: 'declared_literal_variant_leak' });
+  assert.equal(db.prepare('SELECT count(*) AS n FROM veilrag_sessions').get().n, 0); assert.equal(db.prepare('SELECT count(*) AS n FROM veilrag_events').get().n, 0);
 });
 
 for (const [name, mutate] of [
@@ -70,8 +71,8 @@ test('VeilRAG simultaneous generation permits one claimed fixture execution', as
   const { api } = harness(t); const receipt = api.protect(example()); const pending = api.generate(receiptInput(receipt)); await assert.rejects(api.generate(receiptInput(receipt)), { code: 'in_progress' }); assert.equal((await pending).status, 'generated'); assert.equal(api.audit({ tenant: 'acme' }).events.filter((event) => event.kind === 'generating').length, 1);
 });
 
-for (const [profile, reason] of [['leak', 'declared_literal_leak'], ['foreign-alias', 'unknown_alias']]) test(`VeilRAG blocks ${profile} output without persisting the rejected text`, async (t) => {
-  const { api, db } = harness(t); const input = example(); input.profile = profile; const receipt = api.protect(input); const generated = await api.generate(receiptInput(receipt)); assert.equal(generated.status, 'blocked'); assert.equal(generated.reason, reason); assert.equal(generated.sanitizedOutput, undefined); assert.throws(() => api.restore({ ...receiptInput(receipt), recipient: 'acme-reviewer' }), { code: 'not_generated' }); const rows = JSON.stringify(db.prepare('SELECT * FROM veilrag_events').all()); assert.ok(!rows.includes('Ada Example')); assert.ok(!rows.includes('foreign-session'));
+for (const [profile, reason] of [['leak', 'declared_literal_leak'], ['variant-leak', 'declared_literal_variant_leak'], ['foreign-alias', 'unknown_alias']]) test(`VeilRAG blocks ${profile} output without persisting the rejected text`, async (t) => {
+  const { api, db } = harness(t); const input = example(); input.profile = profile; const receipt = api.protect(input); const generated = await api.generate(receiptInput(receipt)); assert.equal(generated.status, 'blocked'); assert.equal(generated.reason, reason); assert.equal(generated.sanitizedOutput, undefined); assert.throws(() => api.restore({ ...receiptInput(receipt), recipient: 'acme-reviewer' }), { code: 'not_generated' }); const rows = JSON.stringify(db.prepare('SELECT * FROM veilrag_events').all()); assert.ok(!rows.includes('Ada Example')); assert.ok(!rows.includes('ada example')); assert.ok(!rows.includes('foreign-session')); assert.deepEqual(api.receipt(receiptInput(receipt)), generated); assert.deepEqual(await api.generate(receiptInput(receipt)), generated);
 });
 
 test('VeilRAG rejects unauthorized and cross-tenant restoration and receipt access', async (t) => {
@@ -209,4 +210,50 @@ for (const firstObservation of ['receipt', 'rejected-restore']) test(`VeilRAG ${
     assert.deepEqual(store.api.purge({ tenant: 'acme' }), { purged: 1, receiptIds: [receipt.id] }); assert.equal(store.db.prepare('SELECT vault FROM veilrag_sessions').get().vault, null);
     assert.equal(store.api.audit({ tenant: 'acme' }).events.filter((event) => event.kind === 'expired').length, 1); assert.equal(store.api.verifyAudit({ tenant: 'acme' }).valid, true);
   } finally { store.close(); rmSync(dir, { recursive: true, force: true }); }
+});
+
+const minimalInput = (literal, query) => ({ tenant: 'acme', commandId: 'variant-guard-command', profile: 'echo', entities: [{ id: 'declared', value: literal }], frames: { query, context: [], history: [], tools: [] } });
+for (const [name, literal, mutate] of [
+  ['lowercase query', 'Ada Example', input => { input.frames.query = 'ada example'; }],
+  ['uppercase context', 'Ada Example', input => { input.frames.context = ['ADA EXAMPLE']; }],
+  ['canonical-equivalent history', 'Élodie Example', input => { input.frames.history = [{ role: 'user', text: 'E\u0301lodie Example' }]; }],
+  ['compatibility-equivalent nested argument', 'Ada Example', input => { input.frames.tools = [{ name: 'lookup', args: { data: [{ contact: 'Ａｄａ　Ｅｘａｍｐｌｅ' }] } }]; }],
+  ['ligature-equivalent query', 'office', input => { input.frames.query = 'oﬃce'; }],
+  ['reverse canonical normalization', 'E\u0301lodie Example', input => { input.frames.context = ['Élodie Example']; }],
+  ['quoted raw value despite JSON escaping', 'Ada "Example"', input => { input.frames.query = 'ada "example"'; }],
+  ['backslash raw value despite JSON escaping', 'Path\\Secret', input => { input.frames.query = 'path\\secret'; }],
+  ['newline raw value despite JSON escaping', 'Ada\nExample', input => { input.frames.query = 'ada\nexample'; }],
+  ['case-equivalent argument key', 'SensitiveKey', input => { input.frames.tools = [{ name: 'lookup', args: { sensitivekey: 'ordinary' } }]; }],
+  ['case-equivalent tool label', 'LOOKUP', input => { input.frames.tools = [{ name: 'lookup', args: {} }]; }],
+  ['case-equivalent fixed transport key', 'CONTEXT', input => {}],
+  ['case-equivalent tenant label', 'ACME', input => {}],
+  ['case-equivalent command label', 'VARIANT-GUARD', input => {}],
+  ['case-equivalent generator profile', 'ECHO', input => {}],
+  ['short declared literal colliding with protocol', 'Q', input => {}],
+]) test('VeilRAG conservatively rejects '+name+' without creating a session or audit event', t => {
+  const { api, db } = harness(t); const input = minimalInput(literal, 'ordinary payload'); mutate(input);
+  let error; try { api.protect(input); } catch (caught) { error = caught; }
+  assert.equal(error?.code, 'declared_literal_variant_leak'); assert.ok(!error.message.includes(literal));
+  assert.equal(db.prepare('SELECT count(*) AS n FROM veilrag_sessions').get().n, 0); assert.equal(db.prepare('SELECT count(*) AS n FROM veilrag_events').get().n, 0);
+});
+
+test('VeilRAG exact quoted and decomposed declared values still restore their original code units', async t => {
+  const { api } = harness(t); const literal = 'E\u0301lodie "Example"'; const input = minimalInput(literal, literal+' / '+literal); const receipt = api.protect(input);
+  assert.equal(receipt.status, 'protected'); assert.ok(!receipt.sanitized.frames.query.includes(literal)); await api.generate(receiptInput(receipt));
+  const restored = api.restore({ ...receiptInput(receipt), recipient: 'acme-reviewer' }); assert.ok(restored.output.includes(input.frames.query)); assert.ok(restored.output.includes('E\u0301lodie')); assert.ok(!restored.output.includes('Élodie'));
+});
+
+test('VeilRAG does not silently broaden the guard into decoding or full Unicode case folding', t => {
+  const { api } = harness(t); const cases = [ ['Ada Example', 'Ada%20Example'], ['Ada Example', 'QWRhIEV4YW1wbGU='], ['Ada Example', 'Ada\u200b Example'], ['Ada Example', 'Аda Example'], ['Straße Example', 'STRASSE EXAMPLE'] ];
+  for (const [at,[literal,variant]] of cases.entries()) { const input = minimalInput(literal,variant); input.commandId+='-'+at; const receipt=api.protect(input); assert.equal(receipt.status,'protected'); assert.equal(receipt.sanitized.frames.query,variant); }
+});
+
+for (const name of ['veilrag-core.mjs','veilrag-fixtures.mjs']) test('VeilRAG '+name+' drift hides prior evidence and blocks execution and restoration', async t => {
+  const dir=mkdtempSync(join(tmpdir(),'veilrag-guard-source-'));for(const file of ['veilrag-core.mjs','veilrag-generator.mjs','veilrag-fixtures.mjs'])copyFileSync(new URL(file,import.meta.url),join(dir,file));const imported=await import(pathToFileURL(join(dir,'veilrag-core.mjs')).href);const store=imported.openVeilRag(':memory:',{key:key()});
+  try{const receipt=store.api.protect(example());await store.api.generate(receiptInput(receipt));writeFileSync(join(dir,name),readFileSync(join(dir,name),'utf8')+'\n// source drift\n');const stale=store.api.receipt(receiptInput(receipt));assert.equal(stale.status,'stale');assert.equal(stale.sanitized,undefined);assert.equal(stale.sanitizedOutput,undefined);assert.throws(()=>store.api.restore({...receiptInput(receipt),recipient:'acme-reviewer'}),{code:'not_generated'});assert.throws(()=>store.api.protect({...example(),commandId:'new-after-drift'}),{code:'restart_required'});await assert.rejects(()=>store.api.generate(receiptInput(receipt)),{code:'stale_implementation'});}finally{store.close();rmSync(dir,{recursive:true,force:true});}
+});
+
+for(const [name,literal,output]of [['compatibility','Ada Example','Ａｄａ　Ｅｘａｍｐｌｅ'],['canonical','Élodie Example','E\u0301lodie Example']])test('VeilRAG rejects '+name+' variant from an actual pinned child process before persistence',async t=>{
+ const dir=mkdtempSync(join(tmpdir(),'veilrag-guard-child-'));for(const file of ['veilrag-core.mjs','veilrag-generator.mjs','veilrag-fixtures.mjs'])copyFileSync(new URL(file,import.meta.url),join(dir,file));const generator=join(dir,'veilrag-generator.mjs'),source=readFileSync(generator,'utf8');assert.ok(source.includes("output: 'ada example'"));writeFileSync(generator,source.replace("output: 'ada example'",'output: '+JSON.stringify(output)));const imported=await import(pathToFileURL(join(dir,'veilrag-core.mjs')).href),store=imported.openVeilRag(':memory:',{key:key()});
+ try{const input=minimalInput(literal,literal);input.profile='variant-leak';const receipt=store.api.protect(input),blocked=await store.api.generate(receiptInput(receipt));assert.equal(blocked.status,'blocked');assert.equal(blocked.reason,'declared_literal_variant_leak');assert.equal(blocked.sanitizedOutput,undefined);assert.throws(()=>store.api.restore({...receiptInput(receipt),recipient:'acme-reviewer'}),{code:'not_generated'});const persisted=JSON.stringify(store.db.prepare('SELECT * FROM veilrag_events').all());assert.ok(!persisted.includes(output));assert.ok(!persisted.includes(literal));assert.equal(store.api.verifyAudit({tenant:'acme'}).valid,true);}finally{store.close();rmSync(dir,{recursive:true,force:true});}
 });

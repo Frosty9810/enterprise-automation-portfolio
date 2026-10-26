@@ -122,7 +122,7 @@ The `answer` operation collects deterministic graph evidence for explicit claim 
 
 ## VeilRAG local alias boundary
 
-Open `/veilrag` for the [alias workbench](../demo-lab/VEILRAG.md). GET `/api/veilrag/catalog` supplies `scenarios[].input`, recipients and matching limits. All operations are local. Matching is exact and case-sensitive; undeclared, differently encoded or inferred identities are outside this partial build. The complete serialized child DTO is checked for declared literal bytes, including protocol keys, before it can be sent to the fixed fixture child.
+Open `/veilrag` for the [alias workbench](../demo-lab/VEILRAG.md). GET `/api/veilrag/catalog` supplies `scenarios[].input`, recipients and matching limits. All operations are local. Alias replacement is exact and case-sensitive. Remaining declared-literal variants matching JavaScript NFKC normalization followed by lowercasing are rejected before transport persistence/generation and before accepting generated output; variants are not automatically rewritten. This is not full Unicode case folding, encoding detection or inference protection. Conservative short-literal/protocol collisions can reject benign input; undeclared identities remain outside this partial build. The complete serialized child DTO is checked for declared literal bytes, including protocol keys, before it can be sent to the fixed fixture child.
 
 | POST route suffix under `/api/veilrag/` | Input |
 |---|---|

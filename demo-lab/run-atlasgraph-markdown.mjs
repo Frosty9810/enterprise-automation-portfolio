@@ -1,0 +1,5 @@
+import {DatabaseSync} from 'node:sqlite';
+import {atlasGraph} from './atlasgraph-core.mjs';
+import {atlasMarkdown} from './atlasgraph-markdown.mjs';
+const db=new DatabaseSync(':memory:');
+try{const importer=atlasMarkdown(db),input=importer.catalog().example,preview=importer.preview(input),compiled=importer.compile({input,previewHash:preview.previewHash,implementationHash:preview.implementationHash,baseSnapshotHash:preview.baseSnapshotHash}),answer=atlasGraph(db).answer({tenant:input.tenant,question:'Which supplied synthetic shipment, customs and approval facts are supported?',startId:'shipment',requiredClaims:['incoterm','customsRule','approval'],maxHops:2,requestId:'markdown-local-proof'});const rawSourcesPreserved=input.sources.every(source=>JSON.parse(db.prepare('SELECT body FROM atlas_source_versions WHERE tenant=? AND source_id=? AND version=?').get(input.tenant,source.id,source.version).body).origin.raw===source.markdown);console.log(JSON.stringify({scope:importer.catalog().scope,previewHash:preview.previewHash,compiled,rawSourcesPreserved,answer},null,2));if(!rawSourcesPreserved||answer.status!=='supported')process.exitCode=1;}finally{db.close();}

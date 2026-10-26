@@ -1,7 +1,10 @@
 import { createHash, randomUUID } from 'node:crypto';
+import { readFileSync } from 'node:fs';
 import { DatabaseSync } from 'node:sqlite';
 
-// Structured, locally reviewed sources only. This is not an extraction/model layer.
+// Structured review annotations; optional source origins preserve exact imported text.
+// This is not semantic extraction or a model layer.
+export const atlasGraphLoadedImplementationHash = createHash('sha256').update(readFileSync(new URL(import.meta.url))).digest('hex');
 const LIMITS = Object.freeze({ sources: 12, pages: 32, references: 6, claims: 12, inputBytes: 240000, text: 8000, hops: 6 });
 const forbidden = new Set(['__proto__', 'prototype', 'constructor']);
 const own = (object, key) => Object.hasOwn(object, key);
@@ -34,12 +37,32 @@ function id(value, label = 'Identifier') { string(value, label, 80); if (!/^[a-z
 function integer(value, fallback, min, max, label) { const result = value === undefined ? fallback : value; if (!Number.isInteger(result) || result < min || result > max) fail(`${label} must be an integer from ${min} to ${max}.`); return result; }
 function array(value, label, max, min = 0) { if (!Array.isArray(value) || value.length < min || value.length > max) fail(`${label} must contain ${min} to ${max} entries.`); return value; }
 function canonical(value) { if (Array.isArray(value)) return value.map(canonical); if (value && typeof value === 'object') return Object.fromEntries(Object.keys(value).sort().map((key) => [key, canonical(value[key])])); return value; }
+function normalizeOrigin(origin, pages) {
+  object(origin, ['format', 'raw', 'sha256', 'ranges']);
+  if (origin.format !== 'markdown-atx-v1') fail('Unknown source origin format.');
+  string(origin.raw, 'Raw Markdown source', 240000);
+  if (!origin.raw.isWellFormed() || /\r(?!\n)/u.test(origin.raw)) fail('Source origin requires well-formed Unicode and LF or CRLF lines.');
+  const rawHash = createHash('sha256').update(origin.raw, 'utf8').digest('hex');
+  if (origin.sha256 !== rawHash) fail('Raw source origin hash does not match its exact bytes.');
+  const byId = new Map(pages.map((page) => [page.id, page])); const seen = new Set(); let next = 0;
+  const ranges = array(origin.ranges, 'Source origin ranges', LIMITS.pages, 1).map((range) => {
+    object(range, ['pageId', 'startUtf16', 'endUtf16', 'startByte', 'endByte']); id(range.pageId, 'Origin page ID');
+    if (!byId.has(range.pageId) || seen.has(range.pageId)) fail('Origin ranges must identify each source page exactly once.'); seen.add(range.pageId);
+    for (const field of ['startUtf16', 'endUtf16', 'startByte', 'endByte']) if (!Number.isSafeInteger(range[field]) || range[field] < 0) fail('Origin offsets must be nonnegative safe integers.');
+    if (range.startUtf16 !== next || range.endUtf16 <= range.startUtf16 || range.endUtf16 > origin.raw.length) fail('Origin ranges must cover the source contiguously in original order.');
+    const exact = origin.raw.slice(range.startUtf16, range.endUtf16);
+    if (!exact.isWellFormed() || exact !== byId.get(range.pageId).text || range.startByte !== Buffer.byteLength(origin.raw.slice(0, range.startUtf16), 'utf8') || range.endByte !== Buffer.byteLength(origin.raw.slice(0, range.endUtf16), 'utf8')) fail('Origin ranges must match exact page text and UTF-8 offsets.');
+    next = range.endUtf16; return { ...range };
+  });
+  if (next !== origin.raw.length || seen.size !== pages.length) fail('Origin ranges must cover every page and all raw source text.');
+  return { format: origin.format, raw: origin.raw, sha256: rawHash, ranges };
+}
 function normalizeCompile(value) {
   input(value, ['tenant', 'sources']);
   const tenant = id(value.tenant, 'Tenant');
   const sourceIds = new Set(); const pageIds = new Set(); const pages = new Map();
   const sources = array(value.sources, 'Sources', LIMITS.sources, 1).map((source) => {
-    object(source, ['id', 'version', 'title', 'approved', 'pages']);
+    object(source, ['id', 'version', 'title', 'approved', 'pages', 'origin'], ['id', 'version', 'title', 'approved', 'pages']);
     id(source.id, 'Source ID'); id(source.version, 'Source version'); string(source.title, 'Source title');
     if (sourceIds.has(source.id)) fail('Duplicate source ID.'); sourceIds.add(source.id);
     if (typeof source.approved !== 'boolean') fail('Source approved must be boolean.');
@@ -66,7 +89,7 @@ function normalizeCompile(value) {
       pages.set(page.id, { sourceId: source.id, approved: source.approved, ...result });
       return result;
     }).sort((a, b) => a.id.localeCompare(b.id));
-    return { id: source.id, version: source.version, title: source.title, approved: source.approved, pages: normalizedPages };
+    return { id: source.id, version: source.version, title: source.title, approved: source.approved, pages: normalizedPages, ...(own(source, 'origin') ? { origin: normalizeOrigin(source.origin, normalizedPages) } : {}) };
   }).sort((a, b) => a.id.localeCompare(b.id));
   const links = [];
   for (const page of pages.values()) for (const reference of page.references) {
@@ -91,7 +114,7 @@ export function atlasGraph(db) {
     if (!snapshotHash) fail('No compiled snapshot exists for this tenant.', 'not_compiled');
     const stored = db.prepare('SELECT body FROM atlas_snapshots WHERE tenant=? AND snapshot_hash=?').get(tenant, snapshotHash);
     const snapshot = JSON.parse(stored.body); const pages = new Map();
-    for (const source of snapshot.sources) if (source.approved) for (const page of source.pages) pages.set(page.id, { ...page, sourceId: source.id, version: source.version, sourceHash: hash(canonical(source)) });
+    for (const source of snapshot.sources) if (source.approved) for (const page of source.pages) pages.set(page.id, { ...page, sourceId: source.id, version: source.version, sourceHash: hash(canonical(source)), ...(source.origin ? { origin: { format: source.origin.format, sha256: source.origin.sha256, range: source.origin.ranges.find((range) => range.pageId === page.id) } } : {}) });
     return { snapshotHash, pages, links: snapshot.links };
   }
   const linksFor = (state, pageId) => state.links.filter((link) => link.from === pageId || link.to === pageId).map((link) => ({ ...link, direction: link.from === pageId ? 'outgoing' : 'incoming', neighbor: link.from === pageId ? link.to : link.from }));
@@ -113,11 +136,15 @@ export function atlasGraph(db) {
     return { id: errorId, tenant, receiptId: value.receiptId ?? null, message: value.message, correction: value.correction ?? null, status: 'pending', createdAt };
   }
   return {
-    compile(value) {
-      const snapshot = normalizeCompile(value); const snapshotHash = hash(snapshot); const createdAt = new Date().toISOString();
-      const reused = currentHash(snapshot.tenant) === snapshotHash;
+    compile(value, options = {}) {
+      input(options, ['expectedSnapshotHash'], []);
+      if (own(options, 'expectedSnapshotHash') && options.expectedSnapshotHash !== null && (typeof options.expectedSnapshotHash !== 'string' || !/^[a-f0-9]{64}$/u.test(options.expectedSnapshotHash))) fail('Expected snapshot must be null or a SHA-256 identity.');
+      const snapshot = normalizeCompile(value); const snapshotHash = hash(snapshot); const createdAt = new Date().toISOString(); let reused = false;
       db.exec('BEGIN IMMEDIATE');
       try {
+        const current = currentHash(snapshot.tenant);
+        if (own(options, 'expectedSnapshotHash') && current !== options.expectedSnapshotHash && current !== snapshotHash) fail('The tenant snapshot changed after review. Preview the whole replacement again.', 'snapshot_conflict');
+        reused = current === snapshotHash;
         for (const source of snapshot.sources) {
           const sourceHash = hash(canonical(source));
           const previous = db.prepare('SELECT content_hash FROM atlas_source_versions WHERE tenant=? AND source_id=? AND version=?').get(snapshot.tenant, source.id, source.version);
@@ -176,7 +203,7 @@ export function atlasGraph(db) {
       }
       const missing = requiredClaims.filter((key) => claimsByKey.get(key).size === 0);
       const conflicts = requiredClaims.filter((key) => claimsByKey.get(key).size > 1);
-      const candidates = trace.map((step) => { const page = state.pages.get(step.pageId); return { pageId: page.id, sourceId: page.sourceId, version: page.version, sourceHash: page.sourceHash, text: page.text }; });
+      const candidates = trace.map((step) => { const page = state.pages.get(step.pageId); return { pageId: page.id, sourceId: page.sourceId, version: page.version, sourceHash: page.sourceHash, text: page.text, ...(page.origin ? { origin: page.origin } : {}) }; });
       const requiredEvidenceBytes = bytes(candidates);
       const reason = !state.pages.has(value.startId) ? 'missing_start' : conflicts.length ? 'contradictory_evidence' : missing.length ? 'missing_evidence' : truncated ? 'hop_limit' : requiredEvidenceBytes > evidenceBudgetBytes ? 'evidence_budget' : 'supported';
       const supported = reason === 'supported'; const citations = supported ? candidates : [];

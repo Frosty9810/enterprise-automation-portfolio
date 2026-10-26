@@ -1,0 +1,74 @@
+{
+  "tenant": "harbor-demo",
+  "sources": [
+    {
+      "id": "supplier-record",
+      "version": "markdown-v1",
+      "title": "Synthetic supplier shipment",
+      "approved": true,
+      "markdown": "\r\n# Sample shipment terms {#shipment}\r\nSample shipment uses Incoterm DAP. Restricted goods must follow customs-checks before release.\r\nFictional source note: Café Harbor 📦; preserve this supplied spelling.\r\n```text\r\n# Code-only example {#not-a-page}\r\nThis fenced text is not a compiled heading.\r\n```\r\n",
+      "annotations": [
+        {
+          "pageId": "shipment",
+          "claims": [
+            {
+              "key": "incoterm",
+              "value": "DAP"
+            }
+          ],
+          "references": [
+            {
+              "to": "customs-checks",
+              "relation": "requires",
+              "quote": "Restricted goods must follow customs-checks before release."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "customs-policy",
+      "version": "markdown-v1",
+      "title": "Synthetic customs guidance",
+      "approved": true,
+      "markdown": "## Restricted goods release check {#customs-checks}\nRestricted goods require a signed permit before release. The approval-threshold policy names the required approver.\n",
+      "annotations": [
+        {
+          "pageId": "customs-checks",
+          "claims": [
+            {
+              "key": "customsRule",
+              "value": "signed permit before release"
+            }
+          ],
+          "references": [
+            {
+              "to": "approval-threshold",
+              "relation": "requires",
+              "quote": "The approval-threshold policy names the required approver."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "approval-policy",
+      "version": "markdown-v1",
+      "title": "Synthetic internal approval policy",
+      "approved": true,
+      "markdown": "### Restricted shipment approval {#approval-threshold}\nFor this synthetic shipment, release requires operations director approval after permit verification.\n",
+      "annotations": [
+        {
+          "pageId": "approval-threshold",
+          "claims": [
+            {
+              "key": "approval",
+              "value": "operations director approval"
+            }
+          ],
+          "references": []
+        }
+      ]
+    }
+  ]
+}

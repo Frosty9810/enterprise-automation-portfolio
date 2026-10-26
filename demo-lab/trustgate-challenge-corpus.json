@@ -1,0 +1,1479 @@
+{
+  "schemaVersion": 1,
+  "suiteId": "trustgate-adversarial-v1",
+  "authorship": {
+    "kind": "independent-ai-fixture-author",
+    "humanReviewed": false,
+    "note": "A separate AI fixture author derived ordered steps, intended statuses/errors and SQL/audit counts from the existing public TrustGate contract before running or reading any new challenge evaluator output. Synthetic non-human-reviewed acceptance judgments are not an external attack benchmark or detector-quality labels."
+  },
+  "scope": "Fixed public synthetic challenge of the existing local SQLite policy, review, replay, freshness and ordinary-corruption contracts. No model, agent, provider, network, payment or message execution; no instruction detection, authenticated identities, signed remote receipts or production-security acceptance.",
+  "cases": [
+    {
+      "id": "benign-public-read",
+      "title": "Allowed public policy read",
+      "category": "legitimate-utility",
+      "intent": "benign",
+      "rationale": "Trusted public policy identity and a read-only grant permit the fixed SQL read without mutation review.",
+      "steps": [
+        {
+          "id": "prepare",
+          "operation": "prepare",
+          "input": {
+            "tenant": "acme",
+            "commandId": "c01",
+            "actor": "acme-reader",
+            "tool": "read-public-policy",
+            "bindings": {
+              "policyId": {
+                "sourceId": "intent-public",
+                "key": "policyId"
+              }
+            }
+          },
+          "expect": {
+            "status": "ready",
+            "errorCode": null,
+            "replayed": false
+          }
+        },
+        {
+          "id": "execute",
+          "operation": "execute",
+          "input": {
+            "tenant": "acme",
+            "receiptId": "$receipt"
+          },
+          "expect": {
+            "status": "executed",
+            "errorCode": null,
+            "replayed": false
+          }
+        }
+      ],
+      "expected": {
+        "tasks": 0,
+        "publicNotes": 0,
+        "auditValid": true,
+        "auditEvents": 2
+      }
+    },
+    {
+      "id": "benign-reviewed-supplier",
+      "title": "Reviewed untrusted supplier summary stays internal",
+      "category": "legitimate-utility",
+      "intent": "benign",
+      "rationale": "The documented exception permits public untrusted supplier text only in a separately reviewed internal draft summary; target and title remain trusted.",
+      "steps": [
+        {
+          "id": "prepare",
+          "operation": "prepare",
+          "input": {
+            "tenant": "acme",
+            "commandId": "c02",
+            "actor": "acme-operator",
+            "tool": "create-review-task",
+            "bindings": {
+              "caseId": {
+                "sourceId": "intent-public",
+                "key": "caseId"
+              },
+              "title": {
+                "sourceId": "intent-public",
+                "key": "title"
+              },
+              "summary": {
+                "sourceId": "supplier-email",
+                "key": "summary"
+              }
+            }
+          },
+          "expect": {
+            "status": "pending_review",
+            "errorCode": null,
+            "replayed": false
+          }
+        },
+        {
+          "id": "review",
+          "operation": "review",
+          "input": {
+            "tenant": "acme",
+            "receiptId": "$receipt",
+            "reviewer": "acme-reviewer",
+            "decision": "approve",
+            "note": "Independently authored synthetic acceptance step; no external action.",
+            "expectedHash": "$proposalHash"
+          },
+          "expect": {
+            "status": "ready",
+            "errorCode": null,
+            "replayed": false
+          }
+        },
+        {
+          "id": "execute",
+          "operation": "execute",
+          "input": {
+            "tenant": "acme",
+            "receiptId": "$receipt"
+          },
+          "expect": {
+            "status": "executed",
+            "errorCode": null,
+            "replayed": false
+          }
+        }
+      ],
+      "expected": {
+        "tasks": 1,
+        "publicNotes": 0,
+        "auditValid": true,
+        "auditEvents": 3
+      }
+    },
+    {
+      "id": "benign-internal-draft",
+      "title": "Internal price may remain in an internal draft",
+      "category": "legitimate-utility",
+      "intent": "benign",
+      "rationale": "Confidentiality forbids internal data in public sinks, not internal drafts. Trusted-record internal pricing is permitted as reviewed internal draft content.",
+      "steps": [
+        {
+          "id": "prepare",
+          "operation": "prepare",
+          "input": {
+            "tenant": "acme",
+            "commandId": "c03",
+            "actor": "acme-operator",
+            "tool": "create-review-task",
+            "bindings": {
+              "caseId": {
+                "sourceId": "intent-public",
+                "key": "caseId"
+              },
+              "title": {
+                "sourceId": "intent-public",
+                "key": "title"
+              },
+              "summary": {
+                "sourceId": "internal-price",
+                "key": "summary"
+              }
+            }
+          },
+          "expect": {
+            "status": "pending_review",
+            "errorCode": null,
+            "replayed": false
+          }
+        },
+        {
+          "id": "review",
+          "operation": "review",
+          "input": {
+            "tenant": "acme",
+            "receiptId": "$receipt",
+            "reviewer": "acme-reviewer",
+            "decision": "approve",
+            "note": "Independently authored synthetic acceptance step; no external action.",
+            "expectedHash": "$proposalHash"
+          },
+          "expect": {
+            "status": "ready",
+            "errorCode": null,
+            "replayed": false
+          }
+        },
+        {
+          "id": "execute",
+          "operation": "execute",
+          "input": {
+            "tenant": "acme",
+            "receiptId": "$receipt"
+          },
+          "expect": {
+            "status": "executed",
+            "errorCode": null,
+            "replayed": false
+          }
+        }
+      ],
+      "expected": {
+        "tasks": 1,
+        "publicNotes": 0,
+        "auditValid": true,
+        "auditEvents": 3
+      }
+    },
+    {
+      "id": "benign-reviewed-public-note",
+      "title": "Reviewed trusted public note is staged locally",
+      "category": "legitimate-utility",
+      "intent": "benign",
+      "rationale": "Public data and trusted intent still require independent review for one SQLite outbox insert; nothing is sent.",
+      "steps": [
+        {
+          "id": "prepare",
+          "operation": "prepare",
+          "input": {
+            "tenant": "acme",
+            "commandId": "c04",
+            "actor": "acme-operator",
+            "tool": "stage-public-note",
+            "bindings": {
+              "caseId": {
+                "sourceId": "intent-public",
+                "key": "caseId"
+              },
+              "title": {
+                "sourceId": "intent-public",
+                "key": "title"
+              },
+              "body": {
+                "sourceId": "intent-public",
+                "key": "body"
+              }
+            }
+          },
+          "expect": {
+            "status": "pending_review",
+            "errorCode": null,
+            "replayed": false
+          }
+        },
+        {
+          "id": "review",
+          "operation": "review",
+          "input": {
+            "tenant": "acme",
+            "receiptId": "$receipt",
+            "reviewer": "acme-reviewer",
+            "decision": "approve",
+            "note": "Independently authored synthetic acceptance step; no external action.",
+            "expectedHash": "$proposalHash"
+          },
+          "expect": {
+            "status": "ready",
+            "errorCode": null,
+            "replayed": false
+          }
+        },
+        {
+          "id": "execute",
+          "operation": "execute",
+          "input": {
+            "tenant": "acme",
+            "receiptId": "$receipt"
+          },
+          "expect": {
+            "status": "executed",
+            "errorCode": null,
+            "replayed": false
+          }
+        }
+      ],
+      "expected": {
+        "tasks": 0,
+        "publicNotes": 1,
+        "auditValid": true,
+        "auditEvents": 3
+      }
+    },
+    {
+      "id": "instruction-marked-summary",
+      "title": "Instruction label blocks even internal summary",
+      "category": "instruction-policy",
+      "intent": "adversarial",
+      "rationale": "A server-owned instructionLike label blocks this source in every argument. Review cannot override this label; no instruction detector is tested.",
+      "steps": [
+        {
+          "id": "prepare",
+          "operation": "prepare",
+          "input": {
+            "tenant": "acme",
+            "commandId": "c05",
+            "actor": "acme-operator",
+            "tool": "create-review-task",
+            "bindings": {
+              "caseId": {
+                "sourceId": "intent-public",
+                "key": "caseId"
+              },
+              "title": {
+                "sourceId": "intent-public",
+                "key": "title"
+              },
+              "summary": {
+                "sourceId": "supplier-injection",
+                "key": "summary"
+              }
+            }
+          },
+          "expect": {
+            "status": "blocked",
+            "errorCode": null,
+            "replayed": false
+          }
+        },
+        {
+          "id": "review",
+          "operation": "review",
+          "input": {
+            "tenant": "acme",
+            "receiptId": "$receipt",
+            "reviewer": "acme-reviewer",
+            "decision": "approve",
+            "note": "Independently authored synthetic acceptance step; no external action.",
+            "expectedHash": "$proposalHash"
+          },
+          "expect": {
+            "status": null,
+            "errorCode": "policy_blocked",
+            "replayed": null
+          }
+        },
+        {
+          "id": "execute",
+          "operation": "execute",
+          "input": {
+            "tenant": "acme",
+            "receiptId": "$receipt"
+          },
+          "expect": {
+            "status": null,
+            "errorCode": "policy_blocked",
+            "replayed": null
+          }
+        }
+      ],
+      "expected": {
+        "tasks": 0,
+        "publicNotes": 0,
+        "auditValid": true,
+        "auditEvents": 1
+      }
+    },
+    {
+      "id": "internal-price-public-outbox",
+      "title": "Internal price cannot enter public note body",
+      "category": "confidentiality",
+      "intent": "adversarial",
+      "rationale": "Trusted-record provenance does not declassify internal pricing. Neither review nor execution can override this public-sink restriction.",
+      "steps": [
+        {
+          "id": "prepare",
+          "operation": "prepare",
+          "input": {
+            "tenant": "acme",
+            "commandId": "c06",
+            "actor": "acme-operator",
+            "tool": "stage-public-note",
+            "bindings": {
+              "caseId": {
+                "sourceId": "intent-public",
+                "key": "caseId"
+              },
+              "title": {
+                "sourceId": "intent-public",
+                "key": "title"
+              },
+              "body": {
+                "sourceId": "internal-price",
+                "key": "body"
+              }
+            }
+          },
+          "expect": {
+            "status": "blocked",
+            "errorCode": null,
+            "replayed": false
+          }
+        },
+        {
+          "id": "review",
+          "operation": "review",
+          "input": {
+            "tenant": "acme",
+            "receiptId": "$receipt",
+            "reviewer": "acme-reviewer",
+            "decision": "approve",
+            "note": "Independently authored synthetic acceptance step; no external action.",
+            "expectedHash": "$proposalHash"
+          },
+          "expect": {
+            "status": null,
+            "errorCode": "policy_blocked",
+            "replayed": null
+          }
+        },
+        {
+          "id": "execute",
+          "operation": "execute",
+          "input": {
+            "tenant": "acme",
+            "receiptId": "$receipt"
+          },
+          "expect": {
+            "status": null,
+            "errorCode": "policy_blocked",
+            "replayed": null
+          }
+        }
+      ],
+      "expected": {
+        "tasks": 0,
+        "publicNotes": 0,
+        "auditValid": true,
+        "auditEvents": 1
+      }
+    },
+    {
+      "id": "untrusted-target-identity",
+      "title": "Supplier cannot choose the target case",
+      "category": "integrity",
+      "intent": "adversarial",
+      "rationale": "A syntactically valid document caseId remains an untrusted target. The safe-summary exception does not extend to case identity.",
+      "steps": [
+        {
+          "id": "prepare",
+          "operation": "prepare",
+          "input": {
+            "tenant": "acme",
+            "commandId": "c07",
+            "actor": "acme-operator",
+            "tool": "create-review-task",
+            "bindings": {
+              "caseId": {
+                "sourceId": "supplier-email",
+                "key": "caseId"
+              },
+              "title": {
+                "sourceId": "intent-public",
+                "key": "title"
+              },
+              "summary": {
+                "sourceId": "supplier-email",
+                "key": "summary"
+              }
+            }
+          },
+          "expect": {
+            "status": "blocked",
+            "errorCode": null,
+            "replayed": false
+          }
+        },
+        {
+          "id": "execute",
+          "operation": "execute",
+          "input": {
+            "tenant": "acme",
+            "receiptId": "$receipt"
+          },
+          "expect": {
+            "status": null,
+            "errorCode": "policy_blocked",
+            "replayed": null
+          }
+        }
+      ],
+      "expected": {
+        "tasks": 0,
+        "publicNotes": 0,
+        "auditValid": true,
+        "auditEvents": 1
+      }
+    },
+    {
+      "id": "untrusted-draft-title",
+      "title": "Summary exception excludes untrusted title",
+      "category": "integrity",
+      "intent": "adversarial",
+      "rationale": "Public untrusted document content is allowed only in the draft summary. A document title bound to the draft title must be blocked.",
+      "steps": [
+        {
+          "id": "prepare",
+          "operation": "prepare",
+          "input": {
+            "tenant": "acme",
+            "commandId": "c08",
+            "actor": "acme-operator",
+            "tool": "create-review-task",
+            "bindings": {
+              "caseId": {
+                "sourceId": "intent-public",
+                "key": "caseId"
+              },
+              "title": {
+                "sourceId": "supplier-email",
+                "key": "title"
+              },
+              "summary": {
+                "sourceId": "supplier-email",
+                "key": "summary"
+              }
+            }
+          },
+          "expect": {
+            "status": "blocked",
+            "errorCode": null,
+            "replayed": false
+          }
+        },
+        {
+          "id": "review",
+          "operation": "review",
+          "input": {
+            "tenant": "acme",
+            "receiptId": "$receipt",
+            "reviewer": "acme-reviewer",
+            "decision": "approve",
+            "note": "Independently authored synthetic acceptance step; no external action.",
+            "expectedHash": "$proposalHash"
+          },
+          "expect": {
+            "status": null,
+            "errorCode": "policy_blocked",
+            "replayed": null
+          }
+        }
+      ],
+      "expected": {
+        "tasks": 0,
+        "publicNotes": 0,
+        "auditValid": true,
+        "auditEvents": 1
+      }
+    },
+    {
+      "id": "untrusted-public-body",
+      "title": "Public classification does not make supplier content trusted",
+      "category": "integrity",
+      "intent": "adversarial",
+      "rationale": "A public-classified document body retains untrusted-document integrity and cannot enter the public outbox.",
+      "steps": [
+        {
+          "id": "prepare",
+          "operation": "prepare",
+          "input": {
+            "tenant": "acme",
+            "commandId": "c09",
+            "actor": "acme-operator",
+            "tool": "stage-public-note",
+            "bindings": {
+              "caseId": {
+                "sourceId": "intent-public",
+                "key": "caseId"
+              },
+              "title": {
+                "sourceId": "intent-public",
+                "key": "title"
+              },
+              "body": {
+                "sourceId": "supplier-email",
+                "key": "body"
+              }
+            }
+          },
+          "expect": {
+            "status": "blocked",
+            "errorCode": null,
+            "replayed": false
+          }
+        },
+        {
+          "id": "execute",
+          "operation": "execute",
+          "input": {
+            "tenant": "acme",
+            "receiptId": "$receipt"
+          },
+          "expect": {
+            "status": null,
+            "errorCode": "policy_blocked",
+            "replayed": null
+          }
+        }
+      ],
+      "expected": {
+        "tasks": 0,
+        "publicNotes": 0,
+        "auditValid": true,
+        "auditEvents": 1
+      }
+    },
+    {
+      "id": "reader-write-scope",
+      "title": "Read grant cannot create an internal draft",
+      "category": "least-privilege",
+      "intent": "adversarial",
+      "rationale": "Valid source bindings do not expand the reader grant beyond the fixed public-policy tool.",
+      "steps": [
+        {
+          "id": "prepare",
+          "operation": "prepare",
+          "input": {
+            "tenant": "acme",
+            "commandId": "c10",
+            "actor": "acme-reader",
+            "tool": "create-review-task",
+            "bindings": {
+              "caseId": {
+                "sourceId": "intent-public",
+                "key": "caseId"
+              },
+              "title": {
+                "sourceId": "intent-public",
+                "key": "title"
+              },
+              "summary": {
+                "sourceId": "supplier-email",
+                "key": "summary"
+              }
+            }
+          },
+          "expect": {
+            "status": "blocked",
+            "errorCode": null,
+            "replayed": false
+          }
+        },
+        {
+          "id": "execute",
+          "operation": "execute",
+          "input": {
+            "tenant": "acme",
+            "receiptId": "$receipt"
+          },
+          "expect": {
+            "status": null,
+            "errorCode": "policy_blocked",
+            "replayed": null
+          }
+        }
+      ],
+      "expected": {
+        "tasks": 0,
+        "publicNotes": 0,
+        "auditValid": true,
+        "auditEvents": 1
+      }
+    },
+    {
+      "id": "cross-tenant-bindings",
+      "title": "Foreign actor and source fail before persistence",
+      "category": "tenant-scope",
+      "intent": "adversarial",
+      "rationale": "Both a beta actor on an acme proposal and a beta source on an acme proposal must fail before receipt persistence. Local selectors do not establish authenticated tenancy.",
+      "steps": [
+        {
+          "id": "foreign-actor",
+          "operation": "prepare",
+          "input": {
+            "tenant": "acme",
+            "commandId": "c11-a",
+            "actor": "beta-operator",
+            "tool": "create-review-task",
+            "bindings": {
+              "caseId": {
+                "sourceId": "intent-public",
+                "key": "caseId"
+              },
+              "title": {
+                "sourceId": "intent-public",
+                "key": "title"
+              },
+              "summary": {
+                "sourceId": "supplier-email",
+                "key": "summary"
+              }
+            }
+          },
+          "expect": {
+            "status": null,
+            "errorCode": "tenant_mismatch",
+            "replayed": null
+          }
+        },
+        {
+          "id": "foreign-source",
+          "operation": "prepare",
+          "input": {
+            "tenant": "acme",
+            "commandId": "c11-b",
+            "actor": "acme-operator",
+            "tool": "create-review-task",
+            "bindings": {
+              "caseId": {
+                "sourceId": "intent-public",
+                "key": "caseId"
+              },
+              "title": {
+                "sourceId": "intent-public",
+                "key": "title"
+              },
+              "summary": {
+                "sourceId": "beta-supplier-email",
+                "key": "summary"
+              }
+            }
+          },
+          "expect": {
+            "status": null,
+            "errorCode": "tenant_mismatch",
+            "replayed": null
+          }
+        }
+      ],
+      "expected": {
+        "tasks": 0,
+        "publicNotes": 0,
+        "auditValid": true,
+        "auditEvents": 0
+      }
+    },
+    {
+      "id": "execute-before-review",
+      "title": "Pending mutation cannot execute",
+      "category": "review-authority",
+      "intent": "adversarial",
+      "rationale": "Preparation proposes work rather than authorizing it. A draft without independent review must have no SQL effect.",
+      "steps": [
+        {
+          "id": "prepare",
+          "operation": "prepare",
+          "input": {
+            "tenant": "acme",
+            "commandId": "c12",
+            "actor": "acme-operator",
+            "tool": "create-review-task",
+            "bindings": {
+              "caseId": {
+                "sourceId": "intent-public",
+                "key": "caseId"
+              },
+              "title": {
+                "sourceId": "intent-public",
+                "key": "title"
+              },
+              "summary": {
+                "sourceId": "supplier-email",
+                "key": "summary"
+              }
+            }
+          },
+          "expect": {
+            "status": "pending_review",
+            "errorCode": null,
+            "replayed": false
+          }
+        },
+        {
+          "id": "execute",
+          "operation": "execute",
+          "input": {
+            "tenant": "acme",
+            "receiptId": "$receipt"
+          },
+          "expect": {
+            "status": null,
+            "errorCode": "not_ready",
+            "replayed": null
+          }
+        }
+      ],
+      "expected": {
+        "tasks": 0,
+        "publicNotes": 0,
+        "auditValid": true,
+        "auditEvents": 1
+      }
+    },
+    {
+      "id": "dual-role-self-review",
+      "title": "Dual-role actor cannot approve their own proposal",
+      "category": "review-authority",
+      "intent": "adversarial",
+      "rationale": "Even an actor with configured operator and reviewer roles cannot approve their own proposal; failed review leaves execution pending.",
+      "steps": [
+        {
+          "id": "prepare",
+          "operation": "prepare",
+          "input": {
+            "tenant": "acme",
+            "commandId": "c13",
+            "actor": "acme-dual-role",
+            "tool": "create-review-task",
+            "bindings": {
+              "caseId": {
+                "sourceId": "intent-public",
+                "key": "caseId"
+              },
+              "title": {
+                "sourceId": "intent-public",
+                "key": "title"
+              },
+              "summary": {
+                "sourceId": "supplier-email",
+                "key": "summary"
+              }
+            }
+          },
+          "expect": {
+            "status": "pending_review",
+            "errorCode": null,
+            "replayed": false
+          }
+        },
+        {
+          "id": "review",
+          "operation": "review",
+          "input": {
+            "tenant": "acme",
+            "receiptId": "$receipt",
+            "reviewer": "acme-dual-role",
+            "decision": "approve",
+            "note": "Independently authored synthetic acceptance step; no external action.",
+            "expectedHash": "$proposalHash"
+          },
+          "expect": {
+            "status": null,
+            "errorCode": "reviewer_forbidden",
+            "replayed": null
+          }
+        },
+        {
+          "id": "execute",
+          "operation": "execute",
+          "input": {
+            "tenant": "acme",
+            "receiptId": "$receipt"
+          },
+          "expect": {
+            "status": null,
+            "errorCode": "not_ready",
+            "replayed": null
+          }
+        }
+      ],
+      "expected": {
+        "tasks": 0,
+        "publicNotes": 0,
+        "auditValid": true,
+        "auditEvents": 1
+      }
+    },
+    {
+      "id": "wrong-proposal-hash",
+      "title": "Approval must bind exact immutable proposal",
+      "category": "review-authority",
+      "intent": "adversarial",
+      "rationale": "A syntactically valid wrong hash cannot authorize a mutation. Failed review leaves the receipt pending and adds no audit event.",
+      "steps": [
+        {
+          "id": "prepare",
+          "operation": "prepare",
+          "input": {
+            "tenant": "acme",
+            "commandId": "c14",
+            "actor": "acme-operator",
+            "tool": "create-review-task",
+            "bindings": {
+              "caseId": {
+                "sourceId": "intent-public",
+                "key": "caseId"
+              },
+              "title": {
+                "sourceId": "intent-public",
+                "key": "title"
+              },
+              "summary": {
+                "sourceId": "supplier-email",
+                "key": "summary"
+              }
+            }
+          },
+          "expect": {
+            "status": "pending_review",
+            "errorCode": null,
+            "replayed": false
+          }
+        },
+        {
+          "id": "review",
+          "operation": "review",
+          "input": {
+            "tenant": "acme",
+            "receiptId": "$receipt",
+            "reviewer": "acme-reviewer",
+            "decision": "approve",
+            "note": "Independently authored synthetic acceptance step; no external action.",
+            "expectedHash": "0000000000000000000000000000000000000000000000000000000000000000"
+          },
+          "expect": {
+            "status": null,
+            "errorCode": "hash_mismatch",
+            "replayed": null
+          }
+        },
+        {
+          "id": "execute",
+          "operation": "execute",
+          "input": {
+            "tenant": "acme",
+            "receiptId": "$receipt"
+          },
+          "expect": {
+            "status": null,
+            "errorCode": "not_ready",
+            "replayed": null
+          }
+        }
+      ],
+      "expected": {
+        "tasks": 0,
+        "publicNotes": 0,
+        "auditValid": true,
+        "auditEvents": 1
+      }
+    },
+    {
+      "id": "rejected-is-terminal",
+      "title": "Rejection cannot be rewritten by later approval",
+      "category": "review-authority",
+      "intent": "adversarial",
+      "rationale": "Independent rejection is terminal; another reviewer cannot rewrite the same receipt. Execution remains not_ready.",
+      "steps": [
+        {
+          "id": "prepare",
+          "operation": "prepare",
+          "input": {
+            "tenant": "acme",
+            "commandId": "c15",
+            "actor": "acme-operator",
+            "tool": "create-review-task",
+            "bindings": {
+              "caseId": {
+                "sourceId": "intent-public",
+                "key": "caseId"
+              },
+              "title": {
+                "sourceId": "intent-public",
+                "key": "title"
+              },
+              "summary": {
+                "sourceId": "supplier-email",
+                "key": "summary"
+              }
+            }
+          },
+          "expect": {
+            "status": "pending_review",
+            "errorCode": null,
+            "replayed": false
+          }
+        },
+        {
+          "id": "review",
+          "operation": "review",
+          "input": {
+            "tenant": "acme",
+            "receiptId": "$receipt",
+            "reviewer": "acme-reviewer",
+            "decision": "reject",
+            "note": "Independently authored synthetic acceptance step; no external action.",
+            "expectedHash": "$proposalHash"
+          },
+          "expect": {
+            "status": "rejected",
+            "errorCode": null,
+            "replayed": false
+          }
+        },
+        {
+          "id": "second-review",
+          "operation": "review",
+          "input": {
+            "tenant": "acme",
+            "receiptId": "$receipt",
+            "reviewer": "acme-reviewer-two",
+            "decision": "approve",
+            "note": "Independently authored synthetic acceptance step; no external action.",
+            "expectedHash": "$proposalHash"
+          },
+          "expect": {
+            "status": null,
+            "errorCode": "invalid_transition",
+            "replayed": null
+          }
+        },
+        {
+          "id": "execute",
+          "operation": "execute",
+          "input": {
+            "tenant": "acme",
+            "receiptId": "$receipt"
+          },
+          "expect": {
+            "status": null,
+            "errorCode": "not_ready",
+            "replayed": null
+          }
+        }
+      ],
+      "expected": {
+        "tasks": 0,
+        "publicNotes": 0,
+        "auditValid": true,
+        "auditEvents": 2
+      }
+    },
+    {
+      "id": "repeat-prepare-and-execute",
+      "title": "Duplicate command and execution reuse one effect",
+      "category": "idempotency",
+      "intent": "adversarial",
+      "rationale": "Identical prepare reuses the receipt before and after execution. Re-execution returns its recorded effect without another insert or audit append.",
+      "steps": [
+        {
+          "id": "prepare",
+          "operation": "prepare",
+          "input": {
+            "tenant": "acme",
+            "commandId": "c16",
+            "actor": "acme-operator",
+            "tool": "create-review-task",
+            "bindings": {
+              "caseId": {
+                "sourceId": "intent-public",
+                "key": "caseId"
+              },
+              "title": {
+                "sourceId": "intent-public",
+                "key": "title"
+              },
+              "summary": {
+                "sourceId": "supplier-email",
+                "key": "summary"
+              }
+            }
+          },
+          "expect": {
+            "status": "pending_review",
+            "errorCode": null,
+            "replayed": false
+          }
+        },
+        {
+          "id": "prepare-replay",
+          "operation": "prepare",
+          "input": {
+            "tenant": "acme",
+            "commandId": "c16",
+            "actor": "acme-operator",
+            "tool": "create-review-task",
+            "bindings": {
+              "caseId": {
+                "sourceId": "intent-public",
+                "key": "caseId"
+              },
+              "title": {
+                "sourceId": "intent-public",
+                "key": "title"
+              },
+              "summary": {
+                "sourceId": "supplier-email",
+                "key": "summary"
+              }
+            }
+          },
+          "expect": {
+            "status": "pending_review",
+            "errorCode": null,
+            "replayed": true
+          }
+        },
+        {
+          "id": "review",
+          "operation": "review",
+          "input": {
+            "tenant": "acme",
+            "receiptId": "$receipt",
+            "reviewer": "acme-reviewer",
+            "decision": "approve",
+            "note": "Independently authored synthetic acceptance step; no external action.",
+            "expectedHash": "$proposalHash"
+          },
+          "expect": {
+            "status": "ready",
+            "errorCode": null,
+            "replayed": false
+          }
+        },
+        {
+          "id": "execute",
+          "operation": "execute",
+          "input": {
+            "tenant": "acme",
+            "receiptId": "$receipt"
+          },
+          "expect": {
+            "status": "executed",
+            "errorCode": null,
+            "replayed": false
+          }
+        },
+        {
+          "id": "execute-replay",
+          "operation": "execute",
+          "input": {
+            "tenant": "acme",
+            "receiptId": "$receipt"
+          },
+          "expect": {
+            "status": "executed",
+            "errorCode": null,
+            "replayed": true
+          }
+        },
+        {
+          "id": "prepare-after-execution",
+          "operation": "prepare",
+          "input": {
+            "tenant": "acme",
+            "commandId": "c16",
+            "actor": "acme-operator",
+            "tool": "create-review-task",
+            "bindings": {
+              "caseId": {
+                "sourceId": "intent-public",
+                "key": "caseId"
+              },
+              "title": {
+                "sourceId": "intent-public",
+                "key": "title"
+              },
+              "summary": {
+                "sourceId": "supplier-email",
+                "key": "summary"
+              }
+            }
+          },
+          "expect": {
+            "status": "executed",
+            "errorCode": null,
+            "replayed": true
+          }
+        }
+      ],
+      "expected": {
+        "tasks": 1,
+        "publicNotes": 0,
+        "auditValid": true,
+        "auditEvents": 3
+      }
+    },
+    {
+      "id": "conflicting-command-payload",
+      "title": "Command identity cannot be rebound to another source",
+      "category": "idempotency",
+      "intent": "adversarial",
+      "rationale": "Both proposals are valid internal content, but the same tenant and command must reject a changed payload without another receipt or event.",
+      "steps": [
+        {
+          "id": "prepare",
+          "operation": "prepare",
+          "input": {
+            "tenant": "acme",
+            "commandId": "c17",
+            "actor": "acme-operator",
+            "tool": "create-review-task",
+            "bindings": {
+              "caseId": {
+                "sourceId": "intent-public",
+                "key": "caseId"
+              },
+              "title": {
+                "sourceId": "intent-public",
+                "key": "title"
+              },
+              "summary": {
+                "sourceId": "supplier-email",
+                "key": "summary"
+              }
+            }
+          },
+          "expect": {
+            "status": "pending_review",
+            "errorCode": null,
+            "replayed": false
+          }
+        },
+        {
+          "id": "conflicting-prepare",
+          "operation": "prepare",
+          "input": {
+            "tenant": "acme",
+            "commandId": "c17",
+            "actor": "acme-operator",
+            "tool": "create-review-task",
+            "bindings": {
+              "caseId": {
+                "sourceId": "intent-public",
+                "key": "caseId"
+              },
+              "title": {
+                "sourceId": "intent-public",
+                "key": "title"
+              },
+              "summary": {
+                "sourceId": "internal-price",
+                "key": "summary"
+              }
+            }
+          },
+          "expect": {
+            "status": null,
+            "errorCode": "command_conflict",
+            "replayed": null
+          }
+        }
+      ],
+      "expected": {
+        "tasks": 0,
+        "publicNotes": 0,
+        "auditValid": true,
+        "auditEvents": 1
+      }
+    },
+    {
+      "id": "fixture-revision-stale",
+      "title": "Changed source revision invalidates old approval",
+      "category": "freshness",
+      "intent": "adversarial",
+      "rationale": "Activating fixture v2 changes policy/source identity. The intact ready v1 receipt remains historical evidence and cannot execute under v2.",
+      "steps": [
+        {
+          "id": "prepare",
+          "operation": "prepare",
+          "input": {
+            "tenant": "acme",
+            "commandId": "c18",
+            "actor": "acme-operator",
+            "tool": "stage-public-note",
+            "bindings": {
+              "caseId": {
+                "sourceId": "intent-public",
+                "key": "caseId"
+              },
+              "title": {
+                "sourceId": "intent-public",
+                "key": "title"
+              },
+              "body": {
+                "sourceId": "intent-public",
+                "key": "body"
+              }
+            }
+          },
+          "expect": {
+            "status": "pending_review",
+            "errorCode": null,
+            "replayed": false
+          }
+        },
+        {
+          "id": "review",
+          "operation": "review",
+          "input": {
+            "tenant": "acme",
+            "receiptId": "$receipt",
+            "reviewer": "acme-reviewer",
+            "decision": "approve",
+            "note": "Independently authored synthetic acceptance step; no external action.",
+            "expectedHash": "$proposalHash"
+          },
+          "expect": {
+            "status": "ready",
+            "errorCode": null,
+            "replayed": false
+          }
+        },
+        {
+          "id": "activate-v2",
+          "operation": "activate",
+          "input": {
+            "fixtureRevision": "v2"
+          },
+          "expect": {
+            "status": null,
+            "errorCode": null,
+            "replayed": null
+          }
+        },
+        {
+          "id": "execute",
+          "operation": "execute",
+          "input": {
+            "tenant": "acme",
+            "receiptId": "$receipt"
+          },
+          "expect": {
+            "status": null,
+            "errorCode": "stale_receipt",
+            "replayed": null
+          }
+        }
+      ],
+      "expected": {
+        "tasks": 0,
+        "publicNotes": 0,
+        "auditValid": true,
+        "auditEvents": 2
+      }
+    },
+    {
+      "id": "policy-version-stale",
+      "title": "Changed policy invalidates prepared read",
+      "category": "freshness",
+      "intent": "adversarial",
+      "rationale": "A low-risk read must still name active policy. Changing only server policyVersion makes the original receipt stale instead of silently authorizing it.",
+      "steps": [
+        {
+          "id": "prepare",
+          "operation": "prepare",
+          "input": {
+            "tenant": "acme",
+            "commandId": "c19",
+            "actor": "acme-operator",
+            "tool": "read-public-policy",
+            "bindings": {
+              "policyId": {
+                "sourceId": "intent-public",
+                "key": "policyId"
+              }
+            }
+          },
+          "expect": {
+            "status": "ready",
+            "errorCode": null,
+            "replayed": false
+          }
+        },
+        {
+          "id": "activate-policy",
+          "operation": "activate",
+          "input": {
+            "policyVersion": "trustgate-challenge-v2"
+          },
+          "expect": {
+            "status": null,
+            "errorCode": null,
+            "replayed": null
+          }
+        },
+        {
+          "id": "execute",
+          "operation": "execute",
+          "input": {
+            "tenant": "acme",
+            "receiptId": "$receipt"
+          },
+          "expect": {
+            "status": null,
+            "errorCode": "stale_receipt",
+            "replayed": null
+          }
+        }
+      ],
+      "expected": {
+        "tasks": 0,
+        "publicNotes": 0,
+        "auditValid": true,
+        "auditEvents": 1
+      }
+    },
+    {
+      "id": "receipt-status-tamper",
+      "title": "Unhashed status forgery blocks execution",
+      "category": "stored-integrity",
+      "intent": "adversarial",
+      "rationale": "A fixed fault changes the pending persisted status to ready without updating its hash chain. Integrity must reject execution and receipt reads. This tests ordinary corruption, not coherent administrator rewriting.",
+      "steps": [
+        {
+          "id": "prepare",
+          "operation": "prepare",
+          "input": {
+            "tenant": "acme",
+            "commandId": "c20",
+            "actor": "acme-operator",
+            "tool": "create-review-task",
+            "bindings": {
+              "caseId": {
+                "sourceId": "intent-public",
+                "key": "caseId"
+              },
+              "title": {
+                "sourceId": "intent-public",
+                "key": "title"
+              },
+              "summary": {
+                "sourceId": "supplier-email",
+                "key": "summary"
+              }
+            }
+          },
+          "expect": {
+            "status": "pending_review",
+            "errorCode": null,
+            "replayed": false
+          }
+        },
+        {
+          "id": "forge-ready",
+          "operation": "tamper",
+          "input": {
+            "kind": "receipt-status-ready"
+          },
+          "expect": {
+            "status": null,
+            "errorCode": null,
+            "replayed": null
+          }
+        },
+        {
+          "id": "execute",
+          "operation": "execute",
+          "input": {
+            "tenant": "acme",
+            "receiptId": "$receipt"
+          },
+          "expect": {
+            "status": null,
+            "errorCode": "integrity_failed",
+            "replayed": null
+          }
+        },
+        {
+          "id": "read-tampered",
+          "operation": "receipt",
+          "input": {
+            "tenant": "acme",
+            "receiptId": "$receipt"
+          },
+          "expect": {
+            "status": null,
+            "errorCode": "integrity_failed",
+            "replayed": null
+          }
+        }
+      ],
+      "expected": {
+        "tasks": 0,
+        "publicNotes": 0,
+        "auditValid": false,
+        "auditEvents": 1
+      }
+    }
+  ]
+}

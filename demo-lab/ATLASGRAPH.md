@@ -16,6 +16,12 @@ node --input-type=module -e "import {readFileSync} from 'node:fs'; import {openA
 
 Use `openAtlasGraph('path/to/graph.sqlite')` for persistence, or `atlasGraph(existingDatabaseSync)` when a host owns the SQLite connection. The latter does not close the supplied database. The server/UI integration supplies a fixed database path; request bodies never choose database paths.
 
+## Startup connection ownership
+
+`openAtlasGraph(path)` owns the SQLite connection it creates. If configuration or schema initialization fails after opening it, the helper closes that connection before rethrowing the original startup error. A malformed database remains unchanged; startup does not delete or repair the source file. This cleanup does not promise rollback of every earlier schema statement.
+
+`atlasGraph(existingDatabaseSync)` uses a caller-owned connection. Its caller retains responsibility for closing or recovering that connection, including when initialization fails. The native startup regression tests in `sqlite-startup.test.mjs` check failed and successful owned lifecycles separately from caller-owned behavior.
+
 ## Input and tools
 
 `atlasgraph-example.json` contains `{compile, answer}` payloads. Compilation replaces the tenant's current **whole snapshot**; it is not an incremental patch. Omitted sources leave the current graph while immutable historical versions remain stored. Recompiling an older snapshot deliberately restores that older current state; there is no monotonic version ordering rule.

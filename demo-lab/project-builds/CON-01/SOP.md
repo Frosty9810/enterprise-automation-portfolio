@@ -6,6 +6,12 @@ Version: 1.1 · Owner: portfolio maintainer
 **Video Walkthrough:** _Pending recording — see script in this SOP's project folder._
 **Real Build Artifacts:** [Runbook and build files →](build/README.md)
 
+## Added procedure: full local cost reversal
+
+For a current-source committed order, inspect its original entry and propose a full reversal using a closed reason and note. Separate manager and finance labels review the reversal fingerprint; both must differ from the reversal requester and original order requester. Post only the current reviewed revision. The controller appends one linked negative entry and atomically credits the exact original amount; the original posting remains immutable and repeated commands cannot credit twice.
+
+A revoked or expired document does not prevent undoing a historical local cost. It still holds new work, and the reversal neither clears readiness nor cancels a real contract or payment. Recover current history after a lost response instead of changing the command intent. See [reproduction, rollback and replay checks](../../CONSTRUCTION-REVERSAL.md). Partial credits, changes to the original schedule and provider accounting acceptance remain open.
+
 ## Added procedure: durable compliance and local commitments
 
 Use the [construction runbook](../../CONSTRUCTION.md) for `/construction?project=CON-01`. Inspect supplied synthetic document contents and source metadata; intake does not parse a PDF or verify its issuer. Record independent compliance review against the exact document hash. Missing, unverified, revoked or expired required documents hold readiness. The app evaluates expiry at its labeled fixed scenario clock, not a background monitoring service.

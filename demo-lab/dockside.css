@@ -2,3 +2,5 @@
 p,code{overflow-wrap:anywhere}
 
 .review{padding:20px;border:1px solid #b6cbd4;background:#f0f5f7;border-radius:7px;margin-top:22px}.check{display:flex;gap:12px;align-items:start;line-height:1.6}.check input{width:auto;margin-top:6px}blockquote{margin:12px 0;padding:14px 17px;border-left:3px solid #92abb6;background:#eef3f5;white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.7}
+
+#dockTextPreviewResult{margin-top:20px;border-top:1px solid var(--line);padding-top:14px}#dockTextIdentity{overflow-wrap:anywhere}#dockTextGrammar pre{max-height:360px}.text-facts{display:grid;grid-template-columns:minmax(90px,140px) minmax(0,1fr);gap:7px 15px}.text-facts dt{color:var(--muted);font-size:13px}.text-facts dd{margin:0;overflow-wrap:anywhere}#dockTextPreviewResult table{min-width:500px}.text-status{font-weight:650;color:var(--ink)}@media(max-width:600px){.text-facts{grid-template-columns:1fr;gap:2px}.text-facts dd{margin-bottom:8px}}

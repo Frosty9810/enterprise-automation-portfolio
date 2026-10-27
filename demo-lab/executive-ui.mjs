@@ -1,6 +1,31 @@
+const calendarClone=value=>JSON.parse(JSON.stringify(value));
+const calendarCanonical=value=>Array.isArray(value)?value.map(calendarCanonical):value&&typeof value==='object'?Object.fromEntries(Object.keys(value).sort().map(key=>[key,calendarCanonical(value[key])])):value;
+const calendarSame=(a,b)=>JSON.stringify(calendarCanonical(a))===JSON.stringify(calendarCanonical(b));
+const calendarFail=message=>{throw Error(message);};
+const calendarHash=value=>typeof value==='string'&&/^[a-f0-9]{64}$/u.test(value);
+const calendarInteger=value=>Number.isSafeInteger(value)&&value>=1&&value<=2147483647;
+const calendarText=value=>typeof value==='string'&&value.length>0&&value.length<=20000&&value.isWellFormed();
+const calendarBytes=value=>new TextEncoder().encode(value).length;
+function calendarInstant(value){if(typeof value!=='string'||!/^20\d{2}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.000Z$/u.test(value)||!Number.isFinite(Date.parse(value))||new Date(value).toISOString()!==value)calendarFail('Calendar snapshot requires exact supplied whole-second UTC instants');return value.replace(/[-:]/gu,'').replace('.000','');}
+const calendarEscape=value=>String(value).replace(/\\/gu,'\\\\').replace(/\r\n|\r|\n/gu,'\\n').replace(/,/gu,'\\,').replace(/;/gu,'\\;');
+async function calendarUidHash(tenant,caseId){const bytes=new TextEncoder().encode(JSON.stringify([tenant,caseId])),hash=await globalThis.crypto.subtle.digest('SHA-256',bytes);return Array.from(new Uint8Array(hash),byte=>byte.toString(16).padStart(2,'0')).join('');}
+export function executiveCalendarEligible(row){return Boolean(row&&!row.stale&&row.status==='active'&&row.readiness?.ready&&row.review?.decision==='approve'&&row.review.expectedHash===row.reviewHash&&calendarHash(row.reviewHash)&&row.task?.status==='active'&&row.task.effectiveStatus==='active'&&row.task.reviewHash===row.reviewHash&&row.task.tenant===row.tenant&&row.task.caseId===row.caseId&&row.task.sourceFixtureId===row.sourceFixtureId&&row.task.sourceVersion===row.source?.version&&row.task.recipient===row.recipient&&row.task.actionText===row.commitment?.actionText&&row.task.start===row.commitment?.start&&row.task.end===row.commitment?.end&&row.task.owner===row.commitment?.owner&&calendarInteger(row.task.sourceVersion)&&calendarText(row.task.actionText)&&calendarInteger(row.task.generation)&&calendarInteger(row.revision));}
+export async function validateExecutiveCalendarResponse(value,row){
+ if(!executiveCalendarEligible(row))calendarFail('Calendar download requires a current active reviewed local task');
+ if(!value||typeof value!=='object'||Array.isArray(value))calendarFail('Invalid calendar snapshot response');
+ const fields=['kind','tenant','caseId','revision','reviewHash','taskGeneration','uid','sequence','filename','mediaType','content','audit','asOf','scope'];if(!calendarSame(Object.keys(value).sort(),[...fields].sort()))calendarFail('Calendar response fields differ from its closed contract');
+ if(value.kind!=='synthetic-executive-calendar-snapshot'||value.tenant!==row.tenant||value.caseId!==row.caseId||value.revision!==row.revision||value.reviewHash!==row.reviewHash||value.taskGeneration!==row.task.generation)calendarFail('Calendar snapshot differs from selected case revision, review or task generation');
+ const uidHash=await calendarUidHash(row.tenant,row.caseId),uid='ea-'+uidHash+'@portfolio.invalid';if(value.uid!==uid||value.sequence!==row.revision||value.filename!==`executive-${uidHash.slice(0,24)}-r${row.revision}.ics`||value.mediaType!=='text/calendar;charset=utf-8')calendarFail('Calendar identity, sequence or download metadata differs from selected task');
+ if(!value.audit||value.audit.valid!==true||!Number.isSafeInteger(value.audit.eventCount)||value.audit.eventCount<0||!calendarHash(value.audit.headHash)||!calendarText(value.scope))calendarFail('Calendar audit evidence is malformed');calendarInstant(value.asOf);
+ if(!calendarText(value.content)||!value.content.endsWith('\r\n'))calendarFail('Calendar content must end in CRLF');const physical=value.content.slice(0,-2).split('\r\n'),logical=[];for(const line of physical){if(!line.length||/[\r\n\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f]/u.test(line)||calendarBytes(line)>75)calendarFail('Calendar physical lines violate the bounded UTF-8/CRLF contract');if(line.startsWith(' ')){if(!logical.length||line.length===1)calendarFail('Calendar continuation has no preceding content');logical[logical.length-1]+=line.slice(1);}else logical.push(line);}
+ const task=row.task,expected=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Frosty9810//Synthetic Executive Calendar Snapshot v1//EN','CALSCALE:GREGORIAN','BEGIN:VEVENT','UID:'+uid,'SEQUENCE:'+row.revision,'DTSTAMP:'+calendarInstant(task.recordedAt),'DTSTART:'+calendarInstant(task.start),'DTEND:'+calendarInstant(task.end),'SUMMARY:'+calendarEscape('SYNTHETIC - '+task.actionText),'DESCRIPTION:'+calendarEscape('Synthetic local task snapshot only. Not an invitation or provider booking. Downloaded files cannot be recalled.'),'STATUS:TENTATIVE','TRANSP:TRANSPARENT','X-EXECUTIVE-TENANT:'+calendarEscape(row.tenant),'X-EXECUTIVE-CASE-ID:'+calendarEscape(row.caseId),'X-EXECUTIVE-SOURCE-ID:'+calendarEscape(task.sourceFixtureId),'X-EXECUTIVE-SOURCE-VERSION:'+task.sourceVersion,'X-EXECUTIVE-REVIEW-HASH:'+row.reviewHash,'X-EXECUTIVE-TASK-GENERATION:'+task.generation,'END:VEVENT','END:VCALENDAR'];if(!calendarSame(logical,expected))calendarFail('Calendar properties differ from the exact reviewed synthetic task; invitations and alarms are not allowed');return calendarClone(value);
+}
 export async function mountExecutive(document, api, download = value => {
   const url = URL.createObjectURL(new Blob([JSON.stringify(value, null, 2)], {type:'application/json'}));
   const a = document.createElement('a'); a.href = url; a.download = 'executive-local-evidence.json'; a.click(); URL.revokeObjectURL(url);
+}, downloadCalendar = value => {
+  const url = URL.createObjectURL(new Blob([value.content], {type:value.mediaType}));
+  const a = document.createElement('a'); a.href = url; a.download = value.filename; a.click(); URL.revokeObjectURL(url);
 }) {
   const $ = id => document.getElementById(id), clone = value => JSON.parse(JSON.stringify(value));
   const node = (tag, text, cls) => {const value=document.createElement(tag);value.textContent=String(text??'');if(cls)value.className=cls;return value;};
@@ -14,7 +39,7 @@ export async function mountExecutive(document, api, download = value => {
   const draft=()=>({sourceFixtureId:$('exSource').value,commitmentId:$('exCommitment').value,recipient:$('exRecipient').value});
   const dirty=()=>current&&Object.entries(draft()).some(([key,value])=>value!==current[key]);
   const common=()=>({...identity(),caseId:current.caseId,expectedRevision:current.revision});
-  const ids=['exRevise','exApprove','exReject','exRecord','exGrant','exRevoke','exExport'];
+  const ids=['exRevise','exApprove','exReject','exRecord','exGrant','exRevoke','exExport','exCalendar'];
   function controls(){
     $('exIngest').disabled=!catalog||busy||!role('operators');
     for(const id of ['exRefresh','exVerify'])$(id).disabled=!catalog||busy;
@@ -25,6 +50,7 @@ export async function mountExecutive(document, api, download = value => {
     $('exExport').disabled=false;
     $('exDraft').textContent=dirty()?'Unsaved proposal choices differ from this saved receipt. Save the revision or recover the saved choices before reviewing or recording.':'The editor matches the selected saved proposal. Review uses the displayed exact fingerprint.';
     if(current.stale)return;
+    $('exCalendar').disabled=dirty()||!executiveCalendarEligible(current);
     $('exRevise').disabled=!role('operators')||!dirty();
     const independent=role('reviewers')&&![current.intakeActor,current.editedBy,current.aclUpdatedBy].includes(identity().actor);
     $('exApprove').disabled=dirty()||!current.readiness.ready||!independent||!$('exAck').checked;
@@ -74,7 +100,7 @@ export async function mountExecutive(document, api, download = value => {
   }
   async function run(work){
     if(busy)return;const token=generation;busy=true;controls();notice('Checking the saved local state...');
-    try{await work(token);if(token===generation)notice('Local operation finished. Inspect the current source, review and actual effects.');}
+    try{const result=await work(token);if(token===generation)notice(typeof result==='string'?result:'Local operation finished. Inspect the current source, review and actual effects.');}
     catch(error){if(token===generation){clearProtected('Current authority could not be established. Recover an accessible saved case before acting.');notice(`Local operation could not establish current state: ${error.message}. Refresh accessible records; an unchanged intake can retry its original command after a lost response.`);}}
     finally{if(token===generation){busy=false;controls();for(const b of $('exHistory').querySelectorAll('button'))b.disabled=false;}}
   }
@@ -99,6 +125,17 @@ export async function mountExecutive(document, api, download = value => {
     if(!latest||receipt.revision!==latest.revision||latest.revision!==selected.revision||latest.reviewHash!==selected.reviewHash)throw Error('Access or revision changed before export; recover the latest receipt');
     renderState(evidence.state,evidence.audit);renderReceipt(latest,false);
     download({kind:'partial-synthetic-executive-local-evidence',identity:who,receipt:latest,state:evidence.state,audit:evidence.audit,scope:catalog.scope});
+  });});
+  $('exCalendar').addEventListener('click',()=>{if(!current||$('exCalendar').disabled)return;const selected=clone(current),who=identity();run(async token=>{
+    const response=await api('calendar-export',{...who,caseId:selected.caseId,expectedRevision:selected.revision,expectedHash:selected.reviewHash});if(token!==generation)return;
+    const checked=await validateExecutiveCalendarResponse(response,selected);if(token!==generation)return;
+    const receipt=await api('receipt',{...who,caseId:selected.caseId});if(token!==generation)return;
+    const evidence=await snapshot(who);if(token!==generation)return;const latest=evidence.state.cases.find(row=>row.caseId===selected.caseId),task=evidence.state.tasks.find(row=>row.caseId===selected.caseId&&row.tenant===who.tenant);
+    if(dirty()||!latest||!executiveCalendarEligible(receipt)||!executiveCalendarEligible(latest)||!latest.acl.allowedActors.includes(who.actor)||!receipt.acl.allowedActors.includes(who.actor))throw Error('Current source access or active reviewed task changed before calendar download');
+    for(const row of [receipt,latest])if(row.tenant!==who.tenant||row.revision!==selected.revision||row.reviewHash!==selected.reviewHash||row.task.generation!==selected.task.generation||!calendarSame(row.task,selected.task))throw Error('Case revision, reviewed task or generation changed before calendar download');
+    if(!calendarSame(receipt,latest)||!task||!calendarSame(task,latest.task)||checked.audit.valid!==evidence.state.audit.valid||checked.audit.eventCount!==evidence.state.audit.eventCount||checked.audit.headHash!==evidence.state.audit.headHash||checked.asOf!==evidence.state.asOf||receipt.readiness.asOf!==checked.asOf||latest.readiness.asOf!==checked.asOf)throw Error('Calendar receipt, accessible task and audit are not one current snapshot');
+    await validateExecutiveCalendarResponse(checked,latest);if(token!==generation)return;
+    renderState(evidence.state,evidence.audit);renderReceipt(latest,false);downloadCalendar(clone(checked));return 'Downloaded a tentative transparent synthetic UTC snapshot. It creates no provider booking or invitation; downloaded files cannot be recalled or automatically updated.';
   });});
   function identityChanged(tenantChanged){
     generation++;busy=false;clearProtected('Identity changed. Source contents were cleared immediately.');

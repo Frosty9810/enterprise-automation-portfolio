@@ -194,6 +194,14 @@ Preparation cannot supply free argument values, source classifications, grants o
 
 The fixed `acme`/`beta` tenants and actor/reviewer IDs are **unauthenticated fixture selectors**, not a multi-tenant identity service. Instruction labels are registered synthetic markers, not automated prompt-injection detection. The local SHA-256 audit chain detects inconsistent records against its stored head; it is not a signed external witness or protection against an administrator rewriting the complete database. The controller's internal error codes are returned by this HTTP adapter as **400 `{error}`**. Unknown TrustGate operations return 404. See [HTTP boundary and execution tests](../demo-lab/trustgate-http.test.mjs) and [core tests](../demo-lab/trustgate.test.mjs).
 
+## EA-01 reviewed calendar snapshot
+
+POST `/api/industry/executive/calendar-export` accepts exactly `tenant`, `actor`, `caseId`, `expectedRevision` and `expectedHash` (the current review fingerprint). Existing loopback Host/Origin, explicit `X-Demo-Client: local-showcase`, body limits and closed route rules apply. The response is JSON containing a suggested `.ics` filename, `text/calendar;charset=utf-8` media type, calendar `content`, stable UID, sequence, selected revision/fingerprint/task generation and the read transaction's audit witness. It is a read operation: no command ID, new audit event, task mutation or provider action.
+
+The core rechecks source access, audit/materializations, current implementation/configuration, exact revision, independent review and the actual active task in one transaction. Held, unrecorded, stale, superseded or revoked cases cannot export. Unknown fields (including supplied calendar content, clocks, destinations and approval) fail. Domain rejection uses the existing 400 error envelope. Actor selectors remain unauthenticated synthetic identities.
+
+The calendar contains one tentative, transparent synthetic UTC event with no invitation, attendee, organizer or alarm. A download is a snapshot: it cannot be recalled after revocation, does not synchronize changes and has no tested provider-import acceptance. The UI fetches fresh state again before download and rejects detected changes; this cannot prevent changes after its last check. See the [calendar runbook](../demo-lab/EXECUTIVE-CALENDAR.md) and [HTTP checks](../demo-lab/executive-calendar-http.test.mjs).
+
 ## Runnable analysis example
 
 In PowerShell, with the server running:

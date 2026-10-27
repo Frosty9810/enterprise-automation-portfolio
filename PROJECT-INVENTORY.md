@@ -1,6 +1,6 @@
 # Complete portfolio inventory and missing work
 
-Updated October 26, 2026 against public main `39483e707e2fd3a38af0d4b5c25aafe93fadc2c3`. **The portfolio is not complete.** This inventory separates available local implementations, remaining flagship/research scope and open pull requests. Catalog presence is not provider acceptance, deployment, a recorded video or a production result.
+Updated October 27, 2026 against public main `0bc9f05ef85fb83f364d65657a78136af2aa53b5`. **The portfolio is not complete.** This inventory separates available local implementations, remaining flagship/research scope and open pull requests. Catalog presence is not provider acceptance, deployment, a recorded video or a production result.
 
 ## Why projects appear missing
 
@@ -9,17 +9,11 @@ Updated October 26, 2026 against public main `39483e707e2fd3a38af0d4b5c25aafe93f
 3. All five research tracks have partial local implementations; none completes its full research blueprint. The six industry entries also have durable local workflows. Their remaining gaps concern wider business scope, authentication, real integrations and acceptance, not absence of those local desks.
 4. Open the local `/projects` page for a searchable inventory with direct project selection across all collections. It lists 73 entries: the original 68 catalog views plus five research tracks. All five research entries are partial local builds; counts are not completion claims.
 
-## Open improvements, not yet on checked main
+## Recently integrated improvements
 
-At this October 26 snapshot, the following PRs are **open and unmerged**. All three required CI jobs are green on each listed head. These changes can be reviewed on their branches; their behavior is not included in the main-based implementation claims above or below. CI does not establish external/provider or production acceptance.
+PRs #37–#42 are merged into the checked main revision. ChronosRank has a synthetic temporal comparison; TrustGate has a synthetic adversarial acceptance suite; VeilRAG rejects remaining declared NFKC/lowercase variants; the inventory reflects the six industry desks; AtlasGraph imports a limited Markdown format with raw source provenance; owned AtlasGraph/Dockside SQLite connections close on startup failures. These are improvements to existing entries, not additional projects or completion of their broader blueprints.
 
-| Pull request | Checked head | Proposed bounded improvement | Scope still open |
-|---|---|---|---|
-| [#37 — ChronosRank comparison](https://github.com/Frosty9810/enterprise-automation-portfolio/pull/37) | `dddd5ac` | Separately AI-authored synthetic temporal-versus-blind lexical diagnostic | Human-reviewed external labels, vector retrieval, trained reranker and calibrated abstention |
-| [#38 — TrustGate challenge](https://github.com/Frosty9810/enterprise-automation-portfolio/pull/38) | `dc75a4c` | Authored local policy/review/replay/tamper acceptance cases | Authenticated agent/tool integration, instruction detection, signed remote receipts and external adversarial acceptance |
-| [#39 — VeilRAG variant guard](https://github.com/Frosty9810/enterprise-automation-portfolio/pull/39) | `e8134d1` | Conservative rejection of remaining NFKC/lowercase-equivalent declared-literal variants | Automatic entity detection, full Unicode case folding, decoding, authenticated providers and general privacy guarantees |
-
-These are improvements to existing research entries, not three additional projects. Reconcile this table after merges; do not treat the initial gap list or this open-PR snapshot as permanent.
+This branch adds a [strict Dockside text intake](demo-lab/DOCKSIDE-TEXT.md). It derives fields from a documented line format and saves the original source through the existing validation/review queue. It does not perform OCR, SLM extraction, authenticity verification or real ERP delivery. Parser spans are local reproduction evidence; saved core receipts retain source text and extracted values, not an authenticated parser attestation.
 
 ## Coverage by collection
 
@@ -135,7 +129,7 @@ The five source documents exist under [Research-to-Production](47%20Automation%2
 
 | Project | Blueprint | Missing implementation scope |
 |---|---|---|
-| AtlasGraph — partial local build | [Design](47%20Automation%20Blueprints/2026%20Research-to-Production/01-atlasgraph.md) | A separately AI-authored synthetic graph-versus-flat-lexical diagnostic comparison is available ([runbook](demo-lab/ATLASGRAPH-EVALUATION.md)); source adapters, semantic/vector retrieval, model-selected tools, authentication and independently measured external multi-hop benchmarks remain open |
+| AtlasGraph — partial local build | [Design](47%20Automation%20Blueprints/2026%20Research-to-Production/01-atlasgraph.md) | A separately AI-authored synthetic graph-versus-flat-lexical diagnostic comparison is available ([runbook](demo-lab/ATLASGRAPH-EVALUATION.md)); broader source adapters beyond the limited Markdown format, semantic/vector retrieval, model-selected tools, authentication and independently measured external multi-hop benchmarks remain open |
 | ChronosRank — partial local build | [Design](47%20Automation%20Blueprints/2026%20Research-to-Production/02-chronosrank.md) | A separately AI-authored synthetic temporal-versus-blind-lexical comparison is available ([runbook](demo-lab/CHRONOSRANK-EVALUATION.md)); distillation/reranker training, vector candidate retrieval, calibrated abstention and external/model retrieval comparisons remain open |
 | TrustGate — partial local build | [Design](47%20Automation%20Blueprints/2026%20Research-to-Production/03-trustgate.md) | Authenticated agent/tool integration, complete runtime provenance, signed remote receipts, LM/saliency screeners and independent adversarial acceptance |
 | DocksideSLM — partial local build | [Design](47%20Automation%20Blueprints/2026%20Research-to-Production/04-docksideslm.md) | OCR/SLM extraction, actual edge-model compression, hardware execution, measured quality/latency and real ERP acceptance |
@@ -180,8 +174,8 @@ Other partial sections still need platform-specific adapters, canonical prompt/s
 
 - The original presence audit matched the collection registries, automation source/wrapper paths and all 20 human fixture files. This update retains the 73-entry count and maps the six existing industry desks to their actual runbooks and routes.
 - All six standalone industry acceptance CLIs were rerun successfully for this reconciliation: `run-maintenance.mjs`, `run-construction.mjs`, `run-referral.mjs`, `run-legal.mjs`, `run-insurance.mjs` and `run-executive.mjs` under `demo-lab`. They exercise local synthetic effects, not provider acceptance or professional decisions. Exact results belong in the delivery log and PR evidence.
-- The unified inventory and AtlasGraph comparison are already on main. This documentation change adds no runtime feature. Open PRs #37–#39 remain separately identified above; no merge or deployment is performed by this update.
-- Next: resolve feedback on those open improvements before duplicating their work; then select a bounded remaining industry, integration or evaluation dependency from the linked runbooks. Authentication, trusted source ingestion, external/model or hardware measurements, platform-native acceptance and recorded walkthroughs require their own evidence.
+- The unified inventory and PRs #37–#42 are on checked main. This branch adds strict Dockside text intake; it does not add a project or complete the Dockside blueprint. No merge or deployment is performed by this update.
+- Next: validate strict text intake and its existing review/queue integration, then select a bounded remaining industry, integration or evaluation dependency from the linked runbooks. Authentication, trusted source ingestion, external/model or hardware measurements, platform-native acceptance and recorded walkthroughs require their own evidence.
 
 ## Other GitHub projects and privacy
 

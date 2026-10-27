@@ -1,0 +1,1318 @@
+{
+  "schemaVersion": 1,
+  "suiteId": "dockside-text-functional-v1",
+  "authorship": {
+    "kind": "independent-ai-fixture-author",
+    "humanReviewed": false,
+    "note": "A separate AI fixture author read the existing public Dockside contract and the frozen DOCKSIDE TEXT 1 grammar, then authored source strings, expected extraction, exact source spans and rejection/core-hold expectations before running or reading any new parser output. These are synthetic functional judgments, not human source verification, OCR/model quality labels or real invoice approval."
+  },
+  "scope": "Fixed public synthetic text-parser acceptance fixtures. A successful parse derives strict integer fields and exact raw-string spans only; the existing tenant registry and independent review/delivery rules remain authoritative. No PDF/OCR/model/provider, authenticity, tax, stock or payment acceptance.",
+  "cases": [
+    {
+      "id": "invoice-lf-unicode-note",
+      "title": "LF invoice with supplied Unicode note",
+      "text": "DOCKSIDE TEXT 1\nKind: invoice\nVendor: vendor-acme\nReference: INV-TEXT-01\nIssued-On: 2026-10-26\nCurrency: USD\nNote: Caf\u00e9 Harbor \ud83d\udce6 synthetic text only.\nLine: item-widget | 2 | 1250 | 2500\nTotal-Minor: 2500\n",
+      "expected": {
+        "status": "parsed",
+        "errorCode": null,
+        "extraction": {
+          "kind": "invoice",
+          "vendorId": "vendor-acme",
+          "reference": "INV-TEXT-01",
+          "issuedOn": "2026-10-26",
+          "currency": "USD",
+          "lines": [
+            {
+              "itemId": "item-widget",
+              "quantity": 2,
+              "unitPriceMinor": 1250,
+              "lineTotalMinor": 2500
+            }
+          ],
+          "totalMinor": 2500
+        },
+        "note": "Caf\u00e9 Harbor \ud83d\udce6 synthetic text only.",
+        "coreStatus": "awaiting-review",
+        "spans": [
+          {
+            "field": "kind",
+            "line": 2,
+            "startUtf16": 22,
+            "endUtf16": 29,
+            "startByte": 22,
+            "endByte": 29,
+            "text": "invoice"
+          },
+          {
+            "field": "vendorId",
+            "line": 3,
+            "startUtf16": 38,
+            "endUtf16": 49,
+            "startByte": 38,
+            "endByte": 49,
+            "text": "vendor-acme"
+          },
+          {
+            "field": "reference",
+            "line": 4,
+            "startUtf16": 61,
+            "endUtf16": 72,
+            "startByte": 61,
+            "endByte": 72,
+            "text": "INV-TEXT-01"
+          },
+          {
+            "field": "issuedOn",
+            "line": 5,
+            "startUtf16": 84,
+            "endUtf16": 94,
+            "startByte": 84,
+            "endByte": 94,
+            "text": "2026-10-26"
+          },
+          {
+            "field": "currency",
+            "line": 6,
+            "startUtf16": 105,
+            "endUtf16": 108,
+            "startByte": 105,
+            "endByte": 108,
+            "text": "USD"
+          },
+          {
+            "field": "note",
+            "line": 7,
+            "startUtf16": 115,
+            "endUtf16": 150,
+            "startByte": 115,
+            "endByte": 153,
+            "text": "Caf\u00e9 Harbor \ud83d\udce6 synthetic text only."
+          },
+          {
+            "field": "lines[0].itemId",
+            "line": 8,
+            "startUtf16": 157,
+            "endUtf16": 168,
+            "startByte": 160,
+            "endByte": 171,
+            "text": "item-widget"
+          },
+          {
+            "field": "lines[0].quantity",
+            "line": 8,
+            "startUtf16": 171,
+            "endUtf16": 172,
+            "startByte": 174,
+            "endByte": 175,
+            "text": "2"
+          },
+          {
+            "field": "lines[0].unitPriceMinor",
+            "line": 8,
+            "startUtf16": 175,
+            "endUtf16": 179,
+            "startByte": 178,
+            "endByte": 182,
+            "text": "1250"
+          },
+          {
+            "field": "lines[0].lineTotalMinor",
+            "line": 8,
+            "startUtf16": 182,
+            "endUtf16": 186,
+            "startByte": 185,
+            "endByte": 189,
+            "text": "2500"
+          },
+          {
+            "field": "totalMinor",
+            "line": 9,
+            "startUtf16": 200,
+            "endUtf16": 204,
+            "startByte": 203,
+            "endByte": 207,
+            "text": "2500"
+          }
+        ],
+        "lines": [
+          {
+            "line": 1,
+            "startUtf16": 0,
+            "endUtf16": 16,
+            "startByte": 0,
+            "endByte": 16,
+            "text": "DOCKSIDE TEXT 1",
+            "eol": "\n"
+          },
+          {
+            "line": 2,
+            "startUtf16": 16,
+            "endUtf16": 30,
+            "startByte": 16,
+            "endByte": 30,
+            "text": "Kind: invoice",
+            "eol": "\n"
+          },
+          {
+            "line": 3,
+            "startUtf16": 30,
+            "endUtf16": 50,
+            "startByte": 30,
+            "endByte": 50,
+            "text": "Vendor: vendor-acme",
+            "eol": "\n"
+          },
+          {
+            "line": 4,
+            "startUtf16": 50,
+            "endUtf16": 73,
+            "startByte": 50,
+            "endByte": 73,
+            "text": "Reference: INV-TEXT-01",
+            "eol": "\n"
+          },
+          {
+            "line": 5,
+            "startUtf16": 73,
+            "endUtf16": 95,
+            "startByte": 73,
+            "endByte": 95,
+            "text": "Issued-On: 2026-10-26",
+            "eol": "\n"
+          },
+          {
+            "line": 6,
+            "startUtf16": 95,
+            "endUtf16": 109,
+            "startByte": 95,
+            "endByte": 109,
+            "text": "Currency: USD",
+            "eol": "\n"
+          },
+          {
+            "line": 7,
+            "startUtf16": 109,
+            "endUtf16": 151,
+            "startByte": 109,
+            "endByte": 154,
+            "text": "Note: Caf\u00e9 Harbor \ud83d\udce6 synthetic text only.",
+            "eol": "\n"
+          },
+          {
+            "line": 8,
+            "startUtf16": 151,
+            "endUtf16": 187,
+            "startByte": 154,
+            "endByte": 190,
+            "text": "Line: item-widget | 2 | 1250 | 2500",
+            "eol": "\n"
+          },
+          {
+            "line": 9,
+            "startUtf16": 187,
+            "endUtf16": 205,
+            "startByte": 190,
+            "endByte": 208,
+            "text": "Total-Minor: 2500",
+            "eol": "\n"
+          }
+        ],
+        "sourceHash": "c494b27e0e0cf5e85c6565611b1b6358ec26fa9eddbc15294aa9f0d60013c07c",
+        "sourceUtf16Length": 205,
+        "sourceUtf8Bytes": 208
+      },
+      "rationale": "Exact source text and Unicode note remain source evidence; the note supplies no approval. Quantity and money are derived from strict decimal tokens, and a valid derived envelope still awaits independent review."
+    },
+    {
+      "id": "invoice-crlf-two-items",
+      "title": "CRLF two-item invoice without terminal EOL",
+      "text": "DOCKSIDE TEXT 1\r\nKind: invoice\r\nVendor: vendor-acme\r\nReference: INV-TEXT-02\r\nIssued-On: 2026-10-26\r\nCurrency: USD\r\nNote: R\u00e9sum\u00e9 \ud83d\udce6 preserved.\r\nLine: item-widget | 2 | 1250 | 2500\r\nLine: item-bolt | 3 | 100 | 300\r\nTotal-Minor: 2800",
+      "expected": {
+        "status": "parsed",
+        "errorCode": null,
+        "extraction": {
+          "kind": "invoice",
+          "vendorId": "vendor-acme",
+          "reference": "INV-TEXT-02",
+          "issuedOn": "2026-10-26",
+          "currency": "USD",
+          "lines": [
+            {
+              "itemId": "item-widget",
+              "quantity": 2,
+              "unitPriceMinor": 1250,
+              "lineTotalMinor": 2500
+            },
+            {
+              "itemId": "item-bolt",
+              "quantity": 3,
+              "unitPriceMinor": 100,
+              "lineTotalMinor": 300
+            }
+          ],
+          "totalMinor": 2800
+        },
+        "note": "R\u00e9sum\u00e9 \ud83d\udce6 preserved.",
+        "coreStatus": "awaiting-review",
+        "spans": [
+          {
+            "field": "kind",
+            "line": 2,
+            "startUtf16": 23,
+            "endUtf16": 30,
+            "startByte": 23,
+            "endByte": 30,
+            "text": "invoice"
+          },
+          {
+            "field": "vendorId",
+            "line": 3,
+            "startUtf16": 40,
+            "endUtf16": 51,
+            "startByte": 40,
+            "endByte": 51,
+            "text": "vendor-acme"
+          },
+          {
+            "field": "reference",
+            "line": 4,
+            "startUtf16": 64,
+            "endUtf16": 75,
+            "startByte": 64,
+            "endByte": 75,
+            "text": "INV-TEXT-02"
+          },
+          {
+            "field": "issuedOn",
+            "line": 5,
+            "startUtf16": 88,
+            "endUtf16": 98,
+            "startByte": 88,
+            "endByte": 98,
+            "text": "2026-10-26"
+          },
+          {
+            "field": "currency",
+            "line": 6,
+            "startUtf16": 110,
+            "endUtf16": 113,
+            "startByte": 110,
+            "endByte": 113,
+            "text": "USD"
+          },
+          {
+            "field": "note",
+            "line": 7,
+            "startUtf16": 121,
+            "endUtf16": 141,
+            "startByte": 121,
+            "endByte": 145,
+            "text": "R\u00e9sum\u00e9 \ud83d\udce6 preserved."
+          },
+          {
+            "field": "lines[0].itemId",
+            "line": 8,
+            "startUtf16": 149,
+            "endUtf16": 160,
+            "startByte": 153,
+            "endByte": 164,
+            "text": "item-widget"
+          },
+          {
+            "field": "lines[0].quantity",
+            "line": 8,
+            "startUtf16": 163,
+            "endUtf16": 164,
+            "startByte": 167,
+            "endByte": 168,
+            "text": "2"
+          },
+          {
+            "field": "lines[0].unitPriceMinor",
+            "line": 8,
+            "startUtf16": 167,
+            "endUtf16": 171,
+            "startByte": 171,
+            "endByte": 175,
+            "text": "1250"
+          },
+          {
+            "field": "lines[0].lineTotalMinor",
+            "line": 8,
+            "startUtf16": 174,
+            "endUtf16": 178,
+            "startByte": 178,
+            "endByte": 182,
+            "text": "2500"
+          },
+          {
+            "field": "lines[1].itemId",
+            "line": 9,
+            "startUtf16": 186,
+            "endUtf16": 195,
+            "startByte": 190,
+            "endByte": 199,
+            "text": "item-bolt"
+          },
+          {
+            "field": "lines[1].quantity",
+            "line": 9,
+            "startUtf16": 198,
+            "endUtf16": 199,
+            "startByte": 202,
+            "endByte": 203,
+            "text": "3"
+          },
+          {
+            "field": "lines[1].unitPriceMinor",
+            "line": 9,
+            "startUtf16": 202,
+            "endUtf16": 205,
+            "startByte": 206,
+            "endByte": 209,
+            "text": "100"
+          },
+          {
+            "field": "lines[1].lineTotalMinor",
+            "line": 9,
+            "startUtf16": 208,
+            "endUtf16": 211,
+            "startByte": 212,
+            "endByte": 215,
+            "text": "300"
+          },
+          {
+            "field": "totalMinor",
+            "line": 10,
+            "startUtf16": 226,
+            "endUtf16": 230,
+            "startByte": 230,
+            "endByte": 234,
+            "text": "2800"
+          }
+        ],
+        "lines": [
+          {
+            "line": 1,
+            "startUtf16": 0,
+            "endUtf16": 17,
+            "startByte": 0,
+            "endByte": 17,
+            "text": "DOCKSIDE TEXT 1",
+            "eol": "\r\n"
+          },
+          {
+            "line": 2,
+            "startUtf16": 17,
+            "endUtf16": 32,
+            "startByte": 17,
+            "endByte": 32,
+            "text": "Kind: invoice",
+            "eol": "\r\n"
+          },
+          {
+            "line": 3,
+            "startUtf16": 32,
+            "endUtf16": 53,
+            "startByte": 32,
+            "endByte": 53,
+            "text": "Vendor: vendor-acme",
+            "eol": "\r\n"
+          },
+          {
+            "line": 4,
+            "startUtf16": 53,
+            "endUtf16": 77,
+            "startByte": 53,
+            "endByte": 77,
+            "text": "Reference: INV-TEXT-02",
+            "eol": "\r\n"
+          },
+          {
+            "line": 5,
+            "startUtf16": 77,
+            "endUtf16": 100,
+            "startByte": 77,
+            "endByte": 100,
+            "text": "Issued-On: 2026-10-26",
+            "eol": "\r\n"
+          },
+          {
+            "line": 6,
+            "startUtf16": 100,
+            "endUtf16": 115,
+            "startByte": 100,
+            "endByte": 115,
+            "text": "Currency: USD",
+            "eol": "\r\n"
+          },
+          {
+            "line": 7,
+            "startUtf16": 115,
+            "endUtf16": 143,
+            "startByte": 115,
+            "endByte": 147,
+            "text": "Note: R\u00e9sum\u00e9 \ud83d\udce6 preserved.",
+            "eol": "\r\n"
+          },
+          {
+            "line": 8,
+            "startUtf16": 143,
+            "endUtf16": 180,
+            "startByte": 147,
+            "endByte": 184,
+            "text": "Line: item-widget | 2 | 1250 | 2500",
+            "eol": "\r\n"
+          },
+          {
+            "line": 9,
+            "startUtf16": 180,
+            "endUtf16": 213,
+            "startByte": 184,
+            "endByte": 217,
+            "text": "Line: item-bolt | 3 | 100 | 300",
+            "eol": "\r\n"
+          },
+          {
+            "line": 10,
+            "startUtf16": 213,
+            "endUtf16": 230,
+            "startByte": 217,
+            "endByte": 234,
+            "text": "Total-Minor: 2800",
+            "eol": ""
+          }
+        ],
+        "sourceHash": "a2e19e26961a1d93f11b50cb163587e8aefd0a2cc393743ee0b3125f6021104b",
+        "sourceUtf16Length": 230,
+        "sourceUtf8Bytes": 234
+      },
+      "rationale": "Every raw line range includes its own CRLF except the final line, which has no EOL. UTF8 and UTF16 offsets remain attributable without newline normalization."
+    },
+    {
+      "id": "packing-list-zero-money",
+      "title": "Packing list with zero monetary fields",
+      "text": "DOCKSIDE TEXT 1\nKind: packing-list\nVendor: vendor-acme\nReference: PACK-TEXT-03\nIssued-On: 2026-10-26\nCurrency: USD\nLine: item-bolt | 10 | 0 | 0\nTotal-Minor: 0\n",
+      "expected": {
+        "status": "parsed",
+        "errorCode": null,
+        "extraction": {
+          "kind": "packing-list",
+          "vendorId": "vendor-acme",
+          "reference": "PACK-TEXT-03",
+          "issuedOn": "2026-10-26",
+          "currency": "USD",
+          "lines": [
+            {
+              "itemId": "item-bolt",
+              "quantity": 10,
+              "unitPriceMinor": 0,
+              "lineTotalMinor": 0
+            }
+          ],
+          "totalMinor": 0
+        },
+        "note": null,
+        "coreStatus": "awaiting-review",
+        "spans": [
+          {
+            "field": "kind",
+            "line": 2,
+            "startUtf16": 22,
+            "endUtf16": 34,
+            "startByte": 22,
+            "endByte": 34,
+            "text": "packing-list"
+          },
+          {
+            "field": "vendorId",
+            "line": 3,
+            "startUtf16": 43,
+            "endUtf16": 54,
+            "startByte": 43,
+            "endByte": 54,
+            "text": "vendor-acme"
+          },
+          {
+            "field": "reference",
+            "line": 4,
+            "startUtf16": 66,
+            "endUtf16": 78,
+            "startByte": 66,
+            "endByte": 78,
+            "text": "PACK-TEXT-03"
+          },
+          {
+            "field": "issuedOn",
+            "line": 5,
+            "startUtf16": 90,
+            "endUtf16": 100,
+            "startByte": 90,
+            "endByte": 100,
+            "text": "2026-10-26"
+          },
+          {
+            "field": "currency",
+            "line": 6,
+            "startUtf16": 111,
+            "endUtf16": 114,
+            "startByte": 111,
+            "endByte": 114,
+            "text": "USD"
+          },
+          {
+            "field": "lines[0].itemId",
+            "line": 7,
+            "startUtf16": 121,
+            "endUtf16": 130,
+            "startByte": 121,
+            "endByte": 130,
+            "text": "item-bolt"
+          },
+          {
+            "field": "lines[0].quantity",
+            "line": 7,
+            "startUtf16": 133,
+            "endUtf16": 135,
+            "startByte": 133,
+            "endByte": 135,
+            "text": "10"
+          },
+          {
+            "field": "lines[0].unitPriceMinor",
+            "line": 7,
+            "startUtf16": 138,
+            "endUtf16": 139,
+            "startByte": 138,
+            "endByte": 139,
+            "text": "0"
+          },
+          {
+            "field": "lines[0].lineTotalMinor",
+            "line": 7,
+            "startUtf16": 142,
+            "endUtf16": 143,
+            "startByte": 142,
+            "endByte": 143,
+            "text": "0"
+          },
+          {
+            "field": "totalMinor",
+            "line": 8,
+            "startUtf16": 157,
+            "endUtf16": 158,
+            "startByte": 157,
+            "endByte": 158,
+            "text": "0"
+          }
+        ],
+        "lines": [
+          {
+            "line": 1,
+            "startUtf16": 0,
+            "endUtf16": 16,
+            "startByte": 0,
+            "endByte": 16,
+            "text": "DOCKSIDE TEXT 1",
+            "eol": "\n"
+          },
+          {
+            "line": 2,
+            "startUtf16": 16,
+            "endUtf16": 35,
+            "startByte": 16,
+            "endByte": 35,
+            "text": "Kind: packing-list",
+            "eol": "\n"
+          },
+          {
+            "line": 3,
+            "startUtf16": 35,
+            "endUtf16": 55,
+            "startByte": 35,
+            "endByte": 55,
+            "text": "Vendor: vendor-acme",
+            "eol": "\n"
+          },
+          {
+            "line": 4,
+            "startUtf16": 55,
+            "endUtf16": 79,
+            "startByte": 55,
+            "endByte": 79,
+            "text": "Reference: PACK-TEXT-03",
+            "eol": "\n"
+          },
+          {
+            "line": 5,
+            "startUtf16": 79,
+            "endUtf16": 101,
+            "startByte": 79,
+            "endByte": 101,
+            "text": "Issued-On: 2026-10-26",
+            "eol": "\n"
+          },
+          {
+            "line": 6,
+            "startUtf16": 101,
+            "endUtf16": 115,
+            "startByte": 101,
+            "endByte": 115,
+            "text": "Currency: USD",
+            "eol": "\n"
+          },
+          {
+            "line": 7,
+            "startUtf16": 115,
+            "endUtf16": 144,
+            "startByte": 115,
+            "endByte": 144,
+            "text": "Line: item-bolt | 10 | 0 | 0",
+            "eol": "\n"
+          },
+          {
+            "line": 8,
+            "startUtf16": 144,
+            "endUtf16": 159,
+            "startByte": 144,
+            "endByte": 159,
+            "text": "Total-Minor: 0",
+            "eol": "\n"
+          }
+        ],
+        "sourceHash": "39179e770c87791fa8aa049cc06f068083a3a18c949e900a501f7d541058746b",
+        "sourceUtf16Length": 159,
+        "sourceUtf8Bytes": 159
+      },
+      "rationale": "A packing list can have positive quantities and zero prices/totals; parsing does not infer invoice amounts or grant delivery authority."
+    },
+    {
+      "id": "unknown-vendor-core-hold",
+      "title": "Unknown vendor parses but fails existing tenant registry validation",
+      "text": "DOCKSIDE TEXT 1\nKind: invoice\nVendor: vendor-other\nReference: INV-TEXT-04\nIssued-On: 2026-10-26\nCurrency: USD\nNote: Caf\u00e9 Harbor \ud83d\udce6 synthetic text only.\nLine: item-widget | 2 | 1250 | 2500\nTotal-Minor: 2500\n",
+      "expected": {
+        "status": "parsed",
+        "errorCode": null,
+        "extraction": {
+          "kind": "invoice",
+          "vendorId": "vendor-other",
+          "reference": "INV-TEXT-04",
+          "issuedOn": "2026-10-26",
+          "currency": "USD",
+          "lines": [
+            {
+              "itemId": "item-widget",
+              "quantity": 2,
+              "unitPriceMinor": 1250,
+              "lineTotalMinor": 2500
+            }
+          ],
+          "totalMinor": 2500
+        },
+        "note": "Caf\u00e9 Harbor \ud83d\udce6 synthetic text only.",
+        "coreStatus": "rejected",
+        "spans": [
+          {
+            "field": "kind",
+            "line": 2,
+            "startUtf16": 22,
+            "endUtf16": 29,
+            "startByte": 22,
+            "endByte": 29,
+            "text": "invoice"
+          },
+          {
+            "field": "vendorId",
+            "line": 3,
+            "startUtf16": 38,
+            "endUtf16": 50,
+            "startByte": 38,
+            "endByte": 50,
+            "text": "vendor-other"
+          },
+          {
+            "field": "reference",
+            "line": 4,
+            "startUtf16": 62,
+            "endUtf16": 73,
+            "startByte": 62,
+            "endByte": 73,
+            "text": "INV-TEXT-04"
+          },
+          {
+            "field": "issuedOn",
+            "line": 5,
+            "startUtf16": 85,
+            "endUtf16": 95,
+            "startByte": 85,
+            "endByte": 95,
+            "text": "2026-10-26"
+          },
+          {
+            "field": "currency",
+            "line": 6,
+            "startUtf16": 106,
+            "endUtf16": 109,
+            "startByte": 106,
+            "endByte": 109,
+            "text": "USD"
+          },
+          {
+            "field": "note",
+            "line": 7,
+            "startUtf16": 116,
+            "endUtf16": 151,
+            "startByte": 116,
+            "endByte": 154,
+            "text": "Caf\u00e9 Harbor \ud83d\udce6 synthetic text only."
+          },
+          {
+            "field": "lines[0].itemId",
+            "line": 8,
+            "startUtf16": 158,
+            "endUtf16": 169,
+            "startByte": 161,
+            "endByte": 172,
+            "text": "item-widget"
+          },
+          {
+            "field": "lines[0].quantity",
+            "line": 8,
+            "startUtf16": 172,
+            "endUtf16": 173,
+            "startByte": 175,
+            "endByte": 176,
+            "text": "2"
+          },
+          {
+            "field": "lines[0].unitPriceMinor",
+            "line": 8,
+            "startUtf16": 176,
+            "endUtf16": 180,
+            "startByte": 179,
+            "endByte": 183,
+            "text": "1250"
+          },
+          {
+            "field": "lines[0].lineTotalMinor",
+            "line": 8,
+            "startUtf16": 183,
+            "endUtf16": 187,
+            "startByte": 186,
+            "endByte": 190,
+            "text": "2500"
+          },
+          {
+            "field": "totalMinor",
+            "line": 9,
+            "startUtf16": 201,
+            "endUtf16": 205,
+            "startByte": 204,
+            "endByte": 208,
+            "text": "2500"
+          }
+        ],
+        "lines": [
+          {
+            "line": 1,
+            "startUtf16": 0,
+            "endUtf16": 16,
+            "startByte": 0,
+            "endByte": 16,
+            "text": "DOCKSIDE TEXT 1",
+            "eol": "\n"
+          },
+          {
+            "line": 2,
+            "startUtf16": 16,
+            "endUtf16": 30,
+            "startByte": 16,
+            "endByte": 30,
+            "text": "Kind: invoice",
+            "eol": "\n"
+          },
+          {
+            "line": 3,
+            "startUtf16": 30,
+            "endUtf16": 51,
+            "startByte": 30,
+            "endByte": 51,
+            "text": "Vendor: vendor-other",
+            "eol": "\n"
+          },
+          {
+            "line": 4,
+            "startUtf16": 51,
+            "endUtf16": 74,
+            "startByte": 51,
+            "endByte": 74,
+            "text": "Reference: INV-TEXT-04",
+            "eol": "\n"
+          },
+          {
+            "line": 5,
+            "startUtf16": 74,
+            "endUtf16": 96,
+            "startByte": 74,
+            "endByte": 96,
+            "text": "Issued-On: 2026-10-26",
+            "eol": "\n"
+          },
+          {
+            "line": 6,
+            "startUtf16": 96,
+            "endUtf16": 110,
+            "startByte": 96,
+            "endByte": 110,
+            "text": "Currency: USD",
+            "eol": "\n"
+          },
+          {
+            "line": 7,
+            "startUtf16": 110,
+            "endUtf16": 152,
+            "startByte": 110,
+            "endByte": 155,
+            "text": "Note: Caf\u00e9 Harbor \ud83d\udce6 synthetic text only.",
+            "eol": "\n"
+          },
+          {
+            "line": 8,
+            "startUtf16": 152,
+            "endUtf16": 188,
+            "startByte": 155,
+            "endByte": 191,
+            "text": "Line: item-widget | 2 | 1250 | 2500",
+            "eol": "\n"
+          },
+          {
+            "line": 9,
+            "startUtf16": 188,
+            "endUtf16": 206,
+            "startByte": 191,
+            "endByte": 209,
+            "text": "Total-Minor: 2500",
+            "eol": "\n"
+          }
+        ],
+        "sourceHash": "24e00adc3199d5b7e3842b167d5a98ec929b55424703e123f904e6628caeda09",
+        "sourceUtf16Length": 206,
+        "sourceUtf8Bytes": 209
+      },
+      "rationale": "ASCII syntax is not vendor authority. The deterministic parser must derive the unknown vendor exactly; the existing core must retain a rejected receipt rather than let parsing override registry policy."
+    },
+    {
+      "id": "unknown-item-core-hold",
+      "title": "Unknown item parses but fails existing tenant registry validation",
+      "text": "DOCKSIDE TEXT 1\nKind: invoice\nVendor: vendor-acme\nReference: INV-TEXT-05\nIssued-On: 2026-10-26\nCurrency: USD\nNote: Caf\u00e9 Harbor \ud83d\udce6 synthetic text only.\nLine: item-other | 2 | 1250 | 2500\nTotal-Minor: 2500\n",
+      "expected": {
+        "status": "parsed",
+        "errorCode": null,
+        "extraction": {
+          "kind": "invoice",
+          "vendorId": "vendor-acme",
+          "reference": "INV-TEXT-05",
+          "issuedOn": "2026-10-26",
+          "currency": "USD",
+          "lines": [
+            {
+              "itemId": "item-other",
+              "quantity": 2,
+              "unitPriceMinor": 1250,
+              "lineTotalMinor": 2500
+            }
+          ],
+          "totalMinor": 2500
+        },
+        "note": "Caf\u00e9 Harbor \ud83d\udce6 synthetic text only.",
+        "coreStatus": "rejected",
+        "spans": [
+          {
+            "field": "kind",
+            "line": 2,
+            "startUtf16": 22,
+            "endUtf16": 29,
+            "startByte": 22,
+            "endByte": 29,
+            "text": "invoice"
+          },
+          {
+            "field": "vendorId",
+            "line": 3,
+            "startUtf16": 38,
+            "endUtf16": 49,
+            "startByte": 38,
+            "endByte": 49,
+            "text": "vendor-acme"
+          },
+          {
+            "field": "reference",
+            "line": 4,
+            "startUtf16": 61,
+            "endUtf16": 72,
+            "startByte": 61,
+            "endByte": 72,
+            "text": "INV-TEXT-05"
+          },
+          {
+            "field": "issuedOn",
+            "line": 5,
+            "startUtf16": 84,
+            "endUtf16": 94,
+            "startByte": 84,
+            "endByte": 94,
+            "text": "2026-10-26"
+          },
+          {
+            "field": "currency",
+            "line": 6,
+            "startUtf16": 105,
+            "endUtf16": 108,
+            "startByte": 105,
+            "endByte": 108,
+            "text": "USD"
+          },
+          {
+            "field": "note",
+            "line": 7,
+            "startUtf16": 115,
+            "endUtf16": 150,
+            "startByte": 115,
+            "endByte": 153,
+            "text": "Caf\u00e9 Harbor \ud83d\udce6 synthetic text only."
+          },
+          {
+            "field": "lines[0].itemId",
+            "line": 8,
+            "startUtf16": 157,
+            "endUtf16": 167,
+            "startByte": 160,
+            "endByte": 170,
+            "text": "item-other"
+          },
+          {
+            "field": "lines[0].quantity",
+            "line": 8,
+            "startUtf16": 170,
+            "endUtf16": 171,
+            "startByte": 173,
+            "endByte": 174,
+            "text": "2"
+          },
+          {
+            "field": "lines[0].unitPriceMinor",
+            "line": 8,
+            "startUtf16": 174,
+            "endUtf16": 178,
+            "startByte": 177,
+            "endByte": 181,
+            "text": "1250"
+          },
+          {
+            "field": "lines[0].lineTotalMinor",
+            "line": 8,
+            "startUtf16": 181,
+            "endUtf16": 185,
+            "startByte": 184,
+            "endByte": 188,
+            "text": "2500"
+          },
+          {
+            "field": "totalMinor",
+            "line": 9,
+            "startUtf16": 199,
+            "endUtf16": 203,
+            "startByte": 202,
+            "endByte": 206,
+            "text": "2500"
+          }
+        ],
+        "lines": [
+          {
+            "line": 1,
+            "startUtf16": 0,
+            "endUtf16": 16,
+            "startByte": 0,
+            "endByte": 16,
+            "text": "DOCKSIDE TEXT 1",
+            "eol": "\n"
+          },
+          {
+            "line": 2,
+            "startUtf16": 16,
+            "endUtf16": 30,
+            "startByte": 16,
+            "endByte": 30,
+            "text": "Kind: invoice",
+            "eol": "\n"
+          },
+          {
+            "line": 3,
+            "startUtf16": 30,
+            "endUtf16": 50,
+            "startByte": 30,
+            "endByte": 50,
+            "text": "Vendor: vendor-acme",
+            "eol": "\n"
+          },
+          {
+            "line": 4,
+            "startUtf16": 50,
+            "endUtf16": 73,
+            "startByte": 50,
+            "endByte": 73,
+            "text": "Reference: INV-TEXT-05",
+            "eol": "\n"
+          },
+          {
+            "line": 5,
+            "startUtf16": 73,
+            "endUtf16": 95,
+            "startByte": 73,
+            "endByte": 95,
+            "text": "Issued-On: 2026-10-26",
+            "eol": "\n"
+          },
+          {
+            "line": 6,
+            "startUtf16": 95,
+            "endUtf16": 109,
+            "startByte": 95,
+            "endByte": 109,
+            "text": "Currency: USD",
+            "eol": "\n"
+          },
+          {
+            "line": 7,
+            "startUtf16": 109,
+            "endUtf16": 151,
+            "startByte": 109,
+            "endByte": 154,
+            "text": "Note: Caf\u00e9 Harbor \ud83d\udce6 synthetic text only.",
+            "eol": "\n"
+          },
+          {
+            "line": 8,
+            "startUtf16": 151,
+            "endUtf16": 186,
+            "startByte": 154,
+            "endByte": 189,
+            "text": "Line: item-other | 2 | 1250 | 2500",
+            "eol": "\n"
+          },
+          {
+            "line": 9,
+            "startUtf16": 186,
+            "endUtf16": 204,
+            "startByte": 189,
+            "endByte": 207,
+            "text": "Total-Minor: 2500",
+            "eol": "\n"
+          }
+        ],
+        "sourceHash": "2de1b958d9bec58ddd0f88fdddf90ea2883a0707f5e4a09cac3dba37200bf7d0",
+        "sourceUtf16Length": 204,
+        "sourceUtf8Bytes": 207
+      },
+      "rationale": "The text syntax permits this item identifier but the acme item registry does not. A parser result is not an approved stock or payment record."
+    },
+    {
+      "id": "reordered-headers",
+      "title": "Correct fields in the wrong order are rejected",
+      "text": "DOCKSIDE TEXT 1\nVendor: vendor-acme\nKind: invoice\nReference: INV-TEXT-01\nIssued-On: 2026-10-26\nCurrency: USD\nNote: Caf\u00e9 Harbor \ud83d\udce6 synthetic text only.\nLine: item-widget | 2 | 1250 | 2500\nTotal-Minor: 2500\n",
+      "expected": {
+        "status": "rejected",
+        "errorCode": "invalid_text",
+        "extraction": null,
+        "note": null,
+        "coreStatus": null,
+        "spans": [],
+        "lines": [],
+        "sourceHash": null,
+        "sourceUtf16Length": null,
+        "sourceUtf8Bytes": null
+      },
+      "rationale": "The named format has an exact ordered header contract; equivalent information is not silently rearranged."
+    },
+    {
+      "id": "duplicate-header",
+      "title": "Duplicate vendor header is rejected",
+      "text": "DOCKSIDE TEXT 1\nKind: invoice\nVendor: vendor-acme\nVendor: vendor-acme\nReference: INV-TEXT-01\nIssued-On: 2026-10-26\nCurrency: USD\nNote: Caf\u00e9 Harbor \ud83d\udce6 synthetic text only.\nLine: item-widget | 2 | 1250 | 2500\nTotal-Minor: 2500\n",
+      "expected": {
+        "status": "rejected",
+        "errorCode": "invalid_text",
+        "extraction": null,
+        "note": null,
+        "coreStatus": null,
+        "spans": [],
+        "lines": [],
+        "sourceHash": null,
+        "sourceUtf16Length": null,
+        "sourceUtf8Bytes": null
+      },
+      "rationale": "A duplicate cannot silently override an earlier source value or shift annotation positions."
+    },
+    {
+      "id": "unknown-review-instruction",
+      "title": "An extra reviewer instruction line is rejected",
+      "text": "DOCKSIDE TEXT 1\nKind: invoice\nVendor: vendor-acme\nReference: INV-TEXT-01\nIssued-On: 2026-10-26\nCurrency: USD\nNote: Caf\u00e9 Harbor \ud83d\udce6 synthetic text only.\nLine: item-widget | 2 | 1250 | 2500\nReviewer: acme-reviewer\nTotal-Minor: 2500\n",
+      "expected": {
+        "status": "rejected",
+        "errorCode": "invalid_text",
+        "extraction": null,
+        "note": null,
+        "coreStatus": null,
+        "spans": [],
+        "lines": [],
+        "sourceHash": null,
+        "sourceUtf16Length": null,
+        "sourceUtf8Bytes": null
+      },
+      "rationale": "The grammar has no reviewer/approval field. Supplied text cannot assign approval through a new header; this is syntax rejection, not general prompt-injection detection."
+    },
+    {
+      "id": "leading-zero-quantity",
+      "title": "Leading-zero quantity is rejected",
+      "text": "DOCKSIDE TEXT 1\nKind: invoice\nVendor: vendor-acme\nReference: INV-TEXT-01\nIssued-On: 2026-10-26\nCurrency: USD\nNote: Caf\u00e9 Harbor \ud83d\udce6 synthetic text only.\nLine: item-widget | 02 | 1250 | 2500\nTotal-Minor: 2500\n",
+      "expected": {
+        "status": "rejected",
+        "errorCode": "invalid_text",
+        "extraction": null,
+        "note": null,
+        "coreStatus": null,
+        "spans": [],
+        "lines": [],
+        "sourceHash": null,
+        "sourceUtf16Length": null,
+        "sourceUtf8Bytes": null
+      },
+      "rationale": "Canonical integer tokens are exactly zero or a nonzero digit followed by digits. The parser must not normalize ambiguous 02 into 2."
+    },
+    {
+      "id": "exponent-price",
+      "title": "Exponential numeric notation is rejected",
+      "text": "DOCKSIDE TEXT 1\nKind: invoice\nVendor: vendor-acme\nReference: INV-TEXT-01\nIssued-On: 2026-10-26\nCurrency: USD\nNote: Caf\u00e9 Harbor \ud83d\udce6 synthetic text only.\nLine: item-widget | 2 | 1.25e3 | 2500\nTotal-Minor: 2500\n",
+      "expected": {
+        "status": "rejected",
+        "errorCode": "invalid_text",
+        "extraction": null,
+        "note": null,
+        "coreStatus": null,
+        "spans": [],
+        "lines": [],
+        "sourceHash": null,
+        "sourceUtf16Length": null,
+        "sourceUtf8Bytes": null
+      },
+      "rationale": "JavaScript number coercion must not broaden the declared decimal integer grammar."
+    },
+    {
+      "id": "line-product-mismatch",
+      "title": "Line product disagreement is rejected",
+      "text": "DOCKSIDE TEXT 1\nKind: invoice\nVendor: vendor-acme\nReference: INV-TEXT-01\nIssued-On: 2026-10-26\nCurrency: USD\nNote: Caf\u00e9 Harbor \ud83d\udce6 synthetic text only.\nLine: item-widget | 2 | 1250 | 2499\nTotal-Minor: 2499\n",
+      "expected": {
+        "status": "rejected",
+        "errorCode": "invalid_text",
+        "extraction": null,
+        "note": null,
+        "coreStatus": null,
+        "spans": [],
+        "lines": [],
+        "sourceHash": null,
+        "sourceUtf16Length": null,
+        "sourceUtf8Bytes": null
+      },
+      "rationale": "Even when the document total matches its declared line total, exact quantity-times-unit-price arithmetic must reject the inconsistent row."
+    },
+    {
+      "id": "document-sum-mismatch",
+      "title": "Document total disagreement is rejected",
+      "text": "DOCKSIDE TEXT 1\nKind: invoice\nVendor: vendor-acme\nReference: INV-TEXT-01\nIssued-On: 2026-10-26\nCurrency: USD\nNote: Caf\u00e9 Harbor \ud83d\udce6 synthetic text only.\nLine: item-widget | 2 | 1250 | 2500\nTotal-Minor: 2501\n",
+      "expected": {
+        "status": "rejected",
+        "errorCode": "invalid_text",
+        "extraction": null,
+        "note": null,
+        "coreStatus": null,
+        "spans": [],
+        "lines": [],
+        "sourceHash": null,
+        "sourceUtf16Length": null,
+        "sourceUtf8Bytes": null
+      },
+      "rationale": "Valid individual line arithmetic does not justify a different document total. No rounding or implicit adjustment is inferred."
+    },
+    {
+      "id": "impossible-calendar-date",
+      "title": "Impossible calendar date is rejected",
+      "text": "DOCKSIDE TEXT 1\nKind: invoice\nVendor: vendor-acme\nReference: INV-TEXT-01\nIssued-On: 2026-02-30\nCurrency: USD\nNote: Caf\u00e9 Harbor \ud83d\udce6 synthetic text only.\nLine: item-widget | 2 | 1250 | 2500\nTotal-Minor: 2500\n",
+      "expected": {
+        "status": "rejected",
+        "errorCode": "invalid_text",
+        "extraction": null,
+        "note": null,
+        "coreStatus": null,
+        "spans": [],
+        "lines": [],
+        "sourceHash": null,
+        "sourceUtf16Length": null,
+        "sourceUtf8Bytes": null
+      },
+      "rationale": "A correctly shaped date must still be a real supported calendar day; the parser must not roll it into March."
+    },
+    {
+      "id": "packing-list-nonzero-money",
+      "title": "Packing list with nonzero prices is rejected",
+      "text": "DOCKSIDE TEXT 1\nKind: packing-list\nVendor: vendor-acme\nReference: PACK-BAD\nIssued-On: 2026-10-26\nCurrency: USD\nLine: item-bolt | 10 | 1 | 10\nTotal-Minor: 10\n",
+      "expected": {
+        "status": "rejected",
+        "errorCode": "invalid_text",
+        "extraction": null,
+        "note": null,
+        "coreStatus": null,
+        "spans": [],
+        "lines": [],
+        "sourceHash": null,
+        "sourceUtf16Length": null,
+        "sourceUtf8Bytes": null
+      },
+      "rationale": "Packing lists must not acquire inferred invoice value; all monetary fields must be zero even when their arithmetic balances."
+    },
+    {
+      "id": "duplicate-item-lines",
+      "title": "Repeated item ID lines are rejected",
+      "text": "DOCKSIDE TEXT 1\nKind: invoice\nVendor: vendor-acme\nReference: INV-DUP\nIssued-On: 2026-10-26\nCurrency: USD\nNote: Caf\u00e9 Harbor \ud83d\udce6 synthetic text only.\nLine: item-widget | 2 | 1250 | 2500\nLine: item-widget | 1 | 100 | 100\nTotal-Minor: 2600\n",
+      "expected": {
+        "status": "rejected",
+        "errorCode": "invalid_text",
+        "extraction": null,
+        "note": null,
+        "coreStatus": null,
+        "spans": [],
+        "lines": [],
+        "sourceHash": null,
+        "sourceUtf16Length": null,
+        "sourceUtf8Bytes": null
+      },
+      "rationale": "The existing document contract admits one line per item ID. A parser must not silently combine duplicates or allow double-counted postings."
+    },
+    {
+      "id": "unpaired-utf16",
+      "title": "Unpaired surrogate source text is rejected",
+      "text": "DOCKSIDE TEXT 1\nKind: invoice\nVendor: vendor-acme\nReference: INV-TEXT-01\nIssued-On: 2026-10-26\nCurrency: USD\nNote: Caf\u00e9 Harbor \ud83d\udce6 synthetic \ud800 text only.\nLine: item-widget | 2 | 1250 | 2500\nTotal-Minor: 2500\n",
+      "expected": {
+        "status": "rejected",
+        "errorCode": "invalid_text",
+        "extraction": null,
+        "note": null,
+        "coreStatus": null,
+        "spans": [],
+        "lines": [],
+        "sourceHash": null,
+        "sourceUtf16Length": null,
+        "sourceUtf8Bytes": null
+      },
+      "rationale": "An ill-formed UTF16 input cannot be represented as unchanged valid UTF8 source evidence; silent replacement is not accepted."
+    }
+  ]
+}

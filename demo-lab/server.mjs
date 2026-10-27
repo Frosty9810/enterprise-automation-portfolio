@@ -32,6 +32,7 @@ import { getTrustGateChallengeCatalog, runTrustGateChallenge } from './trustgate
 import { chronosRank } from './chronosrank-core.mjs';
 import {getChronosRankEvaluationCatalog,evaluateChronosRankSuite} from './chronosrank-evaluation.mjs';
 import { dockside } from './dockside-core.mjs';
+import {parseDocksideText,getDocksideTextCatalog} from './dockside-text.mjs';
 import { veilRag } from './veilrag-core.mjs';
 import { createIndustryDeskHost } from './industry-desks.mjs';
 
@@ -206,6 +207,7 @@ export function createLabServer(db = openStore(), executeWorkflow = runN8n) {
       if (url.pathname === '/api/trustgate/catalog') return send(response,200,gateway.catalog());
       if (url.pathname === '/api/chronosrank/catalog') return send(response,200,memory.catalog());
       if (url.pathname === '/api/dockside/catalog') return send(response,200,dock.catalog());
+      if (url.pathname === '/api/dockside/text-catalog') return send(response,200,getDocksideTextCatalog());
       if (url.pathname === '/api/veilrag/catalog') return send(response,200,privacy.catalog());
       if (url.pathname === '/api/research-markdown/catalog') {
         try { return send(response,200,markdown.catalog()); } catch(error) { return send(response,400,{error:error.message}); }
@@ -438,6 +440,21 @@ export function createLabServer(db = openStore(), executeWorkflow = runN8n) {
         return send(response,200,action(body));
       }
       if (url.pathname.startsWith('/api/dockside/')) {
+        const exact=(value,keys)=>{
+          if(!value||typeof value!=='object'||Array.isArray(value)||Object.keys(value).length!==keys.length||keys.some(key=>!Object.hasOwn(value,key)))throw Error('Supply exactly: '+keys.join(', '));
+        };
+        if(url.pathname==='/api/dockside/text-preview'){
+          exact(body,['text']);
+          return send(response,200,parseDocksideText(body.text));
+        }
+        if(url.pathname==='/api/dockside/text-submit'){
+          exact(body,['commandId','tenant','actor','document','expectedParserHash']);
+          exact(body.document,['id','version','text']);
+          const preview=parseDocksideText(body.document.text);
+          if(body.expectedParserHash!==preview.parserHash)throw Error('Parser identity changed. Preview the text again before saving.');
+          const receipt=dock.submit({commandId:body.commandId,tenant:body.tenant,actor:body.actor,document:body.document,extraction:preview.extraction});
+          return send(response,200,{receipt,preview});
+        }
         const actions = new Map([
           ['submit',x=>dock.submit(x)],['review',x=>dock.review(x)],['sync',x=>dock.sync(x)],['reconcile',x=>dock.reconcile(x)],
           ['receipt',x=>dock.receipt(x)],['history',x=>dock.history(x)],['state',x=>dock.state(x)],['audit',x=>dock.audit(x)],['verify-audit',x=>dock.verifyAudit(x)],

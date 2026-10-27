@@ -4,6 +4,10 @@ This is a **partial local implementation** of the [DocksideSLM blueprint](../47%
 
 There is no OCR, language model, learned confidence score, document authenticity check, hardware inference, energy measurement, cloud dashboard or live ERP integration. Validation does **not** prove that supplied extraction matches the supplied document text. A reviewer must compare them; the demo label is not an authenticated human. No 4 GB execution, field accuracy, latency or compression result is claimed.
 
+## Strict text intake
+
+The optional [text intake mode](DOCKSIDE-TEXT.md) derives fields from the documented `dockside-text-v1` line format, previews their exact source locations without saving, then submits original text plus derived fields to this same queue. The original supplied-JSON path remains available. Parsing is not OCR or SLM extraction and does not authenticate a document or reviewer. The parser can reject syntax/arithmetic before saving; tenant registry policy still applies in the existing core. All saved valid submissions still require independent review before delivery.
+
 ## Run the reproducible examples
 
 From the repository root, using Node 24 with the built-in SQLite module:

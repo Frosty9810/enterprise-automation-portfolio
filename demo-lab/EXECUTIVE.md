@@ -59,3 +59,7 @@ The targeted suite covers real SQLite mutations through core, DOM and loopback H
 Remaining full flagship work: authenticated source connectors and sender/attendee policy enforcement, independent provider acceptance, a real inbox/meeting parser or model, cross-channel commitment identity and follow-up lifecycle, timezone/DST and live calendar reconciliation, encrypted source storage/retention, production authorization and privacy review, monitored scheduling, PostgreSQL adapter execution, a recorded walkthrough and observed business outcomes. No paid providers, private source or client material is needed for this bounded slice.
 
 The older [n8n/build runbook](project-builds/EA-01/build/README.md), [project SOP](project-builds/EA-01/SOP.md) and [proposed PostgreSQL schema](project-builds/EA-01/build/schema.sql) remain separately scoped artifacts. The n8n contact wrapper does not execute this new desk's permission/task lifecycle.
+
+## Read-only calendar snapshot
+
+An already active reviewed task can now be exported as one tentative, transparent synthetic `.ics` snapshot. The [calendar runbook](EXECUTIVE-CALENDAR.md) documents fresh source access, revision/review/task-generation checks, exact UTC serialization and read-only evidence. This downloads a local file; it is not a calendar invitation, provider booking, synchronization or cancellation. Downloaded files cannot be recalled after a later source-access change. Existing JSON evidence and task operations retain their separate contracts.

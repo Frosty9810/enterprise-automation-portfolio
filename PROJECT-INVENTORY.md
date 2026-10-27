@@ -150,6 +150,11 @@ All six desks below are available on the checked main commit. Each uses actual l
 | [INS-01 — Insurance](demo-lab/project-builds/INS-01/README.md) | [Insurance runbook](demo-lab/INSURANCE.md), `/industry/insurance?project=INS-01`: closed loss/evidence fixtures, duplicate reconciliation, consent-bound independent routing review, assignment and revocation holds in one local adjuster queue | Real multi-channel FNOL, claimant/consent verification, authenticated roles, insurer/adjuster adapters, monitoring and recorded acceptance; no coverage, fraud or payment decision is implemented |
 | [EA-01 — Executive Assistants](demo-lab/project-builds/EA-01/README.md) | [Executive runbook](demo-lab/EXECUTIVE.md), `/industry/executive?project=EA-01`: supplied source versions, an access-control simulation, independent fingerprint review, durable local tasks and revoke/regrant review invalidation | Authenticated inbox/meeting ingestion and sender/attendee policies, cross-channel commitment/follow-up lifecycle, live calendar/timezone reconciliation, production storage/privacy review, provider acceptance and recordings |
 
+### EA-01 calendar file export (bounded local increment)
+
+The [executive calendar snapshot](demo-lab/EXECUTIVE-CALENDAR.md) exports a single actual reviewed, active local task as an `.ics` file after fresh source-access, revision, review and readiness checks. Stable case identity and revision sequence accompany the supplied UTC window. Held or revoked tasks cannot produce new exports; an already downloaded file cannot be recalled or updated automatically. Events are explicitly synthetic, tentative and transparent. This adds a portable local artifact, not another project or a completed calendar integration. Authenticated inbox/meeting intake, timezone/DST and live-calendar reconciliation, provider import acceptance, follow-up synchronization, production privacy controls and recordings remain open.
+
+
 The medical, legal and insurance examples retain synthetic-data and human-review boundaries. Their closed fixture catalogs do not establish authentic consent, professional decisions or real-world permissions. Fixed scenario clocks support reproducible examples, not background deadline or SLA monitoring. All six remain partial; no new project or production completion is claimed by this reconciliation.
 
 ## All 50 numbered sections

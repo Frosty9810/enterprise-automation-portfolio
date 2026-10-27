@@ -47,6 +47,11 @@ INS-01 now has a [bounded synthetic loss-evidence desk](demo-lab/INSURANCE.md): 
 
 EA-01 now has a [bounded source-bound executive follow-up desk](demo-lab/EXECUTIVE.md): closed synthetic source versions, an access-control simulation, independent fingerprint review, local task/window checks and revoke/regrant invalidation of previous approval. Its durable decision register and task rows are actual SQLite effects; they do not ingest private correspondence or send follow-up. Authenticated sender/attendee policies, inbox/meeting connectors, cross-channel commitments, live calendar/timezone reconciliation, production privacy/storage review, provider acceptance and recordings remain open.
 
+### EA-01 calendar file export (bounded local increment)
+
+The [executive calendar snapshot](demo-lab/EXECUTIVE-CALENDAR.md) exports a single actual reviewed, active local task as an `.ics` file after fresh source-access, revision, review and readiness checks. Stable case identity and revision sequence accompany the supplied UTC window. Held or revoked tasks cannot produce new exports; an already downloaded file cannot be recalled or updated automatically. Events are explicitly synthetic, tentative and transparent. This adds a portable local artifact, not another project or a completed calendar integration. Authenticated inbox/meeting intake, timezone/DST and live-calendar reconciliation, provider import acceptance, follow-up synchronization, production privacy controls and recordings remain open.
+
+
 ## Platform evidence backlog
 
 Sections 19–31 will be completed by extracting tested patterns from flagships:

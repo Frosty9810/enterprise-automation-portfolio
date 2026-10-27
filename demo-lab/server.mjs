@@ -385,6 +385,7 @@ export function createLabServer(db = openStore(), executeWorkflow = runN8n) {
           ['document-receipt',x=>construction.documentReceipt(x)],['readiness',x=>construction.readiness(x)],
           ['create-order',x=>construction.createOrder(x)],['revise-order',x=>construction.reviseOrder(x)],
           ['review-order',x=>construction.reviewOrder(x)],['record-commitment',x=>construction.recordCommitment(x)],
+          ['propose-reversal',x=>construction.proposeReversal(x)],['review-reversal',x=>construction.reviewReversal(x)],['record-reversal',x=>construction.recordReversal(x)],
           ['receipt',x=>construction.receipt(x)],['history',x=>construction.history(x)],['state',x=>construction.state(x)],
           ['audit',x=>construction.audit(x)],['verify-audit',x=>construction.verifyAudit(x)],
         ]);

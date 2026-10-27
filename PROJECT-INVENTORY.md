@@ -147,6 +147,8 @@ TrustGate depth update: the [separately AI-authored synthetic tool-policy challe
 
 All six desks below are available on the checked main commit. Each uses actual local SQLite effects with synthetic fixtures, while the broader end-to-end requirements in [COMPLETION-ROADMAP.md](COMPLETION-ROADMAP.md) remain open. Actor/reviewer labels are demonstration selectors, not authenticated people or professional approval.
 
+The [CON-01 full local reversal](demo-lab/CONSTRUCTION-REVERSAL.md) preserves an original posted cost and adds one linked negative entry after fresh independent manager and finance reviews. Exact-cents budget credit, immutable intent replay, current revision/fingerprint checks and append-only reconciliation prevent repeated credit. This reverses only a synthetic local ledger commitment; current compliance holds remain visible. Real contract amendments, payments/refunds, partial credits, source/issuer verification, authenticated actors, external accounting integration and recorded acceptance remain open.
+
 | ID | Available bounded local depth and route | Remaining flagship scope |
 |---|---|---|
 | [PM-01 — Property Management](demo-lab/project-builds/PM-01/README.md) | [Maintenance runbook](demo-lab/MAINTENANCE.md), `/maintenance?project=PM-01`: registered intake, deterministic emergency holds, occupant access grants, independent exact-hash review, appointments and local receiver recovery | Full lease lifecycle, authenticated occupants/vendors, live monitoring/escalation, real property/provider acceptance and recordings |

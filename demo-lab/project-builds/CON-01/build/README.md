@@ -32,3 +32,8 @@ Change the amount or requester to invalidate approvals; inspect the hash-linked 
 
 ---
 *Part of the Enterprise Automation Portfolio. See [project overview](../README.md).*
+
+
+## Reviewed full local reversal
+
+The [reversal runbook](../../../CONSTRUCTION-REVERSAL.md) adds a separate proposal and independent manager/finance reviews before one linked negative cost entry restores the exact local budget amount. The original positive posting stays in history. Run `node demo-lab/run-construction-reversal.mjs` and inspect the existing construction desk. Current document holds remain in force; this does not cancel a real contract, alter the supplied schedule or issue a payment/refund.

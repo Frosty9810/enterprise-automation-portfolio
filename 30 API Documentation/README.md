@@ -218,6 +218,14 @@ GET `/api/tool-challenge/catalog` reads fixed suite metadata. POST `/api/tool-ch
 
 See the [challenge runbook](../demo-lab/TRUSTGATE-CHALLENGE.md) for real operation evidence, per-run report identities and incomplete security scope.
 
+## CON-01 full local cost reversal
+
+Three guarded POST operations extend `/api/construction/`. `propose-reversal` accepts exactly `commandId, tenant, orderId, actor, expectedRevision, reasonCode, note`; reason is `change-cancelled` or `scope-withdrawn`. `review-reversal` accepts exactly `commandId, tenant, orderId, reviewer, role, expectedRevision, expectedHash, decision, note`; role is `project_manager` or `finance`, decision is `approve` or `reject`. `record-reversal` accepts exactly `commandId, tenant, orderId, actor, expectedRevision, expectedHash`. Use the current receipt's `revision` as `expectedRevision` and its `reversalHash` as `expectedHash`. Callers cannot set an amount, budget, original entry, approval flag or timestamp.
+
+A proposal requires an existing local commitment. Fresh distinct manager and finance reviews must bind the reversal proposal and original entry; both differ from the proposal requester and original order requester. The posting keeps the original positive entry and atomically adds one linked exact negative amount, updates the net budget, saves the order revision and appends the audit event. One original entry can receive only one full reversal. Exact command replay returns the saved current receipt without another credit; changed intent or a second posting fails.
+
+Current document holds do not prohibit reversing a historical local cost. Reversal does not clear readiness holds, alter the supplied schedule, make a payment/refund or cancel a real contract. Existing Host/Origin, explicit client-intent, body, closed-schema, tenant, source/configuration and immutable-command rules remain. Actor labels are synthetic selectors. See [reversal reproduction and limits](../demo-lab/CONSTRUCTION-REVERSAL.md) and [real HTTP checks](../demo-lab/construction-reversal-http.test.mjs).
+
 ## Contact simulator and errors
 
 Only `POST /contacts/upsert` additionally requires `Authorization: Bearer LOCAL_DEMO_ONLY` and `Version: v3`. That literal is a public local-demo sentinel, not a real provider credential. Body: `locationId: DEMO_LOCATION`, syntactically valid email, optional firstName/lastName/source; all other fields are rejected. The simulator normalizes email and preserves the same ID for the location/email pair. See [simulator tests](../demo-lab/test.mjs).

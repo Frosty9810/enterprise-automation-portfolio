@@ -2,7 +2,7 @@
 
 This roadmap replaces the old document-count target with an evidence target. A section is complete only when a reviewer can inspect a real decision, run or validate an artifact, and understand how another engineer would operate it six months later.
 
-Reconciled October 27, 2026 against public main `0bc9f05ef85fb83f364d65657a78136af2aa53b5`. All six partial industry slices described below are integrated local implementations. The [project inventory](PROJECT-INVENTORY.md) records the merged research improvements and their remaining scope; neither catalog presence nor a passing local run completes the wider flagship.
+Reconciled October 27, 2026 against public main `21cc5dabd22f39fe0f6767ed2d0e73105076010d`. All six partial industry slices, the research comparisons and guards, AtlasGraph Markdown intake, Dockside text intake, executive calendar export and construction reversals are integrated local implementations. The [project inventory](PROJECT-INVENTORY.md) records their bounded capabilities and remaining work; neither catalog presence nor a passing local run completes the wider flagship.
 
 ## Definition of complete
 

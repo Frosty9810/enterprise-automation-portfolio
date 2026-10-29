@@ -1,6 +1,6 @@
 # Portfolio roadmap — October 2026
 
-The strongest direction is revenue operations with trustworthy automation: Salesforce, evidence-based decisions, resilient event processing and human review. The twelve local systems are now built; prioritize live acceptance for three lead cases.
+The strongest direction is revenue operations with trustworthy automation: Salesforce, evidence-based decisions, resilient event processing and human review. Twelve executable synthetic decision views are available; the integration targets below remain open. Prioritize authorized live acceptance for three lead cases.
 
 All twelve rows now have executable synthetic demonstrations in the [twelve-system hub](TWELVE-SYSTEMS.md). The table below preserves the broader integration targets; it is not a claim that those targets are complete. Live sandbox acceptance, authentication, real model costs, blind datasets and provider evidence remain pending. None is presented as shipped client work.
 

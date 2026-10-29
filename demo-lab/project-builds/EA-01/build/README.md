@@ -35,3 +35,6 @@ A lost response clears UI authority: refresh accessible records and recover. Ret
 Real authenticated intake, sender/attendee authorization, source retention/encryption, cross-channel commitment extraction/identity, timezone/DST and provider calendar reconciliation, safe delegated follow-up adapters, human security/privacy review, hosted acceptance, measured results and a recorded video remain unverified. Actor labels are role simulation, not credentials.
 
 The proposed PostgreSQL artifact still needs execution in a disposable engine and an actual writer/migration/adapter before any PostgreSQL claim. No actual provider credentials or paid services are used by the current desk. See the [SOP](../SOP.md) and [project overview](../README.md).
+
+
+The [reported completion runbook](../../../EXECUTIVE-COMPLETION.md) covers terminal local task completion, current access/review checks and historical preservation. It does not verify real work, reopen tasks or synchronize provider calendars.

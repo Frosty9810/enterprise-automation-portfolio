@@ -78,3 +78,8 @@ Before a batch merges:
 3. SQL contains executable tables, keys, constraints, and operational indexes.
 4. No credentials, client-identifying claims, or unverifiable production metrics are included.
 5. Root navigation, master status, and the SOP/video index match repository reality.
+
+
+### EA-01 reported completion (bounded local increment)
+
+The [completion workflow](demo-lab/EXECUTIVE-COMPLETION.md) adds terminal operator-reported completion to an existing reviewed synthetic local task. It binds the current revision, source access, review and task generation; preserves historical completion through later access changes; and rejects duplicate effects, silent reopening and new calendar exports for completed tasks. Completion after the supplied start time does not authorize rescheduling. Real work verification, authenticated actors, explicit reopening/replanning, inbox/calendar providers and recordings remain open. This is depth for the existing EA-01 entry, not another project or completion of its full flagship.

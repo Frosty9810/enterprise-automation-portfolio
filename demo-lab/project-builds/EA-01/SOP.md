@@ -180,3 +180,6 @@ Current source access must govern both operational actions and evidence recovery
 ## 44. Related SOPs
 
 [Executable scope and contract](../../EXECUTIVE.md), [build runbook](build/README.md), [project overview](README.md), [portfolio verification](../../VERIFICATION.md) and [project build index](../README.md).
+
+
+The [reported completion runbook](../../EXECUTIVE-COMPLETION.md) covers terminal local task completion, current access/review checks and historical preservation. It does not verify real work, reopen tasks or synchronize provider calendars.

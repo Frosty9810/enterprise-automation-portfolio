@@ -1,6 +1,6 @@
 {
   "projectId": "EA-01",
-  "summary": "Synthetic source-bound review with durable local follow-up tasks, access revocation, owner-window holds and fresh reviewed-task calendar snapshots.",
+  "summary": "Synthetic source-bound review with durable local follow-up tasks, access revocation, owner-window holds and fresh reviewed-task calendar snapshots and operator-reported terminal completion.",
   "scope": "Partial local implementation using closed synthetic sources, actor labels and a fixed scenario clock. No actual authentication, confidentiality guarantee, executive authority, private correspondence, provider task, calendar or message integration.",
   "operations": {
     "ingest": "ingest",
@@ -8,6 +8,7 @@
     "set-access": "setAccess",
     "review": "review",
     "record-task": "recordTask",
+    "complete-task": "completeTask",
     "receipt": "receipt",
     "state": "state",
     "audit": "audit",

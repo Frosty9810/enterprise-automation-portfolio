@@ -19,3 +19,6 @@ Full flagship completion still requires real permission-aware inbox/meeting inge
 
 ---
 Part of the [project build index](../README.md).
+
+
+The [reported completion runbook](../../EXECUTIVE-COMPLETION.md) covers terminal local task completion, current access/review checks and historical preservation. It does not verify real work, reopen tasks or synchronize provider calendars.

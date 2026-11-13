@@ -149,13 +149,23 @@ export function chronosRank(db) {
   }
   function write(state, tenant, key, operation, request, body) {
     const hash = digest({ tenant, key, operation, requestHash: digest(request), input: request, body, prevHash: state.head });
-    insert.run(tenant, key, operation, digest(request), JSON.stringify(canonical(request)), JSON.stringify(canonical(body)), state.head, hash);
-    db.prepare('INSERT INTO chronosrank_heads (tenant,head,count) VALUES (?,?,?) ON CONFLICT(tenant) DO UPDATE SET head=excluded.head,count=excluded.count').run(tenant, hash, state.count + 1);
+    const entry = insert.run(tenant, key, operation, digest(request), JSON.stringify(canonical(request)), JSON.stringify(canonical(body)), state.head, hash);
+    if (entry.changes !== 1) fail('Ledger entry write did not affect exactly one row.', 'integrity_failed');
+    const head = db.prepare('INSERT INTO chronosrank_heads (tenant,head,count) VALUES (?,?,?) ON CONFLICT(tenant) DO UPDATE SET head=excluded.head,count=excluded.count').run(tenant, hash, state.count + 1);
+    if (head.changes !== 1) fail('Ledger head write did not affect exactly one row.', 'integrity_failed');
     return hash;
   }
   function transact(tenant, callback, writable = true) {
     checkedSource(); db.exec(writable ? 'BEGIN IMMEDIATE' : 'BEGIN');
-    try { const value = callback(load(tenant)); db.exec('COMMIT'); return copy(value); } catch (error) { db.exec('ROLLBACK'); throw error; }
+    try {
+      const value = callback(load(tenant));
+      db.exec('COMMIT');
+      return copy(value);
+    } catch (error) {
+      // SQLite may already have rolled back, for example after RAISE(ROLLBACK).
+      if (db.isTransaction) db.exec('ROLLBACK');
+      throw error;
+    }
   }
   function replay(state, key, operation, request) {
     const existing = state.commands.get(key);

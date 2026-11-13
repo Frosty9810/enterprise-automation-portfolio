@@ -203,6 +203,50 @@ test('failed event or receipt insertion rolls back ledger, head, watermark and r
   } finally { db.close(); }
 });
 
+test('silent ledger or head write suppression cannot return a receipt or advance the watermark', () => {
+  const cases = [
+    ['INSERT ON chronosrank_log', false, 'entry'],
+    ['INSERT ON chronosrank_heads', false, 'head'],
+    ['UPDATE ON chronosrank_heads', true, 'head'],
+  ];
+  for (const [target, seed, rowKind] of cases) {
+    const db = new DatabaseSync(':memory:'), engine = chronosRank(db);
+    try {
+      if (seed) engine.append(memory());
+      const tenant = { tenant: 'acme' };
+      const audit = engine.audit(tenant);
+      db.exec("CREATE TRIGGER suppress_write BEFORE " + target + " BEGIN SELECT RAISE(IGNORE); END");
+      const request = query({ asOf: at(25) });
+      assert.throws(() => engine.retrieve(request), {
+        code: 'integrity_failed',
+        message: 'Ledger ' + rowKind + ' write did not affect exactly one row.',
+      }, target);
+      assert.deepEqual(engine.verifyAudit(tenant), audit, target);
+      assert.deepEqual(engine.history(tenant).receipts, [], target);
+      db.exec('DROP TRIGGER suppress_write');
+      assert.equal(engine.retrieve(request).replayed, false, target);
+      assert.equal(engine.retrieve(request).replayed, true, target);
+      assert.equal(engine.audit(tenant).entryCount, audit.entryCount + 1, target);
+    } finally { db.close(); }
+  }
+});
+
+test('an automatic SQLite rollback preserves the original error and allows retry', () => {
+  const db = new DatabaseSync(':memory:'), engine = chronosRank(db);
+  try {
+    const tenant = { tenant: 'acme' };
+    const audit = engine.audit(tenant);
+    db.exec("CREATE TRIGGER rollback_head BEFORE INSERT ON chronosrank_heads BEGIN SELECT RAISE(ROLLBACK, 'injected engine rollback'); END");
+    const request = query({ asOf: at(25) });
+    assert.throws(() => engine.retrieve(request), /injected engine rollback/u);
+    assert.deepEqual(engine.verifyAudit(tenant), audit);
+    assert.deepEqual(engine.history(tenant).receipts, []);
+    db.exec('DROP TRIGGER rollback_head');
+    assert.equal(engine.retrieve(request).replayed, false);
+    assert.equal(engine.audit(tenant).entryCount, 1);
+  } finally { db.close(); }
+});
+
 test('corrupt event data, receipts, input hashes, ordering links and truncated tails fail closed', () => {
   const mutations = [
     "UPDATE chronosrank_log SET body='{}' WHERE operation='append'",

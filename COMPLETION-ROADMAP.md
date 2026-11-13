@@ -54,6 +54,8 @@ EA-01 now has a [bounded source-bound executive follow-up desk](demo-lab/EXECUTI
 The [executive calendar snapshot](demo-lab/EXECUTIVE-CALENDAR.md) exports a single actual reviewed, active local task as an `.ics` file after fresh source-access, revision, review and readiness checks. Stable case identity and revision sequence accompany the supplied UTC window. Held or revoked tasks cannot produce new exports; an already downloaded file cannot be recalled or updated automatically. Events are explicitly synthetic, tentative and transparent. This adds a portable local artifact, not another project or a completed calendar integration. Authenticated inbox/meeting intake, timezone/DST and live-calendar reconciliation, provider import acceptance, follow-up synchronization, production privacy controls and recordings remain open.
 
 
+The [CON-01 email export adapter](demo-lab/CONSTRUCTION-EMAIL.md) imports bounded synthetic plain-text evidence into the existing unverified document queue. Real attachment processing, issuer verification and authenticated integrations remain open.
+
 ## Platform evidence backlog
 
 Sections 19–31 will be completed by extracting tested patterns from flagships:

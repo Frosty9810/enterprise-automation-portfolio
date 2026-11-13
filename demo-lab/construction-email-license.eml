@@ -1,0 +1,12 @@
+From: supplier@construction.invalid
+To: intake@construction.invalid
+Date: Sat, 24 Oct 2026 09:00:00 GMT
+Message-ID: <fixture-license-001@construction.invalid>
+Subject: Synthetic license manifest
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-CON01-Kind: license
+X-CON01-Valid-Until: 2026-12-01T00:00:00.000Z
+
+Synthetic registration for the fictional contractor Taller Café.

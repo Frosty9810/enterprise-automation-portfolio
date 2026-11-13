@@ -173,6 +173,8 @@ The [executive calendar snapshot](demo-lab/EXECUTIVE-CALENDAR.md) exports a sing
 
 The medical, legal and insurance examples retain synthetic-data and human-review boundaries. Their closed fixture catalogs do not establish authentic consent, professional decisions or real-world permissions. Fixed scenario clocks support reproducible examples, not background deadline or SLA monitoring. All six remain partial; no new project or production completion is claimed by this reconciliation.
 
+The [CON-01 email export adapter](demo-lab/CONSTRUCTION-EMAIL.md) derives document metadata from a restricted synthetic text format and preserves original bytes for later inspection. Independent review still controls readiness. General email and PDF processing, issuer verification and authenticated ingestion remain open.
+
 ## All 50 numbered sections
 
 The reconciled [master index](MASTER-INDEX.md) declares **17 populated, 33 partial and 0 pending placeholders**. Populated describes repository content, not production completion. Nine placeholder READMEs were replaced with concrete source-linked material: seven local-reference sections are populated; Make.com and Zapier remain partial translation/acceptance plans. Their native workflows and provider execution are still unimplemented. Earlier label corrections for existing Prompt Library and Database Schemas evidence add no new implementation. The 137-entry IMP-01 registry is not 137 independent applications.

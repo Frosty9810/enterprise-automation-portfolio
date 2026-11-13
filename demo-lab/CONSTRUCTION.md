@@ -29,6 +29,8 @@ Insurance and license are the two required fixture kinds. A new source ID for a 
 
 `validUntil` is exclusive: a document is expired at the exact timestamp, not one millisecond later. Canonical UTC timestamps are required, impossible dates and future received sources are rejected, and timestamps remain distinct: source receipt does not establish an issuance or validity-start date. An expired document received after its expiry can be stored and reviewed as supplied evidence but cannot establish current readiness. The configured site must also be inside its active fixture period.
 
+A [local email export adapter](CONSTRUCTION-EMAIL.md) can derive document fields from a strict synthetic plain-text format before passing the evidence through the same submission and independent review path.
+
 ## Change review and local posting
 
 1. Create an order with a stable tenant-scoped source issue ID, synthetic scope/provenance, positive integer USD cents and a zero-through-365 whole-day schedule impact. Positive change costs through 1000000000 cents are accepted as proposals; the smaller site budget is independently checked before a commitment. Arbitrary negative credits, real tax calculations, original contract pricing and change disputes are excluded. A separately proposed and independently reviewed full local commitment reversal is available in [CONSTRUCTION-REVERSAL.md](CONSTRUCTION-REVERSAL.md).

@@ -1,0 +1,63 @@
+{
+  "id": "PortfolioGtm0011",
+  "name": "GTM Buying Signal Proposal",
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "nodes": [
+    {
+      "id": "398d6029-2eb4-4536-8ff3-65414108ff35",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "2e0b7b5d-a834-4a18-ab63-49b709bf98bb",
+      "name": "Prepare reviewed CRM action",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        240,
+        0
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "http://127.0.0.1:5680/api/gtm/plan",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Demo-Client",
+              "value": "local-showcase"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\"scenarioId\":\"supplier-signal\",\"runId\":\"n8n-synthetic-demo\"}",
+        "options": {
+          "timeout": 5000
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Prepare reviewed CRM action",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

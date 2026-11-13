@@ -29,6 +29,7 @@ import { portfolioInventory } from './project-inventory.mjs';
 import { atlasGraph } from './atlasgraph-core.mjs';
 import { atlasMarkdown } from './atlasgraph-markdown.mjs';
 import { trustGate } from './trustgate-core.mjs';
+import { createGtmAgent, isGtmCommand } from './gtm-agent.mjs';
 import { getTrustGateChallengeCatalog, runTrustGateChallenge } from './trustgate-challenge.mjs';
 import { chronosRank } from './chronosrank-core.mjs';
 import {getChronosRankEvaluationCatalog,evaluateChronosRankSuite} from './chronosrank-evaluation.mjs';
@@ -157,6 +158,7 @@ export function createLabServer(db = openStore(), executeWorkflow = runN8n) {
   const research = atlasGraph(db);
   const markdown = atlasMarkdown(db);
   const gateway = trustGate(db);
+  const gtm = createGtmAgent(gateway);
   const memory = chronosRank(db);
   const dock = dockside(db);
   const privacy = veilRag(db);
@@ -177,6 +179,16 @@ export function createLabServer(db = openStore(), executeWorkflow = runN8n) {
     const origin = request.headers.origin;
     if ((origin && origin !== localOrigin) || request.headers['sec-fetch-site'] === 'cross-site') return send(response, 403, { error: 'Local origin required' });
     if (request.method === 'GET') {
+      if (url.pathname === '/api/gtm/catalog') return send(response, 200, gtm.catalog());
+      if (url.pathname === '/gtm-agent') {
+        response.writeHead(200, {'Content-Type':'text/html; charset=utf-8','X-Content-Type-Options':'nosniff','Cache-Control':'no-store','Content-Security-Policy':"default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; object-src 'none'"});
+        return response.end(readFileSync(join(directory, 'gtm-agent.html')));
+      }
+      if (['/gtm-agent.css', '/gtm-agent-ui.mjs'].includes(url.pathname)) {
+        const type = url.pathname.endsWith('.css') ? 'text/css' : 'text/javascript';
+        response.writeHead(200, {'Content-Type':type+'; charset=utf-8','X-Content-Type-Options':'nosniff','Cache-Control':'no-store'});
+        return response.end(readFileSync(join(directory, url.pathname.slice(1))));
+      }
       if (url.pathname === '/api/construction/catalog') return send(response,200,construction.catalog());
       if (url.pathname === '/construction') {
         response.writeHead(200,{'Content-Type':'text/html; charset=utf-8','Cache-Control':'no-store','X-Content-Type-Options':'nosniff','Content-Security-Policy':"default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; object-src 'none'"});
@@ -382,6 +394,13 @@ export function createLabServer(db = openStore(), executeWorkflow = runN8n) {
     if (request.headers['x-demo-client'] !== 'local-showcase') return send(response, 403, { error: 'Demo client header required' });
     try {
       const body = await readBody(request);
+      if (url.pathname.startsWith('/api/gtm/')) {
+        const operation = url.pathname.slice('/api/gtm/'.length);
+        if (!['plan', 'review', 'execute', 'inspect'].includes(operation)) {
+          return send(response, 404, {error:'Unknown GTM operation'});
+        }
+        return send(response, 200, gtm[operation](body));
+      }
       if (url.pathname.startsWith('/api/construction/')) {
         const actions = new Map([
           ['submit-document',x=>construction.submitDocument(x)],['review-document',x=>construction.reviewDocument(x)],
@@ -433,9 +452,16 @@ export function createLabServer(db = openStore(), executeWorkflow = runN8n) {
           ['receipt',x=>gateway.receipt(x)],['history',x=>gateway.history(x)],['state',x=>gateway.state(x)],
           ['audit',x=>gateway.audit(x)],['verify-audit',x=>gateway.verifyAudit(x)],
         ]);
-        const action = actions.get(url.pathname.slice('/api/trustgate/'.length));
-        if(!action)return send(response,404,{error:'Unknown TrustGate operation'});
-        return send(response,200,action(body));
+        const operation = url.pathname.slice('/api/trustgate/'.length);
+        const action = actions.get(operation);
+        if (!action) return send(response, 404, {error:'Unknown TrustGate operation'});
+        const commandId = ['review', 'execute'].includes(operation)
+          ? gateway.receipt({tenant:body?.tenant, receiptId:body?.receiptId}).commandId
+          : body?.commandId;
+        if (['prepare', 'review', 'execute'].includes(operation) && isGtmCommand(commandId)) {
+          return send(response, 403, {error:'Use the GTM API to change a GTM proposal.'});
+        }
+        return send(response, 200, action(body));
       }
       if (url.pathname.startsWith('/api/chronosrank/')) {
         const actions = new Map([

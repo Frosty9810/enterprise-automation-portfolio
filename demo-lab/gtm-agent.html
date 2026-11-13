@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Inspect how a synthetic buying signal becomes a reviewed local CRM action with a verifiable receipt.">
+  <title>GTM Agent · Portfolio Lab</title>
+  <link rel="stylesheet" href="/gtm-agent.css">
+  <script type="module" src="/gtm-agent-ui.mjs"></script>
+</head>
+<body>
+  <header class="masthead">
+    <nav class="shell nav" aria-label="Portfolio navigation">
+      <a class="wordmark" href="/projects"><span class="mark" aria-hidden="true">▦</span> Portfolio Lab</a>
+      <a class="nav-link" href="/trustgate">TrustGate policy <span aria-hidden="true">↗</span></a>
+    </nav>
+  </header>
+  <main class="shell">
+    <section class="intro" aria-labelledby="page-title">
+      <div>
+        <p class="eyebrow">Go-to-market engineering</p>
+        <h1 id="page-title">Buying signal to<br><em>reviewed CRM action.</em></h1>
+        <p class="lede">Inspect a signal, propose a follow-up task, and decide whether it can reach the local CRM ledger.</p>
+      </div>
+      <aside class="environment" aria-label="Execution scope">
+        <span class="live-dot" aria-hidden="true"></span>
+        <div><strong>Local simulation</strong><span>Synthetic signals · fixture reviewer</span></div>
+      </aside>
+    </section>
+
+    <ol class="steps" aria-label="Workflow progress">
+      <li data-step="signal" aria-current="step"><span class="index">01</span><span>Signal<small>Inspect the evidence</small></span></li>
+      <li data-step="proposal"><span class="index">02</span><span>Proposal<small>Resolve the action inputs</small></span></li>
+      <li data-step="review"><span class="index">03</span><span>Review<small>Approve the exact action</small></span></li>
+      <li data-step="receipt"><span class="index">04</span><span>Receipt<small>Verify the saved outcome</small></span></li>
+    </ol>
+
+    <div class="workspace">
+      <section class="panel signal" aria-labelledby="signal-heading">
+        <div class="panel-header">
+          <div><p class="eyebrow">Input</p><h2 id="signal-heading">Buying signal</h2></div>
+          <span class="tag">Synthetic fixture</span>
+        </div>
+        <label for="scenario">Scenario</label>
+        <select id="scenario" disabled></select>
+        <div id="signal-detail" class="signal-detail"><p>Loading the approved signal catalog…</p></div>
+        <p class="muted support">The server selects the signal’s source and the action’s exact inputs from the fixture registry.</p>
+        <div class="action-row">
+          <button id="propose" class="primary" type="button" disabled>Prepare proposal <span aria-hidden="true">→</span></button>
+          <button id="shared-run" class="secondary" type="button" disabled>Use shared n8n demo run</button>
+          <button id="start-over" class="secondary" type="button" hidden disabled>Start a new run</button>
+        </div>
+        <p class="muted support shared-help">The shared run loads or prepares the same supplier proposal as the local n8n workflow.</p>
+      </section>
+
+      <section class="panel decision" aria-labelledby="decision-heading">
+        <div class="panel-header">
+          <div><p class="eyebrow">Decision</p><h2 id="decision-heading">Action review</h2></div>
+          <span id="outcome" class="tag" role="status" data-tone="neutral">Awaiting proposal</span>
+        </div>
+        <div id="receipt-summary" class="receipt-summary">
+          <h3>Start with a signal</h3><p>Prepare a proposal to see the task, its source, and the policy decision.</p>
+        </div>
+        <div id="review-controls" hidden>
+          <div class="action-row">
+            <button id="approve" class="primary" type="button" disabled>Approve proposal</button>
+            <button id="reject" class="secondary" type="button" disabled>Reject</button>
+          </div>
+        </div>
+        <div class="action-row">
+          <button id="execute" class="primary" type="button" hidden disabled>Create local task <span aria-hidden="true">→</span></button>
+          <button id="replay" class="secondary" type="button" hidden disabled>Replay same action</button>
+        </div>
+        <p id="notice" class="notice" role="status" aria-live="polite"></p>
+      </section>
+    </div>
+
+    <section class="panel audit" aria-labelledby="audit-heading">
+      <div class="panel-header">
+        <div><p class="eyebrow">Evidence</p><h2 id="audit-heading">Audit trail</h2></div>
+        <button id="refresh-audit" class="secondary" type="button" disabled>Verify audit</button>
+      </div>
+      <dl class="metrics" id="metrics">
+        <div><dt>Tasks in this run</dt><dd id="task-count">—</dd></div>
+        <div><dt>Events in this run</dt><dd id="event-count">—</dd></div>
+        <div><dt>Ledger integrity</dt><dd id="integrity">—</dd></div>
+      </dl>
+      <ol id="audit-events" class="audit-events" aria-label="Saved events in this run" hidden></ol>
+      <details id="technical" hidden>
+        <summary>Inspect receipt JSON</summary><pre id="receipt-json"></pre>
+      </details>
+      <details id="audit-evidence" hidden>
+        <summary>Inspect audit JSON</summary><pre id="audit-json"></pre>
+      </details>
+    </section>
+    <footer><a href="/projects">← All portfolio projects</a><p>Deterministic proposal logic and SQLite. CRM effects stay in the local demo ledger.</p></footer>
+  </main>
+</body>
+</html>

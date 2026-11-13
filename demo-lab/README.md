@@ -12,6 +12,8 @@
 
 **[TrustGate](TRUSTGATE.md):** open **http://127.0.0.1:5680/trustgate**. Inspect source-to-argument bindings, confidentiality/integrity holds, local review and the actual SQLite effects of three fixed tools. The registry and labels are server-held synthetic fixtures, not authenticated user permissions. No provider, message, payment or Internet publishing tool exists. VeilRAG has a separate local alias workbench; all research builds retain unfinished wider scope.
 
+**[Governed GTM workflow](GTM-AGENT.md):** open **http://127.0.0.1:5680/gtm-agent** to trace a synthetic buying signal through proposal, human review, local execution and replay. The runbook includes a native n8n proposal step.
+
 **[Twelve-system collection](TWELVE-SYSTEMS.md):** open **http://127.0.0.1:5680/flagships**. Run twelve distinct business decision engines, inspect their source passports, cross-check all twelve and export acknowledged analysis. Reproduce the acceptance report with `node demo-lab/run-flagships.mjs`. Live providers remain pending.
 
 **[Salesforce RevenueOS](SALESFORCE-REVENUEOPS.md):** open **http://127.0.0.1:5680/salesforce** and run the complete local Lead/Opportunity/Case demonstration. Reproduce its acceptance report with `node demo-lab/run-salesforce.mjs`.

@@ -68,3 +68,7 @@ Per-case decisions, exact values, selected pages, traversal, byte budgets and di
 ## Markdown source import
 
 The [bounded Markdown adapter](ATLASGRAPH-MARKDOWN.md) previews explicit-heading source pages with exact raw-source hashes and offsets, then imports a reviewed whole-tenant snapshot through the existing compiler. Claims and references remain supplied annotations. Optional source origin is retained in the same immutable SQLite transaction; this does not add PDF/email extraction, automatic semantic facts or authenticated review. Open `/research-markdown?project=AtlasGraph` and use a fresh answer request ID after import.
+
+## Citation evaluation
+
+The [citation evaluator](ATLASGRAPH-CITATIONS.md) grades structured proposed answers against stored retrieval receipts and current approved Markdown pages. Its local fixtures exercise incorrect citations, missing evidence, abstention and stale or wrong-tenant receipts.

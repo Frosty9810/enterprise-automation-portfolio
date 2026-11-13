@@ -17,3 +17,16 @@ A positive numerator that underflows to a zero ROAS/pacing quotient is unreprese
 `analysis_version: ad-review-v2` and the versioned `idempotency_key` cover all decision-relevant fields, including budget, elapsed time, baseline ROAS and attribution completeness. Equivalent integer/float values share an identity. This key identifies the full local analysis snapshot; it does not prove event identity or prevent duplicate provider actions. Consumers of the previous four-field key must migrate/recompute cached analysis identities.
 
 Run `python -m unittest discover -s tests -p test_ad_metric_contract.py -v` from the repository root. The n8n export, database adapter and live Meta/Google acceptance are separate implementations; they are not certified by these local Python checks.
+
+## Run the synthetic n8n review workflow
+
+Import [n8n-fixture-workflow.json](n8n-fixture-workflow.json) into n8n and execute the Manual Trigger. From the repository root with the demo lab dependencies installed, the equivalent local commands are:
+
+```powershell
+node demo-lab/n8n.mjs import:workflow --input="13 Marketing Agencies/MKT-01 Multi-Channel Ad Operations Control Plane/build/n8n-fixture-workflow.json"
+node demo-lab/n8n.mjs execute --id=PortfolioMkt0011 --rawOutput
+```
+
+Inspect the four items from **Route for review**. The underpacing fixture requests optimization review, incomplete attribution requests data quality review, healthy metrics route to monitoring, and string-valued spend requests data quality review. The workflow accepts integer cents and basis points within explicit bounds. It rejects invalid rows before deriving ratios, and every result sets automatic budget changes to false.
+
+This manual fixture workflow runs three JavaScript Code nodes and uses bundled data. It covers a bounded subset of the ad review policy. The Python reference also handles its broader numeric snapshot contract and analysis fingerprints. The existing scheduled provider workflow, live advertising sources, persistence and approval-queue integration have their own setup and acceptance requirements.

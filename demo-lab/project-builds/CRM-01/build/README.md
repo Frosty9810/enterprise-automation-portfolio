@@ -28,3 +28,5 @@ Show canonical email, stale version and no-consent routes; no hosted CRM write o
 
 ---
 *Part of the Enterprise Automation Portfolio. See [project overview](../README.md).*
+
+The [lead-to-intake funnel](../../../CRM-HANDOFF-FUNNEL.md) reports stage conversion, first-touch attribution and handoff latency from synthetic CRM events in SQLite.

@@ -21,3 +21,22 @@ The record stores `eml-v1:` followed by base64 of the original bytes. This fits 
 A successful import does not grant readiness. Use the existing compliance review with the saved document revision and content hash. Expiry, revocation and supersession continue to hold readiness under the existing rules.
 
 This adapter implements a restricted synthetic format. Real mailbox access, issuer authentication, PDF and multipart attachment handling, signed provenance and provider acceptance remain open. Keep the existing construction desk and its change approval process within the synthetic scope described in the [construction runbook](CONSTRUCTION.md).
+
+## Loopback HTTP preview and submission
+
+Run the HTTP example from the repository root. It starts its own loopback server with an in-memory store and a bundled synthetic fixture.
+
+```sh
+node demo-lab/run-construction-email-http.mjs
+node demo-lab/run-construction-email-http.mjs --submit
+node --test demo-lab/construction-email-http.test.mjs
+```
+
+Send JSON with the `X-Demo-Client: local-showcase` header to the local lab server. Both routes use POST.
+
+| Route | Exact request fields | Result |
+|---|---|---|
+| `/api/construction/email-preview` | `emailBase64` | Parsed `kind`, `sourceId`, `reference`, `validUntil` and `rawSha256`. The preview leaves the ledger untouched. |
+| `/api/construction/email-submit` | `emailBase64`, `context`, `expectedRawSha256` | `{receipt, rawSha256}` after checking the submitted bytes against the expected digest. The construction ledger applies its existing submission, replay and review rules. |
+
+Encode the original file bytes as canonical padded base64 and supply the lowercase `rawSha256` from the preview. Keep the same six context fields described above. The digest confirms the source bytes only. The existing core validates the context and uses `commandId` to enforce immutable retries. A successful new submission starts unverified. An exact retry returns the current document, including any later review state, without appending another event. The digest and loopback guards provide no sender or operator authentication.

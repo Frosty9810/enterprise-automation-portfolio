@@ -96,3 +96,33 @@ export function prepareConstructionEmail(bytes, context) {
   const { rawSha256, ...source } = parseConstructionEmail(bytes);
   return { input: { ...Object.fromEntries(contextFields.map(field => [field, context[field]])), channel: 'email', ...source }, rawSha256 };
 }
+
+
+function exactRequest(value, keys) {
+  if (!value || typeof value !== 'object' || Array.isArray(value) ||
+      Object.keys(value).length !== keys.length || keys.some(key => !Object.hasOwn(value, key))) {
+    reject('supply exactly: ' + keys.join(', ') + '.');
+  }
+}
+
+function decodeEmailBase64(value) {
+  if (typeof value !== 'string' || value.length === 0 || value.length > Math.ceil(maxBytes / 3) * 4) {
+    reject('supply bounded canonical base64 in emailBase64.');
+  }
+  const bytes = Buffer.from(value, 'base64');
+  if (bytes.toString('base64') !== value) reject('emailBase64 must be canonical padded base64.');
+  return bytes;
+}
+
+export function previewConstructionEmailRequest(request) {
+  exactRequest(request, ['emailBase64']);
+  const { content, ...preview } = parseConstructionEmail(decodeEmailBase64(request.emailBase64));
+  return preview;
+}
+
+export function prepareConstructionEmailSubmission(request) {
+  exactRequest(request, ['emailBase64', 'context', 'expectedRawSha256']);
+  const { input, rawSha256 } = prepareConstructionEmail(decodeEmailBase64(request.emailBase64), request.context);
+  if (request.expectedRawSha256 !== rawSha256) reject('source bytes changed. Preview again before submitting.');
+  return { input, rawSha256 };
+}

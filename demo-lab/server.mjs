@@ -2,6 +2,7 @@ import { createServer } from 'node:http';
 import { referralDesk } from './referral-core.mjs';
 import { maintenanceDesk } from './maintenance-core.mjs';
 import { constructionDesk } from './construction-core.mjs';
+import { previewConstructionEmailRequest, prepareConstructionEmailSubmission } from './construction-email.mjs';
 import { DatabaseSync } from 'node:sqlite';
 import { mkdirSync, readFileSync, readdirSync, existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
@@ -384,6 +385,11 @@ export function createLabServer(db = openStore(), executeWorkflow = runN8n) {
       if (url.pathname.startsWith('/api/construction/')) {
         const actions = new Map([
           ['submit-document',x=>construction.submitDocument(x)],['review-document',x=>construction.reviewDocument(x)],
+          ['email-preview', previewConstructionEmailRequest],
+          ['email-submit', request => {
+            const { input, rawSha256 } = prepareConstructionEmailSubmission(request);
+            return { receipt: construction.submitDocument(input), rawSha256 };
+          }],
           ['document-receipt',x=>construction.documentReceipt(x)],['readiness',x=>construction.readiness(x)],
           ['create-order',x=>construction.createOrder(x)],['revise-order',x=>construction.reviseOrder(x)],
           ['review-order',x=>construction.reviewOrder(x)],['record-commitment',x=>construction.recordCommitment(x)],

@@ -29,7 +29,7 @@ Insurance and license are the two required fixture kinds. A new source ID for a 
 
 `validUntil` is exclusive: a document is expired at the exact timestamp, not one millisecond later. Canonical UTC timestamps are required, impossible dates and future received sources are rejected, and timestamps remain distinct: source receipt does not establish an issuance or validity-start date. An expired document received after its expiry can be stored and reviewed as supplied evidence but cannot establish current readiness. The configured site must also be inside its active fixture period.
 
-A [local email export adapter](CONSTRUCTION-EMAIL.md) can derive document fields from a strict synthetic plain-text format before passing the evidence through the same submission and independent review path.
+A [local email export adapter](CONSTRUCTION-EMAIL.md) can derive document fields from a strict synthetic plain-text format before passing the evidence through the same submission and independent review path. The [loopback API](CONSTRUCTION-EMAIL.md#loopback-http-preview-and-submission) previews the parsed fields and checks the original byte digest on explicit submission.
 
 ## Change review and local posting
 

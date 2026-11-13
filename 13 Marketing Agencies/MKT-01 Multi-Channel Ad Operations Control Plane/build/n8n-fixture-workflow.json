@@ -1,0 +1,95 @@
+{
+  "id": "PortfolioMkt0011",
+  "name": "MKT-01 Synthetic Ad Snapshot Review",
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "nodes": [
+    {
+      "id": "d8648200-527c-4af1-90d6-633510535b02",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "d8648201-527c-4af1-90d6-633510535b02",
+      "name": "Synthetic ad snapshots",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        240,
+        0
+      ],
+      "parameters": {
+        "jsCode": "return [\n  { platform: 'meta', campaign_id: 'fixture-underpace', spend_cents: 20000, revenue_cents: 25000, budget_cents: 100000, elapsed_bps: 5000, baseline_roas_bps: 20000, attribution_bps: 9500 },\n  { platform: 'google', campaign_id: 'fixture-attribution', spend_cents: 40000, revenue_cents: 90000, budget_cents: 80000, elapsed_bps: 5000, baseline_roas_bps: 21000, attribution_bps: 5500 },\n  { platform: 'meta', campaign_id: 'fixture-monitor', spend_cents: 50000, revenue_cents: 110000, budget_cents: 100000, elapsed_bps: 5000, baseline_roas_bps: 20000, attribution_bps: 10000 },\n  { platform: 'google', campaign_id: 'fixture-malformed', spend_cents: '40000', revenue_cents: 90000, budget_cents: 80000, elapsed_bps: 5000, baseline_roas_bps: 21000, attribution_bps: 9500 },\n].map(json => ({ json }));"
+      }
+    },
+    {
+      "id": "d8648202-527c-4af1-90d6-633510535b02",
+      "name": "Validate integer metrics",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        480,
+        0
+      ],
+      "parameters": {
+        "jsCode": "const limits = {\n  spend_cents: [0, 1000000000], revenue_cents: [0, 1000000000],\n  budget_cents: [1, 1000000000], elapsed_bps: [1, 10000],\n  baseline_roas_bps: [0, 1000000], attribution_bps: [0, 10000],\n};\nreturn $input.all().map(({ json: row }) => {\n  const invalid = [];\n  if (!['meta', 'google'].includes(row.platform)) invalid.push('platform');\n  if (typeof row.campaign_id !== 'string' || !/^fixture-[a-z0-9-]{1,60}$/.test(row.campaign_id)) invalid.push('campaign_id');\n  const metrics = {};\n  for (const [key, [min, max]] of Object.entries(limits)) {\n    const value = row[key];\n    if (!Number.isSafeInteger(value) || value < min || value > max) {\n      invalid.push(key);\n    } else {\n      metrics[key] = value;\n    }\n  }\n  return { json: {\n    platform: invalid.includes('platform') ? null : row.platform,\n    campaign_id: invalid.includes('campaign_id') ? null : row.campaign_id,\n    invalid_fields: invalid,\n    metrics: invalid.length ? null : metrics,\n  } };\n});"
+      }
+    },
+    {
+      "id": "d8648203-527c-4af1-90d6-633510535b02",
+      "name": "Route for review",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        720,
+        0
+      ],
+      "parameters": {
+        "jsCode": "return $input.all().map(({ json: row }) => {\n  const m = row.metrics;\n  const reasons = [];\n  let action = 'monitor';\n  if (row.invalid_fields.length) {\n    action = 'data_quality_review';\n    reasons.push('invalid_snapshot');\n  } else if (m.attribution_bps < 8000) {\n    action = 'data_quality_review';\n    reasons.push('attribution_incomplete');\n  } else {\n    // Integer cross-products stay below Number.MAX_SAFE_INTEGER at the declared bounds.\n    if (m.spend_cents * 40000 < m.budget_cents * m.elapsed_bps * 3) {\n      reasons.push('under_pacing');\n    }\n    if (m.spend_cents > 0 && m.revenue_cents * 100000 < m.spend_cents * m.baseline_roas_bps * 7) {\n      reasons.push('roas_below_baseline');\n    }\n    if (reasons.length) action = 'optimization_review';\n  }\n  return { json: {\n    ...row, action, reasons,\n    roas: m && m.spend_cents > 0 ? m.revenue_cents / m.spend_cents : null,\n    pacing: m ? (m.spend_cents * 10000) / (m.budget_cents * m.elapsed_bps) : null,\n    requires_human_review: action !== 'monitor',\n    automatic_budget_change_allowed: false,\n  } };\n});"
+      }
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Synthetic ad snapshots",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Synthetic ad snapshots": {
+      "main": [
+        [
+          {
+            "node": "Validate integer metrics",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate integer metrics": {
+      "main": [
+        [
+          {
+            "node": "Route for review",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

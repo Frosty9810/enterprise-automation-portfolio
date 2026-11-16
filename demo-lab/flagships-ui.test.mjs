@@ -113,3 +113,26 @@ test('late evaluation and fixture responses cannot overwrite a newer project', a
 finally {
     x.close();
 } });
+
+test('consent scope explains which person and known-time cutoff control the preview', async () => {
+    const x = setup();
+    try {
+        await mountFlagships(x.d, x.api, x.download, 'F09');
+        const editor = x.d.getElementById('input');
+        const fixture = JSON.parse(editor.value);
+        fixture.events.push({ ...fixture.events[1], id: 'unrelated-revoke', personId: 'other-person', knownAt: fixture.events[1].occurredAt });
+        fixture.asOf = fixture.events[1].occurredAt;
+        editor.value = JSON.stringify(fixture);
+        editor.dispatchEvent(new x.dom.window.Event('input'));
+        x.d.getElementById('evaluate').click();
+        await until(() => !x.d.getElementById('evaluate').disabled);
+        const detail = x.d.getElementById('details').textContent;
+        assert.match(detail, /Subject-bound events.*synthetic-person.*email \/ marketing/);
+        assert.match(detail, /active scoped grant/);
+        assert.doesNotMatch(detail, /unrelated-revoke/);
+        assert.match(x.d.getElementById('summary').textContent, /eligible transition preview/);
+        assert.equal(JSON.parse(x.d.getElementById('raw').textContent).communicationSent, false);
+    } finally {
+        x.close();
+    }
+});

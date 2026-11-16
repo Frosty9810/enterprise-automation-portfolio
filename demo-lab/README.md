@@ -14,6 +14,8 @@
 
 **[Governed GTM workflow](GTM-AGENT.md):** open **http://127.0.0.1:5680/gtm-agent** to trace a synthetic buying signal through proposal, human review, local execution and replay. The runbook includes a native n8n proposal step.
 
+**[CRM campaign-to-intake pipeline](CRM-HANDOFF-FUNNEL.md)**. Import a local n8n workflow, load out-of-order synthetic CRM events, and compare event-time conversion and replay counts.
+
 **[Twelve-system collection](TWELVE-SYSTEMS.md):** open **http://127.0.0.1:5680/flagships**. Run twelve distinct business decision engines, inspect their source passports, cross-check all twelve and export acknowledged analysis. Reproduce the acceptance report with `node demo-lab/run-flagships.mjs`. Live providers remain pending.
 
 **[Salesforce RevenueOS](SALESFORCE-REVENUEOPS.md):** open **http://127.0.0.1:5680/salesforce** and run the complete local Lead/Opportunity/Case demonstration. Reproduce its acceptance report with `node demo-lab/run-salesforce.mjs`.

@@ -9,6 +9,33 @@ node --test demo-lab/crm-handoff-funnel.test.mjs
 
 The demo loads six events, including a handoff and intake received before their prerequisites, then retries the batch. It produces two cohorts. Paid search has two inquiries, one intake and a 15-minute average qualified-to-handoff interval. Referral has one inquiry and no completed handoff. These figures are synthetic.
 
+## Run the native n8n workflow
+
+With Node.js 24 and the repository's pinned n8n dependency installed, start the lab:
+
+```sh
+npm ci --prefix demo-lab --no-audit --no-fund
+node demo-lab/server.mjs
+```
+
+In a second terminal, import and run the workflow twice:
+
+```sh
+node demo-lab/n8n.mjs import:workflow --input=demo-lab/crm-handoff-n8n.json
+node demo-lab/n8n.mjs execute --id=PortfolioCrm0016 --rawOutput
+node demo-lab/n8n.mjs execute --id=PortfolioCrm0016 --rawOutput
+```
+
+Inspect **Load synthetic CRM events** for the first delivery and its replay. On a fresh lab database the nodes report six inserts and then six replays with zero inserts. If the fixture is already loaded, both runs report six replays. **Read campaign funnel** reports at 11:00 UTC from the November 16 fixture. Paid search reaches intake for one of two leads (50%), with 15 minutes from qualification to handoff. Referral has one inquiry and no qualification, so its qualified-to-handoff rate is undefined. These counts describe only the bundled fixture.
+
+Both HTTP nodes use the loopback lab at port 5680. The workflow sends the six normalized events to `POST /api/crm-funnel/ingest` as `{events}`, then reads cohort rows via `POST /api/crm-funnel/report` as `{asOf}`. Both use JSON and the lab's required `X-Demo-Client: local-showcase` header. The header is a local browser safeguard. Production authentication remains outside this demo. The lab enforces its existing request body limit, so split large event files into smaller batches. The workflow uses a manual trigger and synthetic IDs. The local database is shared by both routes and persists between lab restarts.
+
+Raw n8n output includes runtime metadata. Share the verifier summary for evidence.
+
+CI verifies native import, initial load, replay and unchanged cohort metrics. To run that strict acceptance check yourself while the lab is running, start with a lab database that has never loaded the CRM n8n fixture, then run `node demo-lab/verify-crm-handoff-n8n.mjs`.
+
+## Event contract
+
 Use `openCrmHandoffFunnel()` for a temporary in-memory database or pass a local SQLite file path to persist the events. Call `ingest(events)` with 1 to 1,000 event objects and `report(asOf)` with a UTC timestamp through the cutoff, then call `close()`.
 
 | Field | Contract |

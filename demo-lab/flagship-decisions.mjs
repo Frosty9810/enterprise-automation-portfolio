@@ -101,11 +101,10 @@ export function routingLab(x) {
     const sorted = [...latencies].sort((a, b) => a - b), accepted = trials.filter(t => t.selected).length;
     return { action: trials.every(t => t.passed) ? 'fixture_gate_passed' : 'evaluation_review', datasetHash: hash({ version: x.datasetVersion, cases: x.cases, trainingIds: x.trainingIds }), trials, passed: trials.filter(t => t.passed).length, total: trials.length, spentScenarioUnits: spent, budgetUnits: x.budgetUnits, scenarioUnitsPerVerifiedResult: accepted ? spent / accepted : null, p50LocalMs: sorted.length ? sorted[Math.ceil(sorted.length * .5) - 1] : null, p95LocalMs: sorted.length ? sorted[Math.ceil(sorted.length * .95) - 1] : null, sampleCount: latencies.length, externalActions: 0, scope: 'Proposals and unit costs are synthetic fixtures. Instruction markers are caller supplied; absent markers are not a safety guarantee. Durations measure the local verifier, not model latency. No paid inference, empirical provider cost, blind holdout or general semantic grounding claim.' };
 }
-export function mergePreview(x) {
-    text(x.tenant, 'Tenant');
-    list(x.records, 'Records');
-    unique(x.records);
-    for (const r of x.records) {
+export function validateMergeRecords(records) {
+    list(records, 'Records');
+    unique(records);
+    for (const r of records) {
         text(r.tenant, 'Record tenant');
         text(r.name, 'Name');
         text(r.owner, 'Owner');
@@ -117,6 +116,10 @@ export function mergePreview(x) {
             if (typeof r[field] !== 'string' || r[field].length > 200)
                 throw Error('Invalid merge field');
     }
+}
+export function mergePreview(x) {
+    text(x.tenant, 'Tenant');
+    validateMergeRecords(x.records);
     if (!['preview', 'simulate_apply_undo', 'simulate_undo_conflict'].includes(x.mode))
         throw Error('Unknown merge mode');
     const keep = x.records.find(r => r.id === x.keepId), duplicate = x.records.find(r => r.id === x.duplicateId);

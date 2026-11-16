@@ -113,3 +113,24 @@ test('late evaluation and fixture responses cannot overwrite a newer project', a
 finally {
     x.close();
 } });
+
+test('support desk shows scoped policy reasons without changing the original exact excerpt', async () => {
+    const x = setup();
+    try {
+        await mountFlagships(x.d, x.api, x.download, 'F03');
+        const editor = x.d.getElementById('input');
+        const fixture = JSON.parse(editor.value);
+        fixture.query = 'How many days do I have to send back a sealed purchase?';
+        fixture.retrievalPolicy = 'scoped-intent-v1';
+        editor.value = JSON.stringify(fixture);
+        editor.dispatchEvent(new x.dom.window.Event('input'));
+        x.d.getElementById('evaluate').click();
+        await until(() => !x.d.getElementById('evaluate').disabled);
+        const detail = x.d.getElementById('details').textContent;
+        assert.match(detail, /Scoped retrieval: return window \/ one approved source/);
+        assert.match(detail, /Unopened products may be returned within 30 days/);
+        assert.equal(x.d.getElementById('export').disabled, true);
+    } finally {
+        x.close();
+    }
+});

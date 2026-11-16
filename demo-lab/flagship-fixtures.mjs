@@ -23,7 +23,7 @@ export const flagshipFixtures = {
 export const flagshipDescriptions = [
     ['F01', 'Salesforce RevenueOS', 'Route CRM changes without overwriting reviewed evidence.', 'Salesforce / RevenueOps', '/salesforce', ['salesforce-core.mjs', 'salesforce-ui.mjs', 'salesforce.test.mjs']],
     ['F02', 'Incident & Recovery Console', 'Recover uncertain writes before retrying.', 'Platform reliability', '/workshop', ['reliability.mjs', 'project-passports.mjs', 'reliability.test.mjs']],
-    ['F03', 'Evidence-grounded Support Desk', 'Show approved excerpts, exclusions and abstention.', 'Support / AI infrastructure', null, ['flagship-decisions.mjs', 'engineering-evals.mjs', 'flagship-decisions.test.mjs']],
+    ['F03', 'Evidence-grounded Support Desk', 'Show approved excerpts, exclusions and abstention.', 'Support / AI infrastructure', null, ['flagship-decisions.mjs', 'engineering-evals.mjs', 'flagship-decisions.test.mjs', 'support-intent-policy.mjs', 'support-intent-policy.test.mjs']],
     ['F04', 'Routing Evaluation Lab', 'Inspect the quality and budget tradeoff before paying for inference.', 'Evaluation engineering', '/engineering', ['flagship-decisions.mjs', 'engineering-evals.mjs', 'flagship-fixtures.mjs', 'flagship-decisions.test.mjs']],
     ['F05', 'Accounts Payable Review Desk', 'Match invoices to purchase evidence and hold financial exceptions.', 'Finance operations', null, ['../16 Accounting/ACC-01 Accounts Payable Match and Cash Control/build/invoice_matcher.py', '../tests/test_invoice_controls.py']],
     ['F06', 'Source-linked Architecture Explorer', 'Follow each decision to actual source and current execution evidence.', 'Engineering communication', null, ['flagship-suite.mjs', 'flagship-suite.test.mjs', 'explorer-evidence.test.mjs']],

@@ -2,6 +2,7 @@ import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { isDeepStrictEqual } from 'node:util';
 import { supportDesk } from './flagship-decisions.mjs';
+import { scopedIntentPolicy } from './support-intent-policy.mjs';
 
 function readFixture(name) {
   return JSON.parse(readFileSync(new URL(name, import.meta.url), 'utf8'));
@@ -70,6 +71,7 @@ function score(question, label, output, documents) {
     observed: { status, citations, ...(exactExcerpt && { quote: evidence[0].quote, sha256: evidence[0].sha256 }) },
     forbidden,
     findings,
+    ...(output?.retrievalPolicy && { retrievalPolicy: output.retrievalPolicy }),
   };
 }
 
@@ -117,5 +119,16 @@ export function evaluateSupportSuite(decide = supportDesk) {
     },
     cases,
     scope: 'Authored synthetic diagnostics for the local lexical support desk. No hosted model or general injection detection is evaluated.',
+  };
+}
+
+export function compareSupportPolicies() {
+  return {
+    lexical: evaluateSupportSuite(),
+    scopedIntent: {
+      ...evaluateSupportSuite(input => supportDesk({ ...input, retrievalPolicy: scopedIntentPolicy })),
+      scope: 'Authored synthetic diagnostics for the scoped question rules and supplied source tags.',
+    },
+    scope: 'The scoped rules were designed after observing the frozen suite. This comparison is a regression check on synthetic cases.',
   };
 }

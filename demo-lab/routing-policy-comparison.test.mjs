@@ -1,8 +1,10 @@
 import assert from 'node:assert/strict';
+import { spawnSync } from 'node:child_process';
+import { fileURLToPath } from 'node:url';
 import test from 'node:test';
 import { routingLab } from './flagship-decisions.mjs';
 import { flagshipFixtures } from './flagship-fixtures.mjs';
-import { compareRoutingPolicies } from './routing-policy-comparison.mjs';
+import { compareRoutingPolicies, routingPolicyFrontier } from './routing-policy-comparison.mjs';
 
 function results(report) {
   return report.policies.map(policy => [
@@ -82,4 +84,59 @@ test('fixed case order affects constrained allocation and reference labels only 
   assert.deepEqual(relabeled.trace, original.trace);
   assert.equal(relabeled.outcome, original.outcome);
   assert.equal(relabeled.correct, false);
+});
+
+test('the bundled frontier covers every integer budget and records the first instance of each exact outcome', () => {
+  const report = routingPolicyFrontier();
+  assert.equal(report.maximumBudgetUnits, 18);
+  assert.equal(report.budgetsEvaluated, 19);
+  assert.deepEqual(report, routingPolicyFrontier());
+
+  const runs = Array.from({ length: report.budgetsEvaluated }, (_, budgetUnits) =>
+    compareRoutingPolicies({ budgetUnits }));
+  assert.equal(report.datasetHash, runs[0].datasetHash);
+  assert.deepEqual(report.caseOrder, runs[0].caseOrder);
+
+  const thresholdRows = report.policies.map(({ thresholds }) => thresholds.map(row =>
+    [row.correct, row.minimumStartingBudgetUnits, row.spentScenarioUnitsAtThreshold]));
+  assert.deepEqual(thresholdRows, [
+    [[0, 0, 0], [1, 1, 1]],
+    [[0, 0, 0], [1, 5, 5], [2, 10, 10], [3, 15, 15]],
+    [[0, 0, 0], [1, 1, 1], [2, 7, 7], [3, 13, 13]],
+  ]);
+  assert.deepEqual(report.policies.map(policy => policy.fullAccuracyAttainable), [false, true, true]);
+  assert.deepEqual(report.policies.map(policy => policy.neverCorrectCaseIds), [
+    ['eval-shipping', 'eval-unknown'], [], [],
+  ]);
+
+  for (const [index, policy] of report.policies.entries()) {
+    const observed = runs.map(run => run.policies[index]);
+    const correctCounts = new Set(observed.map(result => result.correct));
+    assert.deepEqual(new Set(policy.thresholds.map(row => row.correct)), correctCounts);
+    for (const threshold of policy.thresholds) {
+      const first = observed.findIndex(result => result.correct === threshold.correct);
+      assert.equal(threshold.minimumStartingBudgetUnits, first);
+      assert.equal(threshold.spentScenarioUnitsAtThreshold, observed[first].spentScenarioUnits);
+    }
+    assert.deepEqual(policy.neverCorrectCaseIds, report.caseOrder.filter(caseId =>
+      observed.every(result => !result.trials.some(trial => trial.id === caseId && trial.correct))));
+  }
+});
+
+test('CLI emits either the bundled frontier or a single budget trace and rejects combinations', () => {
+  const cli = fileURLToPath(new URL('./run-routing-comparison.mjs', import.meta.url));
+  const run = (...args) => spawnSync(process.execPath, [cli, ...args], {
+    encoding: 'utf8', timeout: 5_000, windowsHide: true,
+  });
+
+  const frontier = run('--frontier');
+  assert.equal(frontier.status, 0);
+  assert.deepEqual(JSON.parse(frontier.stdout), routingPolicyFrontier());
+  const trace = run('7');
+  assert.equal(trace.status, 0);
+  assert.deepEqual(JSON.parse(trace.stdout), compareRoutingPolicies({ budgetUnits: 7 }));
+  const invalid = run('--frontier', '7');
+  assert.equal(invalid.status, 1);
+  assert.equal(invalid.stdout, '');
+  assert.match(invalid.stderr, /Usage:/);
 });

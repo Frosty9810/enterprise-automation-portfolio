@@ -57,3 +57,49 @@ export function compareRoutingPolicies({ fixture = flagshipFixtures.F04, budgetU
     scope: 'Synthetic proposals and unit charges. Each policy starts with the same independent budget and processes cases in fixture order. No model calls, provider prices or latency measurements.',
   };
 }
+
+export function routingPolicyFrontier() {
+  const fixture = flagshipFixtures.F04;
+  const maximumBudgetUnits = fixture.cases.reduce((sum, row) =>
+    sum + (row.cheap?.units ?? 0) + (row.escalation?.units ?? 0), 0);
+  // This exhaustive command is for a small, checked-in fixture.
+  if (!Number.isSafeInteger(maximumBudgetUnits) || maximumBudgetUnits < 0 || maximumBudgetUnits > 10_000) {
+    throw new RangeError('The bundled fixture budget is outside the exhaustive scan range.');
+  }
+
+  const initial = compareRoutingPolicies({ budgetUnits: 0 });
+  const trackers = initial.policies.map(({ id }) => ({
+    id, thresholds: new Map(), correctCases: new Set(),
+  }));
+  for (let budgetUnits = 0; budgetUnits <= maximumBudgetUnits; budgetUnits++) {
+    const { policies: results } = budgetUnits === 0 ? initial : compareRoutingPolicies({ budgetUnits });
+    for (const [index, result] of results.entries()) {
+      const { thresholds, correctCases } = trackers[index];
+      if (!thresholds.has(result.correct)) {
+        thresholds.set(result.correct, {
+          correct: result.correct,
+          minimumStartingBudgetUnits: budgetUnits,
+          spentScenarioUnitsAtThreshold: result.spentScenarioUnits,
+        });
+      }
+      for (const trial of result.trials) {
+        if (trial.correct) correctCases.add(trial.id);
+      }
+    }
+  }
+
+  return {
+    datasetVersion: initial.datasetVersion,
+    datasetHash: initial.datasetHash,
+    caseOrder: initial.caseOrder,
+    maximumBudgetUnits,
+    budgetsEvaluated: maximumBudgetUnits + 1,
+    policies: trackers.map(({ id, thresholds, correctCases }) => ({
+      id,
+      thresholds: [...thresholds.values()].sort((a, b) => a.correct - b.correct),
+      fullAccuracyAttainable: thresholds.has(initial.caseOrder.length),
+      neverCorrectCaseIds: initial.caseOrder.filter(caseId => !correctCases.has(caseId)),
+    })),
+    scope: 'Exhaustive integer starting budgets for the bundled synthetic fixture in its fixed case order. Spend comes from the first run attaining each exact correct count. No model calls, provider prices or latency measurements.',
+  };
+}

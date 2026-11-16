@@ -23,6 +23,8 @@ IDs and attribution slugs use lowercase letters, digits, hyphens or underscores,
 
 The report includes events whose timestamps are at or before the cutoff. Each lead is counted once, attributed to its earliest inquiry, with event ID as the tie-breaker. Each later stage must occur at or after its preceding stage. An event without a prerequisite is retained but cannot advance the funnel until a qualifying predecessor arrives. Backfilled events can therefore revise reports for earlier cutoffs. Repeat inquiries are tracked as events under the same lead and do not open new funnels.
 
+The [late-event reconciliation drill](CRM-BACKFILL-RECONCILIATION.md) compares a baseline and a restated report at the same cutoff.
+
 Rates use the preceding stage or the inquiry cohort as the named denominator. A zero denominator yields null. Average handoff latency is in milliseconds and includes only leads that reached handoff. Results are ordered by source and campaign.
 
 The [CRM-01 build runbook](project-builds/CRM-01/build/README.md) covers the separate local contact handoff workflow. The funnel consumes already normalized synthetic events. Live CRM account mapping, provider delivery, dashboard services and measured conversion outcomes require separate implementation and verification.

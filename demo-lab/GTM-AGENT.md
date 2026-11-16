@@ -25,4 +25,14 @@ The manual workflow takes the synthetic supplier signal to the loopback proposal
 node --test demo-lab/gtm-agent.test.mjs demo-lab/gtm-agent-http.test.mjs demo-lab/gtm-agent-ui.test.mjs
 ```
 
+## Verify the full run
+
+With the lab running and the shared n8n demo run unused, run:
+
+```powershell
+node demo-lab/verify-gtm-n8n.mjs
+```
+
+The check imports and executes the workflow in native n8n, then uses the loopback API to record the fixture review, execute and replay the approved task, and exercise the blocked case. It verifies the same receipt across both entry points. The CI job uses a fresh lab database. The verifier writes a short evidence summary suitable for sharing. Raw n8n execution output can include runtime metadata.
+
 Use synthetic data in this local lab. The deterministic planner demonstrates tool boundaries and review without a hosted model. Fixture identities, loopback checks and the local audit chain provide demo controls. Production authentication, a real CRM connector, LLM evaluation and campaign outcome measurements remain separate.

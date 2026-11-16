@@ -29,6 +29,7 @@ import { portfolioInventory } from './project-inventory.mjs';
 import { atlasGraph } from './atlasgraph-core.mjs';
 import { atlasMarkdown } from './atlasgraph-markdown.mjs';
 import { trustGate } from './trustgate-core.mjs';
+import { crmHandoffFunnel } from './crm-handoff-funnel.mjs';
 import { createGtmAgent, isGtmCommand } from './gtm-agent.mjs';
 import { getTrustGateChallengeCatalog, runTrustGateChallenge } from './trustgate-challenge.mjs';
 import { chronosRank } from './chronosrank-core.mjs';
@@ -158,6 +159,7 @@ export function createLabServer(db = openStore(), executeWorkflow = runN8n) {
   const research = atlasGraph(db);
   const markdown = atlasMarkdown(db);
   const gateway = trustGate(db);
+  const crmFunnel = crmHandoffFunnel(db);
   const gtm = createGtmAgent(gateway);
   const memory = chronosRank(db);
   const dock = dockside(db);
@@ -394,6 +396,15 @@ export function createLabServer(db = openStore(), executeWorkflow = runN8n) {
     if (request.headers['x-demo-client'] !== 'local-showcase') return send(response, 403, { error: 'Demo client header required' });
     try {
       const body = await readBody(request);
+      if (url.pathname === '/api/crm-funnel/ingest' || url.pathname === '/api/crm-funnel/report') {
+        const ingest = url.pathname.endsWith('/ingest');
+        const field = ingest ? 'events' : 'asOf';
+        if (!body || Array.isArray(body) || Object.keys(body).length !== 1 || !Object.hasOwn(body, field)) {
+          return send(response, 400, { error: 'Supply exactly: ' + field });
+        }
+        const result = ingest ? crmFunnel.ingest(body.events) : crmFunnel.report(body.asOf);
+        return send(response, 200, result);
+      }
       if (url.pathname.startsWith('/api/gtm/')) {
         const operation = url.pathname.slice('/api/gtm/'.length);
         if (!['plan', 'review', 'execute', 'inspect'].includes(operation)) {

@@ -12,6 +12,8 @@
 
 **[Governed n8n-to-CRM workflow](demo-lab/GTM-AGENT.md)**. Follow a synthetic supplier signal from an n8n proposal through exact-hash review, a local CRM task, and a replayable audit receipt.
 
+**[CRM campaign-to-intake pipeline](demo-lab/CRM-HANDOFF-FUNNEL.md)**. Run the n8n workflow twice against SQLite and compare campaign conversion, missing handoffs, and replay counts using synthetic lead events.
+
 **[TrustGate local tool gateway](demo-lab/TRUSTGATE.md)** — open `http://127.0.0.1:5680/trustgate` to resolve tool arguments from registered synthetic sources, inspect policy holds, review proposed writes and execute three narrow SQLite tools. Outbound providers and authenticated agent integration remain outside this partial research build.
 
 **[ChronosRank local memory workbench](demo-lab/CHRONOSRANK.md)** — open `http://127.0.0.1:5680/chronosrank` to append synthetic memory events, retrieve as of a chosen time, inspect excluded facts and preserve source receipts with feedback. Token-overlap scores are deterministic; no trained reranker or calibrated probability is claimed.

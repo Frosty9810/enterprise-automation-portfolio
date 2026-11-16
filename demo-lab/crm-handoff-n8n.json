@@ -1,0 +1,103 @@
+{
+  "id": "PortfolioCrm0016",
+  "name": "CRM campaign intake funnel",
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "nodes": [
+    {
+      "id": "8285f06e-1de7-4507-a6fb-4bb282ab7598",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "426ccca0-af55-4448-a743-63efc63d9ef2",
+      "name": "Load synthetic CRM events",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        260,
+        0
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "http://127.0.0.1:5680/api/crm-funnel/ingest",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Demo-Client",
+              "value": "local-showcase"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"events\": [\n    {\n      \"eventId\": \"crm-n8n-a-intake\",\n      \"leadId\": \"crm-n8n-a\",\n      \"stage\": \"intake_started\",\n      \"occurredAt\": \"2026-11-16T10:30:00.000Z\",\n      \"source\": null,\n      \"campaign\": null\n    },\n    {\n      \"eventId\": \"crm-n8n-a-handoff\",\n      \"leadId\": \"crm-n8n-a\",\n      \"stage\": \"handed_off\",\n      \"occurredAt\": \"2026-11-16T10:20:00.000Z\",\n      \"source\": null,\n      \"campaign\": null\n    },\n    {\n      \"eventId\": \"crm-n8n-a-inquiry\",\n      \"leadId\": \"crm-n8n-a\",\n      \"stage\": \"inquiry\",\n      \"occurredAt\": \"2026-11-16T10:00:00.000Z\",\n      \"source\": \"paid_search\",\n      \"campaign\": \"crm_n8n_search\"\n    },\n    {\n      \"eventId\": \"crm-n8n-b-inquiry\",\n      \"leadId\": \"crm-n8n-b\",\n      \"stage\": \"inquiry\",\n      \"occurredAt\": \"2026-11-16T10:01:00.000Z\",\n      \"source\": \"paid_search\",\n      \"campaign\": \"crm_n8n_search\"\n    },\n    {\n      \"eventId\": \"crm-n8n-c-inquiry\",\n      \"leadId\": \"crm-n8n-c\",\n      \"stage\": \"inquiry\",\n      \"occurredAt\": \"2026-11-16T10:03:00.000Z\",\n      \"source\": \"referral\",\n      \"campaign\": \"crm_n8n_partner\"\n    },\n    {\n      \"eventId\": \"crm-n8n-a-qualified\",\n      \"leadId\": \"crm-n8n-a\",\n      \"stage\": \"qualified\",\n      \"occurredAt\": \"2026-11-16T10:05:00.000Z\",\n      \"source\": null,\n      \"campaign\": null\n    }\n  ]\n}",
+        "options": {
+          "timeout": 5000
+        }
+      }
+    },
+    {
+      "id": "ff87cf4f-816c-4bb7-966c-39e15463d571",
+      "name": "Read campaign funnel",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        520,
+        0
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "http://127.0.0.1:5680/api/crm-funnel/report",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Demo-Client",
+              "value": "local-showcase"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"asOf\": \"2026-11-16T11:00:00.000Z\"\n}",
+        "options": {
+          "timeout": 5000
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Load synthetic CRM events",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Load synthetic CRM events": {
+      "main": [
+        [
+          {
+            "node": "Read campaign funnel",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

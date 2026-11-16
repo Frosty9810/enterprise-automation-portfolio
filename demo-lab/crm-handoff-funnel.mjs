@@ -83,60 +83,66 @@ const funnelQuery = `
   ORDER BY source, campaign
 `;
 
+export function crmHandoffFunnel(db) {
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS crm_funnel_events (
+      eventId TEXT NOT NULL PRIMARY KEY,
+      leadId TEXT NOT NULL,
+      stage TEXT NOT NULL CHECK (stage IN ('inquiry', 'qualified', 'handed_off', 'intake_started')),
+      occurredMs INTEGER NOT NULL,
+      source TEXT,
+      campaign TEXT,
+      CHECK ((stage = 'inquiry' AND source IS NOT NULL AND campaign IS NOT NULL)
+        OR (stage <> 'inquiry' AND source IS NULL AND campaign IS NULL))
+    ) STRICT;
+    CREATE INDEX IF NOT EXISTS crm_funnel_event_time ON crm_funnel_events(occurredMs);
+  `);
+  const find = db.prepare('SELECT leadId, stage, occurredMs, source, campaign FROM crm_funnel_events WHERE eventId = ?');
+  const insert = db.prepare('INSERT INTO crm_funnel_events (eventId, leadId, stage, occurredMs, source, campaign) VALUES (?, ?, ?, ?, ?, ?)');
+  const report = db.prepare(funnelQuery);
+
+  return {
+    ingest(events) {
+      if (!Array.isArray(events) || events.length === 0 || events.length > 1000) {
+        throw new TypeError('Supply a batch of 1 to 1000 CRM events.');
+      }
+      const rows = Array.from(events, validateEvent);
+      let inserted = 0;
+      db.exec('BEGIN IMMEDIATE');
+      try {
+        for (const { eventId, ...row } of rows) {
+          const existing = find.get(eventId);
+          if (existing) {
+            if (Object.keys(row).some(field => existing[field] !== row[field])) {
+              throw new Error('CRM event ID already has a different payload.');
+            }
+            continue;
+          }
+          const { leadId, stage, occurredMs, source, campaign } = row;
+          if (insert.run(eventId, leadId, stage, occurredMs, source, campaign).changes !== 1) {
+            throw new Error('CRM event insert did not persist one row.');
+          }
+          inserted++;
+        }
+        db.exec('COMMIT');
+      } catch (error) {
+        if (db.isTransaction) db.exec('ROLLBACK');
+        throw error;
+      }
+      return { inserted, replayed: rows.length - inserted };
+    },
+    report(asOf) {
+      return report.all(timestamp(asOf)).map(row => ({ ...row }));
+    },
+  };
+}
+
 export function openCrmHandoffFunnel(path = ':memory:') {
   const db = new DatabaseSync(path);
   try {
-    db.exec(`
-      PRAGMA busy_timeout = 5000;
-      CREATE TABLE IF NOT EXISTS crm_funnel_events (
-        eventId TEXT NOT NULL PRIMARY KEY,
-        leadId TEXT NOT NULL,
-        stage TEXT NOT NULL CHECK (stage IN ('inquiry', 'qualified', 'handed_off', 'intake_started')),
-        occurredMs INTEGER NOT NULL,
-        source TEXT,
-        campaign TEXT,
-        CHECK ((stage = 'inquiry' AND source IS NOT NULL AND campaign IS NOT NULL)
-          OR (stage <> 'inquiry' AND source IS NULL AND campaign IS NULL))
-      ) STRICT;
-      CREATE INDEX IF NOT EXISTS crm_funnel_event_time ON crm_funnel_events(occurredMs);
-    `);
-    const find = db.prepare('SELECT leadId, stage, occurredMs, source, campaign FROM crm_funnel_events WHERE eventId = ?');
-    const insert = db.prepare('INSERT INTO crm_funnel_events (eventId, leadId, stage, occurredMs, source, campaign) VALUES (?, ?, ?, ?, ?, ?)');
-    const report = db.prepare(funnelQuery);
-
+    db.exec('PRAGMA busy_timeout = 5000');
     return {
-      ingest(events) {
-        if (!Array.isArray(events) || events.length === 0 || events.length > 1000) {
-          throw new TypeError('Supply a batch of 1 to 1000 CRM events.');
-        }
-        const rows = Array.from(events, validateEvent);
-        let inserted = 0;
-        db.exec('BEGIN IMMEDIATE');
-        try {
-          for (const { eventId, ...row } of rows) {
-            const existing = find.get(eventId);
-            if (existing) {
-              if (Object.keys(row).some(field => existing[field] !== row[field])) {
-                throw new Error('CRM event ID already has a different payload.');
-              }
-              continue;
-            }
-            const { leadId, stage, occurredMs, source, campaign } = row;
-            if (insert.run(eventId, leadId, stage, occurredMs, source, campaign).changes !== 1) {
-              throw new Error('CRM event insert did not persist one row.');
-            }
-            inserted++;
-          }
-          db.exec('COMMIT');
-        } catch (error) {
-          if (db.isTransaction) db.exec('ROLLBACK');
-          throw error;
-        }
-        return { inserted, replayed: rows.length - inserted };
-      },
-      report(asOf) {
-        return report.all(timestamp(asOf)).map(row => ({ ...row }));
-      },
+      ...crmHandoffFunnel(db),
       close() {
         db.close();
       },

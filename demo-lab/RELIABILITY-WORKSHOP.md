@@ -14,6 +14,8 @@ Source manifests hash the explicitly listed business source, handoff contract, w
 
 `node --test demo-lab/reliability.test.mjs demo-lab/workshop-ui.test.mjs` verifies project coverage, rejection without storage, duplicate/change handling, retry limits, unresolved reconciliation, restart, source invalidation, HTTP boundaries and browser state.
 
+The [OPS-01 recovery integrity drill](OPS-RECOVERY-INTEGRITY.md) cross-checks local receipt transitions, outcomes and persisted effects after simulated faults.
+
 ## Invoice controls strengthened in the same release
 
 ACC-01 now rejects boolean, negative and nonfinite monetary/quantity values; validates required identities and a syntactically valid uppercase currency code; checks purchased quantity as well as received quantity; and uses decimal tolerance comparisons. Duplicate identity is now supplier plus invoice number, excluding mutable amount and currency. **Previously generated fingerprints use a different scheme and require reindexing from their source invoices before adopting this version.** The local sample has no persisted invoice ledger. Currency support, credit-note policies, authenticated bank-change approval and actual payment release remain outside this demonstration.

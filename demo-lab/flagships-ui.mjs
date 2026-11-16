@@ -105,8 +105,11 @@ export async function mountFlagships(document, api, download, initialId = 'F01')
         }
         if (id === 'F08')
             box.append(table(['Policy state', 'Reasons'], [[r.decision.action, r.decision.reasons.join(' · ') || 'Protected facts retained']]));
-        if (id === 'F09')
-            box.append(table(['Consent scope', 'Reason', 'Latest event'], [[r.channel + ' / ' + r.purpose, r.reason, r.latestEvent]]));
+        if (id === 'F09') {
+            const scope = r.eventScope === 'subject_bound' ? 'Subject-bound events' : 'Caller pre-scoped events';
+            box.append(node('p', scope + ' · ' + r.personId + ' · ' + r.channel + ' / ' + r.purpose));
+            box.append(table(['Decision cutoff', 'Reason', 'Latest event'], [[r.asOf, r.reason.replaceAll('_', ' '), r.latestEvent]]));
+        }
         if (id === 'F10') {
             box.append(node('p', `Draft $${(r.amountCents / 100).toFixed(2)} USD · next adjustment $${(r.nextInvoiceAdjustmentCents / 100).toFixed(2)} USD`));
             box.append(table(['Journal account', 'Debit cents', 'Credit cents'], r.journal.map(j => [j.account, j.debitCents, j.creditCents])));

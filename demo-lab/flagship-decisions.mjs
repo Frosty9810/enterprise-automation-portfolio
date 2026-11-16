@@ -157,34 +157,82 @@ export function mergePreview(x) {
     const undoAllowed = hash(current) === appliedHash;
     return { ...result, action: undoAllowed ? 'simulated_merge_reversed' : 'undo_conflict_hold', before, after, current, restored: undoAllowed ? before : null, trace: ['exact_identity_candidate', 'demo_steward_acknowledged', 'local_survivor_fields_applied', 'duplicate_archived', undoAllowed ? 'conditional_undo_restored' : 'intervening_change_blocks_undo'], localWrites: 2, undoAllowed };
 }
+function normalizeConsentEvent(event, subjectBound) {
+    const { id, personId, type, channel, purpose } = event;
+    text(id, 'Event ID');
+    if (!['grant', 'revoke'].includes(type) || !['email', 'sms'].includes(channel) || !['marketing', 'service'].includes(purpose))
+        throw Error('Invalid consent event');
+    if (subjectBound) {
+        text(personId, 'Event person');
+        const fields = ['id', 'personId', 'type', 'channel', 'purpose', 'occurredAt', 'knownAt'];
+        if (type === 'grant')
+            fields.push('expiresAt');
+        if (Reflect.ownKeys(event).length !== fields.length || fields.some(field => !Object.hasOwn(event, field)))
+            throw Error('Unexpected fields on a subject-bound consent event');
+    }
+
+    const occurredAt = instant(event.occurredAt);
+    const knownAt = instant(event.knownAt);
+    if (knownAt < occurredAt)
+        throw Error('Known time precedes occurrence');
+    const expiresAt = type === 'grant' ? instant(event.expiresAt) : null;
+    if (expiresAt !== null && expiresAt <= occurredAt)
+        throw Error('Grant expiry must follow occurrence');
+
+    return { id, personId: subjectBound ? personId : null, type, channel, purpose, occurredAt, knownAt, expiresAt };
+}
+
 export function journey(x) {
     text(x.personId, 'Person');
     const asOf = instant(x.asOf);
     if (!['email', 'sms'].includes(x.channel) || !['marketing', 'service'].includes(x.purpose))
         throw Error('Unknown channel or purpose');
     list(x.events, 'Consent events');
+    if (x.events.some(event => !event || typeof event !== 'object' || Array.isArray(event)))
+        throw Error('Invalid consent event');
+    const subjectBound = x.events.some(event => Object.hasOwn(event, 'personId'));
+    if (subjectBound && x.events.some(event => !Object.hasOwn(event, 'personId')))
+        throw Error('Mixed subject-bound and legacy consent events');
+
     const dedup = new Map();
-    for (const e of x.events) {
-        text(e.id, 'Event ID');
-        instant(e.occurredAt);
-        instant(e.knownAt);
-        if (instant(e.knownAt) < instant(e.occurredAt))
-            throw Error('Known time precedes occurrence');
-        if (!['grant', 'revoke'].includes(e.type) || !['email', 'sms'].includes(e.channel) || !['marketing', 'service'].includes(e.purpose))
-            throw Error('Invalid consent event');
-        if (e.type === 'grant') {
-            instant(e.expiresAt);
-            if (instant(e.expiresAt) <= instant(e.occurredAt))
-                throw Error('Grant expiry must follow occurrence');
-        }
-        const old = dedup.get(e.id);
-        if (old && hash(old) !== hash(e))
+    for (const input of x.events) {
+        const event = normalizeConsentEvent(input, subjectBound);
+        const previous = dedup.get(event.id);
+        if (previous && JSON.stringify(previous) !== JSON.stringify(event))
             throw Error('Conflicting duplicate consent event');
-        dedup.set(e.id, e);
+        dedup.set(event.id, event);
     }
-    const relevant = [...dedup.values()].filter(e => e.channel === x.channel && e.purpose === x.purpose && instant(e.knownAt) <= asOf && instant(e.occurredAt) <= asOf).sort((a, b) => instant(a.occurredAt) - instant(b.occurredAt) || (a.type === 'revoke' ? 1 : 0) - (b.type === 'revoke' ? 1 : 0) || a.id.localeCompare(b.id));
-    const latest = relevant.at(-1), conflicted = latest?.type === 'grant' && new Set(relevant.filter(e => e.type === 'grant' && instant(e.occurredAt) === instant(latest.occurredAt)).map(e => e.expiresAt)).size > 1, eligible = !conflicted && latest?.type === 'grant' && instant(latest.expiresAt) > asOf;
-    return { action: eligible ? 'eligible_transition_preview' : 'communication_suppressed', reason: !latest ? 'no_applicable_consent' : latest.type === 'revoke' ? 'revoked' : conflicted ? 'conflicting_grants' : instant(latest.expiresAt) <= asOf ? 'expired' : 'active_scoped_grant', personId: x.personId, channel: x.channel, purpose: x.purpose, asOf: x.asOf, considered: relevant.map(e => e.id), latestEvent: latest?.id ?? null, uniqueEvents: dedup.size, retention: { productionEnforcement: false, analysisInput: 'saved_in_local_receipt' }, communicationSent: false, externalActions: 0, scope: 'Synthetic eligibility preview for explicitly supplied consent events. No consent authentication, delivery or production retention enforcement.' };
+    const subjectEvents = [...dedup.values()].filter(event => !subjectBound || event.personId === x.personId);
+    const relevant = subjectEvents
+        .filter(event => event.channel === x.channel && event.purpose === x.purpose && event.knownAt <= asOf)
+        .sort((a, b) => a.occurredAt - b.occurredAt ||
+            Number(a.type === 'revoke') - Number(b.type === 'revoke') ||
+            Number(a.id > b.id) - Number(a.id < b.id));
+    const latest = relevant.at(-1);
+    const concurrentExpiries = new Set(relevant
+        .filter(event => event.type === 'grant' && event.occurredAt === latest?.occurredAt)
+        .map(event => event.expiresAt));
+    const reason = !latest ? 'no_applicable_consent'
+        : latest.type === 'revoke' ? 'revoked'
+        : concurrentExpiries.size > 1 ? 'conflicting_grants'
+        : latest.expiresAt <= asOf ? 'expired'
+        : 'active_scoped_grant';
+    return {
+        action: reason === 'active_scoped_grant' ? 'eligible_transition_preview' : 'communication_suppressed',
+        reason,
+        personId: x.personId,
+        channel: x.channel,
+        purpose: x.purpose,
+        asOf: x.asOf,
+        eventScope: subjectBound ? 'subject_bound' : 'legacy_pre_scoped',
+        considered: relevant.map(event => event.id),
+        latestEvent: latest?.id ?? null,
+        uniqueEvents: subjectEvents.length,
+        retention: { productionEnforcement: false, analysisInput: 'saved_in_local_receipt' },
+        communicationSent: false,
+        externalActions: 0,
+        scope: 'Synthetic eligibility preview. Subject-bound IDs are supplied; legacy timelines are pre-scoped by the caller. No consent authentication, delivery or production retention enforcement.',
+    };
 }
 export function usageLedger(x) {
     text(x.account, 'Account');

@@ -98,6 +98,92 @@ test('merge candidates reject same-domain false positives and conflicting consen
     assert.ok(!r.after);
 } const x = fixture('F07'); x.records[1].consent = 'true'; assert.throws(() => mergePreview(x), /boolean/); });
 test('consent uses event time and known time, revocation wins ties, repeats dedupe, expiry and purpose hold', () => { const x = fixture('F09'); assert.equal(journey(x).reason, 'revoked'); x.events = x.events.slice(0, 1); assert.equal(journey(x).action, 'eligible_transition_preview'); assert.equal(journey({ ...x, purpose: 'service' }).reason, 'no_applicable_consent'); assert.equal(journey({ ...x, asOf: '2026-11-01T12:00:00.000Z' }).reason, 'expired'); x.events.push(structuredClone(x.events[0])); assert.equal(journey(x).uniqueEvents, 1); const bad = fixture('F09'); bad.events[1].occurredAt = bad.events[0].occurredAt; assert.equal(journey(bad).reason, 'revoked'); bad.events[1].knownAt = '2026-10-06T12:00:00.000Z'; assert.equal(journey(bad).reason, 'active_scoped_grant'); x.events[1].expiresAt = '2026-12-01T12:00:00.000Z'; assert.throws(() => journey(x), /Conflicting duplicate/); });
+test('subject-bound journey excludes foreign grants and revokes from the decision result', () => {
+    const x = fixture('F09');
+    const [grant, revoke] = x.events;
+    const foreignPerson = 'other-synthetic-person';
+    const foreignGrant = { ...grant, id: 'foreign-grant', personId: foreignPerson };
+    const foreignRevoke = { ...revoke, id: 'foreign-revoke', personId: foreignPerson };
+
+    const unavailable = journey({ ...x, events: [foreignGrant] });
+    assert.equal(unavailable.reason, 'no_applicable_consent');
+    assert.equal(unavailable.eventScope, 'subject_bound');
+    assert.equal(unavailable.uniqueEvents, 0);
+    assert.deepEqual(unavailable.considered, []);
+    assert.equal(unavailable.latestEvent, null);
+
+    const localGrant = journey({ ...x, events: [foreignRevoke, grant, foreignGrant] });
+    assert.equal(localGrant.action, 'eligible_transition_preview');
+    assert.equal(localGrant.latestEvent, grant.id);
+    assert.deepEqual(localGrant.considered, [grant.id]);
+    assert.equal(localGrant.uniqueEvents, 1);
+    assert.equal(localGrant.communicationSent, false);
+    assert.equal(localGrant.externalActions, 0);
+
+    assert.equal(journey({ ...x, events: [foreignGrant, revoke, grant] }).reason, 'revoked');
+    assert.equal(journey({ ...x, channel: 'sms' }).reason, 'no_applicable_consent');
+    assert.equal(journey({ ...x, personId: grant.personId.toUpperCase() }).reason, 'no_applicable_consent');
+});
+
+test('subject mode rejects mixed timelines and unexpected fields while preserving an explicit legacy boundary', () => {
+    const x = fixture('F09');
+    const [grant, revoke] = x.events;
+    const { personId, ...legacy } = grant;
+    assert.throws(() => journey({ ...x, events: [legacy, revoke] }), /Mixed subject-bound/);
+    assert.throws(() => journey({ ...x, events: [{ ...grant, personId: '' }] }), /Event person/);
+    assert.throws(() => journey({ ...x, events: [{ ...grant, person_id: grant.personId }] }), /Unexpected fields/);
+    assert.throws(() => journey({ ...x, events: [{ ...revoke, expiresAt: null }] }), /Unexpected fields/);
+
+    const legacyResult = journey({ ...x, events: [legacy, { ...legacy, debug: 'ignored legacy metadata' }] });
+    assert.equal(legacyResult.action, 'eligible_transition_preview');
+    assert.equal(legacyResult.eventScope, 'legacy_pre_scoped');
+    assert.equal(legacyResult.uniqueEvents, 1);
+});
+
+test('canonical event IDs replay across reordered keys and equivalent offsets but reject contradictory facts', () => {
+    const x = fixture('F09');
+    const [grant] = x.events;
+    const offsetReplay = {
+        expiresAt: '2026-11-01T08:00:00-04:00',
+        knownAt: '2026-10-01T08:00:00-04:00',
+        occurredAt: '2026-10-01T08:00:00-04:00',
+        purpose: grant.purpose,
+        channel: grant.channel,
+        type: grant.type,
+        personId: grant.personId,
+        id: grant.id,
+    };
+    const expected = journey({ ...x, events: [grant] });
+    assert.deepEqual(journey({ ...x, events: [offsetReplay, grant] }), expected);
+    assert.deepEqual(journey({ ...x, events: [grant, offsetReplay] }), expected);
+    for (const changed of [
+        { personId: 'other-person' },
+        { knownAt: '2026-10-01T12:00:01.000Z' },
+        { channel: 'sms' },
+        { expiresAt: '2026-11-01T12:00:01.000Z' },
+    ]) {
+        assert.throws(() => journey({ ...x, events: [grant, { ...offsetReplay, ...changed }] }), /Conflicting duplicate/);
+    }
+});
+
+test('same-instant grants agree across offsets, late conflicting knowledge arrives at its exact boundary', () => {
+    const x = fixture('F09');
+    const [grant, revoke] = x.events;
+    const agreement = { ...grant, id: 'second-grant', expiresAt: '2026-11-01T08:00:00-04:00' };
+    const disagreement = {
+        ...grant, id: 'late-grant', expiresAt: '2026-11-01T12:00:01.000Z',
+        knownAt: '2026-10-05T12:00:00.000Z',
+    };
+    const tiedRevoke = { ...revoke, occurredAt: grant.occurredAt, knownAt: disagreement.knownAt };
+    const batch = [disagreement, agreement, grant];
+    const early = { ...x, asOf: '2026-10-05T11:59:59.999Z', events: batch };
+    assert.equal(journey(early).reason, 'active_scoped_grant');
+    assert.deepEqual(journey({ ...early, events: [...batch].reverse() }), journey(early));
+    assert.equal(journey({ ...x, events: batch }).reason, 'conflicting_grants');
+    assert.equal(journey({ ...x, events: [...batch, tiedRevoke] }).reason, 'revoked');
+    assert.equal(journey({ ...x, events: [agreement, grant], asOf: grant.expiresAt }).reason, 'expired');
+});
+
 test('usage ledger uses exact cents, duplicate suppression and next-period credits with balanced journal', () => { const x = fixture('F10'), r = usageLedger(x); assert.equal(r.amountCents, 2500); assert.equal(r.nextInvoiceAdjustmentCents, -250); assert.equal(r.balanced, true); assert.equal(r.journal[0].debitCents, 2500); x.events.push(structuredClone(x.events[0])); assert.equal(usageLedger(x).amountCents, 2500); x.events.at(-1).units = 101; assert.throws(() => usageLedger(x), /Conflicting/); });
 test('ledger rejects fractional or boolean metering, excess credits, boundary-period leakage and bad currency', () => { for (const units of [true, 1.5, 0]) {
     const x = fixture('F10');

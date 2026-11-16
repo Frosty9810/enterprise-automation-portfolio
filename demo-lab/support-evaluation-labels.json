@@ -1,0 +1,106 @@
+{
+  "schemaVersion": 1,
+  "suiteId": "f03-support-diagnostic-v1",
+  "labels": [
+    {
+      "id": "return-window",
+      "status": "evidence_found",
+      "citations": [
+        "return-window-v1"
+      ],
+      "rationale": "The policy specifies the window for unopened purchases."
+    },
+    {
+      "id": "delivery-time",
+      "status": "evidence_found",
+      "citations": [
+        "standard-delivery-v1"
+      ],
+      "rationale": "The excerpt gives the standard delivery duration."
+    },
+    {
+      "id": "track-parcel",
+      "status": "evidence_found",
+      "citations": [
+        "tracking-v1"
+      ],
+      "rationale": "The tracking article identifies where to find the link."
+    },
+    {
+      "id": "damage-report",
+      "status": "evidence_found",
+      "citations": [
+        "damage-report-v1"
+      ],
+      "rationale": "The damage article explains the required evidence and reporting step."
+    },
+    {
+      "id": "invoice-copy",
+      "status": "evidence_found",
+      "citations": [
+        "invoice-download-v1"
+      ],
+      "rationale": "The invoice article identifies the download location."
+    },
+    {
+      "id": "dealer-authority",
+      "status": "evidence_found",
+      "citations": [
+        "dealer-tiers-v1"
+      ],
+      "rationale": "The dealer is in scope for its own tier schedule."
+    },
+    {
+      "id": "missing-policy",
+      "status": "abstain",
+      "citations": [],
+      "rationale": "No eligible source covers installation."
+    },
+    {
+      "id": "ambiguous-request",
+      "status": "abstain",
+      "citations": [],
+      "rationale": "The request names two topics without a concrete decision or question."
+    },
+    {
+      "id": "cross-tenant",
+      "status": "abstain",
+      "citations": [],
+      "rationale": "The only relevant article belongs to the dealer tenant."
+    },
+    {
+      "id": "draft-policy",
+      "status": "abstain",
+      "citations": [],
+      "rationale": "The only warranty article is a draft without approval."
+    },
+    {
+      "id": "flagged-instructions",
+      "status": "abstain",
+      "citations": [],
+      "rationale": "The only relevant input is explicitly marked as an instruction."
+    },
+    {
+      "id": "paraphrased-return",
+      "status": "evidence_found",
+      "citations": [
+        "return-window-v1"
+      ],
+      "rationale": "Sending back a sealed purchase is an unopened return and the request asks for the number of days."
+    },
+    {
+      "id": "unsupported-shipping-price",
+      "status": "abstain",
+      "citations": [],
+      "rationale": "The shipping article gives an estimate in days. It supplies no price."
+    },
+    {
+      "id": "damage-versus-general-return",
+      "status": "evidence_found",
+      "citations": [
+        "damage-report-v1"
+      ],
+      "rationale": "The damage-specific article governs the first step before a return."
+    }
+  ]
+}

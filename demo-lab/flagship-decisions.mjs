@@ -1,5 +1,6 @@
 import { createHash } from 'node:crypto';
 import { extractAnswer, validateAnswer } from './engineering-evals.mjs';
+import { extractScopedSupportAnswer, scopedIntentPolicy } from './support-intent-policy.mjs';
 const hash = x => createHash('sha256').update(JSON.stringify(x)).digest('hex');
 export const text = (x, n) => { if (typeof x !== 'string' || !x.trim() || x.length > 2000)
     throw Error(n + ' must be nonempty text'); return x.trim(); };
@@ -36,10 +37,15 @@ export function supportDesk(x) {
         list(d.topics, 'Topics');
         d.topics.forEach(t => text(t, 'Topic'));
     }
-    const eligible = x.documents.filter(d => !d.instructionLike), result = extractAnswer(x.query, x.tenant, eligible);
+    if (x.retrievalPolicy !== undefined && x.retrievalPolicy !== scopedIntentPolicy)
+        throw Error('Unknown support retrieval policy');
+    const eligible = x.documents.filter(d => !d.instructionLike);
+    const { result, policy } = x.retrievalPolicy === scopedIntentPolicy
+        ? extractScopedSupportAnswer(x.query, x.tenant, eligible)
+        : { result: extractAnswer(x.query, x.tenant, eligible) };
     if (!validateAnswer(result, x.tenant, eligible))
         throw Error('Evidence verification failed');
-    return { ...result, action: result.status === 'abstain' ? 'escalation_review' : 'answer_review', citationEvidence: result.citations.map(id => { const d = eligible.find(d => d.id === id); return { id, quote: d.text, sha256: hash(d.text) }; }), excluded: x.documents.filter(d => d.tenant !== x.tenant || !d.approved || d.instructionLike).map(d => ({ id: d.id, reason: d.tenant !== x.tenant ? 'tenant_mismatch' : !d.approved ? 'not_approved' : 'flagged_instruction_text' })), externalActions: 0, scope: 'Exact approved excerpts and lexical retrieval. Instruction markers are supplied fixtures, not a general injection detector or semantic truth test.' };
+    return { ...result, action: result.status === 'abstain' ? 'escalation_review' : 'answer_review', citationEvidence: result.citations.map(id => { const d = eligible.find(d => d.id === id); return { id, quote: d.text, sha256: hash(d.text) }; }), excluded: x.documents.filter(d => d.tenant !== x.tenant || !d.approved || d.instructionLike).map(d => ({ id: d.id, reason: d.tenant !== x.tenant ? 'tenant_mismatch' : !d.approved ? 'not_approved' : 'flagged_instruction_text' })), ...(policy && { retrievalPolicy: policy }), externalActions: 0, scope: policy ? 'Exact approved excerpts and explicitly scoped question forms. Topic tags and instruction markers are supplied fixtures.' : 'Exact approved excerpts and lexical retrieval. Instruction markers are supplied fixtures, not a general injection detector or semantic truth test.' };
 }
 export function routingLab(x) {
     text(x.datasetVersion, 'Dataset version');

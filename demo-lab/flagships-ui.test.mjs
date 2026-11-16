@@ -13,6 +13,27 @@ async function until(fn) { for (let i = 0; i < 300; i++) {
     await new Promise(r => setTimeout(r, 10));
 } throw Error('UI did not settle'); }
 function setup() { const dom = new JSDOM(readFileSync(new URL('./flagships.html', import.meta.url), 'utf8')), db = new DatabaseSync(':memory:'), suite = flagshipSuite(db); let exported; const api = async (k, b) => k === 'catalog' ? { projects: suite.catalog() } : k === 'example' ? suite.example(b) : k === 'evaluate' ? suite.evaluate(b.toolId, b.input) : k === 'run-all' ? crossCheckFlagships(suite) : k === 'review' ? suite.review(b.receiptId, b.actor) : suite.export(b.receiptId); return { dom, db, suite, api, d: dom.window.document, download: x => { exported = x; }, exported: () => exported, close() { dom.window.close(); db.close(); } }; }
+test('support desk shows scoped policy reasons without changing the original exact excerpt', async () => {
+    const x = setup();
+    try {
+        await mountFlagships(x.d, x.api, x.download, 'F03');
+        const editor = x.d.getElementById('input');
+        const fixture = JSON.parse(editor.value);
+        fixture.query = 'How many days do I have to send back a sealed purchase?';
+        fixture.retrievalPolicy = 'scoped-intent-v1';
+        editor.value = JSON.stringify(fixture);
+        editor.dispatchEvent(new x.dom.window.Event('input'));
+        x.d.getElementById('evaluate').click();
+        await until(() => !x.d.getElementById('evaluate').disabled);
+        const detail = x.d.getElementById('details').textContent;
+        assert.match(detail, /Scoped retrieval: return window \/ one approved source/);
+        assert.match(detail, /Unopened products may be returned within 30 days/);
+        assert.equal(x.d.getElementById('export').disabled, true);
+    } finally {
+        x.close();
+    }
+});
+
 test('routing displays excluded sources and a budget stop without granting export authority', async () => {
     const x = setup();
     try {

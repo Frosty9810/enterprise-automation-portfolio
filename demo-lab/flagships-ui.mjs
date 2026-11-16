@@ -49,6 +49,10 @@ export async function mountFlagships(document, api, download, initialId = 'F01')
         if (id === 'F02')
             box.append(table(['Transition', 'Status', 'Effects'], [['Before recovery', r.beforeRecovery.status, r.beforeRecovery.localEffects], ['After recovery', r.afterRecovery.status, r.afterRecovery.localEffects]]));
         if (id === 'F03') {
+            if (r.retrievalPolicy) {
+                const label = r.retrievalPolicy.intent?.replaceAll('_', ' ') ?? 'question held';
+                box.append(node('p', 'Scoped retrieval: ' + label + ' / ' + r.retrievalPolicy.reason.replaceAll('_', ' ')));
+            }
             box.append(node('p', r.answer, 'quote'));
             box.append(table(['Source', 'Exact excerpt hash'], r.citationEvidence.map(c => [c.id, c.sha256.slice(0, 16)])));
             box.append(table(['Excluded source', 'Reason'], r.excluded.map(c => [c.id, c.reason])));

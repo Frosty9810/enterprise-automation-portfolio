@@ -278,6 +278,15 @@ export function createLabServer(db = openStore(), executeWorkflow = runN8n) {
         try { return send(response,200,salesforce.state(url.searchParams.get('run'))); }
         catch(error) { return send(response,400,{error:error.message}); }
       }
+      if (url.pathname === '/revenueos-interview') {
+        response.writeHead(200, {'Content-Type':'text/html; charset=utf-8','Cache-Control':'no-store','X-Content-Type-Options':'nosniff',
+          'Content-Security-Policy': "default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; object-src 'none'"});
+        return response.end(readFileSync(join(directory,'revenueos-interview.html')));
+      }
+      if (['/revenueos-interview.css','/revenueos-interview-ui.mjs'].includes(url.pathname)) {
+        response.writeHead(200, {'Content-Type':url.pathname.endsWith('.css')?'text/css; charset=utf-8':'text/javascript; charset=utf-8','X-Content-Type-Options':'nosniff','Cache-Control':'no-store'});
+        return response.end(readFileSync(join(directory,url.pathname.slice(1))));
+      }
       if (url.pathname === '/salesforce') {
         response.writeHead(200, {'Content-Type':'text/html; charset=utf-8','Cache-Control':'no-store',
           'Content-Security-Policy': "default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; object-src 'none'"});

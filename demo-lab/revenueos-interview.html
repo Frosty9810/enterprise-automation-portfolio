@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="A guided Salesforce RevenueOS consultant demonstration using synthetic local records.">
+<title>RevenueOS · Consultant walkthrough</title>
+<link rel="stylesheet" href="/revenueos-interview.css">
+<script type="module" src="/revenueos-interview-ui.mjs"></script>
+</head>
+<body>
+<header class="masthead shell"><a class="brand" href="/projects">Revenue<span>OS</span><small>by Gabriel Acosta</small></a><nav aria-label="Portfolio"><a href="/salesforce">Technical control room ↗</a></nav></header>
+<main class="shell">
+<section class="intro">
+<div><p class="eyebrow">Salesforce consulting · interactive case study</p><h1>From a CRM signal<br>to an accountable action.</h1><p class="lede">Understand the business problem. Review the proposed change. Prove what happened when the response gets lost.</p></div>
+<aside class="scope"><span class="dot" aria-hidden="true"></span><div><strong>Synthetic local demonstration</strong><p>SQLite records · simulated reviewer<br>Salesforce sandbox acceptance remains open</p></div></aside>
+</section>
+<section class="story-picker" aria-labelledby="story-title">
+<div class="section-heading"><h2 id="story-title">Choose the conversation</h2><p>Three situations a RevenueOps consultant needs to explain.</p></div>
+<div class="stories">
+<button type="button" class="story" id="story-Lead"><span>Lead management</span><strong>Route a high-fit lead</strong><small>Fit, consent and clear ownership</small></button>
+<button type="button" class="story" id="story-Opportunity"><span>Pipeline execution</span><strong>Unblock the next step</strong><small>An overdue proposal needs follow-up</small></button>
+<button type="button" class="story" id="story-Case"><span>Service operations</span><strong>Recover an escalation</strong><small>A saved update loses its acknowledgement</small></button>
+</div>
+</section>
+<section class="brief" aria-labelledby="brief-title"><div><p class="eyebrow">The client problem</p><h2 id="brief-title"></h2><p id="business-context"></p></div><div class="brief-action"><label for="challenge">Evidence scenario</label><select id="challenge"><option value="normal">Normal evidence</option><option value="consent_hold">Lead consent missing</option><option value="field_denied">Field permission denied</option><option value="stale_event">Stale event evidence</option></select><button type="button" class="primary" id="start-story">Start fresh walkthrough →</button></div></section>
+<ol class="progress" aria-label="Walkthrough progress"><li data-step="signal">Inspect the signal</li><li data-step="proposal">Explain the change</li><li data-step="review">Review and apply</li><li data-step="receipt">Verify the result</li></ol>
+<p id="notice" role="status" aria-live="polite"></p>
+<div class="workspace">
+<section class="panel" aria-labelledby="signal-title"><p class="eyebrow">Evidence</p><h2 id="signal-title">The authoritative record</h2><div id="record"></div><button type="button" id="evaluate" class="primary" disabled>Prepare proposed change</button><p class="support" id="rule"></p></section>
+<section class="panel" aria-labelledby="proposal-title"><div class="panel-heading"><div><p class="eyebrow">Decision</p><h2 id="proposal-title">Make the change explainable</h2></div><span class="status" id="status">Ready to begin</span></div><div id="proposal"></div>
+<div id="review-controls" hidden><label for="reviewer">Simulated reviewer</label><select id="reviewer"><option value="revops-reviewer">RevenueOps reviewer</option><option value="analyst-readonly">Read-only analyst</option></select><label class="check"><input type="checkbox" id="acknowledge">I checked the exact fields and expected record revision.</label><button type="button" id="approve" class="primary" disabled>Record review</button></div>
+<div id="execution-controls" hidden><label for="outcome">Demonstrate the response</label><select id="outcome"><option value="timeout_after">Update saved · response lost</option><option value="success">Update saved · response received</option><option value="timeout_before">Confirmed failure before update</option></select><button type="button" id="apply" class="primary" disabled>Apply reviewed change</button></div>
+<div class="actions"><button type="button" id="reconcile" class="primary" hidden>Reconcile saved update</button><button type="button" id="replay" class="secondary" hidden>Replay the same action</button><button type="button" id="verify" class="secondary" hidden>Reload saved evidence</button><button type="button" id="download" class="secondary" hidden>Export confirmed receipt</button></div>
+</section>
+</div>
+<section class="evidence panel" aria-labelledby="evidence-title"><div class="panel-heading"><div><p class="eyebrow">Execution evidence</p><h2 id="evidence-title">The receipt tells the story.</h2></div><span id="run-label" class="mono"></span></div><dl class="metrics"><div><dt>Saved local effects</dt><dd id="effects">—</dd></div><div><dt>Execution attempts</dt><dd id="attempts">—</dd></div><div><dt>Recorded transitions</dt><dd id="events">—</dd></div></dl><ol id="timeline" aria-label="Recorded transitions"></ol><details id="technical" hidden><summary>Inspect exact receipt</summary><pre id="receipt-json"></pre></details></section>
+<details class="presenter panel"><summary>Consultant presenter notes</summary><div class="notes"><section><h3>Discover</h3><p id="discovery"></p></section><section><h3>Recommend</h3><p id="recommendation"></p></section><section><h3>Validate and hand over</h3><p>Test duplicate delivery, field permissions, concurrent edits and uncertain responses. Agree ownership, monitoring and a recovery runbook. Validate authenticated CRUD/FLS, record access and conditional writes in an authorized Salesforce sandbox.</p></section></div></details>
+<footer><a href="/salesforce">Explore the full Salesforce control room ↗</a><p>Each action above operates on the local fixture store. Reported counts describe this walkthrough.</p></footer>
+</main>
+</body></html>

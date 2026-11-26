@@ -139,3 +139,31 @@ test('late evaluations do not restore receipts after scenario changes', async ()
         x.close();
     }
 });
+
+test('operator queue follows review, uncertainty and completion without granting an action', async () => {
+    const x = setup();
+    try {
+        await mountSalesforce(x.d, x.api, x.download);
+        assert.match(x.d.getElementById('queue').textContent, /Evaluate a record/);
+        x.d.getElementById('evaluate').click();
+        await flush();
+        assert.match(x.d.getElementById('queue').textContent, /Review proposed fields/);
+        x.d.querySelector('#queue button').click();
+        assert.equal(x.d.getElementById('ack').checked, false);
+        assert.equal(x.d.getElementById('review').disabled, true);
+        x.d.getElementById('ack').checked = true;
+        x.d.getElementById('ack').dispatchEvent(new x.dom.window.Event('change'));
+        x.d.getElementById('review').click();
+        await flush();
+        x.d.getElementById('outcome').value = 'timeout_after';
+        x.d.getElementById('execute').click();
+        await flush();
+        assert.match(x.d.getElementById('queue').textContent, /Reconcile saved update/);
+        assert.equal(x.d.getElementById('execute').disabled, true);
+        x.d.getElementById('reconcile').click();
+        await flush();
+        assert.match(x.d.getElementById('queue').textContent, /Completed history/);
+    } finally {
+        x.close();
+    }
+});

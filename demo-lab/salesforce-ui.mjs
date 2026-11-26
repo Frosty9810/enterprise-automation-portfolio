@@ -1,3 +1,5 @@
+import { projectSalesforceQueue } from './salesforce-queue.mjs';
+
 export async function mountSalesforce(document, api, download) {
     const $ = id => document.getElementById(id);
     let state = null, selected = null, receipt = null, busy = false, generation = 0;
@@ -15,6 +17,26 @@ export async function mountSalesforce(document, api, download) {
     function invalidate() { generation++; receipt = null; $('ack').checked = false; render(); }
     function render() {
         $('records').replaceChildren();
+        $('queue').replaceChildren();
+        if (state) {
+            const queue = projectSalesforceQueue(state);
+            if (!queue.rows.length) $('queue').append(node('p', 'Evaluate a record to add it to this run’s queue.'));
+            for (const row of queue.rows) {
+                const item = node('article', '', 'queue-item');
+                const labels = { review: 'Review proposed fields', execute: 'Apply reviewed update', reconcile: 'Reconcile saved update', retry: 'Retry confirmed failure', reevaluate: 'Reevaluate current evidence', stop: 'Investigate hold', none: row.historical ? 'Completed history' : 'No update needed' };
+                item.append(node('strong', row.object + ' · ' + labels[row.action]), node('p', row.reasonCodes.map(code => code.replaceAll('_', ' ')).join(' · ')), node('small', row.attempts + '/2 attempts · ' + row.localEffects + ' local effects'));
+                const select = node('button', 'Inspect decision', 'secondary');
+                select.disabled = busy;
+                select.addEventListener('click', () => {
+                    selected = state.records.find(record => record.id === row.recordId);
+                    invalidate();
+                    receipt = state.receipts.find(saved => saved.receiptId === row.receiptId);
+                    render();
+                });
+                item.append(select);
+                $('queue').append(item);
+            }
+        }
         $('run-id').textContent = '';
         $('confirmed').textContent = '0';
         $('pending').textContent = '0';

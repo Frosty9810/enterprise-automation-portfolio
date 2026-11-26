@@ -283,7 +283,7 @@ export function createLabServer(db = openStore(), executeWorkflow = runN8n) {
           'Content-Security-Policy': "default-src 'self'; script-src 'self'; style-src 'self'; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; object-src 'none'"});
         return response.end(readFileSync(join(directory,'salesforce.html')));
       }
-      if (['/salesforce.css','/salesforce-ui.mjs','/salesforce-core.mjs'].includes(url.pathname)) {
+      if (['/salesforce.css','/salesforce-ui.mjs','/salesforce-core.mjs','/salesforce-queue.mjs'].includes(url.pathname)) {
         response.writeHead(200, {'Content-Type':url.pathname.endsWith('.css')?'text/css; charset=utf-8':'text/javascript; charset=utf-8','X-Content-Type-Options':'nosniff','Cache-Control':'no-store'});
         return response.end(readFileSync(join(directory,url.pathname.slice(1))));
       }

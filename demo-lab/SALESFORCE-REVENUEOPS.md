@@ -22,6 +22,12 @@ Each proposal reads its record from the local store. Input events cannot provide
 4. On another fresh run, simulate an operator change after approval. The existing review cannot overwrite the new record; reevaluate current evidence.
 5. Explore missing consent, denied field permission and stale event evidence. They hold updates. Inspect the current source and receipt hashes.
 
+## Operator queue
+
+The control room now groups each saved decision by its suggested next action. Inspect a row to load its original proposal and history. A pending proposal needs review, a reviewed proposal can be applied, and a confirmed pre-write failure can be retried within the two-attempt cap. Lost acknowledgements require reconciliation. Changed evidence and policy holds call for reevaluation or investigation.
+
+The queue includes completed history and shows attempts and local effect counts. It summarizes only the selected synthetic run. These are workflow counts, with no inferred pipeline value or revenue forecast.
+
 ## Salesforce foundations and deliberate differences
 
 - [CDC change-event structure](https://developer.salesforce.com/docs/platform/change-data-capture/guide/cdc-message-structure.html): real CDC uses ChangeEventHeader and decoded record fields. This lab uses a small normalized synthetic envelope with org, transaction key, sequence and record identity; it does not decode Avro, handle gap/overflow events or subscribe to Pub/Sub.
@@ -46,9 +52,3 @@ The durable schema stores separate runs, records, event-bound intents, unique pe
 ## Live sandbox acceptance still required
 
 Use an authorized Developer sandbox and an approved OAuth connection. Resolve metadata and actual record IDs, authenticate operators, validate CRUD/FLS and record access, fetch authoritative current records, decode CDC and handle replay-window gaps, enforce conditional writes, test real failures/rate limits and reconcile provider evidence before replay. Log correlations without tokens or client contact data. Keep any live adapter separate from the deterministic local mode.
-
-## Operator queue
-
-The control room now groups each saved decision by its suggested next action. Inspect a row to load its original proposal and history. A pending proposal needs review, a reviewed proposal can be applied, and a confirmed pre-write failure can be retried within the two-attempt cap. Lost acknowledgements require reconciliation. Changed evidence and policy holds call for reevaluation or investigation.
-
-The queue includes completed history and shows attempts and local effect counts. It summarizes only the selected synthetic run. These are workflow counts, with no inferred pipeline value or revenue forecast.

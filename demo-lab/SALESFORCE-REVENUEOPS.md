@@ -46,3 +46,16 @@ The durable schema stores separate runs, records, event-bound intents, unique pe
 ## Live sandbox acceptance still required
 
 Use an authorized Developer sandbox and an approved OAuth connection. Resolve metadata and actual record IDs, authenticate operators, validate CRUD/FLS and record access, fetch authoritative current records, decode CDC and handle replay-window gaps, enforce conditional writes, test real failures/rate limits and reconcile provider evidence before replay. Log correlations without tokens or client contact data. Keep any live adapter separate from the deterministic local mode.
+
+## Recovery fault drill
+
+Run the reproducible failure matrix:
+
+~~~sh
+node demo-lab/run-salesforce-fault-drill.mjs
+node --test demo-lab/salesforce-fault-drill.test.mjs
+~~~
+
+The drill uses the existing desk against a temporary file database. It closes and reopens the store at recovery boundaries, checks retry limits, reconciles uncertain effects, and injects an audit-write failure to verify transaction rollback. Its report contains statuses, attempts, effect counts and named checks. Each scenario records its own assertions. The source-drift probe supplies a changed local source selector to exercise the policy hold.
+
+This evidence concerns the local simulation. Real org permissions, conditional REST writes and provider reconciliation still need authorized sandbox acceptance.

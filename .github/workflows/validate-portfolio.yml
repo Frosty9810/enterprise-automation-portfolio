@@ -80,6 +80,8 @@ jobs:
         run: node --test demo-lab/*.test.mjs demo-lab/test.mjs
       - name: Execute complete local Salesforce RevenueOps acceptance
         run: node demo-lab/run-salesforce.mjs
+      - name: Exercise Salesforce recovery fault matrix
+        run: node demo-lab/run-salesforce-fault-drill.mjs
       - name: Cross-check all twelve business systems
         run: node demo-lab/run-flagships.mjs
       - name: Execute all local n8n demos

@@ -1,5 +1,7 @@
 # Gabriel Acosta — automation engineering portfolio
 
+**[RevenueOS consultant walkthrough](demo-lab/REVENUEOS-INTERVIEW.md)**. Present lead routing, opportunity follow-up and case recovery through a guided local demo.
+
 **[Complete project inventory and missing work](PROJECT-INVENTORY.md)** — open the local `/projects` page to search all 73 named entries: 27 automation demos, 20 life/data tools, nine engineering prototypes, twelve-system views and five research tracks. The collections share components; all five research entries have partial local builds. The unified catalog, all five partial research builds and PM-01 maintenance operations are integrated into main; the wider blueprints remain unfinished.
 
 **[CON-01 compliance and change-order ledger](demo-lab/CONSTRUCTION.md)** - open `http://127.0.0.1:5680/construction?project=CON-01` for supplied synthetic document provenance, expiry/readiness holds, independent version-bound change reviews and actual local budget commitments. No PDF parsing, issuer verification, payment or authority to start site work is claimed. The full industry flagship remains partial.

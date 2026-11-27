@@ -4,6 +4,7 @@ import { fileURLToPath } from 'node:url';
 import { artifacts } from './showcase.mjs';
 import { projects, projectById } from './catalog.mjs';
 import { evaluateHandoff } from './acceptance.mjs';
+import { portfolioInventory } from './project-inventory.mjs';
 const stories = {
     'RE-01': ['Sales operations', 'Prioritize a new inquiry', 'Duplicate or incomplete lead', 'Explain scoring, preserve contact identity, verify consent before follow-up'],
     'RE-02': ['Transaction coordinator', 'Calculate a milestone deadline', 'Invalid offsets or overdue milestone', 'Reject impossible milestone ordering and expose escalation'],
@@ -44,11 +45,12 @@ export function sourceSnapshot(id) {
 }
 export function passport(id) {
     const p = projectById.get(id), story = stories[id];
-    if (!p || !story)
+    const destination = portfolioInventory().find(row => row.collection === 'automation' && row.id === id);
+    if (!p || !story || !destination)
         throw Error('Unknown project');
     const handoff = evaluateHandoff(id);
     return { id, title: p.title, actor: story[0], decision: story[1], failure: story[2], acceptance: story[3], sourceSnapshot: sourceSnapshot(id), handoff,
-        demo: p.demo, steps: p.stages, deepLink: id === 'ECOM-01' ? '/product-governance' : `/#project=${id}`,
+        demo: p.demo, steps: p.stages, deepLink: destination.href,
         principles: ['Validate inputs', 'Separate proposal from authority', 'Minimize stored data', 'Bind review to source', 'Replay without duplicate effects', 'Reconcile uncertain outcomes', 'Retain failure evidence'],
         production: { status: 'not_established', needs: ['Authenticated roles and tenant context', 'Authoritative live domain records', 'Original full workflow and database acceptance', 'Provider reconciliation and operator takeover', 'Measured operational outcomes'] },
         scope: 'The interactive workshop below exercises the shared relationship-handoff lifecycle. It does not execute or validate this project’s domain policy.' };

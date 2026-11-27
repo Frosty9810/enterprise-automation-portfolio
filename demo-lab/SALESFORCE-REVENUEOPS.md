@@ -22,6 +22,8 @@ Each proposal reads its record from the local store. Input events cannot provide
 4. On another fresh run, simulate an operator change after approval. The existing review cannot overwrite the new record; reevaluate current evidence.
 5. Explore missing consent, denied field permission and stale event evidence. They hold updates. Inspect the current source and receipt hashes.
 
+The [n8n integration workshop](SALESFORCE-INTEGRATION-WORKSHOP.md) prepares three local proposals, verifies event replay, and maps the demo to Salesforce sandbox acceptance.
+
 ## Salesforce foundations and deliberate differences
 
 - [CDC change-event structure](https://developer.salesforce.com/docs/platform/change-data-capture/guide/cdc-message-structure.html): real CDC uses ChangeEventHeader and decoded record fields. This lab uses a small normalized synthetic envelope with org, transaction key, sequence and record identity; it does not decode Avro, handle gap/overflow events or subscribe to Pub/Sub.

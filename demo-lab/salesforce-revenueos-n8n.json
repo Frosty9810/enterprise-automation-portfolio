@@ -1,0 +1,230 @@
+{
+  "id": "PortfolioSf0027",
+  "name": "RevenueOS Salesforce proposal and replay",
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "nodes": [
+    {
+      "id": "4baf0606-cf08-4aaf-b9d6-c10c80939f2f",
+      "name": "Manual Trigger",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "parameters": {}
+    },
+    {
+      "id": "6c4bbfd1-9ae9-4f95-9062-6e2b550346cb",
+      "name": "Start local Salesforce run",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        240,
+        0
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "http://127.0.0.1:5680/api/salesforce/start",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Demo-Client",
+              "value": "local-showcase"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\"scenario\":\"normal\"}",
+        "options": {
+          "timeout": 5000,
+          "redirect": {
+            "redirect": {
+              "followRedirects": false
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "594c7cd2-3f2c-448d-a785-75c3bd695351",
+      "name": "Build normalized events",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        480,
+        0
+      ],
+      "parameters": {
+        "jsCode": "const state = $input.first().json;\nif (!state.runId || !state.orgId || state.records.length !== 3) throw new Error('Unexpected Salesforce local run.');\nconst supported = ['Lead', 'Opportunity', 'Case'];\nif (new Set(state.records.map(record => record.object)).size !== 3) throw new Error('Expected three Salesforce objects.');\nreturn state.records.map(record => {\n  if (!supported.includes(record.object) || record.revision !== 1) throw new Error('Unexpected authoritative record.');\n  const event = {\n    orgId: state.orgId,\n    entityName: record.object,\n    recordId: record.id,\n    transactionKey: 'n8n-revenueos-' + state.runId,\n    sequenceNumber: 1,\n    replayId: 'n8n-local-' + record.object,\n    expectedRevision: record.revision,\n    changeType: 'UPDATE',\n  };\n  return { json: { object: record.object, request: { runId: state.runId, event } } };\n});"
+      }
+    },
+    {
+      "id": "6a1b704a-5063-4f4f-8e80-87facf4f2544",
+      "name": "Evaluate proposed changes",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        720,
+        0
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "http://127.0.0.1:5680/api/salesforce/evaluate",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Demo-Client",
+              "value": "local-showcase"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.request) }}",
+        "options": {
+          "timeout": 5000,
+          "redirect": {
+            "redirect": {
+              "followRedirects": false
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "47abe87d-6d4c-437b-83f6-2a1255b8f3ae",
+      "name": "Keep replay evidence",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        960,
+        0
+      ],
+      "parameters": {
+        "jsCode": "const requests = $('Build normalized events').all();\nreturn $input.all().map((item, index) => {\n  const original = requests[index].json;\n  const first = item.json;\n  if (first.runId !== original.request.runId || first.recordId !== original.request.event.recordId ||\n      first.before.object !== original.object || first.status !== 'pending_review' || first.localEffects !== 0) {\n    throw new Error('Proposal does not match its authoritative record.');\n  }\n  return { json: { ...original, first } };\n});"
+      }
+    },
+    {
+      "id": "f17f8144-6076-4e5f-9fbb-6a6b454f85d3",
+      "name": "Replay the same events",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1200,
+        0
+      ],
+      "parameters": {
+        "method": "POST",
+        "url": "http://127.0.0.1:5680/api/salesforce/evaluate",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Demo-Client",
+              "value": "local-showcase"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.request) }}",
+        "options": {
+          "timeout": 5000,
+          "redirect": {
+            "redirect": {
+              "followRedirects": false
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "6b791797-7fec-41de-8ea8-59f88a03bcd3",
+      "name": "Verify proposal replay",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1440,
+        0
+      ],
+      "parameters": {
+        "jsCode": "const attempts = $('Keep replay evidence').all();\nconst fields = ['receiptId', 'runId', 'recordId', 'status', 'before', 'patch', 'expectedRevision', 'sourceHash', 'reviewer', 'attempts', 'localEffects', 'history', 'reasons'];\nreturn $input.all().map((item, index) => {\n  const first = attempts[index].json.first;\n  const replay = item.json;\n  if (replay.replayed !== true || fields.some(field => JSON.stringify(first[field]) !== JSON.stringify(replay[field])) ||\n      replay.status !== 'pending_review' || replay.localEffects !== 0 || replay.attempts !== 0 || replay.reviewer !== null) {\n    throw new Error('Replay changed a proposal or produced an effect.');\n  }\n  return { json: {\n    object: replay.before.object,\n    runId: replay.runId,\n    receiptId: replay.receiptId,\n    recordId: replay.recordId,\n    status: replay.status,\n    localEffects: replay.localEffects,\n    attempts: replay.attempts,\n    patch: replay.patch,\n    sameReceipt: true,\n    reviewRequired: true,\n    scope: 'Synthetic local Salesforce proposal. Every workflow invocation creates a fresh run.',\n  } };\n});"
+      }
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Start local Salesforce run",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Start local Salesforce run": {
+      "main": [
+        [
+          {
+            "node": "Build normalized events",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build normalized events": {
+      "main": [
+        [
+          {
+            "node": "Evaluate proposed changes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Evaluate proposed changes": {
+      "main": [
+        [
+          {
+            "node": "Keep replay evidence",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Keep replay evidence": {
+      "main": [
+        [
+          {
+            "node": "Replay the same events",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Replay the same events": {
+      "main": [
+        [
+          {
+            "node": "Verify proposal replay",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

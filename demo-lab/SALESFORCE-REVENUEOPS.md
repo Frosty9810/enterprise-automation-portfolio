@@ -4,6 +4,8 @@ A complete local Salesforce-focused flagship: lead assignment, opportunity follo
 
 This is a working local reconstruction, not an integration with a Salesforce org. No client records, credentials, hosted CRM writes, live API success or production outcome are implied.
 
+The [n8n integration workshop](SALESFORCE-INTEGRATION-WORKSHOP.md) prepares three local proposals, verifies event replay, and maps the demo to Salesforce sandbox acceptance.
+
 ## Business workflows
 
 | Object | Triggering evidence | Proposed update | Explicit boundary |
@@ -21,8 +23,6 @@ Each proposal reads its record from the local store. Input events cannot provide
 3. Simulate a write with a lost acknowledgement. Retry and export remain disabled. Reconcile the existing local effect; export the confirmed receipt.
 4. On another fresh run, simulate an operator change after approval. The existing review cannot overwrite the new record; reevaluate current evidence.
 5. Explore missing consent, denied field permission and stale event evidence. They hold updates. Inspect the current source and receipt hashes.
-
-The [n8n integration workshop](SALESFORCE-INTEGRATION-WORKSHOP.md) prepares three local proposals, verifies event replay, and maps the demo to Salesforce sandbox acceptance.
 
 ## Salesforce foundations and deliberate differences
 

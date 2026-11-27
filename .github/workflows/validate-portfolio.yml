@@ -91,6 +91,10 @@ jobs:
             if curl -fsS http://127.0.0.1:5680/health; then break; fi
             sleep 1
           done
+          python integrations/salesforce-revenueos/revenueos_operator.py --object Lead
+          python integrations/salesforce-revenueos/revenueos_operator.py --object Case --approve-demo --outcome timeout_after
+          python integrations/salesforce-revenueos/revenueos_operator.py --object Opportunity --approve-demo --outcome timeout_before
+          python integrations/salesforce-revenueos/revenueos_operator.py --object Lead --approve-demo --outcome success
           node demo-lab/verify.mjs
           node demo-lab/audit-originals.mjs
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2

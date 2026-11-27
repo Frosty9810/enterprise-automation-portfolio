@@ -4,6 +4,8 @@ A complete local Salesforce-focused flagship: lead assignment, opportunity follo
 
 This is a working local reconstruction, not an integration with a Salesforce org. No client records, credentials, hosted CRM writes, live API success or production outcome are implied.
 
+The [n8n integration workshop](SALESFORCE-INTEGRATION-WORKSHOP.md) prepares three local proposals, verifies event replay, and maps the demo to Salesforce sandbox acceptance.
+
 ## Business workflows
 
 | Object | Triggering evidence | Proposed update | Explicit boundary |

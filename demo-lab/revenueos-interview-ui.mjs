@@ -9,8 +9,8 @@ const stories = {
   },
   Opportunity: {
     title: 'A proposal is waiting without a useful next step.',
-    context: 'The Northstar expansion proposal has gone nine days without a next step. The account team needs a specific follow-up that preserves the commercial record.',
-    rule: 'The local rule proposes a concrete NextStep when a proposal has gone at least seven days without one. The proposed change covers that field only.',
+    context: 'The Northstar expansion proposal has had no updated next step for nine days. Its current note is awaiting discovery notes. The account team needs a specific follow-up that preserves the commercial record.',
+    rule: 'The local rule proposes a concrete NextStep when a proposal has gone at least seven days without an updated next step. The proposed change covers that field only.',
     discovery: 'What makes an opportunity stalled? Who should own follow-up? Which fields must automation leave under the account team’s control?',
     recommendation: 'Propose a next action from the current opportunity, keep the commercial fields visible and protect the update against a concurrent edit.',
     fields: ['StageName', 'DaysWithoutNextStep', 'NextStep', 'Amount'],
@@ -92,6 +92,21 @@ export async function mountRevenueInterview(document, api, download = () => {}) 
     byId('discovery').textContent = description.discovery;
     byId('recommendation').textContent = description.recommendation;
     byId('rule').textContent = description.rule;
+    const consentOption = byId('challenge').querySelector('option[value="consent_hold"]');
+    consentOption.disabled = story !== 'Lead';
+    const nextActions = {
+      pending_review: 'Compare the fields, choose a reviewer and acknowledge the exact revision.',
+      reviewed: 'Approval is saved. Choose a response scenario, then apply the update.',
+      retryable: 'The write did not happen. One attempt remains under this review.',
+      stopped: 'Both attempts failed before writing. Start a new walkthrough to investigate again.',
+      uncertain: 'One update may already exist. Reconcile it before continuing.',
+      completed: 'The update is confirmed. Replay to prove the saved effect is reused, or export the receipt.',
+      held: 'The evidence blocks this update. Inspect the reason and start a fresh scenario.',
+      no_change: 'The record requires no update under the selected rule.',
+    };
+    byId('next-action').textContent = needsVerify ? 'Reload saved evidence before taking another action.'
+      : receipt ? nextActions[receipt.status] : record ? 'Prepare the proposal to inspect the exact fields.'
+      : 'Choose a story and start a fresh walkthrough.';
     const recordBox = byId('record');
     recordBox.replaceChildren();
     if (record) {
@@ -116,20 +131,29 @@ export async function mountRevenueInterview(document, api, download = () => {}) 
       if (Object.keys(receipt.patch).length) {
         const table = make('table', '');
         const head = make('tr', '');
-        for (const label of ['Field', 'Current at evaluation', 'Proposed']) head.append(make('th', label));
+        for (const label of ['Field', 'Before evaluation', ['completed', 'uncertain'].includes(receipt.status) ? 'Saved update' : 'Proposed update']) head.append(Object.assign(make('th', label), { scope: 'col' }));
         const thead = make('thead', '');
         thead.append(head);
-        table.append(thead);
+        const caption = make('caption', 'Reviewed field comparison');
+        table.append(caption, thead);
         const body = make('tbody', '');
         for (const [field, value] of Object.entries(receipt.patch)) {
           const row = make('tr', '');
-          row.append(make('td', labels[field] ?? field), make('td', receipt.before[field]), make('td', value));
+          row.append(Object.assign(make('th', labels[field] ?? field), { scope: 'row' }), make('td', receipt.before[field]), make('td', value));
           body.append(row);
         }
         table.append(body);
         proposal.append(table);
       }
-      proposal.append(make('p', 'Review binds record revision ' + receipt.expectedRevision + ' and the saved source policy.', 'support'));
+      const reviewText = receipt.reviewer ? 'Review recorded by ' + receipt.reviewer + ' for revision ' + receipt.expectedRevision + '.'
+        : 'Review required for record revision ' + receipt.expectedRevision + '.';
+      proposal.append(make('p', reviewText, 'support'));
+      if (receipt.status === 'held' || receipt.status === 'no_change') {
+        proposal.append(make('p', 'The displayed fields are a draft. No update is authorized.', 'support'));
+      }
+      if (receipt.status === 'uncertain') {
+        proposal.append(make('p', 'The effect is saved locally. Reconciliation checks the receipt against that effect.', 'support'));
+      }
       byId('receipt-json').textContent = JSON.stringify(receipt, null, 2);
     } else {
       proposal.append(make('p', 'Prepare a proposal to inspect the exact fields, decision reason and review boundary.', 'proposal-copy'));
@@ -148,6 +172,9 @@ export async function mountRevenueInterview(document, api, download = () => {}) 
   function selectStory(next) {
     generation++;
     story = next;
+    if (next !== 'Lead' && byId('challenge').value === 'consent_hold') byId('challenge').value = 'normal';
+    byId('reviewer').value = 'revops-reviewer';
+    byId('technical').open = false;
     state = record = receipt = null;
     busy = false;
     needsVerify = false;
@@ -155,6 +182,33 @@ export async function mountRevenueInterview(document, api, download = () => {}) 
     byId('outcome').value = next === 'Case' ? 'timeout_after' : 'success';
     notice('');
     render();
+  }
+
+  function validateState(value, expectedRun) {
+    if (!value || typeof value.runId !== 'string' || !value.runId ||
+        (expectedRun && value.runId !== expectedRun) ||
+        !Array.isArray(value.records) || !Array.isArray(value.receipts) ||
+        !value.records.every(item => item && typeof item.id === 'string' && item.data) ||
+        !value.receipts.every(item => item && typeof item.receiptId === 'string') ||
+        value.records.filter(item => item.object === story).length !== 1) {
+      throw new Error('The saved state does not match this walkthrough.');
+    }
+  }
+
+  function validateReceipt(value, savedState, expectedId) {
+    const selected = savedState.records.find(item => item.object === story);
+    const saved = savedState.receipts.find(item => item.receiptId === value?.receiptId);
+    if (!value || value.runId !== savedState.runId || value.recordId !== selected.id ||
+        value.before?.object !== story || (expectedId && value.receiptId !== expectedId) ||
+        !saved || !Object.hasOwn(statuses, value.status)) {
+      throw new Error('The returned receipt does not match the selected record.');
+    }
+    for (const field of ['runId', 'recordId', 'status', 'before', 'patch', 'expectedRevision',
+      'sourceHash', 'reviewer', 'attempts', 'localEffects', 'history', 'reasons']) {
+      if (JSON.stringify(value[field]) !== JSON.stringify(saved[field])) {
+        throw new Error('The returned receipt differs from the saved decision.');
+      }
+    }
   }
 
   async function act(kind) {
@@ -172,9 +226,14 @@ export async function mountRevenueInterview(document, api, download = () => {}) 
       const result = await api(kind, body);
       if (currentGeneration !== generation) return;
       if (kind === 'export') {
+        validateReceipt(result, state, receipt.receiptId);
+        if (result.authority !== 'local_simulation_only' || result.status !== 'completed') {
+          throw new Error('A confirmed local receipt is required for export.');
+        }
         download(result);
         notice('Confirmed local receipt exported.');
       } else if (kind === 'start') {
+        validateState(result);
         state = result;
         record = state.records.find(item => item.object === story);
         if (!record) throw new Error('The selected record is missing from the local run.');
@@ -183,6 +242,11 @@ export async function mountRevenueInterview(document, api, download = () => {}) 
         byId('acknowledge').checked = false;
         notice('Fresh synthetic record loaded. Prepare the proposed change.');
       } else if (kind === 'state') {
+        validateState(result, state.runId);
+        const selected = result.records.find(item => item.object === story);
+        const saved = result.receipts.find(item => item.recordId === selected.id);
+        if (receipt && !saved) throw new Error('The saved receipt is missing. Reload evidence before continuing.');
+        if (saved) validateReceipt(saved, result, receipt?.receiptId);
         state = result;
         record = state.records.find(item => item.object === story);
         receipt = state.receipts.find(item => item.recordId === record?.id) ?? null;
@@ -192,6 +256,8 @@ export async function mountRevenueInterview(document, api, download = () => {}) 
       } else {
         const refreshed = await api('state', { runId: state.runId });
         if (currentGeneration !== generation) return;
+        validateState(refreshed, state.runId);
+        validateReceipt(result, refreshed, kind === 'evaluate' ? null : receipt.receiptId);
         state = refreshed;
         record = state.records.find(item => item.object === story);
         receipt = result;
@@ -215,6 +281,12 @@ export async function mountRevenueInterview(document, api, download = () => {}) 
       if (currentGeneration === generation) {
         busy = false;
         render();
+        const focusId = needsVerify ? 'verify' : !state ? 'start-story'
+          : !receipt ? 'evaluate' : receipt.status === 'pending_review' ? 'acknowledge'
+          : ['reviewed', 'retryable'].includes(receipt.status) ? 'apply'
+          : receipt.status === 'uncertain' ? 'reconcile'
+          : receipt.status === 'completed' ? 'replay' : 'start-story';
+        byId(focusId).focus();
       }
     }
   }
@@ -222,6 +294,10 @@ export async function mountRevenueInterview(document, api, download = () => {}) 
   for (const key of Object.keys(stories)) byId('story-' + key).addEventListener('click', () => selectStory(key));
   byId('challenge').addEventListener('change', () => selectStory(story));
   byId('acknowledge').addEventListener('change', controls);
+  byId('reviewer').addEventListener('change', () => {
+    byId('acknowledge').checked = false;
+    controls();
+  });
   for (const [id, kind] of [
     ['start-story', 'start'], ['evaluate', 'evaluate'], ['approve', 'review'], ['apply', 'execute'],
     ['reconcile', 'reconcile'], ['replay', 'execute'], ['verify', 'state'], ['download', 'export'],

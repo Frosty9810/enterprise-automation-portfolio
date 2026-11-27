@@ -82,6 +82,19 @@ jobs:
         run: node demo-lab/run-salesforce.mjs
       - name: Cross-check all twelve business systems
         run: node demo-lab/run-flagships.mjs
+      - name: Exercise the local Python RevenueOS operator
+        run: |
+          node demo-lab/server.mjs > /tmp/portfolio-python-demo.log 2>&1 &
+          PYTHON_DEMO_PID=$!
+          trap 'kill "$PYTHON_DEMO_PID"' EXIT
+          for attempt in $(seq 1 30); do
+            if curl -fsS http://127.0.0.1:5680/health; then break; fi
+            sleep 1
+          done
+          python integrations/salesforce-revenueos/revenueos_operator.py --object Lead
+          python integrations/salesforce-revenueos/revenueos_operator.py --object Case --approve-demo --outcome timeout_after
+          python integrations/salesforce-revenueos/revenueos_operator.py --object Opportunity --approve-demo --outcome timeout_before
+          python integrations/salesforce-revenueos/revenueos_operator.py --object Lead --approve-demo --outcome success
       - name: Execute all local n8n demos
         run: |
           node demo-lab/server.mjs > /tmp/portfolio-demo.log 2>&1 &

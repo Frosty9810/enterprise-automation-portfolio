@@ -29,6 +29,8 @@ Each proposal reads its record from the local store. Input events cannot provide
 - [Conditional REST requests](https://developer.salesforce.com/docs/platform/api-rest/guide/intro-rest-conditional-requests.html): a live adapter must protect updates against intervening changes using supported conditional requests and handle failed preconditions. The local integer revision models that intent; it is not a Salesforce field, ETag or claim about real REST behavior. Account-specific ETags should not be assumed for Lead, Opportunity or Case.
 - Reviewer profiles demonstrate least privilege and field-write checks. They are server-side local fixtures, not authenticated Salesforce users, OAuth scopes, CRUD/FLS enforcement or production authorization. Live Describe metadata and authenticated user permissions must replace these fixtures.
 
+The [Python operator](SALESFORCE-PYTHON-OPERATOR.md) provides a repeatable local proposal and recovery client with explicit scripted approval.
+
 ## Run and verify
 
 Requires the existing Node 24 environment; no extra package installation is needed.

@@ -59,6 +59,7 @@ The new previews use one tested JavaScript planner and make no external requests
 
 ## Review the engineering
 
+- [Whole-portfolio review assignments, shared project structure and next build queue](demo-lab/PORTFOLIO-REVIEW-HARNESS.md)
 - [Current PR stack, reproduction steps and review handoff](REVIEW-HANDOFF.md)
 - [n8n exports and operating guidance](21%20n8n/README.md)
 - [GoHighLevel setup and integration boundary](24%20GoHighLevel/README.md)

@@ -1,10 +1,10 @@
 # Complete portfolio inventory and missing work
 
-Updated October 27, 2026 against checked public main `21cc5dabd22f39fe0f6767ed2d0e73105076010d`. **The portfolio is not complete.** This inventory separates available local implementations from remaining flagship/research scope. PRs #37–#45 are merged into that commit; no pull requests were open when this snapshot was checked. Recheck GitHub before starting another delivery because branch and review states can change. Catalog presence is not provider acceptance, deployment, a recorded video or a production result.
+Reconciled November 27, 2026 against public main `f056f50a4cad3bf216c5b186a57051bfebc44581`. **The portfolio is not complete.** This inventory separates available local implementations from remaining flagship/research scope. PRs through #54 are merged; #55–67 were open with green CI when checked. Their implementation is available on feature branches and must not be described as already present on main. Recheck GitHub before delivery. Catalog presence is not provider acceptance, deployment, a recorded video or a production result.
 
 ## Why projects appear missing
 
-1. Public main includes the unified catalog, all five partial research builds, all six bounded industry desks below and the AtlasGraph synthetic comparison. PRs #31–#45 are merged into the checked main commit. Use `/projects` for the full discovery surface; the six industry desks are existing implementations, not missing projects or new catalog entries.
+1. Public main includes the unified catalog, all five partial research builds, all six bounded industry desks below and the AtlasGraph synthetic comparisons. PRs #31–#54 are merged into the checked main commit. Use `/projects` for the full discovery surface; the six industry desks are existing implementations, not missing projects or new catalog entries.
 2. Build Studio starts with selected automation cases. Its **All projects** filter covers the 27 automation demos, not the other collections. Life and data, AI engineering and Twelve systems have their own navigation.
 3. All five research tracks have partial local implementations; none completes its full research blueprint. The six industry entries also have durable local workflows. Their remaining gaps concern wider business scope, authentication, real integrations and acceptance, not absence of those local desks.
 4. Open the local `/projects` page for a searchable inventory with direct project selection across all collections. It lists 73 entries: the original 68 catalog views plus five research tracks. All five research entries are partial local builds; counts are not completion claims.
@@ -25,7 +25,20 @@ The following improvements are available on the checked main commit. The PR link
 | [#44 — Executive calendar snapshot](https://github.com/Frosty9810/enterprise-automation-portfolio/pull/44) | [Freshly checked single-case calendar export for active reviewed local tasks](demo-lab/EXECUTIVE-CALENDAR.md) | Authenticated actors, real calendar booking/sync/cancellation, inbox connectors and provider acceptance |
 | [#45 — Construction full reversal](https://github.com/Frosty9810/enterprise-automation-portfolio/pull/45) | [Fresh independent review and one linked exact-cents negative entry with atomic local budget credit](demo-lab/CONSTRUCTION-REVERSAL.md) | Partial credits, real contract amendments, payments/refunds, external accounting and authenticated roles |
 
-There are no proposed-but-unmerged slices in this dated snapshot. Future improvements belong in their own review evidence; do not treat this merge-history table as a permanent open-work queue or count these depth additions as new projects.
+Additional merged depth is available on the checked main:
+
+| Merged pull request | Available bounded improvement | Remaining boundary |
+| --- | --- | --- |
+| [#47 — Executive completion](https://github.com/Frosty9810/enterprise-automation-portfolio/pull/47) | Terminal operator-reported completion of reviewed synthetic tasks | Actual work verification and provider/calendar synchronization remain open |
+| [#48 — Construction text intake](https://github.com/Frosty9810/enterprise-automation-portfolio/pull/48) | Bounded text evidence intake into the existing construction queue | Source/issuer verification and genuine email/PDF processing remain open |
+| [#49 — ChronosRank audit](https://github.com/Frosty9810/enterprise-automation-portfolio/pull/49) | Independently checked local temporal evaluation and evidence handling | External datasets, trained reranking and calibrated confidence remain open |
+| [#50 — Construction email preview](https://github.com/Frosty9810/enterprise-automation-portfolio/pull/50) | Synthetic plain-text email export adapter | Authentic sources, attachments and authenticated integration remain open |
+| [#51 — Marketing n8n fixtures](https://github.com/Frosty9810/enterprise-automation-portfolio/pull/51) | Native deterministic ad-review fixture workflow | Actual ad-platform ingestion and spend mutation acceptance remain open |
+| [#52 — CRM funnel](https://github.com/Frosty9810/enterprise-automation-portfolio/pull/52) | Replay-safe local campaign-to-intake SQL reporting | Real attribution sources and observed business outcomes remain open |
+| [#53 — AtlasGraph citations](https://github.com/Frosty9810/enterprise-automation-portfolio/pull/53) | Source-citation evaluation against supplied approved evidence | Semantic extraction, external evaluation and provider acceptance remain open |
+| [#54 — Governed GTM demo](https://github.com/Frosty9810/enterprise-automation-portfolio/pull/54) | Reviewed local CRM action with source and replay controls | Authenticated external tool execution remains open |
+
+Open #55–67 add CRM native intake/backfill/duplicate triage, scoped support evaluation, subject-bound consent, native GTM acceptance, routing comparisons, recovery auditing and Salesforce queue/fault/interview/n8n/Python slices. Finish their review and compatibility work before duplicating those deliveries. This is a dated branch snapshot. CI checks do not merge the work or establish live integration acceptance.
 
 Dockside's text parser derives fields from a documented line format and saves the original source through the existing validation/review queue. Parser spans are local reproduction evidence; saved core receipts retain source text and extracted values, not an authenticated parser attestation.
 
@@ -195,9 +208,12 @@ Other partial sections still need platform-specific adapters, canonical prompt/s
 
 ## Reconciliation and next work
 
+- The November 27 multi-agent source audit found implementation/test associations for all 27 automation, 20 life/data, nine engineering, 12 business-system and five research entries. Several use shared engines; shared contact-handoff tests do not prove the original domain policy. The 20 life/data examples remain local calculators/prototypes rather than durable data pipelines.
+- Use the [whole-portfolio review harness](demo-lab/PORTFOLIO-REVIEW-HARNESS.md) for a current 73-entry assignment plan, independent reviewer reports and source-freshness checks. A generated plan is not a completed review. Its next-work table prioritizes Salesforce acceptance, marketing/data intake, independent RAG evaluation and durable agent/tool recovery.
+
 - The original presence audit matched the collection registries, automation source/wrapper paths and all 20 human fixture files. This update retains the 73-entry count and maps the six existing industry desks to their actual runbooks and routes.
 - The October 26 reconciliation recorded successful runs of all six standalone industry acceptance CLIs: `run-maintenance.mjs`, `run-construction.mjs`, `run-referral.mjs`, `run-legal.mjs`, `run-insurance.mjs` and `run-executive.mjs` under `demo-lab`. They exercise local synthetic effects, not provider acceptance or professional decisions. Exact results belong in the delivery log and PR evidence.
-- The unified inventory, all five bounded research builds, six industry desks and merged depth slices above are on the checked main commit. This reconciliation changes documentation only; it performs no merge or deployment. Counts remain 73 catalog entries, not completed production systems.
+- The unified inventory, all five bounded research builds, six industry desks and merged depth slices above are on the checked main commit. The new review harness is a separate feature-branch delivery. Counts remain 73 catalog entries, not completed production systems.
 - Next: recheck current main, open PRs, CI and review feedback, then select a bounded remaining industry, integration or evaluation dependency from the linked runbooks. Continue an existing delivery when present rather than duplicating a merged slice. Authentication, trusted source ingestion, external/model or hardware measurements, platform-native acceptance and recorded walkthroughs require their own evidence.
 
 ## Other GitHub projects and privacy

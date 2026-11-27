@@ -13,6 +13,8 @@ Use this workflow when asking Codex to develop or review this portfolio. It desc
 
 ## AI specialists
 
+For collection-wide work, use the [portfolio review harness](demo-lab/PORTFOLIO-REVIEW-HARNESS.md) to derive assignments from all live catalog entries. Generate packets after source edits, assign actual independent Codex reviewers in bounded waves, and assess their returned reports against the same source. Keep unverified checks blocked. The packet generator does not launch agents, authenticate identities or replace the deterministic governor below.
+
 - Implementation: implement bounded domain changes, preserve public/private boundaries, document concrete examples and limitations.
 - Reliability reviewer: cross-check adverse cases, duplicate actions, failure handling, evidence freshness and claimed metrics. Return file/line, severity, reproducible evidence and the required correction.
 - Presentation reviewer: inspect the actual UI, readability, navigation, examples and the accuracy of capability claims. Distinguish visual observation from automated DOM checks.
